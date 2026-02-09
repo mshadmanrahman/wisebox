@@ -80,7 +80,9 @@ class TicketController extends Controller
 
     public function show(Request $request, Ticket $ticket): JsonResponse
     {
-        if (!$this->canViewTicket($request->user(), $ticket)) {
+        $user = $request->user();
+
+        if (!$this->canViewTicket($user, $ticket)) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
@@ -91,9 +93,10 @@ class TicketController extends Controller
             'consultant:id,name,email',
         ]);
 
-        $ticket->setRelation('comments', $this->commentQueryFor($request->user(), $ticket)->get());
+        $payload = $ticket->toArray();
+        $payload['comments'] = $this->commentQueryFor($user, $ticket)->get()->toArray();
 
-        return response()->json(['data' => $ticket]);
+        return response()->json(['data' => $payload]);
     }
 
     public function updateStatus(Request $request, Ticket $ticket): JsonResponse
@@ -238,7 +241,10 @@ class TicketController extends Controller
     {
         return $ticket->comments()
             ->with('user:id,name,email')
-            ->when($user->isCustomer(), fn ($query) => $query->where('is_internal', false));
+            ->when(
+                $ticket->customer_id === $user->id && !$user->isAdmin() && !$user->isConsultant(),
+                fn ($query) => $query->where('is_internal', false)
+            );
     }
 
     private function canViewTicket(User $user, Ticket $ticket): bool
