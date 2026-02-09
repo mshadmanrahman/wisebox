@@ -32,6 +32,7 @@ export const useAuthStore = create<AuthState>()(
           const response = await api.post<AuthResponse>('/auth/login', data);
           const { user, token } = response.data.data;
           localStorage.setItem('wisebox_token', token);
+          document.cookie = `wisebox_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
           set({ user, token, isAuthenticated: true, isLoading: false });
         } catch (error) {
           set({ isLoading: false });
@@ -45,6 +46,7 @@ export const useAuthStore = create<AuthState>()(
           const response = await api.post<AuthResponse>('/auth/register', data);
           const { user, token } = response.data.data;
           localStorage.setItem('wisebox_token', token);
+          document.cookie = `wisebox_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
           set({ user, token, isAuthenticated: true, isLoading: false });
         } catch (error) {
           set({ isLoading: false });
@@ -58,6 +60,7 @@ export const useAuthStore = create<AuthState>()(
           const response = await api.post<AuthResponse>('/auth/google', { id_token: idToken });
           const { user, token } = response.data.data;
           localStorage.setItem('wisebox_token', token);
+          document.cookie = `wisebox_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
           set({ user, token, isAuthenticated: true, isLoading: false });
         } catch (error) {
           set({ isLoading: false });
@@ -72,6 +75,7 @@ export const useAuthStore = create<AuthState>()(
           // Ignore logout errors
         } finally {
           localStorage.removeItem('wisebox_token');
+          document.cookie = 'wisebox_token=; path=/; max-age=0';
           set({ user: null, token: null, isAuthenticated: false });
         }
       },
@@ -95,6 +99,7 @@ export const useAuthStore = create<AuthState>()(
 
       reset: () => {
         localStorage.removeItem('wisebox_token');
+        document.cookie = 'wisebox_token=; path=/; max-age=0';
         set({ user: null, token: null, isAuthenticated: false, isLoading: false });
       },
     }),
