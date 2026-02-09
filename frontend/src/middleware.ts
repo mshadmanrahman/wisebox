@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // Routes that require authentication
-const protectedPaths = ['/dashboard', '/properties', '/tickets', '/orders', '/settings'];
+const protectedPaths = ['/dashboard', '/properties', '/services', '/tickets', '/orders', '/settings'];
 
 // Routes only for unauthenticated users
 const authPaths = ['/login', '/register', '/forgot-password'];
@@ -36,6 +36,7 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/properties/:path*',
+    '/services/:path*',
     '/tickets/:path*',
     '/orders/:path*',
     '/settings/:path*',

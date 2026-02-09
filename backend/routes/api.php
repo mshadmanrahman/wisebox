@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\OrderController;
+use App\Http\Controllers\Api\V1\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,13 +53,17 @@ Route::prefix('v1')->group(function () {
         Route::delete('properties/{property}/documents/{document}', [\App\Http\Controllers\Api\V1\DocumentController::class, 'destroy']);
 
         // Phase 3: Orders
-        // Route::apiResource('orders', OrderController::class);
+        Route::apiResource('orders', OrderController::class)->only(['index', 'store', 'show']);
+        Route::post('orders/{order}/checkout', [OrderController::class, 'checkout']);
+        Route::post('orders/{order}/cancel', [OrderController::class, 'cancel']);
 
         // Phase 4: Tickets
         // Route::apiResource('tickets', TicketController::class);
     });
 
     // Public routes (no auth)
+    Route::post('/webhooks/stripe', StripeWebhookController::class);
+
     // Phase 2: Locations
     Route::prefix('locations')->group(function () {
         Route::get('/divisions', function () {
