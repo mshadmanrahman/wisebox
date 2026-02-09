@@ -40,9 +40,9 @@ Route::prefix('v1')->group(function () {
             Route::put('/me', [AuthController::class, 'updateMe']);
         });
 
-        // Placeholder routes for future phases
         // Phase 2: Properties
-        // Route::apiResource('properties', PropertyController::class);
+        Route::apiResource('properties', \App\Http\Controllers\Api\V1\PropertyController::class);
+        Route::put('properties/{property}/draft', [\App\Http\Controllers\Api\V1\PropertyController::class, 'saveDraft']);
 
         // Phase 3: Orders
         // Route::apiResource('orders', OrderController::class);
