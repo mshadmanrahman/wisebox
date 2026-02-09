@@ -103,6 +103,12 @@
 - Replaced ticket placeholder frontend with working pages:
   - `/tickets` (ticket list)
   - `/tickets/{id}` (ticket detail + threaded comments)
+- Enhanced ticket operations:
+  - `PATCH /api/v1/tickets/{id}/assign` (admin consultant assignment)
+  - `GET /api/v1/tickets/{id}/comments` (comment list endpoint)
+  - `GET /api/v1/consultants` (admin consultant directory with open-ticket counts)
+  - Internal notes are hidden from customers in ticket detail/comment responses
+  - Role-aware ticket filters and status controls in portal ticket UI
 
 ---
 

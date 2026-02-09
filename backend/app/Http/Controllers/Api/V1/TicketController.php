@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\Ticket;
 use App\Models\TicketComment;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,10 +18,24 @@ class TicketController extends Controller
         $user = $request->user();
 
         $tickets = Ticket::query()
-            ->with(['property:id,property_name', 'service:id,name', 'consultant:id,name,email'])
-            ->when($user->isAdmin(), fn ($query) => $query)
-            ->when($user->isConsultant(), fn ($query) => $query->where('consultant_id', $user->id))
+            ->with([
+                'property:id,property_name',
+                'service:id,name',
+                'customer:id,name,email',
+                'consultant:id,name,email',
+            ])
             ->when($user->isCustomer(), fn ($query) => $query->where('customer_id', $user->id))
+            ->when($user->isConsultant(), fn ($query) => $query->where('consultant_id', $user->id))
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')->toString()))
+            ->when($request->filled('priority'), fn ($query) => $query->where('priority', $request->string('priority')->toString()))
+            ->when(
+                $request->string('assigned')->toString() === 'unassigned' && $user->isAdmin(),
+                fn ($query) => $query->whereNull('consultant_id')
+            )
+            ->when(
+                $request->string('assigned')->toString() === 'assigned' && $user->isAdmin(),
+                fn ($query) => $query->whereNotNull('consultant_id')
+            )
             ->latest()
             ->paginate($request->integer('per_page', 15));
 
@@ -74,8 +89,9 @@ class TicketController extends Controller
             'service',
             'customer:id,name,email',
             'consultant:id,name,email',
-            'comments.user:id,name,email',
         ]);
+
+        $ticket->setRelation('comments', $this->commentQueryFor($request->user(), $ticket)->get());
 
         return response()->json(['data' => $ticket]);
     }
@@ -113,6 +129,51 @@ class TicketController extends Controller
         return response()->json(['data' => $ticket]);
     }
 
+    public function assignConsultant(Request $request, Ticket $ticket): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$user->isAdmin()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $validated = $request->validate([
+            'consultant_id' => [
+                'required',
+                Rule::exists('users', 'id')->where(
+                    fn ($query) => $query->where('role', 'consultant')->where('status', 'active')
+                ),
+            ],
+        ]);
+
+        $ticket->consultant_id = $validated['consultant_id'];
+
+        if ($ticket->status === 'open') {
+            $ticket->status = 'assigned';
+        }
+
+        $ticket->save();
+        $ticket->load(['consultant:id,name,email', 'customer:id,name,email']);
+
+        return response()->json([
+            'data' => $ticket,
+            'message' => 'Consultant assigned successfully.',
+        ]);
+    }
+
+    public function comments(Request $request, Ticket $ticket): JsonResponse
+    {
+        if (!$this->canViewTicket($request->user(), $ticket)) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $comments = $this->commentQueryFor($request->user(), $ticket)
+            ->latest()
+            ->paginate($request->integer('per_page', 50));
+
+        return response()->json($comments);
+    }
+
     public function addComment(Request $request, Ticket $ticket): JsonResponse
     {
         $user = $request->user();
@@ -141,12 +202,46 @@ class TicketController extends Controller
             'is_internal' => $isInternal,
         ]);
 
+        if ($user->isCustomer() && !$isInternal && $ticket->status === 'awaiting_customer') {
+            $ticket->update(['status' => 'awaiting_consultant']);
+        }
+
+        if (($user->isConsultant() || $user->isAdmin()) && !$isInternal && $ticket->status === 'awaiting_consultant') {
+            $ticket->update(['status' => 'awaiting_customer']);
+        }
+
         $comment->load('user:id,name,email');
 
         return response()->json(['data' => $comment], 201);
     }
 
-    private function canViewTicket($user, Ticket $ticket): bool
+    public function consultants(Request $request): JsonResponse
+    {
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $consultants = User::query()
+            ->where('role', 'consultant')
+            ->where('status', 'active')
+            ->withCount([
+                'assignedTickets as open_tickets_count' => fn ($query) => $query->whereNotIn('status', ['completed', 'cancelled']),
+            ])
+            ->orderBy('open_tickets_count')
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        return response()->json(['data' => $consultants]);
+    }
+
+    private function commentQueryFor(User $user, Ticket $ticket)
+    {
+        return $ticket->comments()
+            ->with('user:id,name,email')
+            ->when($user->isCustomer(), fn ($query) => $query->where('is_internal', false));
+    }
+
+    private function canViewTicket(User $user, Ticket $ticket): bool
     {
         return $user->isAdmin()
             || $ticket->customer_id === $user->id

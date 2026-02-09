@@ -295,6 +295,7 @@ export interface Ticket {
   property_id: number;
   property?: Property;
   customer_id: number;
+  customer?: User;
   consultant_id: number | null;
   consultant?: User;
   service_id: number | null;

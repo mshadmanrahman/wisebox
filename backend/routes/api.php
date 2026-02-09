@@ -61,7 +61,10 @@ Route::prefix('v1')->group(function () {
         // Phase 4: Tickets
         Route::apiResource('tickets', TicketController::class)->only(['index', 'store', 'show']);
         Route::patch('tickets/{ticket}/status', [TicketController::class, 'updateStatus']);
+        Route::patch('tickets/{ticket}/assign', [TicketController::class, 'assignConsultant']);
+        Route::get('tickets/{ticket}/comments', [TicketController::class, 'comments']);
         Route::post('tickets/{ticket}/comments', [TicketController::class, 'addComment']);
+        Route::get('consultants', [TicketController::class, 'consultants']);
     });
 
     // Public routes (no auth)

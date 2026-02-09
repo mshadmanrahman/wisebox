@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Loader2, Send } from 'lucide-react';
@@ -11,7 +11,25 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import type { ApiResponse, Ticket, TicketComment } from '@/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { ApiResponse, Ticket, TicketComment, TicketStatus } from '@/types';
+
+const STATUS_OPTIONS: TicketStatus[] = [
+  'open',
+  'assigned',
+  'in_progress',
+  'awaiting_customer',
+  'awaiting_consultant',
+  'scheduled',
+  'completed',
+  'cancelled',
+];
 
 function statusBadgeClass(status: Ticket['status']): string {
   if (status === 'completed') return 'bg-green-100 text-green-700';
@@ -19,6 +37,13 @@ function statusBadgeClass(status: Ticket['status']): string {
   if (status === 'scheduled') return 'bg-purple-100 text-purple-700';
   if (status === 'cancelled') return 'bg-gray-100 text-gray-600';
   return 'bg-amber-100 text-amber-700';
+}
+
+interface ConsultantOption {
+  id: number;
+  name: string;
+  email: string;
+  open_tickets_count: number;
 }
 
 export default function TicketDetailPage() {
@@ -29,6 +54,13 @@ export default function TicketDetailPage() {
 
   const [commentBody, setCommentBody] = useState('');
   const [isInternal, setIsInternal] = useState(false);
+  const [statusValue, setStatusValue] = useState<TicketStatus | ''>('');
+  const [consultantIdValue, setConsultantIdValue] = useState<string>('');
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+  const canManageStatus = isAdmin || user?.role === 'consultant';
+  const canUseInternalComments = canManageStatus;
 
   const { data: ticket, isLoading } = useQuery({
     queryKey: ['ticket', ticketId],
@@ -39,7 +71,24 @@ export default function TicketDetailPage() {
     enabled: Number.isFinite(ticketId),
   });
 
-  const canUseInternalComments = user?.role === 'consultant' || user?.role === 'admin' || user?.role === 'super_admin';
+  const { data: consultants } = useQuery({
+    queryKey: ['consultants-for-ticket-assignment'],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<ConsultantOption[]>>('/consultants');
+      return res.data.data;
+    },
+    enabled: isAdmin,
+  });
+
+  const effectiveStatusValue = useMemo(
+    () => statusValue || ticket?.status || '',
+    [statusValue, ticket?.status]
+  );
+
+  const effectiveConsultantValue = useMemo(
+    () => consultantIdValue || (ticket?.consultant_id ? String(ticket.consultant_id) : ''),
+    [consultantIdValue, ticket?.consultant_id]
+  );
 
   const addCommentMutation = useMutation({
     mutationFn: async () => {
@@ -52,7 +101,51 @@ export default function TicketDetailPage() {
     onSuccess: async () => {
       setCommentBody('');
       setIsInternal(false);
+      setActionError(null);
       await queryClient.invalidateQueries({ queryKey: ['ticket', ticketId] });
+      await queryClient.invalidateQueries({ queryKey: ['tickets'] });
+    },
+    onError: (err: unknown) => {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      setActionError(axiosErr.response?.data?.message || 'Could not send comment.');
+    },
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async (nextStatus: TicketStatus) => {
+      const res = await api.patch<ApiResponse<Ticket>>(`/tickets/${ticketId}/status`, {
+        status: nextStatus,
+      });
+      return res.data.data;
+    },
+    onSuccess: async (updatedTicket) => {
+      setStatusValue(updatedTicket.status);
+      setActionError(null);
+      await queryClient.invalidateQueries({ queryKey: ['ticket', ticketId] });
+      await queryClient.invalidateQueries({ queryKey: ['tickets'] });
+    },
+    onError: (err: unknown) => {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      setActionError(axiosErr.response?.data?.message || 'Could not update status.');
+    },
+  });
+
+  const assignConsultantMutation = useMutation({
+    mutationFn: async (consultantId: number) => {
+      const res = await api.patch<ApiResponse<Ticket>>(`/tickets/${ticketId}/assign`, {
+        consultant_id: consultantId,
+      });
+      return res.data.data;
+    },
+    onSuccess: async (updatedTicket) => {
+      setConsultantIdValue(updatedTicket.consultant_id ? String(updatedTicket.consultant_id) : '');
+      setActionError(null);
+      await queryClient.invalidateQueries({ queryKey: ['ticket', ticketId] });
+      await queryClient.invalidateQueries({ queryKey: ['tickets'] });
+    },
+    onError: (err: unknown) => {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      setActionError(axiosErr.response?.data?.message || 'Could not assign consultant.');
     },
   });
 
@@ -113,7 +206,107 @@ export default function TicketDetailPage() {
             <p>
               Created: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.created_at).toLocaleString()}</span>
             </p>
+            {ticket.customer?.name && (
+              <p>
+                Customer: <span className="font-medium text-wisebox-text-primary">{ticket.customer.name}</span>
+              </p>
+            )}
+            {ticket.consultant?.name && (
+              <p>
+                Consultant: <span className="font-medium text-wisebox-text-primary">{ticket.consultant.name}</span>
+              </p>
+            )}
+            {ticket.property?.property_name && (
+              <p>
+                Property: <span className="font-medium text-wisebox-text-primary">{ticket.property.property_name}</span>
+              </p>
+            )}
+            {ticket.service?.name && (
+              <p>
+                Service: <span className="font-medium text-wisebox-text-primary">{ticket.service.name}</span>
+              </p>
+            )}
           </div>
+
+          {(canManageStatus || isAdmin) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t">
+              {canManageStatus && (
+                <div className="space-y-2">
+                  <p className="font-medium text-wisebox-text-primary">Update Status</p>
+                  <div className="flex gap-2">
+                    <Select
+                      value={effectiveStatusValue}
+                      onValueChange={(value) => setStatusValue(value as TicketStatus)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STATUS_OPTIONS.map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={
+                        updateStatusMutation.isPending ||
+                        !effectiveStatusValue ||
+                        effectiveStatusValue === ticket.status
+                      }
+                      onClick={() => updateStatusMutation.mutate(effectiveStatusValue as TicketStatus)}
+                    >
+                      {updateStatusMutation.isPending ? 'Saving...' : 'Save'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {isAdmin && (
+                <div className="space-y-2">
+                  <p className="font-medium text-wisebox-text-primary">Assign Consultant</p>
+                  <div className="flex gap-2">
+                    <Select
+                      value={effectiveConsultantValue}
+                      onValueChange={(value) => setConsultantIdValue(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select consultant" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(consultants ?? []).map((consultant) => (
+                          <SelectItem key={consultant.id} value={String(consultant.id)}>
+                            {consultant.name} ({consultant.open_tickets_count} open)
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={
+                        assignConsultantMutation.isPending ||
+                        !effectiveConsultantValue ||
+                        String(ticket.consultant_id ?? '') === effectiveConsultantValue
+                      }
+                      onClick={() => assignConsultantMutation.mutate(Number(effectiveConsultantValue))}
+                    >
+                      {assignConsultantMutation.isPending ? 'Assigning...' : 'Assign'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {actionError && (
+            <p className="text-sm text-red-600 border border-red-200 bg-red-50 rounded-md px-3 py-2">
+              {actionError}
+            </p>
+          )}
         </CardContent>
       </Card>
 

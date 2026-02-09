@@ -71,6 +71,94 @@ class TicketApiTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_internal_comments_are_hidden_from_customers(): void
+    {
+        $customer = User::factory()->create();
+        $consultant = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00003',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'consultant_id' => $consultant->id,
+            'title' => 'Ownership update needed',
+            'priority' => 'medium',
+            'status' => 'in_progress',
+        ]);
+
+        Sanctum::actingAs($consultant);
+
+        $this->postJson("/api/v1/tickets/{$ticket->id}/comments", [
+            'body' => 'Internal note for consultant workflow.',
+            'is_internal' => true,
+        ])->assertCreated();
+
+        $this->postJson("/api/v1/tickets/{$ticket->id}/comments", [
+            'body' => 'Public update for the customer.',
+            'is_internal' => false,
+        ])->assertCreated();
+
+        Sanctum::actingAs($customer);
+
+        $this->getJson("/api/v1/tickets/{$ticket->id}")
+            ->assertOk()
+            ->assertJsonCount(1, 'data.comments')
+            ->assertJsonPath('data.comments.0.body', 'Public update for the customer.');
+
+        $this->getJson("/api/v1/tickets/{$ticket->id}/comments")
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.body', 'Public update for the customer.');
+    }
+
+    public function test_admin_can_assign_consultant_to_ticket(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+
+        $customer = User::factory()->create();
+        $consultant = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00004',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'title' => 'Need legal review',
+            'priority' => 'high',
+            'status' => 'open',
+        ]);
+
+        Sanctum::actingAs($admin);
+
+        $this->patchJson("/api/v1/tickets/{$ticket->id}/assign", [
+            'consultant_id' => $consultant->id,
+        ])->assertOk()
+            ->assertJsonPath('data.consultant_id', $consultant->id)
+            ->assertJsonPath('data.status', 'assigned');
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'consultant_id' => $consultant->id,
+            'status' => 'assigned',
+        ]);
+
+        $this->getJson('/api/v1/consultants')
+            ->assertOk()
+            ->assertJsonFragment(['id' => $consultant->id]);
+    }
+
     private function createPropertyForUser(User $user): Property
     {
         $propertyTypeId = DB::table('property_types')->insertGetId([

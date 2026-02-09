@@ -1,12 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { useAuthStore } from '@/stores/auth';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { PaginatedResponse, Ticket } from '@/types';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { PaginatedResponse, Ticket, TicketStatus } from '@/types';
 
 function statusBadgeClass(status: Ticket['status']): string {
   if (status === 'completed') return 'bg-green-100 text-green-700';
@@ -17,10 +20,22 @@ function statusBadgeClass(status: Ticket['status']): string {
 }
 
 export default function TicketsPage() {
+  const { user } = useAuthStore();
+  const [statusFilter, setStatusFilter] = useState<'all' | TicketStatus>('all');
+  const [assignedFilter, setAssignedFilter] = useState<'all' | 'assigned' | 'unassigned'>('all');
+
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+  const isConsultant = user?.role === 'consultant';
+
   const { data, isLoading } = useQuery({
-    queryKey: ['tickets'],
+    queryKey: ['tickets', statusFilter, assignedFilter],
     queryFn: async () => {
-      const res = await api.get<PaginatedResponse<Ticket>>('/tickets');
+      const res = await api.get<PaginatedResponse<Ticket>>('/tickets', {
+        params: {
+          status: statusFilter === 'all' ? undefined : statusFilter,
+          assigned: isAdmin && assignedFilter !== 'all' ? assignedFilter : undefined,
+        },
+      });
       return res.data;
     },
   });
@@ -29,17 +44,76 @@ export default function TicketsPage() {
 
   return (
     <div className="px-6 py-8 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-wisebox-text-primary">Tickets</h1>
           <p className="mt-1 text-wisebox-text-secondary">
-            Follow consultant progress for your service requests.
+            {isConsultant
+              ? 'Manage your assigned tickets and keep customers updated.'
+              : 'Follow consultant progress for your service requests.'}
           </p>
         </div>
         <Button asChild variant="outline">
           <Link href="/orders">View Orders</Link>
         </Button>
       </div>
+
+      <Card>
+        <CardContent className="pt-6 space-y-4">
+          <Tabs
+            value={statusFilter}
+            onValueChange={(value) => setStatusFilter(value as 'all' | TicketStatus)}
+          >
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 lg:grid-cols-7">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="open">Open</TabsTrigger>
+              <TabsTrigger value="assigned">Assigned</TabsTrigger>
+              <TabsTrigger value="in_progress">In Progress</TabsTrigger>
+              <TabsTrigger value="awaiting_customer">Awaiting Customer</TabsTrigger>
+              <TabsTrigger value="awaiting_consultant">Awaiting Consultant</TabsTrigger>
+              <TabsTrigger value="completed">Completed</TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          {isAdmin && (
+            <div className="flex items-center gap-2 text-sm">
+              <button
+                type="button"
+                className={`px-3 py-1.5 rounded-md border ${
+                  assignedFilter === 'all'
+                    ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
+                    : 'bg-white text-wisebox-text-secondary border-gray-200'
+                }`}
+                onClick={() => setAssignedFilter('all')}
+              >
+                All Assignments
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1.5 rounded-md border ${
+                  assignedFilter === 'assigned'
+                    ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
+                    : 'bg-white text-wisebox-text-secondary border-gray-200'
+                }`}
+                onClick={() => setAssignedFilter('assigned')}
+              >
+                Assigned
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1.5 rounded-md border ${
+                  assignedFilter === 'unassigned'
+                    ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
+                    : 'bg-white text-wisebox-text-secondary border-gray-200'
+                }`}
+                onClick={() => setAssignedFilter('unassigned')}
+              >
+                Unassigned
+              </button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {isLoading && (
         <Card>
@@ -50,9 +124,9 @@ export default function TicketsPage() {
       {!isLoading && tickets.length === 0 && (
         <Card>
           <CardContent className="p-6 space-y-3">
-            <h2 className="font-semibold text-wisebox-text-primary">No tickets yet</h2>
+            <h2 className="font-semibold text-wisebox-text-primary">No tickets found</h2>
             <p className="text-sm text-wisebox-text-secondary">
-              Tickets are automatically created after successful paid or free service orders.
+              Try changing filters or create new service orders to generate tickets.
             </p>
             <Button asChild variant="outline">
               <Link href="/services">Book Services</Link>
@@ -83,6 +157,26 @@ export default function TicketsPage() {
                 <p>
                   Updated: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.updated_at).toLocaleString()}</span>
                 </p>
+                {ticket.property?.property_name && (
+                  <p>
+                    Property: <span className="font-medium text-wisebox-text-primary">{ticket.property.property_name}</span>
+                  </p>
+                )}
+                {ticket.service?.name && (
+                  <p>
+                    Service: <span className="font-medium text-wisebox-text-primary">{ticket.service.name}</span>
+                  </p>
+                )}
+                {ticket.customer?.name && (
+                  <p>
+                    Customer: <span className="font-medium text-wisebox-text-primary">{ticket.customer.name}</span>
+                  </p>
+                )}
+                {ticket.consultant?.name && (
+                  <p>
+                    Consultant: <span className="font-medium text-wisebox-text-primary">{ticket.consultant.name}</span>
+                  </p>
+                )}
               </div>
 
               <Button asChild variant="outline" className="w-full sm:w-auto">
