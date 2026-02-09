@@ -27,6 +27,7 @@ class Ticket extends Model
     public function property(): BelongsTo { return $this->belongsTo(Property::class); }
     public function customer(): BelongsTo { return $this->belongsTo(User::class, 'customer_id'); }
     public function consultant(): BelongsTo { return $this->belongsTo(User::class, 'consultant_id'); }
+    public function service(): BelongsTo { return $this->belongsTo(Service::class); }
 
     public function comments(): HasMany
     {

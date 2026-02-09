@@ -7,10 +7,10 @@
 | Phase | Status | Started | Completed |
 |-------|--------|---------|-----------|
 | Phase 0: Scaffolding | COMPLETE | 2026-02-09 | 2026-02-09 |
-| Phase 1: Authentication | NOT STARTED | - | - |
-| Phase 2: Core Systems | NOT STARTED | - | - |
-| Phase 3: Payments | NOT STARTED | - | - |
-| Phase 4: Consultant Workflow | NOT STARTED | - | - |
+| Phase 1: Authentication | COMPLETE | 2026-02-09 | 2026-02-09 |
+| Phase 2: Core Systems | COMPLETE | 2026-02-09 | 2026-02-10 |
+| Phase 3: Payments | COMPLETE | 2026-02-10 | 2026-02-10 |
+| Phase 4: Consultant Workflow | IN PROGRESS | 2026-02-10 | - |
 | Phase 5: Integrations | NOT STARTED | - | - |
 | Phase 6: Dashboard & Assessment | NOT STARTED | - | - |
 | Phase 7: Marketing Site | NOT STARTED | - | - |
@@ -68,6 +68,41 @@
 - **Frontend:** Next.js 14 with 18 shadcn/ui components, TypeScript types, API client, auth store
 - **Verification:** All services up, migrations pass, seeders pass, CORS working, frontend builds
 - **Issues fixed during verification:** PHP 8.3->8.4 (Laravel 12 requirement), libicu-dev missing, .env SQLite->MySQL, ESLint use-toast fix
+
+---
+
+## Phase 3: Service & Payment Layer (2026-02-10)
+
+- Enabled order API endpoints:
+  - `GET /api/v1/orders`
+  - `POST /api/v1/orders`
+  - `GET /api/v1/orders/{id}`
+  - `POST /api/v1/orders/{id}/checkout`
+  - `POST /api/v1/orders/{id}/cancel`
+- Added Stripe webhook endpoint:
+  - `POST /api/v1/webhooks/stripe`
+- Added backend services:
+  - `StripeService` for checkout session creation + webhook signature verification
+  - `OrderFulfillmentService` for post-payment ticket creation
+- Implemented customer portal pages:
+  - `/services` (service selection and order creation)
+  - `/orders` (history)
+  - `/orders/{id}` (detail + checkout/cancel)
+  - `/orders/{id}/confirmation` (payment confirmation)
+- Added local Stripe checklist document:
+  - `docs/stripe-local-testing.md`
+
+## Phase 4: Consultant Workflow (Started 2026-02-10)
+
+- Added initial ticket workflow API:
+  - `GET /api/v1/tickets`
+  - `POST /api/v1/tickets`
+  - `GET /api/v1/tickets/{id}`
+  - `PATCH /api/v1/tickets/{id}/status`
+  - `POST /api/v1/tickets/{id}/comments`
+- Replaced ticket placeholder frontend with working pages:
+  - `/tickets` (ticket list)
+  - `/tickets/{id}` (ticket detail + threaded comments)
 
 ---
 

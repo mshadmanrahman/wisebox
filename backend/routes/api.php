@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\StripeWebhookController;
+use App\Http\Controllers\Api\V1\TicketController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,7 +59,9 @@ Route::prefix('v1')->group(function () {
         Route::post('orders/{order}/cancel', [OrderController::class, 'cancel']);
 
         // Phase 4: Tickets
-        // Route::apiResource('tickets', TicketController::class);
+        Route::apiResource('tickets', TicketController::class)->only(['index', 'store', 'show']);
+        Route::patch('tickets/{ticket}/status', [TicketController::class, 'updateStatus']);
+        Route::post('tickets/{ticket}/comments', [TicketController::class, 'addComment']);
     });
 
     // Public routes (no auth)

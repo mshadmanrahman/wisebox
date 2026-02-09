@@ -79,5 +79,6 @@ See [BUILD-LOG.md](./BUILD-LOG.md) for step-by-step documentation of every build
 
 - [Implementation Plan](./WISEBOX-IMPLEMENTATION-PLAN.md)
 - [Project Bible](./WISEBOX-PROJECT-BIBLE.md)
+- [Stripe Local Testing](./docs/stripe-local-testing.md)
 - [API Documentation](./docs/api/)
 - [Architecture](./docs/architecture/)
