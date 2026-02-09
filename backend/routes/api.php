@@ -44,6 +44,12 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('properties', \App\Http\Controllers\Api\V1\PropertyController::class);
         Route::put('properties/{property}/draft', [\App\Http\Controllers\Api\V1\PropertyController::class, 'saveDraft']);
 
+        // Documents (nested under properties)
+        Route::get('properties/{property}/documents', [\App\Http\Controllers\Api\V1\DocumentController::class, 'index']);
+        Route::post('properties/{property}/documents', [\App\Http\Controllers\Api\V1\DocumentController::class, 'store']);
+        Route::post('properties/{property}/documents/{documentTypeId}/mark-missing', [\App\Http\Controllers\Api\V1\DocumentController::class, 'markMissing']);
+        Route::delete('properties/{property}/documents/{document}', [\App\Http\Controllers\Api\V1\DocumentController::class, 'destroy']);
+
         // Phase 3: Orders
         // Route::apiResource('orders', OrderController::class);
 
