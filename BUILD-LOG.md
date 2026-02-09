@@ -1,0 +1,88 @@
+# Wisebox MVP Build Log
+
+> Step-by-step documentation of every build action. This file enables freeze/resume at any point.
+
+## Build Status
+
+| Phase | Status | Started | Completed |
+|-------|--------|---------|-----------|
+| Phase 0: Scaffolding | IN PROGRESS | 2026-02-09 | - |
+| Phase 1: Authentication | NOT STARTED | - | - |
+| Phase 2: Core Systems | NOT STARTED | - | - |
+| Phase 3: Payments | NOT STARTED | - | - |
+| Phase 4: Consultant Workflow | NOT STARTED | - | - |
+| Phase 5: Integrations | NOT STARTED | - | - |
+| Phase 6: Dashboard & Assessment | NOT STARTED | - | - |
+| Phase 7: Marketing Site | NOT STARTED | - | - |
+| Phase 8: Deployment | NOT STARTED | - | - |
+
+---
+
+## Phase 0: Project Scaffolding
+
+### 0.1 Create monorepo structure
+- **Date:** 2026-02-09
+- **Action:** Created directory skeleton
+- **Directories:** backend/, frontend/, docs/, docker/, .github/workflows/
+- **Git:** Initialized repository
+
+### 0.2 Create root configuration files
+- **Date:** 2026-02-09
+- **Action:** Created BUILD-LOG.md, README.md, .gitignore
+- **Purpose:** Project documentation, ignore rules for Laravel + Next.js + Docker
+
+### 0.3 Docker Compose setup
+- **Status:** PENDING
+- **Plan:** PHP 8.3 FPM + Nginx + MySQL 8 + Redis 7
+- **Reason:** No local PHP/Composer; full backend runs in Docker
+
+### 0.4 Initialize Next.js frontend
+- **Status:** PENDING
+- **Plan:** create-next-app with App Router, TypeScript, Tailwind, shadcn/ui
+
+### 0.5 Initialize Laravel backend
+- **Status:** PENDING
+- **Plan:** Laravel 11 via Docker, install Sanctum, Filament, Stripe, Twilio
+
+### 0.6 Database migrations
+- **Status:** PENDING
+- **Plan:** 23+ tables from implementation plan schema
+
+### 0.7 Reference data seeders
+- **Status:** PENDING
+- **Plan:** Property types, ownership statuses, document types, services, locations
+
+### 0.8 Design system setup
+- **Status:** PENDING
+- **Plan:** Tailwind theme tokens, shadcn/ui components, TypeScript types, API client
+
+### 0.9 Phase 0 verification
+- **Status:** PENDING
+- **Plan:** Docker up, migrations, seeders, dev servers, CORS check
+
+---
+
+## Resume Instructions
+
+To resume building after a stop:
+
+1. Read this BUILD-LOG.md to understand current state
+2. Check the last completed step
+3. Look at the next PENDING step
+4. Run `docker compose ps` to check if services are running
+5. Run `cd frontend && npm run dev` to start frontend if needed
+6. Continue from the next pending step
+
+## Architecture Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Backend containerization | Docker (PHP 8.3 FPM) | No local PHP; portable, production-like |
+| Frontend runtime | Native Node.js v24 | Node available locally; faster dev cycle |
+| Database | MySQL 8 (Docker) | Matches implementation plan |
+| Cache/Queue | Redis 7 (Docker) | Session store, queue driver, caching |
+| Frontend framework | Next.js 14 App Router | SSR for marketing, SPA for portal |
+| UI library | shadcn/ui + Tailwind | Rapid development with consistent design |
+| State management | Zustand | Lightweight, simple for auth + form drafts |
+| API client | TanStack Query + Axios | Caching, auto-refetch, interceptors |
+| Deployment target | Vercel (frontend) | User requirement; optimized for Next.js |
