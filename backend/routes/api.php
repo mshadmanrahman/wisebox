@@ -1,12 +1,161 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/health', function () {
-    return response()->json(['status' => 'ok']);
-});
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| All routes are prefixed with /api/v1/
+|
+*/
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('v1')->group(function () {
+
+    // Health check
+    Route::get('/', function () {
+        return response()->json(['status' => 'ok']);
+    });
+
+    // Auth routes (public)
+    Route::prefix('auth')->group(function () {
+        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/google', [AuthController::class, 'googleAuth']);
+        Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+        Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    });
+
+    // Auth routes (protected)
+    Route::middleware('auth:sanctum')->group(function () {
+
+        // Auth management
+        Route::prefix('auth')->group(function () {
+            Route::post('/logout', [AuthController::class, 'logout']);
+            Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+            Route::post('/resend-otp', [AuthController::class, 'resendOtp']);
+            Route::get('/me', [AuthController::class, 'me']);
+            Route::put('/me', [AuthController::class, 'updateMe']);
+        });
+
+        // Placeholder routes for future phases
+        // Phase 2: Properties
+        // Route::apiResource('properties', PropertyController::class);
+
+        // Phase 3: Orders
+        // Route::apiResource('orders', OrderController::class);
+
+        // Phase 4: Tickets
+        // Route::apiResource('tickets', TicketController::class);
+    });
+
+    // Public routes (no auth)
+    // Phase 2: Locations
+    Route::prefix('locations')->group(function () {
+        Route::get('/divisions', function () {
+            return response()->json([
+                'data' => \Illuminate\Support\Facades\DB::table('divisions')->get(),
+            ]);
+        });
+        Route::get('/districts', function (\Illuminate\Http\Request $request) {
+            $query = \Illuminate\Support\Facades\DB::table('districts');
+            if ($request->has('division_id')) {
+                $query->where('division_id', $request->division_id);
+            }
+            return response()->json(['data' => $query->get()]);
+        });
+        Route::get('/upazilas', function (\Illuminate\Http\Request $request) {
+            $query = \Illuminate\Support\Facades\DB::table('upazilas');
+            if ($request->has('district_id')) {
+                $query->where('district_id', $request->district_id);
+            }
+            return response()->json(['data' => $query->get()]);
+        });
+        Route::get('/mouzas', function (\Illuminate\Http\Request $request) {
+            $query = \Illuminate\Support\Facades\DB::table('mouzas');
+            if ($request->has('upazila_id')) {
+                $query->where('upazila_id', $request->upazila_id);
+            }
+            return response()->json(['data' => $query->get()]);
+        });
+    });
+
+    // Public: Services
+    Route::get('/services', function () {
+        return response()->json([
+            'data' => \Illuminate\Support\Facades\DB::table('services')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get(),
+        ]);
+    });
+
+    // Public: Service categories
+    Route::get('/service-categories', function () {
+        return response()->json([
+            'data' => \Illuminate\Support\Facades\DB::table('service_categories')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get(),
+        ]);
+    });
+
+    // Public: FAQs
+    Route::get('/faqs', function () {
+        return response()->json([
+            'data' => \Illuminate\Support\Facades\DB::table('faqs')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get(),
+        ]);
+    });
+
+    // Public: Sliders
+    Route::get('/sliders', function () {
+        return response()->json([
+            'data' => \Illuminate\Support\Facades\DB::table('sliders')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get(),
+        ]);
+    });
+
+    // Public: Property types, ownership statuses, etc. (for forms)
+    Route::get('/property-types', function () {
+        return response()->json([
+            'data' => \Illuminate\Support\Facades\DB::table('property_types')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get(),
+        ]);
+    });
+
+    Route::get('/ownership-statuses', function () {
+        return response()->json([
+            'data' => \Illuminate\Support\Facades\DB::table('ownership_statuses')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get(),
+        ]);
+    });
+
+    Route::get('/ownership-types', function () {
+        return response()->json([
+            'data' => \Illuminate\Support\Facades\DB::table('ownership_types')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get(),
+        ]);
+    });
+
+    Route::get('/document-types', function () {
+        return response()->json([
+            'data' => \Illuminate\Support\Facades\DB::table('document_types')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get(),
+        ]);
+    });
 });
