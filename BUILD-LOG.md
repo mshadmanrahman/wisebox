@@ -1,6 +1,7 @@
 # Wisebox MVP Build Log
 
 > Step-by-step documentation of every build action. This file enables freeze/resume at any point.
+> Detailed chronology and implementation method for Phase 2B-4: `docs/execution-journal-phase2b-phase4.md`.
 
 ## Build Status
 
