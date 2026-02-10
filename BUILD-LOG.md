@@ -183,6 +183,19 @@
   - Extended root validation script with `--with-e2e` option.
   - Installed `@playwright/test` and committed lockfile updates for reproducible E2E runs.
   - Added `allowedDevOrigins` in `frontend/next.config.mjs` to align dev-server origin policy for Playwright (`127.0.0.1` and `localhost`).
+- Calendly outbound scheduling integration:
+  - Added `CalendlyService` with API-first scheduling link generation using `CALENDLY_API_KEY` + `CALENDLY_EVENT_TYPE_URI`.
+  - Added graceful fallback to consultant `calendly_url` or `CALENDLY_BOOKING_URL` when API calls fail or are not configured.
+  - Extended scheduling endpoint response with `mode` (`api` or `fallback`) for observability.
+- Transactional email notifications (queued):
+  - Added `OrderLifecycleNotification` and `TicketLifecycleNotification` (both `ShouldQueue`).
+  - Added `TransactionalEmailService` and wired events into:
+    - order create/cancel flows
+    - Stripe webhook payment status transitions (paid, failed, refunded)
+    - ticket assignment, status updates, and public comment updates
+- CI automation:
+  - Added GitHub Actions workflow `.github/workflows/validate.yml` for push/PR validation.
+  - Workflow runs full matrix including Playwright via `./scripts/validate.sh --with-e2e`.
 
 ---
 

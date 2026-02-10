@@ -76,6 +76,8 @@ npm run dev
 ./scripts/validate.sh --with-e2e
 ```
 
+GitHub Actions runs the same command on push and PR via `.github/workflows/validate.yml`.
+
 ## Environment Variables
 
 Copy the example files and configure:

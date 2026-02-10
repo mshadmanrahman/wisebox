@@ -6,9 +6,11 @@ use App\Models\Order;
 use App\Models\Property;
 use App\Models\Service;
 use App\Models\User;
+use App\Notifications\OrderLifecycleNotification;
 use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
 use Stripe\Checkout\Session;
 use Tests\TestCase;
@@ -19,6 +21,8 @@ class OrderApiTest extends TestCase
 
     public function test_customer_can_create_paid_order(): void
     {
+        Notification::fake();
+
         $user = User::factory()->create();
         $property = $this->createPropertyForUser($user);
         $service = $this->createService(price: 45.00, pricingType: 'paid');
@@ -53,6 +57,10 @@ class OrderApiTest extends TestCase
         $this->assertDatabaseMissing('tickets', [
             'order_id' => $orderId,
         ]);
+
+        Notification::assertSentTo($user, OrderLifecycleNotification::class, function (OrderLifecycleNotification $notification) {
+            return $notification->event === 'created';
+        });
     }
 
     public function test_free_order_is_auto_paid_and_creates_ticket(): void
@@ -165,6 +173,32 @@ class OrderApiTest extends TestCase
             'stripe_checkout_session_id' => 'cs_test_123',
             'stripe_payment_intent_id' => 'pi_test_123',
         ]);
+    }
+
+    public function test_customer_can_cancel_pending_order_and_receives_email_notification(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $property = $this->createPropertyForUser($user);
+        $service = $this->createService(price: 25.00, pricingType: 'paid');
+
+        Sanctum::actingAs($user);
+
+        $orderId = $this->postJson('/api/v1/orders', [
+            'property_id' => $property->id,
+            'items' => [
+                ['service_id' => $service->id],
+            ],
+        ])->assertCreated()->json('data.id');
+
+        $this->postJson("/api/v1/orders/{$orderId}/cancel")
+            ->assertOk()
+            ->assertJsonPath('data.status', 'cancelled');
+
+        Notification::assertSentTo($user, OrderLifecycleNotification::class, function (OrderLifecycleNotification $notification) {
+            return $notification->event === 'cancelled';
+        });
     }
 
     private function createPropertyForUser(User $user): Property

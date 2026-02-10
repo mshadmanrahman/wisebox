@@ -130,3 +130,10 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 4. Update docs (`BUILD-LOG.md` + slice-specific doc).
 5. Commit with clear scope.
 6. Push and verify branch status.
+
+## CI Enforcement
+
+- Workflow: `.github/workflows/validate.yml`
+- Trigger: push + pull request against `main`
+- CI gate command: `./scripts/validate.sh --with-e2e`
+- Artifacts: Playwright report and test results are uploaded on each run.

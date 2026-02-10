@@ -47,8 +47,10 @@ return [
 
     'calendly' => [
         'api_key' => env('CALENDLY_API_KEY'),
+        'base_url' => env('CALENDLY_BASE_URL', 'https://api.calendly.com'),
         'webhook_secret' => env('CALENDLY_WEBHOOK_SECRET'),
         'booking_url' => env('CALENDLY_BOOKING_URL'),
+        'event_type_uri' => env('CALENDLY_EVENT_TYPE_URI'),
     ],
 
     'twilio' => [

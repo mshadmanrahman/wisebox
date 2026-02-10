@@ -7,6 +7,8 @@ use App\Models\Property;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 use App\Models\User;
+use App\Services\CalendlyService;
+use App\Services\TransactionalEmailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -17,6 +19,11 @@ use Illuminate\Validation\Rule;
 
 class TicketController extends Controller
 {
+    public function __construct(
+        private CalendlyService $calendlyService,
+        private TransactionalEmailService $transactionalEmailService
+    ) {}
+
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -147,6 +154,13 @@ class TicketController extends Controller
                     'to_status' => $ticket->status,
                 ]
             );
+
+            if ($ticket->customer_id) {
+                $customer = User::query()->find($ticket->customer_id);
+                if ($customer) {
+                    $this->transactionalEmailService->sendTicketStatusUpdated($customer, $ticket, $previousStatus);
+                }
+            }
         }
 
         return response()->json(['data' => $ticket]);
@@ -190,6 +204,10 @@ class TicketController extends Controller
                     'ticket_number' => $ticket->ticket_number,
                 ]
             );
+
+            if ($ticket->consultant) {
+                $this->transactionalEmailService->sendTicketAssigned($ticket->consultant, $ticket);
+            }
         }
 
         $this->createNotification(
@@ -203,6 +221,10 @@ class TicketController extends Controller
                 'consultant_id' => $ticket->consultant_id,
             ]
         );
+
+        if ($ticket->customer) {
+            $this->transactionalEmailService->sendTicketAssigned($ticket->customer, $ticket);
+        }
 
         return response()->json([
             'data' => $ticket,
@@ -288,6 +310,13 @@ class TicketController extends Controller
                         'comment_id' => $comment->id,
                     ]
                 );
+
+                if ($ticket->consultant_id) {
+                    $consultant = User::query()->find($ticket->consultant_id);
+                    if ($consultant) {
+                        $this->transactionalEmailService->sendTicketCommentAdded($consultant, $ticket, 'Customer');
+                    }
+                }
             }
 
             if (($user->isConsultant() || $user->isAdmin()) && $ticket->customer_id) {
@@ -302,6 +331,11 @@ class TicketController extends Controller
                         'comment_id' => $comment->id,
                     ]
                 );
+
+                $customer = User::query()->find($ticket->customer_id);
+                if ($customer) {
+                    $this->transactionalEmailService->sendTicketCommentAdded($customer, $ticket, 'Consultant');
+                }
             }
         }
 
@@ -404,25 +438,18 @@ class TicketController extends Controller
             'consultant.consultantProfile:id,user_id,calendly_url',
         ]);
 
-        $baseBookingUrl = $ticket->consultant?->consultantProfile?->calendly_url
-            ?: config('services.calendly.booking_url');
-
-        if (!is_string($baseBookingUrl) || blank($baseBookingUrl)) {
+        try {
+            $scheduling = $this->calendlyService->createSchedulingLink($ticket);
+        } catch (\RuntimeException $exception) {
             return response()->json([
-                'message' => 'Scheduling URL is not configured for this consultant.',
+                'message' => $exception->getMessage(),
             ], 422);
         }
 
-        $bookingUrl = $this->appendQuery($baseBookingUrl, array_filter([
-            'ticket_id' => $ticket->id,
-            'ticket_number' => $ticket->ticket_number,
-            'customer_email' => $ticket->customer?->email,
-            'customer_name' => $ticket->customer?->name,
-        ], fn ($value) => filled($value)));
-
         return response()->json([
             'data' => [
-                'booking_url' => $bookingUrl,
+                'booking_url' => $scheduling['booking_url'],
+                'mode' => $scheduling['mode'],
                 'consultant' => [
                     'id' => $ticket->consultant?->id,
                     'name' => $ticket->consultant?->name,
@@ -460,24 +487,6 @@ class TicketController extends Controller
         } while (Ticket::query()->where('ticket_number', $ticketNumber)->exists());
 
         return $ticketNumber;
-    }
-
-    private function appendQuery(string $url, array $params): string
-    {
-        $fragment = parse_url($url, PHP_URL_FRAGMENT);
-        $baseWithoutFragment = $fragment !== null ? str_replace('#'.$fragment, '', $url) : $url;
-        $existingQuery = parse_url($baseWithoutFragment, PHP_URL_QUERY);
-        $baseWithoutQuery = $existingQuery !== null ? str_replace('?'.$existingQuery, '', $baseWithoutFragment) : $baseWithoutFragment;
-
-        $query = [];
-        if (is_string($existingQuery) && $existingQuery !== '') {
-            parse_str($existingQuery, $query);
-        }
-
-        $finalQuery = array_merge($query, $params);
-        $finalUrl = $baseWithoutQuery.'?'.http_build_query($finalQuery);
-
-        return $fragment !== null ? $finalUrl.'#'.$fragment : $finalUrl;
     }
 
     /**

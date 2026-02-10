@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Service;
 use App\Services\OrderFulfillmentService;
 use App\Services\StripeService;
+use App\Services\TransactionalEmailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,8 @@ class OrderController extends Controller
 {
     public function __construct(
         private StripeService $stripeService,
-        private OrderFulfillmentService $fulfillmentService
+        private OrderFulfillmentService $fulfillmentService,
+        private TransactionalEmailService $transactionalEmailService
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -110,6 +112,7 @@ class OrderController extends Controller
         });
 
         $order->load(['items.service', 'property', 'tickets']);
+        $this->transactionalEmailService->sendOrderCreated($user, $order);
 
         return response()->json(['data' => $order], 201);
     }
@@ -154,6 +157,7 @@ class OrderController extends Controller
             ]);
 
             $this->fulfillmentService->createFromOrder($order);
+            $this->transactionalEmailService->sendOrderPaid($request->user(), $order->fresh());
 
             return response()->json([
                 'data' => [
@@ -203,6 +207,7 @@ class OrderController extends Controller
         ]);
 
         $order->load(['items.service', 'property']);
+        $this->transactionalEmailService->sendOrderCancelled($request->user(), $order);
 
         return response()->json([
             'data' => $order,

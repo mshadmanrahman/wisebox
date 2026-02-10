@@ -6,9 +6,12 @@ use App\Models\Property;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 use App\Models\User;
+use App\Notifications\TicketLifecycleNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -195,7 +198,8 @@ class TicketApiTest extends TestCase
 
         $response = $this->postJson("/api/v1/tickets/{$ticket->id}/schedule-link")
             ->assertOk()
-            ->assertJsonPath('data.consultant.id', $consultant->id);
+            ->assertJsonPath('data.consultant.id', $consultant->id)
+            ->assertJsonPath('data.mode', 'fallback');
 
         $bookingUrl = (string) $response->json('data.booking_url');
 
@@ -203,6 +207,104 @@ class TicketApiTest extends TestCase
         $this->assertStringContainsString('ticket_id='.$ticket->id, $bookingUrl);
         $this->assertStringContainsString('ticket_number='.urlencode($ticket->ticket_number), $bookingUrl);
         $this->assertStringContainsString('customer_email='.urlencode((string) $customer->email), $bookingUrl);
+    }
+
+    public function test_scheduling_link_uses_calendly_api_when_event_type_is_configured(): void
+    {
+        Http::fake([
+            'https://api.calendly.test/scheduling_links' => Http::response([
+                'resource' => [
+                    'booking_url' => 'https://calendly.com/d/single-use/wisebox-abc123',
+                ],
+            ], 201),
+        ]);
+
+        config([
+            'services.calendly.api_key' => 'cal_test_key',
+            'services.calendly.base_url' => 'https://api.calendly.test',
+            'services.calendly.event_type_uri' => 'https://api.calendly.com/event_types/AAAAAA',
+            'services.calendly.booking_url' => 'https://calendly.com/fallback/intake',
+        ]);
+
+        $customer = User::factory()->create();
+        $consultant = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00008',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'consultant_id' => $consultant->id,
+            'title' => 'Need API scheduling link',
+            'priority' => 'medium',
+            'status' => 'assigned',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $response = $this->postJson("/api/v1/tickets/{$ticket->id}/schedule-link")
+            ->assertOk()
+            ->assertJsonPath('data.mode', 'api');
+
+        $bookingUrl = (string) $response->json('data.booking_url');
+        $this->assertStringContainsString('https://calendly.com/d/single-use/wisebox-abc123', $bookingUrl);
+        $this->assertStringContainsString('ticket_id='.$ticket->id, $bookingUrl);
+        $this->assertStringContainsString('ticket_number='.urlencode($ticket->ticket_number), $bookingUrl);
+    }
+
+    public function test_scheduling_link_falls_back_when_calendly_api_fails(): void
+    {
+        Http::fake([
+            'https://api.calendly.test/scheduling_links' => Http::response([
+                'message' => 'upstream failure',
+            ], 500),
+        ]);
+
+        config([
+            'services.calendly.api_key' => 'cal_test_key',
+            'services.calendly.base_url' => 'https://api.calendly.test',
+            'services.calendly.event_type_uri' => 'https://api.calendly.com/event_types/BBBBBB',
+        ]);
+
+        $customer = User::factory()->create();
+        $consultant = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+
+        DB::table('consultant_profiles')->insert([
+            'user_id' => $consultant->id,
+            'calendly_url' => 'https://calendly.com/wisebox-consultant/fallback-intake',
+            'is_available' => true,
+            'max_concurrent_tickets' => 6,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00009',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'consultant_id' => $consultant->id,
+            'title' => 'Need fallback scheduling link',
+            'priority' => 'medium',
+            'status' => 'assigned',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $response = $this->postJson("/api/v1/tickets/{$ticket->id}/schedule-link")
+            ->assertOk()
+            ->assertJsonPath('data.mode', 'fallback');
+
+        $bookingUrl = (string) $response->json('data.booking_url');
+        $this->assertStringContainsString('https://calendly.com/wisebox-consultant/fallback-intake', $bookingUrl);
     }
 
     public function test_comment_supports_file_attachments(): void
@@ -246,6 +348,8 @@ class TicketApiTest extends TestCase
 
     public function test_assignment_and_public_comment_create_notifications(): void
     {
+        Notification::fake();
+
         $admin = User::factory()->create([
             'role' => 'admin',
             'status' => 'active',
@@ -281,6 +385,14 @@ class TicketApiTest extends TestCase
             'type' => 'ticket.consultant.assigned',
         ]);
 
+        Notification::assertSentTo($consultant, TicketLifecycleNotification::class, function (TicketLifecycleNotification $notification) {
+            return $notification->event === 'assigned';
+        });
+
+        Notification::assertSentTo($customer, TicketLifecycleNotification::class, function (TicketLifecycleNotification $notification) {
+            return $notification->event === 'assigned';
+        });
+
         Sanctum::actingAs($consultant);
 
         $this->postJson("/api/v1/tickets/{$ticket->id}/comments", [
@@ -293,6 +405,10 @@ class TicketApiTest extends TestCase
             'type' => 'ticket.comment.added',
             'title' => 'Ticket updated by consultant',
         ]);
+
+        Notification::assertSentTo($customer, TicketLifecycleNotification::class, function (TicketLifecycleNotification $notification) {
+            return $notification->event === 'comment_added';
+        });
     }
 
     private function createPropertyForUser(User $user): Property

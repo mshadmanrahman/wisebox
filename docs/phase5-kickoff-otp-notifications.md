@@ -92,7 +92,20 @@ docker compose exec app php artisan test --filter=AuthOtpTest
 - Follow-up fix after first validation run:
   - Added Sanctum migration `create_personal_access_tokens_table` because OTP registration uses `createToken()` and tests run against sqlite in-memory DB.
   - Added `email_verified_at` and `phone_verified_at` to `User::$fillable` so OTP verification persists channel verification timestamps.
-- Next Phase 5 slices can build on this by adding:
-  - Calendly API scheduling link creation service (`CalendlyService`)
-  - transactional email notification classes for order/ticket lifecycle
-  - queue-backed delivery for non-blocking notification processing
+
+## Phase 5 Progress Update
+
+Follow-on slices completed after this kickoff:
+
+- Calendly outbound scheduling link integration:
+  - `backend/app/Services/CalendlyService.php`
+  - API-first scheduling link generation using `CALENDLY_API_KEY`, `CALENDLY_BASE_URL`, and `CALENDLY_EVENT_TYPE_URI`
+  - fallback to consultant profile `calendly_url` and global `CALENDLY_BOOKING_URL`
+- Transactional queued email notifications:
+  - `backend/app/Notifications/OrderLifecycleNotification.php`
+  - `backend/app/Notifications/TicketLifecycleNotification.php`
+  - `backend/app/Services/TransactionalEmailService.php`
+  - wired into order, stripe webhook, and ticket lifecycle controllers
+- CI validation automation:
+  - `.github/workflows/validate.yml`
+  - executes `./scripts/validate.sh --with-e2e` on push/PR

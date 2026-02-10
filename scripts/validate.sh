@@ -30,7 +30,7 @@ if [[ "$RUN_BACKEND" -eq 1 ]]; then
   echo "==> Backend: running Laravel test suite"
   (
     cd "$ROOT_DIR"
-    docker compose exec app php artisan test
+    docker compose exec -T app php artisan test
   )
 fi
 

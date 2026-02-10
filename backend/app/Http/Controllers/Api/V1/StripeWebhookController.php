@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\OrderFulfillmentService;
 use App\Services\StripeService;
+use App\Services\TransactionalEmailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use RuntimeException;
@@ -15,7 +16,8 @@ class StripeWebhookController extends Controller
 {
     public function __construct(
         private StripeService $stripeService,
-        private OrderFulfillmentService $fulfillmentService
+        private OrderFulfillmentService $fulfillmentService,
+        private TransactionalEmailService $transactionalEmailService
     ) {}
 
     public function __invoke(Request $request): JsonResponse
@@ -77,6 +79,10 @@ class StripeWebhookController extends Controller
         ]);
 
         $this->fulfillmentService->createFromOrder($order);
+
+        if ($order->user) {
+            $this->transactionalEmailService->sendOrderPaid($order->user, $order);
+        }
     }
 
     private function handlePaymentFailed(object $paymentIntent): void
@@ -95,6 +101,10 @@ class StripeWebhookController extends Controller
             'payment_status' => 'failed',
             'status' => 'pending',
         ]);
+
+        if ($order->user) {
+            $this->transactionalEmailService->sendOrderPaymentFailed($order->user, $order);
+        }
     }
 
     private function handleChargeRefunded(object $charge): void
@@ -113,5 +123,9 @@ class StripeWebhookController extends Controller
             'payment_status' => 'refunded',
             'status' => 'cancelled',
         ]);
+
+        if ($order->user) {
+            $this->transactionalEmailService->sendOrderRefunded($order->user, $order);
+        }
     }
 }

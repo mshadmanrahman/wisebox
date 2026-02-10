@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 use App\Models\User;
+use App\Services\TransactionalEmailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -16,6 +17,10 @@ use Illuminate\Validation\Rule;
 
 class ConsultantTicketController extends Controller
 {
+    public function __construct(
+        private TransactionalEmailService $transactionalEmailService
+    ) {}
+
     public function dashboard(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -202,6 +207,13 @@ class ConsultantTicketController extends Controller
                     'to_status' => $ticket->status,
                 ]
             );
+
+            if ($ticket->customer_id) {
+                $customer = User::query()->find($ticket->customer_id);
+                if ($customer) {
+                    $this->transactionalEmailService->sendTicketStatusUpdated($customer, $ticket, $previousStatus);
+                }
+            }
         }
 
         return response()->json(['data' => $ticket]);
@@ -258,6 +270,13 @@ class ConsultantTicketController extends Controller
                     'comment_id' => $comment->id,
                 ]
             );
+
+            if ($ticket->customer_id) {
+                $customer = User::query()->find($ticket->customer_id);
+                if ($customer) {
+                    $this->transactionalEmailService->sendTicketCommentAdded($customer, $ticket, 'Consultant');
+                }
+            }
         }
 
         $comment->load('user:id,name,email');
