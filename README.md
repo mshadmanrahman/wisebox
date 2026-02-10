@@ -82,5 +82,6 @@ For a full chronological execution breakdown (Phase 2B through current Phase 4),
 - [Project Bible](./WISEBOX-PROJECT-BIBLE.md)
 - [Execution Journal (Phase 2B-4)](./docs/execution-journal-phase2b-phase4.md)
 - [Stripe Local Testing](./docs/stripe-local-testing.md)
+- [GitHub Remote Ops Runbook](./docs/github/remote-ops-runbook.md)
 - [API Documentation](./docs/api/)
 - [Architecture](./docs/architecture/)
