@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\ConsultantTicketController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\OrderController;
+use App\Http\Controllers\Api\V1\ServiceCatalogController;
 use App\Http\Controllers\Api\V1\StripeWebhookController;
 use App\Http\Controllers\Api\V1\TicketController;
 use Illuminate\Support\Facades\Route;
@@ -131,24 +132,10 @@ Route::prefix('v1')->group(function () {
     });
 
     // Public: Services
-    Route::get('/services', function () {
-        return response()->json([
-            'data' => \Illuminate\Support\Facades\DB::table('services')
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->get(),
-        ]);
-    });
+    Route::get('/services', [ServiceCatalogController::class, 'index']);
 
     // Public: Service categories
-    Route::get('/service-categories', function () {
-        return response()->json([
-            'data' => \Illuminate\Support\Facades\DB::table('service_categories')
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->get(),
-        ]);
-    });
+    Route::get('/service-categories', [ServiceCatalogController::class, 'categories']);
 
     // Public: FAQs
     Route::get('/faqs', function () {

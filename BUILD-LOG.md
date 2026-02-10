@@ -337,6 +337,15 @@
     - `backend/tests/Unit/GovernmentGatewayAdapterTest.php`
   - Added slice note:
     - `docs/phase9-slice1-government-adapter.md`
+- Slice 2 completed: Service catalog API filters and pagination
+  - Replaced public service catalog route closures with controller:
+    - `backend/app/Http/Controllers/Api/V1/ServiceCatalogController.php`
+    - `backend/routes/api.php`
+  - Added optional filters/search/pagination support on `GET /api/v1/services`
+  - Added feature tests:
+    - `backend/tests/Feature/ServiceCatalogApiTest.php`
+  - Added slice note:
+    - `docs/phase9-slice2-service-catalog-api.md`
 
 ---
 

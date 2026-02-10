@@ -57,3 +57,4 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 ## Completed slices
 
 1. `docs/phase9-slice1-government-adapter.md`
+2. `docs/phase9-slice2-service-catalog-api.md`
