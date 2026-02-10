@@ -128,7 +128,7 @@ async function mockNotificationEndpoints(page, initialNotifications) {
     });
   });
 
-  await page.route('**/api/v1/notifications**', async (route) => {
+  await page.route(/.*\/api\/v1\/notifications(?:\?.*)?$/, async (route) => {
     const requestUrl = new URL(route.request().url());
     const status = requestUrl.searchParams.get('status') || 'all';
     const type = requestUrl.searchParams.get('type');
