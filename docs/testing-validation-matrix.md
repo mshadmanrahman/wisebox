@@ -74,6 +74,11 @@ npm run build
   - `/register`
   - `/forgot-password`
   - `/assessment`
+- Current authenticated workflow coverage:
+  - Protected route redirect (`/dashboard` requires auth)
+  - Login form flow to `/dashboard` (mocked API)
+  - Notification center filter + pagination behaviors
+  - Property detail assessment history rendering
 - Dev server origin policy:
   - `frontend/next.config.mjs` includes `allowedDevOrigins` host entries for both `127.0.0.1` and `localhost`.
 - Command:

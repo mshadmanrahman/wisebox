@@ -15,7 +15,7 @@
 | Phase 4: Consultant Workflow | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 5: Integrations | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 6: Dashboard & Assessment | IN PROGRESS | 2026-02-10 | - |
-| Phase 7: Marketing Site | NOT STARTED | - | - |
+| Phase 7: Marketing Site | IN PROGRESS | 2026-02-10 | - |
 | Phase 8: Deployment | NOT STARTED | - | - |
 
 ---
@@ -241,6 +241,21 @@
     - `DashboardSummaryApiTest`
     - `AssessmentApiTest` (history endpoint assertions)
     - `NotificationApiTest` (filters/search/pagination assertions)
+
+## Phase 7: Marketing Site (Started 2026-02-10)
+
+- Kickoff documentation added:
+  - `docs/phase7-kickoff-marketing-site.md`
+- CI/release evidence snapshot added:
+  - `docs/github/phase6-polish-ci-release-snapshot.md`
+- E2E expansion beyond smoke:
+  - Added authenticated workflow suite:
+    - `frontend/tests/e2e/authenticated-workflows.spec.js`
+  - New coverage includes:
+    - protected-route redirect enforcement (`/dashboard` -> `/login`)
+    - login-to-dashboard authenticated flow with API mocking
+    - notification center filter + pagination interactions
+    - property detail assessment history rendering
 
 ---
 

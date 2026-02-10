@@ -55,7 +55,7 @@ if [[ "$RUN_FRONTEND" -eq 1 ]]; then
 fi
 
 if [[ "$RUN_E2E" -eq 1 ]]; then
-  echo "==> Frontend: Playwright E2E smoke"
+  echo "==> Frontend: Playwright E2E suite"
   (
     cd "$ROOT_DIR/frontend"
     npm run test:e2e
