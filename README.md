@@ -6,7 +6,7 @@ Digital property management platform for the South Asian diaspora. Manage ancest
 
 | Layer | Technology |
 |-------|-----------|
-| Backend | Laravel 11 (PHP 8.3), Filament 3, Sanctum |
+| Backend | Laravel 12 (PHP 8.4 in Docker), Filament 4, Sanctum |
 | Frontend | Next.js 14 (TypeScript), Tailwind CSS, shadcn/ui |
 | Database | MySQL 8 |
 | Cache/Queue | Redis 7 |
@@ -20,10 +20,11 @@ Digital property management platform for the South Asian diaspora. Manage ancest
 
 ```
 wisebox/
-├── backend/          # Laravel 11 API + Filament admin
+├── backend/          # Laravel 12 API + Filament admin
 ├── frontend/         # Next.js 14 (App Router) portal + marketing
 ├── docker/           # Docker configs (Nginx, PHP)
 ├── docs/             # Architecture, API, design docs
+├── scripts/          # Validation and automation scripts
 ├── .github/          # CI/CD workflows
 ├── docker-compose.yml
 └── BUILD-LOG.md      # Step-by-step build documentation
@@ -62,6 +63,16 @@ npm run dev
 | MySQL | localhost:3306 |
 | Redis | localhost:6379 |
 
+### Validation
+
+```bash
+# Full backend + frontend validation gate
+./scripts/validate.sh
+
+# Frontend-only fast path
+./scripts/validate.sh --frontend-only
+```
+
 ## Environment Variables
 
 Copy the example files and configure:
@@ -83,6 +94,8 @@ For the complete end-to-end dossier covering every commit and artifact from Phas
 - [Project Bible](./WISEBOX-PROJECT-BIBLE.md)
 - [Execution Journal (Phase 2B-4)](./docs/execution-journal-phase2b-phase4.md)
 - [Exhaustive Build Dossier (Phase 0-4)](./docs/phase0-to-phase4-exhaustive-log.md)
+- [Phase 5 Kickoff (OTP + Notifications)](./docs/phase5-kickoff-otp-notifications.md)
+- [Testing & Validation Matrix](./docs/testing-validation-matrix.md)
 - [Stripe Local Testing](./docs/stripe-local-testing.md)
 - [GitHub Remote Ops Runbook](./docs/github/remote-ops-runbook.md)
 - [API Documentation](./docs/api/)

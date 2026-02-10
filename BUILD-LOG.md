@@ -13,7 +13,7 @@
 | Phase 2: Core Systems | COMPLETE | 2026-02-09 | 2026-02-10 |
 | Phase 3: Payments | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 4: Consultant Workflow | COMPLETE | 2026-02-10 | 2026-02-10 |
-| Phase 5: Integrations | NOT STARTED | - | - |
+| Phase 5: Integrations | IN PROGRESS | 2026-02-10 | - |
 | Phase 6: Dashboard & Assessment | NOT STARTED | - | - |
 | Phase 7: Marketing Site | NOT STARTED | - | - |
 | Phase 8: Deployment | NOT STARTED | - | - |
@@ -148,6 +148,32 @@
     - notification hook assertions
     - ticket comment attachment assertions
 
+## Phase 5: Integrations (Started 2026-02-10)
+
+- OTP integration kickoff:
+  - Added `OtpService` with:
+    - 6-digit OTP generation
+    - 10-minute OTP expiry
+    - 60-second resend cooldown per user
+    - hashed OTP storage in cache
+    - channel support: `email` and `sms`
+  - Added `OtpCodeNotification` (email OTP delivery template).
+  - `AuthController` now uses `OtpService` for:
+    - OTP send on registration
+    - OTP resend endpoint with channel validation and rate limiting
+    - OTP verify endpoint with invalid/expired handling
+  - Added Twilio service config mapping in `config/services.php`:
+    - `sid`, `auth_token`, `from`, `verify_sid`
+- Testing and quality:
+  - Added `backend/tests/Feature/AuthOtpTest.php`
+  - Covers: registration OTP send, resend + verify success, invalid code rejection, resend rate limiting, SMS phone requirement validation.
+- Documentation:
+  - Added `docs/phase5-kickoff-otp-notifications.md` for implementation notes and verification commands.
+  - Added `docs/testing-validation-matrix.md` to standardize unit/functional/integration/frontend/E2E validation gates.
+- Stability fixes from validation feedback:
+  - Added Sanctum migration for `personal_access_tokens` to support token creation in registration tests.
+  - Updated `User` model fillable fields to include `email_verified_at` and `phone_verified_at` so OTP verification updates persist.
+
 ---
 
 ## Resume Instructions
@@ -165,7 +191,7 @@ To resume building after a stop:
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Backend containerization | Docker (PHP 8.3 FPM) | No local PHP; portable, production-like |
+| Backend containerization | Docker (PHP 8.4 FPM) | No local PHP; portable, production-like |
 | Frontend runtime | Native Node.js v24 | Node available locally; faster dev cycle |
 | Database | MySQL 8 (Docker) | Matches implementation plan |
 | Cache/Queue | Redis 7 (Docker) | Session store, queue driver, caching |

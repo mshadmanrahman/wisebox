@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\OtpService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
@@ -14,6 +14,10 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        private OtpService $otpService
+    ) {}
+
     /**
      * Register a new customer account.
      */
@@ -42,6 +46,7 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
+        $this->otpService->send($user, 'email');
 
         return response()->json([
             'data' => [
@@ -179,13 +184,22 @@ class AuthController extends Controller
             'code' => ['required', 'string', 'size:6'],
         ]);
 
-        // TODO: Implement OTP verification with Twilio Verify
-        // For now, accept any 6-digit code and mark as verified
         $user = $request->user();
-        $user->update(['email_verified_at' => now()]);
+        $channel = $this->otpService->verify($user, $request->string('code')->toString());
+        if ($channel === null) {
+            throw ValidationException::withMessages([
+                'code' => ['Invalid or expired OTP code.'],
+            ]);
+        }
+
+        if ($channel === 'sms') {
+            $user->update(['phone_verified_at' => now()]);
+        } else {
+            $user->update(['email_verified_at' => now()]);
+        }
 
         return response()->json([
-            'message' => 'Email verified successfully.',
+            'message' => 'OTP verified successfully.',
             'data' => ['user' => $user->fresh()],
         ]);
     }
@@ -195,11 +209,21 @@ class AuthController extends Controller
      */
     public function resendOtp(Request $request): JsonResponse
     {
-        // TODO: Implement with Twilio Verify
-        // Rate limit: 1 per 60 seconds
+        $validated = $request->validate([
+            'channel' => ['nullable', 'in:email,sms'],
+        ]);
+
+        try {
+            $channel = $validated['channel'] ?? 'email';
+            $this->otpService->send($request->user(), $channel);
+        } catch (\InvalidArgumentException|\RuntimeException $exception) {
+            throw ValidationException::withMessages([
+                'channel' => [$exception->getMessage()],
+            ]);
+        }
 
         return response()->json([
-            'message' => 'OTP code sent.',
+            'message' => 'OTP code sent successfully.',
         ]);
     }
 

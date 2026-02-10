@@ -51,4 +51,11 @@ return [
         'booking_url' => env('CALENDLY_BOOKING_URL'),
     ],
 
+    'twilio' => [
+        'sid' => env('TWILIO_SID'),
+        'auth_token' => env('TWILIO_AUTH_TOKEN'),
+        'from' => env('TWILIO_FROM_NUMBER'),
+        'verify_sid' => env('TWILIO_VERIFY_SID'),
+    ],
+
 ];
