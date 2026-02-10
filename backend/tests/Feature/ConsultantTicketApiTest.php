@@ -131,6 +131,82 @@ class ConsultantTicketApiTest extends TestCase
         $this->getJson('/api/v1/consultant/tickets')->assertForbidden();
     }
 
+    public function test_admin_can_view_consultant_workload_and_metrics(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+
+        $consultantA = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+
+        $consultantB = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+
+        DB::table('consultant_profiles')->insert([
+            [
+                'user_id' => $consultantA->id,
+                'is_available' => true,
+                'max_concurrent_tickets' => 4,
+                'calendly_url' => 'https://calendly.com/a/intake',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => $consultantB->id,
+                'is_available' => true,
+                'max_concurrent_tickets' => 8,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        $customer = User::factory()->create();
+        $service = $this->createService();
+        $property = $this->createPropertyForUser($customer);
+
+        Ticket::create([
+            'ticket_number' => 'TK-2026-10004',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'consultant_id' => $consultantA->id,
+            'service_id' => $service->id,
+            'title' => 'Consultant A active ticket',
+            'priority' => 'medium',
+            'status' => 'in_progress',
+        ]);
+
+        Ticket::create([
+            'ticket_number' => 'TK-2026-10005',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'consultant_id' => $consultantB->id,
+            'service_id' => $service->id,
+            'title' => 'Consultant B completed ticket',
+            'priority' => 'medium',
+            'status' => 'completed',
+            'resolved_at' => now()->subDays(1),
+        ]);
+
+        Sanctum::actingAs($admin);
+
+        $this->getJson('/api/v1/consultants/workload')
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $consultantB->id)
+            ->assertJsonPath('data.0.suggestion_rank', 1);
+
+        $this->getJson("/api/v1/consultant/metrics?consultant_id={$consultantB->id}&days=30")
+            ->assertOk()
+            ->assertJsonPath('data.kpis.window_days', 30)
+            ->assertJsonPath('data.kpis.completed_in_window_count', 1)
+            ->assertJsonPath('data.status_breakdown.completed', 1);
+    }
+
     private function createPropertyForUser(User $user): Property
     {
         $propertyTypeId = DB::table('property_types')->insertGetId([

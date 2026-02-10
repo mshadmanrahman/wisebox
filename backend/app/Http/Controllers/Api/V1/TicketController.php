@@ -237,6 +237,109 @@ class TicketController extends Controller
         return response()->json(['data' => $consultants]);
     }
 
+    public function consultantWorkload(Request $request): JsonResponse
+    {
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $consultants = User::query()
+            ->where('role', 'consultant')
+            ->where('status', 'active')
+            ->with('consultantProfile:id,user_id,is_available,max_concurrent_tickets,calendly_url')
+            ->withCount([
+                'assignedTickets as open_tickets_count' => fn ($query) => $query->whereNotIn('status', ['completed', 'cancelled']),
+                'assignedTickets as scheduled_tickets_count' => fn ($query) => $query->where('status', 'scheduled'),
+            ])
+            ->get(['id', 'name', 'email']);
+
+        $ranked = $consultants
+            ->map(function (User $consultant) {
+                $maxConcurrent = max((int) ($consultant->consultantProfile?->max_concurrent_tickets ?? 10), 1);
+                $openCount = (int) ($consultant->open_tickets_count ?? 0);
+                $isAvailable = (bool) ($consultant->consultantProfile?->is_available ?? true);
+                $utilization = round(($openCount / $maxConcurrent) * 100, 1);
+
+                return [
+                    'id' => $consultant->id,
+                    'name' => $consultant->name,
+                    'email' => $consultant->email,
+                    'is_available' => $isAvailable,
+                    'open_tickets_count' => $openCount,
+                    'scheduled_tickets_count' => (int) ($consultant->scheduled_tickets_count ?? 0),
+                    'max_concurrent_tickets' => $maxConcurrent,
+                    'utilization_percentage' => $utilization,
+                    'has_calendly_url' => filled($consultant->consultantProfile?->calendly_url),
+                ];
+            })
+            ->sortBy([
+                ['is_available', 'desc'],
+                ['utilization_percentage', 'asc'],
+                ['open_tickets_count', 'asc'],
+                ['name', 'asc'],
+            ])
+            ->values()
+            ->map(function (array $item, int $index) {
+                $item['suggestion_rank'] = $index + 1;
+                return $item;
+            });
+
+        return response()->json([
+            'data' => $ranked,
+            'meta' => [
+                'generated_at' => now()->toISOString(),
+            ],
+        ]);
+    }
+
+    public function schedulingLink(Request $request, Ticket $ticket): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$this->canViewTicket($user, $ticket)) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        if (!$ticket->consultant_id) {
+            return response()->json([
+                'message' => 'This ticket has no assigned consultant yet.',
+            ], 422);
+        }
+
+        $ticket->loadMissing([
+            'customer:id,name,email',
+            'consultant:id,name,email',
+            'consultant.consultantProfile:id,user_id,calendly_url',
+        ]);
+
+        $baseBookingUrl = $ticket->consultant?->consultantProfile?->calendly_url
+            ?: config('services.calendly.booking_url');
+
+        if (!is_string($baseBookingUrl) || blank($baseBookingUrl)) {
+            return response()->json([
+                'message' => 'Scheduling URL is not configured for this consultant.',
+            ], 422);
+        }
+
+        $bookingUrl = $this->appendQuery($baseBookingUrl, array_filter([
+            'ticket_id' => $ticket->id,
+            'ticket_number' => $ticket->ticket_number,
+            'customer_email' => $ticket->customer?->email,
+            'customer_name' => $ticket->customer?->name,
+        ], fn ($value) => filled($value)));
+
+        return response()->json([
+            'data' => [
+                'booking_url' => $bookingUrl,
+                'consultant' => [
+                    'id' => $ticket->consultant?->id,
+                    'name' => $ticket->consultant?->name,
+                    'email' => $ticket->consultant?->email,
+                ],
+            ],
+        ]);
+    }
+
     private function commentQueryFor(User $user, Ticket $ticket)
     {
         return $ticket->comments()
@@ -265,5 +368,23 @@ class TicketController extends Controller
         } while (Ticket::query()->where('ticket_number', $ticketNumber)->exists());
 
         return $ticketNumber;
+    }
+
+    private function appendQuery(string $url, array $params): string
+    {
+        $fragment = parse_url($url, PHP_URL_FRAGMENT);
+        $baseWithoutFragment = $fragment !== null ? str_replace('#'.$fragment, '', $url) : $url;
+        $existingQuery = parse_url($baseWithoutFragment, PHP_URL_QUERY);
+        $baseWithoutQuery = $existingQuery !== null ? str_replace('?'.$existingQuery, '', $baseWithoutFragment) : $baseWithoutFragment;
+
+        $query = [];
+        if (is_string($existingQuery) && $existingQuery !== '') {
+            parse_str($existingQuery, $query);
+        }
+
+        $finalQuery = array_merge($query, $params);
+        $finalUrl = $baseWithoutQuery.'?'.http_build_query($finalQuery);
+
+        return $fragment !== null ? $finalUrl.'#'.$fragment : $finalUrl;
     }
 }

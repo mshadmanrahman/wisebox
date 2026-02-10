@@ -216,6 +216,37 @@ Security note:
 
 ---
 
+## 11) Phase 4 follow-up: workload + metrics + scheduling-link + ticket-detail polish
+
+### What was done
+- Added ticket scheduling-link generation endpoint:
+  - `POST /api/v1/tickets/{ticket}/schedule-link`
+  - Uses consultant profile `calendly_url` first, falls back to `CALENDLY_BOOKING_URL`
+  - Appends ticket/customer tracking parameters to generated booking URL
+- Added consultant workload suggestion endpoint for admin assignment support:
+  - `GET /api/v1/consultants/workload`
+  - Returns availability, open/scheduled counts, utilization percentage, and suggestion rank
+- Added consultant metrics endpoint:
+  - `GET /api/v1/consultant/metrics`
+  - Returns KPI snapshot and status breakdown (supports admin `consultant_id` filter)
+- Updated customer ticket detail page (`/tickets/[id]`) with:
+  - status timeline chips
+  - richer meeting block with scheduled metadata
+  - on-demand scheduling-link generation action
+- Updated consultant workspace list page (`/consultant/tickets`) with metrics cards sourced from `/consultant/metrics`.
+- Added/extended backend tests:
+  - `backend/tests/Feature/TicketApiTest.php` (scheduling-link endpoint)
+  - `backend/tests/Feature/ConsultantTicketApiTest.php` (workload + metrics endpoints)
+- Added config support:
+  - `CALENDLY_BOOKING_URL` in `.env.example`
+  - `services.calendly.booking_url` in `backend/config/services.php`
+
+### Validation notes
+- Frontend checks pass (`tsc`, `lint`, `build`).
+- Backend verification should be run via Docker in local environment due sandbox Docker restrictions.
+
+---
+
 ## Verification Workflow Used
 
 ## Frontend
@@ -257,11 +288,8 @@ Latest observed status after fixes:
 
 Current status:
 - Phase 3 complete and validated.
-- Phase 4 in active progress with customer/admin/consultant ticket workflows and scheduling webhook ingestion.
+- Phase 4 expanded with workload ranking, consultant metrics API, customer scheduling-link generation, and richer ticket detail meeting/timeline UI.
 
 Next practical build items:
 1. Notification hooks (assignment, comment, status changes).
-2. Calendly scheduling link generation flow (outbound API integration, not just webhook ingestion).
-3. Consultant workload balancing suggestions endpoint (open-ticket aware).
-4. Ticket attachment support for comments (S3) per roadmap.
-
+2. Ticket attachment support for comments (S3) per roadmap.

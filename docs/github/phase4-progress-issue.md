@@ -23,17 +23,21 @@ Track implementation and remaining work for Phase 4 (consultant workflow and tic
   - [x] `invitee.canceled` handling
   - [x] signature verification via `CALENDLY_WEBHOOK_SECRET`
 - [x] Automated tests for consultant APIs + Calendly webhooks
+- [x] Consultant workload/suggestion endpoint (least open tickets)
+  - [x] `GET /api/v1/consultants/workload`
+- [x] Consultant metrics endpoint for SLA/reporting snapshots
+  - [x] `GET /api/v1/consultant/metrics`
+- [x] Customer scheduling-link generation flow
+  - [x] `POST /api/v1/tickets/{ticket}/schedule-link`
+- [x] Customer ticket detail meeting block + status timeline polish
 
 ## Validation Snapshot
-- Backend tests: `18 passed (72 assertions)`
-- Frontend: typecheck/lint/build all passing
+- Frontend: typecheck/lint/build passing
+- Backend: run locally in Docker to validate new endpoint tests
 
 ## Remaining (Phase 4)
 - [ ] Notification hooks for assignment, status updates, and comments
 - [ ] Ticket comment attachments (S3)
-- [ ] Consultant workload/suggestion endpoint (least open tickets)
-- [ ] Customer ticket detail: richer meeting block and status timeline polish
-- [ ] Optional: consultant-only metrics endpoint for SLA/reporting
 
 ## References
 - Execution journal: `docs/execution-journal-phase2b-phase4.md`

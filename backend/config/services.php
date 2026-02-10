@@ -48,6 +48,7 @@ return [
     'calendly' => [
         'api_key' => env('CALENDLY_API_KEY'),
         'webhook_secret' => env('CALENDLY_WEBHOOK_SECRET'),
+        'booking_url' => env('CALENDLY_BOOKING_URL'),
     ],
 
 ];

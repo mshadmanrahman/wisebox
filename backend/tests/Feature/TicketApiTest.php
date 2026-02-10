@@ -159,6 +159,49 @@ class TicketApiTest extends TestCase
             ->assertJsonFragment(['id' => $consultant->id]);
     }
 
+    public function test_customer_can_generate_scheduling_link_for_assigned_ticket(): void
+    {
+        $customer = User::factory()->create();
+        $consultant = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+
+        DB::table('consultant_profiles')->insert([
+            'user_id' => $consultant->id,
+            'calendly_url' => 'https://calendly.com/wisebox-consultant/intake',
+            'is_available' => true,
+            'max_concurrent_tickets' => 8,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00005',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'consultant_id' => $consultant->id,
+            'title' => 'Need a scheduling link',
+            'priority' => 'medium',
+            'status' => 'assigned',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $response = $this->postJson("/api/v1/tickets/{$ticket->id}/schedule-link")
+            ->assertOk()
+            ->assertJsonPath('data.consultant.id', $consultant->id);
+
+        $bookingUrl = (string) $response->json('data.booking_url');
+
+        $this->assertStringContainsString('https://calendly.com/wisebox-consultant/intake', $bookingUrl);
+        $this->assertStringContainsString('ticket_id='.$ticket->id, $bookingUrl);
+        $this->assertStringContainsString('ticket_number='.urlencode($ticket->ticket_number), $bookingUrl);
+        $this->assertStringContainsString('customer_email='.urlencode((string) $customer->email), $bookingUrl);
+    }
+
     private function createPropertyForUser(User $user): Property
     {
         $propertyTypeId = DB::table('property_types')->insertGetId([

@@ -113,17 +113,26 @@
 - Consultant workflow expansion:
   - Added consultant API scope:
     - `GET /api/v1/consultant/dashboard`
+    - `GET /api/v1/consultant/metrics`
     - `GET /api/v1/consultant/tickets`
     - `GET /api/v1/consultant/tickets/{id}`
     - `PUT /api/v1/consultant/tickets/{id}`
     - `POST /api/v1/consultant/tickets/{id}/comments`
+  - Added consultant assignment intelligence endpoint:
+    - `GET /api/v1/consultants/workload`
   - Added Calendly webhook ingestion:
     - `POST /api/v1/webhooks/calendly`
     - Supports `invitee.created` and `invitee.canceled` ticket schedule updates
     - Signature verification using `CALENDLY_WEBHOOK_SECRET`
+  - Added customer scheduling-link endpoint:
+    - `POST /api/v1/tickets/{id}/schedule-link`
+    - Uses consultant Calendly URL and falls back to `CALENDLY_BOOKING_URL`
   - Added consultant portal pages:
     - `/consultant/tickets`
     - `/consultant/tickets/{id}`
+  - Improved customer ticket detail:
+    - Status timeline chips
+    - Meeting block with schedule metadata and scheduling-link action
   - Added automated tests:
     - `ConsultantTicketApiTest`
     - `CalendlyWebhookTest`

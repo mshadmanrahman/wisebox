@@ -30,6 +30,23 @@ interface ConsultantDashboardResponse {
   upcoming_meetings: Ticket[];
 }
 
+interface ConsultantMetricsResponse {
+  kpis: {
+    window_days: number;
+    active_count: number;
+    completed_in_window_count: number;
+    awaiting_customer_count: number;
+    upcoming_meetings_count: number;
+    avg_resolution_hours: number | null;
+    capacity?: {
+      open_tickets_count: number;
+      max_concurrent_tickets: number;
+      utilization_percentage: number;
+    };
+  };
+  status_breakdown: Record<string, number>;
+}
+
 function statusBadgeClass(status: Ticket['status']): string {
   if (status === 'completed') return 'bg-green-100 text-green-700';
   if (status === 'in_progress' || status === 'assigned') return 'bg-blue-100 text-blue-700';
@@ -66,6 +83,15 @@ export default function ConsultantTicketsPage() {
     enabled: isConsultantRole,
   });
 
+  const { data: metricsData } = useQuery({
+    queryKey: ['consultant-metrics'],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<ConsultantMetricsResponse>>('/consultant/metrics');
+      return res.data.data;
+    },
+    enabled: isConsultantRole,
+  });
+
   const tickets = data?.data ?? [];
 
   const summaryCards = useMemo(() => {
@@ -74,17 +100,21 @@ export default function ConsultantTicketsPage() {
         { label: 'Open', value: 0 },
         { label: 'Awaiting Customer', value: 0 },
         { label: 'Upcoming Meetings', value: 0 },
-        { label: 'Completed This Month', value: 0 },
+        { label: 'Avg Resolution (hrs)', value: '-' },
       ];
     }
+
+    const avgResolution = metricsData?.kpis.avg_resolution_hours;
+    const utilization = metricsData?.kpis.capacity?.utilization_percentage;
 
     return [
       { label: 'Open', value: dashboardData.stats.open_count },
       { label: 'Awaiting Customer', value: dashboardData.stats.awaiting_customer_count },
       { label: 'Upcoming Meetings', value: dashboardData.stats.upcoming_meetings_count },
-      { label: 'Completed This Month', value: dashboardData.stats.completed_this_month_count },
+      { label: 'Avg Resolution (hrs)', value: avgResolution !== null && avgResolution !== undefined ? avgResolution : '-' },
+      ...(utilization !== undefined ? [{ label: 'Utilization (%)', value: utilization }] : []),
     ];
-  }, [dashboardData]);
+  }, [dashboardData, metricsData]);
 
   if (!isConsultantRole) {
     return (
@@ -113,7 +143,7 @@ export default function ConsultantTicketsPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {summaryCards.map((card) => (
           <Card key={card.label}>
             <CardContent className="pt-6">
