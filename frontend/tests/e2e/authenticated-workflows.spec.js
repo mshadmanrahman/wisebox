@@ -18,6 +18,28 @@ const E2E_USER = {
   updated_at: '2026-02-10T00:00:00.000000Z',
 };
 
+const E2E_USER_WITH_PROFILE = {
+  ...E2E_USER,
+  profile: {
+    preferred_language: 'en',
+    timezone: 'UTC',
+    notification_preferences: {
+      order_updates: true,
+      ticket_updates: true,
+      consultant_updates: true,
+      marketing_updates: false,
+    },
+  },
+};
+
+const E2E_CONSULTANT = {
+  ...E2E_USER,
+  id: 1200,
+  name: 'E2E Consultant',
+  email: 'e2e-consultant@wisebox.test',
+  role: 'consultant',
+};
+
 function buildPaginated(items, page, perPage) {
   const total = items.length;
   const safePerPage = Math.max(1, perPage);
@@ -43,7 +65,7 @@ function buildPaginated(items, page, perPage) {
   };
 }
 
-async function applyAuthenticatedSession(page) {
+async function applyAuthenticatedSession(page, user = E2E_USER) {
   await page.context().addCookies([
     {
       name: 'wisebox_token',
@@ -54,16 +76,16 @@ async function applyAuthenticatedSession(page) {
     },
   ]);
 
-  await page.addInitScript((token) => {
+  await page.addInitScript(({ token, user }) => {
     localStorage.setItem('wisebox_token', token);
     localStorage.setItem(
       'wisebox-auth',
       JSON.stringify({
-        state: { token, user: null, isAuthenticated: true },
+        state: { token, user, isAuthenticated: true },
         version: 0,
       })
     );
-  }, AUTH_TOKEN);
+  }, { token: AUTH_TOKEN, user });
 }
 
 async function mockNotificationEndpoints(page, initialNotifications) {
@@ -505,6 +527,357 @@ test.describe('Wisebox authenticated workflows', () => {
     await expect(page.getByText('Status Timeline')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Get scheduling link' })).toBeVisible();
     await expect(page.getByText('Please upload your latest mutation copy.')).toBeVisible();
+  });
+
+  test('settings page saves profile preferences and password change request', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER_WITH_PROFILE);
+    await mockNotificationEndpoints(page, []);
+
+    let profileSaved = false;
+    let passwordChanged = false;
+    let profileState = { ...E2E_USER_WITH_PROFILE };
+
+    await page.route(/.*\/api\/v1\/auth\/me$/, async (route) => {
+      const method = route.request().method();
+
+      if (method === 'PUT') {
+        const payload = route.request().postDataJSON();
+        profileSaved = true;
+        profileState = {
+          ...profileState,
+          name: payload.name,
+          phone: payload.phone,
+          country_of_residence: payload.country_of_residence,
+          profile: {
+            ...profileState.profile,
+            preferred_language: payload.preferred_language,
+            timezone: payload.timezone,
+            notification_preferences: payload.notification_preferences,
+          },
+        };
+
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: profileState }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: profileState }),
+      });
+    });
+
+    await page.route('**/api/v1/auth/change-password', async (route) => {
+      passwordChanged = true;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Password updated successfully.' }),
+      });
+    });
+
+    await page.goto('/settings');
+    await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
+
+    const saveProfileRequest = page.waitForResponse(
+      (response) => response.url().includes('/api/v1/auth/me') && response.request().method() === 'PUT'
+    );
+    await page.getByRole('button', { name: 'Marketing updates' }).click();
+    await page.getByRole('button', { name: 'Save changes' }).click();
+    await saveProfileRequest;
+    expect(profileSaved).toBeTruthy();
+
+    await page.getByRole('tab', { name: 'Password' }).click();
+    await expect(page.getByText('Change your password securely.')).toBeVisible();
+    const passwordInputs = page.locator('input[type="password"]:visible');
+    await passwordInputs.nth(0).fill('CurrentPass123!');
+    await passwordInputs.nth(1).fill('NewPass123!');
+    await passwordInputs.nth(2).fill('NewPass123!');
+    const updatePasswordRequest = page.waitForResponse(
+      (response) => response.url().includes('/api/v1/auth/change-password') && response.request().method() === 'PUT'
+    );
+    await page.getByRole('button', { name: 'Update password' }).click();
+    await updatePasswordRequest;
+    expect(passwordChanged).toBeTruthy();
+  });
+
+  test('authenticated user can create order from services workspace', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
+
+    await page.route('**/api/v1/services', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: [
+            {
+              id: 31,
+              name: 'Title Search',
+              short_description: 'Verify ownership history',
+              pricing_type: 'paid',
+              price: 150,
+              currency: 'USD',
+              is_featured: true,
+            },
+          ],
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/properties(?:\?.*)?$/, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [
+            {
+              id: 9,
+              user_id: E2E_USER.id,
+              property_name: 'Workspace Property',
+              property_type_id: 1,
+              ownership_status_id: 1,
+              ownership_type_id: 1,
+              status: 'active',
+              completion_percentage: 76,
+              completion_status: 'yellow',
+              created_at: '2026-02-10T00:00:00.000000Z',
+              updated_at: '2026-02-10T00:00:00.000000Z',
+            },
+          ],
+          per_page: 100,
+          total: 1,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.route('**/api/v1/orders', async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.continue();
+        return;
+      }
+
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 501,
+            order_number: 'WB-2026-00501',
+            payment_status: 'pending',
+            status: 'pending',
+          },
+        }),
+      });
+    });
+
+    await page.route('**/api/v1/orders/501', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 501,
+            order_number: 'WB-2026-00501',
+            property_id: 9,
+            user_id: E2E_USER.id,
+            subtotal: 150,
+            tax: 0,
+            discount: 0,
+            total: 150,
+            currency: 'USD',
+            payment_status: 'pending',
+            status: 'pending',
+            created_at: '2026-02-10T10:00:00.000000Z',
+            updated_at: '2026-02-10T10:00:00.000000Z',
+            items: [
+              {
+                id: 1,
+                order_id: 501,
+                service_id: 31,
+                quantity: 1,
+                unit_price: 150,
+                total_price: 150,
+                service: {
+                  id: 31,
+                  name: 'Title Search',
+                },
+              },
+            ],
+          },
+        }),
+      });
+    });
+
+    await page.goto('/workspace/services');
+    await expect(page.getByRole('heading', { name: 'Choose Services' })).toBeVisible();
+
+    await page.getByRole('combobox').first().click();
+    await page.getByRole('option', { name: 'Workspace Property' }).click();
+    await page.getByRole('button', { name: /Title Search/ }).click();
+    await page.getByRole('button', { name: 'Proceed to checkout' }).click();
+
+    await expect(page).toHaveURL(/\/orders\/501$/);
+    await expect(page.getByRole('button', { name: 'Pay with Stripe' })).toBeVisible();
+  });
+
+  test('consultant user can access consultant workspace list and detail', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_CONSULTANT);
+    await mockNotificationEndpoints(page, []);
+
+    await page.route('**/api/v1/consultant/dashboard', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            stats: {
+              open_count: 2,
+              awaiting_customer_count: 1,
+              upcoming_meetings_count: 1,
+              completed_this_month_count: 4,
+            },
+            upcoming_meetings: [],
+          },
+        }),
+      });
+    });
+
+    await page.route('**/api/v1/consultant/metrics', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            kpis: {
+              window_days: 30,
+              active_count: 2,
+              completed_in_window_count: 4,
+              awaiting_customer_count: 1,
+              upcoming_meetings_count: 1,
+              avg_resolution_hours: 9.4,
+              capacity: {
+                open_tickets_count: 2,
+                max_concurrent_tickets: 8,
+                utilization_percentage: 25,
+              },
+            },
+            status_breakdown: {
+              open: 1,
+              in_progress: 1,
+            },
+          },
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/consultant\/tickets\/44(?:\?.*)?$/, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 44,
+            ticket_number: 'TK-2026-00044',
+            property_id: 9,
+            customer_id: 100,
+            consultant_id: E2E_CONSULTANT.id,
+            service_id: 31,
+            title: 'Consultant detail test ticket',
+            description: 'Review uploaded deed and mutation.',
+            priority: 'high',
+            status: 'in_progress',
+            scheduled_at: null,
+            meeting_url: null,
+            meeting_duration_minutes: null,
+            resolution_notes: null,
+            created_at: '2026-02-10T09:00:00.000000Z',
+            updated_at: '2026-02-10T10:00:00.000000Z',
+            property: {
+              id: 9,
+              property_name: 'Workspace Property',
+              documents: [],
+            },
+            service: {
+              id: 31,
+              name: 'Title Search',
+            },
+            customer: {
+              id: 100,
+              name: 'Customer Alpha',
+              email: 'customer-alpha@wisebox.test',
+            },
+            comments: [
+              {
+                id: 1,
+                ticket_id: 44,
+                user_id: 100,
+                body: 'Sharing latest update.',
+                is_internal: false,
+                attachments: [],
+                created_at: '2026-02-10T09:30:00.000000Z',
+                user: {
+                  id: 100,
+                  name: 'Customer Alpha',
+                },
+              },
+            ],
+          },
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/consultant\/tickets(?:\?.*)?$/, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [
+            {
+              id: 44,
+              ticket_number: 'TK-2026-00044',
+              property_id: 9,
+              customer_id: 100,
+              consultant_id: E2E_CONSULTANT.id,
+              service_id: 31,
+              title: 'Consultant detail test ticket',
+              priority: 'high',
+              status: 'in_progress',
+              created_at: '2026-02-10T09:00:00.000000Z',
+              updated_at: '2026-02-10T10:00:00.000000Z',
+              property: { id: 9, property_name: 'Workspace Property' },
+              service: { id: 31, name: 'Title Search' },
+              customer: { id: 100, name: 'Customer Alpha', email: 'customer-alpha@wisebox.test' },
+            },
+          ],
+          stats: {
+            open_count: 2,
+            awaiting_customer_count: 1,
+            scheduled_count: 1,
+            completed_count: 4,
+          },
+          per_page: 15,
+          total: 1,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.goto('/consultant/tickets');
+    await expect(page.getByRole('heading', { name: 'Consultant Workspace' })).toBeVisible();
+    await expect(page.getByText('TK-2026-00044')).toBeVisible();
+
+    await page.getByRole('link', { name: 'Open workspace' }).click();
+    await expect(page).toHaveURL(/\/consultant\/tickets\/44$/);
+    await expect(page.getByText('Update Ticket')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Add Comment' })).toBeVisible();
   });
 
   test('property detail renders assessment history', async ({ page }) => {
