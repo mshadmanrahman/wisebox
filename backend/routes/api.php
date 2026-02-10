@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AssessmentController;
 use App\Http\Controllers\Api\V1\CalendlyWebhookController;
 use App\Http\Controllers\Api\V1\ConsultantTicketController;
+use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\StripeWebhookController;
@@ -88,7 +89,9 @@ Route::prefix('v1')->group(function () {
         Route::patch('notifications/read-all', [NotificationController::class, 'markAllRead']);
         Route::patch('notifications/{notificationId}/read', [NotificationController::class, 'markRead']);
         Route::get('notifications', [NotificationController::class, 'index']);
+        Route::get('dashboard/summary', [DashboardController::class, 'summary']);
         Route::get('properties/{property}/assessment', [AssessmentController::class, 'propertyAssessment']);
+        Route::get('properties/{property}/assessments', [AssessmentController::class, 'history']);
     });
 
     // Public routes (no auth)

@@ -11,10 +11,27 @@ class NotificationController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'status' => ['nullable', 'in:all,read,unread'],
+            'type' => ['nullable', 'string', 'max:191'],
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
+
         $notifications = InAppNotification::query()
             ->where('user_id', $request->user()->id)
+            ->when(($validated['status'] ?? 'all') === 'read', fn ($query) => $query->whereNotNull('read_at'))
+            ->when(($validated['status'] ?? 'all') === 'unread', fn ($query) => $query->whereNull('read_at'))
+            ->when(!empty($validated['type']), fn ($query) => $query->where('type', $validated['type']))
+            ->when(!empty($validated['q']), function ($query) use ($validated) {
+                $term = '%'.$validated['q'].'%';
+                $query->where(function ($search) use ($term) {
+                    $search->where('title', 'like', $term)
+                        ->orWhere('body', 'like', $term);
+                });
+            })
             ->orderByDesc('created_at')
-            ->paginate($request->integer('per_page', 20));
+            ->paginate((int) ($validated['per_page'] ?? 20));
 
         return response()->json($notifications);
     }

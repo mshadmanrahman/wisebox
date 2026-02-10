@@ -98,6 +98,7 @@ Use route checks after backend feature additions:
 ```bash
 cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 docker compose exec app php artisan route:list | grep -E 'api/v1/(orders|tickets|consultant|consultants|notifications|assessments|webhooks/stripe|webhooks/calendly|auth/verify-otp|auth/resend-otp|auth/change-password)'
+docker compose exec app php artisan route:list | grep -E 'api/v1/(dashboard/summary|properties/.*/assessment|properties/.*/assessments|notifications)'
 ```
 
 ## Release Gate (Required Before Push)

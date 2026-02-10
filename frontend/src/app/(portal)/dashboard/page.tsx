@@ -5,13 +5,11 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Bell, CalendarCheck, Plus, ShieldCheck } from 'lucide-react';
 import api from '@/lib/api';
-import { useProperties } from '@/hooks/use-properties';
-import { useNotifications, useUnreadNotificationsCount } from '@/hooks/use-notifications';
 import { PropertyCard } from '@/components/property/property-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { ApiResponse, Notification, PaginatedResponse, Slider, Ticket } from '@/types';
+import type { ApiResponse, DashboardSummary, Notification } from '@/types';
 
 function relativeTime(value: string): string {
   const now = Date.now();
@@ -31,31 +29,19 @@ function relativeTime(value: string): string {
 export default function DashboardPage() {
   const [activeSlide, setActiveSlide] = useState(0);
 
-  const { data: propertyResponse } = useProperties({ page: 1 });
-  const { data: notificationsResponse } = useNotifications(5);
-  const { data: unreadCount = 0 } = useUnreadNotificationsCount();
-
-  const { data: sliders = [] } = useQuery({
-    queryKey: ['sliders', 'dashboard'],
+  const { data: summary } = useQuery({
+    queryKey: ['dashboard', 'summary'],
     queryFn: async () => {
-      const response = await api.get<ApiResponse<Slider[]>>('/sliders');
+      const response = await api.get<ApiResponse<DashboardSummary>>('/dashboard/summary');
       return response.data.data;
     },
   });
-
-  const { data: ticketsResponse } = useQuery({
-    queryKey: ['dashboard', 'tickets'],
-    queryFn: async () => {
-      const response = await api.get<PaginatedResponse<Ticket>>('/tickets', {
-        params: { per_page: 5 },
-      });
-      return response.data;
-    },
-  });
-
-  const topProperties = (propertyResponse?.data ?? []).slice(0, 3);
-  const notifications = notificationsResponse?.data ?? [];
-  const recentTickets = ticketsResponse?.data ?? [];
+  const sliders = summary?.hero_slides ?? [];
+  const topProperties = summary?.properties_preview ?? [];
+  const notifications = summary?.notifications_preview ?? [];
+  const recentTickets = summary?.tickets_preview ?? [];
+  const unreadCount = summary?.unread_notifications_count ?? 0;
+  const counts = summary?.counts;
 
   useEffect(() => {
     if (sliders.length < 2) {
@@ -125,13 +111,13 @@ export default function DashboardPage() {
           href="/properties/new"
           icon={<Plus className="h-5 w-5" />}
           title="Add New Property"
-          description="Start a new property file in 2 steps."
+          description={`Start a new property file in 2 steps. ${counts ? `${counts.properties_total} tracked.` : ''}`}
         />
         <QuickActionCard
           href="/tickets"
           icon={<CalendarCheck className="h-5 w-5" />}
           title="Talk to an Expert"
-          description="Open tickets and schedule with consultants."
+          description={`Open tickets and schedule with consultants. ${counts ? `${counts.tickets_open} open.` : ''}`}
         />
         <QuickActionCard
           href="/assessment"

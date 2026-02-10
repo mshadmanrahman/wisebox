@@ -81,4 +81,75 @@ class NotificationApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.unread_count', 0);
     }
+
+    public function test_notification_filters_search_and_pagination_work(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        DB::table('notifications')->insert([
+            [
+                'id' => (string) Str::uuid(),
+                'user_id' => $user->id,
+                'type' => 'ticket.assigned',
+                'title' => 'Assigned to consultant',
+                'body' => 'Ticket assigned for intake.',
+                'data' => null,
+                'read_at' => null,
+                'created_at' => now()->subMinutes(3),
+            ],
+            [
+                'id' => (string) Str::uuid(),
+                'user_id' => $user->id,
+                'type' => 'order.paid',
+                'title' => 'Order paid',
+                'body' => 'Payment completed successfully.',
+                'data' => null,
+                'read_at' => now()->subMinute(),
+                'created_at' => now()->subMinutes(2),
+            ],
+            [
+                'id' => (string) Str::uuid(),
+                'user_id' => $user->id,
+                'type' => 'ticket.comment.added',
+                'title' => 'Consultant comment',
+                'body' => 'Your consultant added a comment.',
+                'data' => null,
+                'read_at' => null,
+                'created_at' => now()->subMinute(),
+            ],
+            [
+                'id' => (string) Str::uuid(),
+                'user_id' => $otherUser->id,
+                'type' => 'ticket.comment.added',
+                'title' => 'Other user notification',
+                'body' => 'Should not appear.',
+                'data' => null,
+                'read_at' => null,
+                'created_at' => now(),
+            ],
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $this->getJson('/api/v1/notifications?status=unread&per_page=10')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('total', 2);
+
+        $this->getJson('/api/v1/notifications?type=ticket.comment.added&per_page=10')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.type', 'ticket.comment.added');
+
+        $this->getJson('/api/v1/notifications?q=Payment&per_page=10')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.type', 'order.paid');
+
+        $this->getJson('/api/v1/notifications?per_page=1&page=2')
+            ->assertOk()
+            ->assertJsonPath('current_page', 2)
+            ->assertJsonPath('per_page', 1);
+    }
 }

@@ -1,7 +1,7 @@
 # Phase 6: Dashboard, Assessment, Settings, and Notification Center
 
 Date: 2026-02-10
-Status: In progress (core APIs and UI delivered)
+Status: In progress (core APIs and Phase 6 polish delivered)
 
 ## Scope delivered in this slice
 
@@ -49,6 +49,13 @@ Status: In progress (core APIs and UI delivered)
   - `GET /api/v1/notifications/unread-count`
   - `PATCH /api/v1/notifications/{notificationId}/read`
   - `PATCH /api/v1/notifications/read-all`
+  - `GET /api/v1/dashboard/summary`
+  - `GET /api/v1/properties/{property}/assessments`
+- Notification list endpoint now supports:
+  - `status` (`all`, `read`, `unread`)
+  - `type`
+  - `q` (title/body search)
+  - `per_page` + `page`
 
 5. Settings security + preferences
 - Added route:
@@ -79,6 +86,11 @@ Status: In progress (core APIs and UI delivered)
 - unread/read states.
 - mark single read.
 - mark all read.
+- Added filter controls:
+  - status (`all`, `unread`, `read`)
+  - type (`ticket.*`, `order.*`)
+  - text search (`title` and `body`)
+- Added server-backed pagination controls.
 
 4. Header bell and dropdown integration
 - Added unread badge in portal header.
@@ -95,18 +107,27 @@ Status: In progress (core APIs and UI delivered)
 6. Middleware updates
 - Added `/notifications` to protected route matcher.
 
+7. Assessment history in property detail
+- Added persisted history panel under property assessment card.
+- History is sourced from `GET /api/v1/properties/{property}/assessments`.
+- Shows latest score snapshots with status and date.
+
 ### Tests added
 
 Backend:
+- `backend/tests/Feature/DashboardSummaryApiTest.php`
+  - authenticated dashboard summary data scoping
 - `backend/tests/Feature/AssessmentApiTest.php`
   - public question retrieval
   - free assessment scoring flow
   - authenticated property assessment generation
+  - assessment history endpoint ordering + authorization
 - `backend/tests/Feature/NotificationApiTest.php`
   - list notifications
   - unread count
   - mark read
   - mark all read
+  - filter + search + pagination behavior
 - `backend/tests/Feature/AuthSettingsTest.php`
   - notification preference persistence via `/auth/me`
   - password change flow via `/auth/change-password`
@@ -128,6 +149,7 @@ Blocked by sandbox restrictions (run on local machine):
 ## Files introduced in this slice
 
 - `backend/app/Http/Controllers/Api/V1/AssessmentController.php`
+- `backend/app/Http/Controllers/Api/V1/DashboardController.php`
 - `backend/app/Http/Controllers/Api/V1/NotificationController.php`
 - `backend/app/Models/AssessmentQuestion.php`
 - `backend/app/Models/InAppNotification.php`
@@ -137,6 +159,7 @@ Blocked by sandbox restrictions (run on local machine):
 - `backend/database/seeders/AssessmentQuestionSeeder.php`
 - `backend/tests/Feature/AssessmentApiTest.php`
 - `backend/tests/Feature/AuthSettingsTest.php`
+- `backend/tests/Feature/DashboardSummaryApiTest.php`
 - `backend/tests/Feature/NotificationApiTest.php`
 - `frontend/src/hooks/use-notifications.ts`
 - `frontend/src/app/assessment/page.tsx`
@@ -145,7 +168,4 @@ Blocked by sandbox restrictions (run on local machine):
 
 ## Known next steps inside Phase 6
 
-1. Add a dedicated dashboard API to reduce client-side fan-out requests.
-2. Add persisted user-facing assessment history in portal UI.
-3. Add notification filters (`type`, `unread only`) and pagination controls in `/notifications`.
-4. Add backend assertions for recommendation-service mapping behavior edge cases.
+1. Add backend assertions for recommendation-service mapping behavior edge cases.

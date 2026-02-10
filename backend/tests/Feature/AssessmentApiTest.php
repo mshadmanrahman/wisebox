@@ -131,6 +131,68 @@ class AssessmentApiTest extends TestCase
         ]);
     }
 
+    public function test_property_assessment_history_is_ordered_and_scoped(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $property = $this->createPropertyForUser($user, 'purchase-case');
+        $otherProperty = $this->createPropertyForUser($otherUser, 'inheritance-case-2');
+
+        DB::table('property_assessments')->insert([
+            [
+                'property_id' => $property->id,
+                'assessed_by' => $user->id,
+                'overall_score' => 40,
+                'score_status' => 'yellow',
+                'document_score' => 20,
+                'ownership_score' => 20,
+                'risk_factors' => json_encode(['missing_doc']),
+                'recommendations' => json_encode([]),
+                'summary' => 'Older assessment',
+                'detailed_report' => null,
+                'created_at' => now()->subDays(2),
+            ],
+            [
+                'property_id' => $property->id,
+                'assessed_by' => $user->id,
+                'overall_score' => 85,
+                'score_status' => 'green',
+                'document_score' => 45,
+                'ownership_score' => 40,
+                'risk_factors' => json_encode([]),
+                'recommendations' => json_encode([]),
+                'summary' => 'Most recent assessment',
+                'detailed_report' => null,
+                'created_at' => now()->subDay(),
+            ],
+            [
+                'property_id' => $otherProperty->id,
+                'assessed_by' => $otherUser->id,
+                'overall_score' => 10,
+                'score_status' => 'red',
+                'document_score' => 5,
+                'ownership_score' => 5,
+                'risk_factors' => json_encode(['critical_issue']),
+                'recommendations' => json_encode([]),
+                'summary' => 'Other user property',
+                'detailed_report' => null,
+                'created_at' => now(),
+            ],
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $this->getJson("/api/v1/properties/{$property->id}/assessments?per_page=1")
+            ->assertOk()
+            ->assertJsonPath('total', 2)
+            ->assertJsonPath('per_page', 1)
+            ->assertJsonPath('data.0.summary', 'Most recent assessment');
+
+        $this->getJson("/api/v1/properties/{$otherProperty->id}/assessments")
+            ->assertForbidden();
+    }
+
     private function createPropertyForUser(User $user, string $ownershipSlug): Property
     {
         $propertyTypeId = DB::table('property_types')->insertGetId([

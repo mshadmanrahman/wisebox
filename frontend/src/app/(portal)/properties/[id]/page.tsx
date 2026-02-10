@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { PropertyOverview } from '@/components/property/property-overview';
 import { DocumentStatusList } from '@/components/property/document-status-list';
 import { AssessmentSection } from '@/components/property/assessment-section';
-import type { ApiResponse, Property } from '@/types';
+import type { ApiResponse, PaginatedResponse, Property, PropertyAssessment } from '@/types';
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -24,6 +24,17 @@ export default function PropertyDetailPage() {
     queryFn: async () => {
       const res = await api.get<ApiResponse<Property>>(`/properties/${id}`);
       return res.data.data;
+    },
+    enabled: !!id,
+  });
+
+  const { data: assessmentsResponse } = useQuery({
+    queryKey: ['property', Number(id), 'assessments'],
+    queryFn: async () => {
+      const res = await api.get<PaginatedResponse<PropertyAssessment>>(`/properties/${id}/assessments`, {
+        params: { per_page: 5 },
+      });
+      return res.data;
     },
     enabled: !!id,
   });
@@ -84,7 +95,7 @@ export default function PropertyDetailPage() {
         completionStatus={property.completion_status}
       />
 
-      <AssessmentSection property={property} />
+      <AssessmentSection property={property} assessmentHistory={assessmentsResponse?.data ?? []} />
     </div>
   );
 }

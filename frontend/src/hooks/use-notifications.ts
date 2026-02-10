@@ -7,14 +7,72 @@ interface UnreadCountResponse {
   unread_count: number;
 }
 
-export function useNotifications(perPage = 20) {
+export interface NotificationsQueryOptions {
+  page?: number;
+  perPage?: number;
+  status?: 'read' | 'unread';
+  type?: string;
+  q?: string;
+}
+
+export function useNotifications(options: number | NotificationsQueryOptions = 20) {
+  const normalized =
+    typeof options === 'number'
+      ? { perPage: options }
+      : {
+          page: options.page,
+          perPage: options.perPage ?? 20,
+          status: options.status,
+          type: options.type,
+          q: options.q,
+        };
+
   return useQuery({
-    queryKey: ['notifications', perPage],
+    queryKey: ['notifications', normalized],
     queryFn: async () => {
-      const response = await api.get<PaginatedResponse<Notification>>('/notifications', {
-        params: { per_page: perPage },
+      const response = await api.get<PaginatedResponse<Notification> & {
+        current_page?: number;
+        last_page?: number;
+        per_page?: number;
+        total?: number;
+        from?: number | null;
+        to?: number | null;
+        first_page_url?: string;
+        last_page_url?: string;
+        prev_page_url?: string | null;
+        next_page_url?: string | null;
+      }>('/notifications', {
+        params: {
+          page: normalized.page,
+          per_page: normalized.perPage,
+          status: normalized.status,
+          type: normalized.type,
+          q: normalized.q,
+        },
       });
-      return response.data;
+      const payload = response.data;
+
+      if ('meta' in payload && payload.meta) {
+        return payload;
+      }
+
+      return {
+        data: payload.data,
+        meta: {
+          current_page: payload.current_page ?? 1,
+          from: payload.from ?? 0,
+          last_page: payload.last_page ?? 1,
+          per_page: payload.per_page ?? normalized.perPage ?? 20,
+          to: payload.to ?? 0,
+          total: payload.total ?? payload.data.length,
+        },
+        links: {
+          first: payload.first_page_url ?? '',
+          last: payload.last_page_url ?? '',
+          prev: payload.prev_page_url ?? null,
+          next: payload.next_page_url ?? null,
+        },
+      } satisfies PaginatedResponse<Notification>;
     },
   });
 }

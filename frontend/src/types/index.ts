@@ -431,6 +431,19 @@ export interface Notification {
   created_at: string;
 }
 
+export interface DashboardSummary {
+  hero_slides: Slider[];
+  properties_preview: Property[];
+  tickets_preview: Ticket[];
+  notifications_preview: Notification[];
+  unread_notifications_count: number;
+  counts: {
+    properties_total: number;
+    tickets_total: number;
+    tickets_open: number;
+  };
+}
+
 // === Sliders ===
 export interface Slider {
   id: number;

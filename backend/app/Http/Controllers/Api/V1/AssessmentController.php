@@ -117,6 +117,25 @@ class AssessmentController extends Controller
         ]);
     }
 
+    public function history(Request $request, Property $property): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$user->isAdmin() && $property->user_id !== $user->id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $validated = $request->validate([
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $assessments = $property->assessments()
+            ->orderByDesc('created_at')
+            ->paginate((int) ($validated['per_page'] ?? 10));
+
+        return response()->json($assessments);
+    }
+
     private function scoreStatus(int $score): string
     {
         if ($score >= 80) {

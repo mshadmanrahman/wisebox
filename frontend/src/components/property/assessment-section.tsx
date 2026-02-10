@@ -5,10 +5,11 @@ import { ShieldCheck, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import type { Property } from '@/types';
+import type { Property, PropertyAssessment } from '@/types';
 
 interface AssessmentSectionProps {
   property: Property;
+  assessmentHistory?: PropertyAssessment[];
 }
 
 function scoreColor(status: 'red' | 'yellow' | 'green'): string {
@@ -48,7 +49,11 @@ function recommendation(percentage: number): string {
   return 'All documents uploaded! Consider a document assessment service for verification.';
 }
 
-export function AssessmentSection({ property }: AssessmentSectionProps) {
+function formatDate(value: string): string {
+  return new Date(value).toLocaleDateString();
+}
+
+export function AssessmentSection({ property, assessmentHistory = [] }: AssessmentSectionProps) {
   const pct = property.completion_percentage;
   const status = property.completion_status;
 
@@ -90,6 +95,33 @@ export function AssessmentSection({ property }: AssessmentSectionProps) {
               </Link>
             </Button>
           </div>
+        </div>
+
+        <div className="space-y-3 border-t pt-4">
+          <h3 className="text-sm font-semibold text-wisebox-text-primary">Assessment History</h3>
+          {assessmentHistory.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No saved assessments yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {assessmentHistory.map((assessment) => (
+                <div
+                  key={assessment.id}
+                  className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
+                >
+                  <div>
+                    <p className="font-medium text-wisebox-text-primary">{assessment.overall_score}/100</p>
+                    <p className="text-xs text-muted-foreground">{assessment.summary || 'No summary provided.'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={cn('text-xs font-medium uppercase', scoreColor(assessment.score_status))}>
+                      {statusLabel(assessment.score_status)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{formatDate(assessment.created_at)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

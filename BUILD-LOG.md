@@ -230,6 +230,17 @@
   - `NotificationApiTest`
   - `AuthSettingsTest`
   - Playwright smoke test now includes `/assessment`.
+- Phase 6 polish completion:
+  - Added dedicated aggregate endpoint: `GET /api/v1/dashboard/summary`.
+  - Added property assessment history endpoint: `GET /api/v1/properties/{property}/assessments`.
+  - Extended notification listing with `status`, `type`, and `q` filters plus pagination support.
+  - Refactored portal dashboard to use aggregate summary API (single query).
+  - Upgraded `/notifications` with server-backed filter/search/pagination controls.
+  - Added assessment history panel in property detail UI.
+  - Added/updated test coverage:
+    - `DashboardSummaryApiTest`
+    - `AssessmentApiTest` (history endpoint assertions)
+    - `NotificationApiTest` (filters/search/pagination assertions)
 
 ---
 
