@@ -181,6 +181,8 @@
     - `npm run test:e2e:headed`
     - `npm run test:e2e:ui`
   - Extended root validation script with `--with-e2e` option.
+  - Installed `@playwright/test` and committed lockfile updates for reproducible E2E runs.
+  - Added `allowedDevOrigins` in `frontend/next.config.mjs` to align dev-server origin policy for Playwright (`127.0.0.1` and `localhost`).
 
 ---
 
