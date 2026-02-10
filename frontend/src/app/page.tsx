@@ -31,12 +31,23 @@ export const metadata: Metadata = {
   title: 'Property Management for Diaspora Families',
   description:
     'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'Wisebox | Property Management for Diaspora Families',
     description:
       'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
     type: 'website',
     url: 'https://mywisebox.com',
+    images: [
+      {
+        url: 'https://mywisebox.com/og/wisebox-home.png',
+        width: 1200,
+        height: 630,
+        alt: 'Wisebox home page',
+      },
+    ],
   },
 };
 
@@ -53,12 +64,27 @@ const featureIcons = [
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Wisebox',
-  url: 'https://mywisebox.com',
-  description:
-    'Secure property management for diaspora families, including document tracking and consultant workflows.',
-  sameAs: ['https://mywisebox.com/about', 'https://mywisebox.com/contact'],
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://mywisebox.com/#organization',
+      name: 'Wisebox',
+      url: 'https://mywisebox.com',
+      description:
+        'Secure property management for diaspora families, including document tracking and consultant workflows.',
+      sameAs: ['https://mywisebox.com/about', 'https://mywisebox.com/contact'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://mywisebox.com/#website',
+      url: 'https://mywisebox.com',
+      name: 'Wisebox',
+      publisher: {
+        '@id': 'https://mywisebox.com/#organization',
+      },
+      inLanguage: 'en',
+    },
+  ],
 };
 
 export default function Home() {
@@ -76,18 +102,22 @@ export default function Home() {
               <h1 className="text-4xl font-bold leading-tight text-wisebox-text-primary sm:text-5xl">
                 Manage Your Ancestral Properties From Anywhere in the World
               </h1>
-              <p className="text-lg text-wisebox-text-secondary">
+              <p className="max-w-xl text-base leading-7 text-wisebox-text-secondary sm:text-lg">
                 Wisebox unifies documents, tickets, consultant support, and assessment insights into one
                 secure operating system for your properties.
               </p>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
                   <Link href="/assessment">
                     Get Free Assessment
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="border-teal-200 text-wisebox-primary-700 hover:bg-teal-50">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-teal-200 text-wisebox-primary-700 hover:bg-teal-50"
+                >
                   <Link href="/register">Start Managing Properties</Link>
                 </Button>
               </div>

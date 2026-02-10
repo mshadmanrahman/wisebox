@@ -73,12 +73,13 @@ Completed:
 - Moved authenticated ordering workspace from `/services` to `/workspace/services` to preserve a public marketing surface.
 - Added SEO baseline:
   - route-level metadata (root + page-level)
-  - JSON-LD on landing page
+  - canonical + Open Graph metadata across public marketing pages
+  - richer JSON-LD on landing and services pages
   - `sitemap.xml` and `robots.txt` via App Router metadata routes
 - Expanded smoke E2E coverage for marketing route reachability.
+- Added public-services CTA redirect assertion to confirm auth handoff to `/workspace/services`.
 
 Pending:
-- Final copy polish and visual QA pass for mobile/tablet breakpoints.
 - CI run confirmation for the updated marketing routes.
 
 ## Definition of done (Phase 7)

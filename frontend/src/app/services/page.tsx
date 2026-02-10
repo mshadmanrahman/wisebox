@@ -12,6 +12,48 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 export const metadata: Metadata = {
   title: 'Services',
   description: 'Explore Wisebox service offerings for property documentation, support workflows, and legal coordination.',
+  alternates: {
+    canonical: '/services',
+  },
+  openGraph: {
+    title: 'Wisebox Services',
+    description:
+      'Explore Wisebox service offerings for property documentation, support workflows, and legal coordination.',
+    type: 'website',
+    url: 'https://mywisebox.com/services',
+    images: [
+      {
+        url: 'https://mywisebox.com/og/wisebox-services.png',
+        width: 1200,
+        height: 630,
+        alt: 'Wisebox services page',
+      },
+    ],
+  },
+};
+
+const servicesJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Wisebox Property Services',
+  provider: {
+    '@type': 'Organization',
+    name: 'Wisebox',
+    url: 'https://mywisebox.com',
+  },
+  description:
+    'Property documentation, consultant workflows, legal coordination, and operational support for diaspora families.',
+  areaServed: 'Global',
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Wisebox Plans',
+    itemListElement: pricingPlans.map((plan, index) => ({
+      '@type': 'Offer',
+      position: index + 1,
+      name: plan.name,
+      description: plan.description,
+    })),
+  },
 };
 
 export default function PublicServicesPage() {
@@ -25,10 +67,11 @@ export default function PublicServicesPage() {
               Services overview
             </Badge>
             <h1 className="text-4xl font-bold text-wisebox-text-primary sm:text-5xl">Wisebox Services</h1>
-            <p className="text-lg text-wisebox-text-secondary">
-              Choose the right support level for your property journey, from readiness checks to consultant-guided workflows.
+            <p className="max-w-2xl text-base leading-7 text-wisebox-text-secondary sm:text-lg">
+              Choose the right support level for your property journey, from readiness checks to
+              consultant-guided workflows.
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
                 <Link href="/assessment">
                   Get Free Assessment
@@ -71,6 +114,7 @@ export default function PublicServicesPage() {
         </section>
       </main>
       <MarketingFooter />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }} />
     </>
   );
 }

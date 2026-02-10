@@ -9,6 +9,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 export const metadata: Metadata = {
   title: 'Contact',
   description: 'Contact Wisebox for onboarding, service support, and partnership inquiries.',
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    title: 'Contact Wisebox',
+    description: 'Contact Wisebox for onboarding, service support, and partnership inquiries.',
+    type: 'website',
+    url: 'https://mywisebox.com/contact',
+    images: [
+      {
+        url: 'https://mywisebox.com/og/wisebox-contact.png',
+        width: 1200,
+        height: 630,
+        alt: 'Contact Wisebox page',
+      },
+    ],
+  },
 };
 
 const channels = [

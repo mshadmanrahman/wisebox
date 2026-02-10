@@ -81,6 +81,7 @@ npm run build
   - `/assessment`
 - Current authenticated workflow coverage:
   - Protected route redirect (`/dashboard` requires auth)
+  - Public services CTA redirect behavior (`/services` -> `/login?redirect=%2Fworkspace%2Fservices` for unauthenticated users)
   - Login form flow to `/dashboard` (mocked API)
   - Notification center filter + pagination behaviors
   - Property detail assessment history rendering

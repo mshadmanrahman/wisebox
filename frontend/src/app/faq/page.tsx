@@ -11,6 +11,23 @@ import { Card, CardContent } from '@/components/ui/card';
 export const metadata: Metadata = {
   title: 'FAQ',
   description: 'Read frequently asked questions about Wisebox workflows, security, and onboarding.',
+  alternates: {
+    canonical: '/faq',
+  },
+  openGraph: {
+    title: 'Wisebox FAQ',
+    description: 'Read frequently asked questions about Wisebox workflows, security, and onboarding.',
+    type: 'website',
+    url: 'https://mywisebox.com/faq',
+    images: [
+      {
+        url: 'https://mywisebox.com/og/wisebox-faq.png',
+        width: 1200,
+        height: 630,
+        alt: 'Wisebox FAQ page',
+      },
+    ],
+  },
 };
 
 export default function FaqPage() {

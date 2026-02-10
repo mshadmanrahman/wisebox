@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     template: '%s | Wisebox',
   },
   description: 'Wisebox helps property owners manage records, services, and support workflows in one secure workspace.',
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'Wisebox',
     description:
@@ -27,12 +30,21 @@ export const metadata: Metadata = {
     url: 'https://mywisebox.com',
     siteName: 'Wisebox',
     type: 'website',
+    images: [
+      {
+        url: 'https://mywisebox.com/og/wisebox-default.png',
+        width: 1200,
+        height: 630,
+        alt: 'Wisebox property management platform',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Wisebox',
     description:
       'Wisebox helps property owners manage records, services, and support workflows in one secure workspace.',
+    images: ['https://mywisebox.com/og/wisebox-default.png'],
   },
 };
 

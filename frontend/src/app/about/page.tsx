@@ -10,6 +10,24 @@ export const metadata: Metadata = {
   title: 'About',
   description:
     'Learn how Wisebox helps diaspora families manage property records, workflows, and consultant support securely.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About Wisebox',
+    description:
+      'Learn how Wisebox helps diaspora families manage property records, workflows, and consultant support securely.',
+    type: 'website',
+    url: 'https://mywisebox.com/about',
+    images: [
+      {
+        url: 'https://mywisebox.com/og/wisebox-about.png',
+        width: 1200,
+        height: 630,
+        alt: 'About Wisebox',
+      },
+    ],
+  },
 };
 
 const pillars = [

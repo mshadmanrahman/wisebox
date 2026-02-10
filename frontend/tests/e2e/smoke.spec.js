@@ -36,6 +36,12 @@ test.describe('Wisebox smoke', () => {
     await expect(page.getByRole('heading', { name: 'Wisebox Services' })).toBeVisible();
   });
 
+  test('services workspace CTA redirects unauthenticated users to login with redirect', async ({ page }) => {
+    await page.goto('/services');
+    await page.getByRole('link', { name: 'Open Services Workspace' }).click();
+    await expect(page).toHaveURL(/\/login\?redirect=%2Fworkspace%2Fservices/);
+  });
+
   test('login page is reachable', async ({ page }) => {
     const response = await page.goto('/login');
     expect(response?.ok()).toBeTruthy();

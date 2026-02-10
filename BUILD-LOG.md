@@ -275,10 +275,13 @@
     - Updated middleware protection from `/services` to `/workspace`
   - Added SEO surface:
     - root metadata + Open Graph baseline in `frontend/src/app/layout.tsx`
-    - JSON-LD on landing page
+    - canonical + Open Graph page metadata for public marketing pages
+    - richer JSON-LD on landing and services pages
     - `frontend/src/app/robots.ts`
     - `frontend/src/app/sitemap.ts`
   - Expanded smoke E2E route coverage for public pages (`/`, `/about`, `/faq`, `/contact`, `/services`).
+  - Added E2E assertion for `/services` CTA auth behavior:
+    - unauthenticated click on "Open Services Workspace" redirects to `/login?redirect=%2Fworkspace%2Fservices`
 
 ---
 
