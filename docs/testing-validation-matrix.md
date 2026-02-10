@@ -74,7 +74,7 @@ npm run build
   - `/register`
   - `/forgot-password`
 - Dev server origin policy:
-  - `frontend/next.config.mjs` includes `allowedDevOrigins` for both `http://127.0.0.1:3000` and `http://localhost:3000`.
+  - `frontend/next.config.mjs` includes `allowedDevOrigins` host entries for both `127.0.0.1` and `localhost`.
 - Command:
 
 ```bash
