@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CalendlyWebhookController;
+use App\Http\Controllers\Api\V1\ConsultantTicketController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\StripeWebhookController;
 use App\Http\Controllers\Api\V1\TicketController;
@@ -65,10 +67,20 @@ Route::prefix('v1')->group(function () {
         Route::get('tickets/{ticket}/comments', [TicketController::class, 'comments']);
         Route::post('tickets/{ticket}/comments', [TicketController::class, 'addComment']);
         Route::get('consultants', [TicketController::class, 'consultants']);
+
+        // Consultant workflow
+        Route::prefix('consultant')->group(function () {
+            Route::get('dashboard', [ConsultantTicketController::class, 'dashboard']);
+            Route::get('tickets', [ConsultantTicketController::class, 'index']);
+            Route::get('tickets/{ticket}', [ConsultantTicketController::class, 'show']);
+            Route::put('tickets/{ticket}', [ConsultantTicketController::class, 'update']);
+            Route::post('tickets/{ticket}/comments', [ConsultantTicketController::class, 'addComment']);
+        });
     });
 
     // Public routes (no auth)
     Route::post('/webhooks/stripe', StripeWebhookController::class);
+    Route::post('/webhooks/calendly', CalendlyWebhookController::class);
 
     // Phase 2: Locations
     Route::prefix('locations')->group(function () {

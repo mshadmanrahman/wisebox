@@ -45,4 +45,9 @@ return [
         'url' => env('FRONTEND_URL', 'http://localhost:3000'),
     ],
 
+    'calendly' => [
+        'api_key' => env('CALENDLY_API_KEY'),
+        'webhook_secret' => env('CALENDLY_WEBHOOK_SECRET'),
+    ],
+
 ];

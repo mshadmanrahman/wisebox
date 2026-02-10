@@ -109,6 +109,23 @@
   - `GET /api/v1/consultants` (admin consultant directory with open-ticket counts)
   - Internal notes are hidden from customers in ticket detail/comment responses
   - Role-aware ticket filters and status controls in portal ticket UI
+- Consultant workflow expansion:
+  - Added consultant API scope:
+    - `GET /api/v1/consultant/dashboard`
+    - `GET /api/v1/consultant/tickets`
+    - `GET /api/v1/consultant/tickets/{id}`
+    - `PUT /api/v1/consultant/tickets/{id}`
+    - `POST /api/v1/consultant/tickets/{id}/comments`
+  - Added Calendly webhook ingestion:
+    - `POST /api/v1/webhooks/calendly`
+    - Supports `invitee.created` and `invitee.canceled` ticket schedule updates
+    - Signature verification using `CALENDLY_WEBHOOK_SECRET`
+  - Added consultant portal pages:
+    - `/consultant/tickets`
+    - `/consultant/tickets/{id}`
+  - Added automated tests:
+    - `ConsultantTicketApiTest`
+    - `CalendlyWebhookTest`
 
 ---
 
