@@ -71,6 +71,7 @@ export default function ConsultantTicketDetailPage() {
   const [resolutionNotesValue, setResolutionNotesValue] = useState('');
 
   const [commentBody, setCommentBody] = useState('');
+  const [commentFiles, setCommentFiles] = useState<File[]>([]);
   const [isInternal, setIsInternal] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -126,14 +127,28 @@ export default function ConsultantTicketDetailPage() {
 
   const commentMutation = useMutation({
     mutationFn: async () => {
-      const res = await api.post<ApiResponse<TicketComment>>(`/consultant/tickets/${ticketId}/comments`, {
+      const hasFiles = commentFiles.length > 0;
+      const payload = hasFiles ? new FormData() : {
         body: commentBody,
         is_internal: isInternal,
-      });
+      };
+
+      if (payload instanceof FormData) {
+        if (commentBody.trim()) {
+          payload.append('body', commentBody);
+        }
+        payload.append('is_internal', String(isInternal));
+        commentFiles.forEach((file) => payload.append('attachments[]', file));
+      }
+
+      const res = await api.post<ApiResponse<TicketComment>>(`/consultant/tickets/${ticketId}/comments`, payload, payload instanceof FormData
+        ? { headers: { 'Content-Type': 'multipart/form-data' } }
+        : undefined);
       return res.data.data;
     },
     onSuccess: async () => {
       setCommentBody('');
+      setCommentFiles([]);
       setIsInternal(false);
       setActionError(null);
       await queryClient.invalidateQueries({ queryKey: ['consultant-ticket', ticketId] });
@@ -146,7 +161,7 @@ export default function ConsultantTicketDetailPage() {
 
   const handleCommentSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (!commentBody.trim()) return;
+    if (!commentBody.trim() && commentFiles.length === 0) return;
     commentMutation.mutate();
   };
 
@@ -370,6 +385,18 @@ export default function ConsultantTicketDetailPage() {
                     </div>
                   </div>
                   <p className="mt-2 text-sm text-wisebox-text-secondary whitespace-pre-wrap">{comment.body}</p>
+                  {(comment.attachments ?? []).length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {(comment.attachments ?? []).map((attachment) => (
+                        <span
+                          key={attachment}
+                          className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                        >
+                          {attachment.split('/').pop()}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -382,6 +409,27 @@ export default function ConsultantTicketDetailPage() {
               onChange={(e) => setCommentBody(e.target.value)}
               placeholder="Write an update..."
             />
+            <div className="space-y-2">
+              <input
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                onChange={(e) => setCommentFiles(Array.from(e.target.files ?? []))}
+                className="block w-full text-sm text-wisebox-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-wisebox-primary-50 file:px-3 file:py-1.5 file:text-wisebox-primary-700"
+              />
+              {commentFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {commentFiles.map((file) => (
+                    <span
+                      key={`${file.name}-${file.size}`}
+                      className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                    >
+                      {file.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
             <label className="flex items-center gap-2 text-sm text-wisebox-text-secondary">
               <input type="checkbox" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} />
               Internal note (not visible to customer)
@@ -389,7 +437,7 @@ export default function ConsultantTicketDetailPage() {
             <Button
               type="submit"
               className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600"
-              disabled={commentMutation.isPending || !commentBody.trim()}
+              disabled={commentMutation.isPending || (!commentBody.trim() && commentFiles.length === 0)}
             >
               {commentMutation.isPending ? (
                 <>

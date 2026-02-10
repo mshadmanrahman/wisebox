@@ -11,7 +11,7 @@
 | Phase 1: Authentication | COMPLETE | 2026-02-09 | 2026-02-09 |
 | Phase 2: Core Systems | COMPLETE | 2026-02-09 | 2026-02-10 |
 | Phase 3: Payments | COMPLETE | 2026-02-10 | 2026-02-10 |
-| Phase 4: Consultant Workflow | IN PROGRESS | 2026-02-10 | - |
+| Phase 4: Consultant Workflow | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 5: Integrations | NOT STARTED | - | - |
 | Phase 6: Dashboard & Assessment | NOT STARTED | - | - |
 | Phase 7: Marketing Site | NOT STARTED | - | - |
@@ -133,9 +133,19 @@
   - Improved customer ticket detail:
     - Status timeline chips
     - Meeting block with schedule metadata and scheduling-link action
+  - Added notification hooks (DB-backed) for:
+    - consultant assignment
+    - status updates
+    - public comment updates
+  - Added ticket comment attachment support:
+    - multipart upload support on customer + consultant comment endpoints
+    - attachment persistence in `ticket_comments.attachments`
+    - file handling uses S3 in production and local disk in non-production
   - Added automated tests:
     - `ConsultantTicketApiTest`
     - `CalendlyWebhookTest`
+    - notification hook assertions
+    - ticket comment attachment assertions
 
 ---
 

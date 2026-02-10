@@ -9,6 +9,10 @@ use App\Models\TicketComment;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class TicketController extends Controller
@@ -115,6 +119,7 @@ class TicketController extends Controller
             'resolution_notes' => ['nullable', 'string'],
         ]);
 
+        $previousStatus = $ticket->status;
         $ticket->status = $validated['status'];
 
         if ($validated['status'] === 'completed') {
@@ -128,6 +133,21 @@ class TicketController extends Controller
 
         $ticket->save();
         $ticket->load(['property', 'service', 'consultant']);
+
+        if ($previousStatus !== $ticket->status) {
+            $this->createNotification(
+                (int) $ticket->customer_id,
+                'ticket.status.updated',
+                'Ticket status updated',
+                "Ticket {$ticket->ticket_number} is now {$ticket->status}.",
+                [
+                    'ticket_id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                    'from_status' => $previousStatus,
+                    'to_status' => $ticket->status,
+                ]
+            );
+        }
 
         return response()->json(['data' => $ticket]);
     }
@@ -149,6 +169,7 @@ class TicketController extends Controller
             ],
         ]);
 
+        $previousConsultantId = $ticket->consultant_id;
         $ticket->consultant_id = $validated['consultant_id'];
 
         if ($ticket->status === 'open') {
@@ -157,6 +178,31 @@ class TicketController extends Controller
 
         $ticket->save();
         $ticket->load(['consultant:id,name,email', 'customer:id,name,email']);
+
+        if ($ticket->consultant_id && $ticket->consultant_id !== $previousConsultantId) {
+            $this->createNotification(
+                (int) $ticket->consultant_id,
+                'ticket.assigned',
+                'New ticket assigned',
+                "You have been assigned to ticket {$ticket->ticket_number}.",
+                [
+                    'ticket_id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                ]
+            );
+        }
+
+        $this->createNotification(
+            (int) $ticket->customer_id,
+            'ticket.consultant.assigned',
+            'Consultant assigned',
+            "A consultant has been assigned to ticket {$ticket->ticket_number}.",
+            [
+                'ticket_id' => $ticket->id,
+                'ticket_number' => $ticket->ticket_number,
+                'consultant_id' => $ticket->consultant_id,
+            ]
+        );
 
         return response()->json([
             'data' => $ticket,
@@ -186,11 +232,21 @@ class TicketController extends Controller
         }
 
         $validated = $request->validate([
-            'body' => ['required', 'string'],
+            'body' => ['nullable', 'string', 'required_without:attachments'],
             'is_internal' => ['nullable', 'boolean'],
+            'attachments' => ['nullable', 'array', 'max:5', 'required_without:body'],
+            'attachments.*' => ['file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,doc,docx'],
         ]);
 
         $isInternal = (bool) ($validated['is_internal'] ?? false);
+        $bodyText = trim((string) ($validated['body'] ?? ''));
+        $incomingAttachments = $request->file('attachments', []);
+
+        if ($bodyText === '' && empty(is_array($incomingAttachments) ? $incomingAttachments : [$incomingAttachments])) {
+            return response()->json([
+                'message' => 'A comment body or at least one attachment is required.',
+            ], 422);
+        }
 
         if ($isInternal && !($user->isAdmin() || $user->isConsultant())) {
             return response()->json([
@@ -198,11 +254,17 @@ class TicketController extends Controller
             ], 403);
         }
 
+        $attachmentPaths = $this->storeCommentAttachments(
+            $ticket->id,
+            $incomingAttachments
+        );
+
         $comment = TicketComment::create([
             'ticket_id' => $ticket->id,
             'user_id' => $user->id,
-            'body' => $validated['body'],
+            'body' => $bodyText,
             'is_internal' => $isInternal,
+            'attachments' => $attachmentPaths ?: null,
         ]);
 
         if ($user->isCustomer() && !$isInternal && $ticket->status === 'awaiting_customer') {
@@ -211,6 +273,36 @@ class TicketController extends Controller
 
         if (($user->isConsultant() || $user->isAdmin()) && !$isInternal && $ticket->status === 'awaiting_consultant') {
             $ticket->update(['status' => 'awaiting_customer']);
+        }
+
+        if (!$isInternal) {
+            if ($user->isCustomer() && $ticket->consultant_id) {
+                $this->createNotification(
+                    (int) $ticket->consultant_id,
+                    'ticket.comment.added',
+                    'Customer comment added',
+                    "A new customer comment was added to ticket {$ticket->ticket_number}.",
+                    [
+                        'ticket_id' => $ticket->id,
+                        'ticket_number' => $ticket->ticket_number,
+                        'comment_id' => $comment->id,
+                    ]
+                );
+            }
+
+            if (($user->isConsultant() || $user->isAdmin()) && $ticket->customer_id) {
+                $this->createNotification(
+                    (int) $ticket->customer_id,
+                    'ticket.comment.added',
+                    'Ticket updated by consultant',
+                    "A new update was posted on ticket {$ticket->ticket_number}.",
+                    [
+                        'ticket_id' => $ticket->id,
+                        'ticket_number' => $ticket->ticket_number,
+                        'comment_id' => $comment->id,
+                    ]
+                );
+            }
         }
 
         $comment->load('user:id,name,email');
@@ -386,5 +478,61 @@ class TicketController extends Controller
         $finalUrl = $baseWithoutQuery.'?'.http_build_query($finalQuery);
 
         return $fragment !== null ? $finalUrl.'#'.$fragment : $finalUrl;
+    }
+
+    /**
+     * @param array<int, UploadedFile>|UploadedFile|null $files
+     * @return array<int, string>
+     */
+    private function storeCommentAttachments(int $ticketId, UploadedFile|array|null $files): array
+    {
+        if ($files === null) {
+            return [];
+        }
+
+        $normalized = is_array($files) ? $files : [$files];
+        if (empty($normalized)) {
+            return [];
+        }
+
+        $disk = $this->commentAttachmentDisk();
+        $storedPaths = [];
+
+        foreach ($normalized as $file) {
+            if (!$file instanceof UploadedFile) {
+                continue;
+            }
+
+            $extension = strtolower((string) $file->getClientOriginalExtension());
+            $safeExt = $extension !== '' ? $extension : 'bin';
+            $path = "ticket-comments/{$ticketId}/".Str::uuid().".{$safeExt}";
+            Storage::disk($disk)->put($path, file_get_contents($file->getRealPath()));
+            $storedPaths[] = $path;
+        }
+
+        return $storedPaths;
+    }
+
+    private function commentAttachmentDisk(): string
+    {
+        return app()->environment('production') ? 's3' : 'local';
+    }
+
+    private function createNotification(
+        int $userId,
+        string $type,
+        string $title,
+        ?string $body = null,
+        array $data = []
+    ): void {
+        DB::table('notifications')->insert([
+            'id' => (string) Str::uuid(),
+            'user_id' => $userId,
+            'type' => $type,
+            'title' => $title,
+            'body' => $body,
+            'data' => !empty($data) ? json_encode($data, JSON_UNESCAPED_SLASHES) : null,
+            'created_at' => now(),
+        ]);
     }
 }

@@ -247,6 +247,33 @@ Security note:
 
 ---
 
+## 12) Phase 4 closeout: notifications + comment attachments
+
+### What was done
+- Implemented notification hooks backed by `notifications` table for:
+  - consultant assignment events
+  - ticket status updates
+  - public ticket comments from either customer or consultant/admin
+- Added multipart attachment support for comments in:
+  - `POST /api/v1/tickets/{ticket}/comments`
+  - `POST /api/v1/consultant/tickets/{ticket}/comments`
+- Implemented attachment storage handling:
+  - production: `s3` disk
+  - non-production: `local` disk
+- Updated portal UI on:
+  - `/tickets/[id]` (customer ticket detail)
+  - `/consultant/tickets/[id]` (consultant workspace detail)
+  - both now support multi-file attachment upload in comment composer and attachment chips in comment list
+- Expanded feature tests:
+  - comment attachments (customer + consultant flows)
+  - notification creation for assignment, status update, and public comments
+
+### Validation notes
+- Frontend checks pass (`tsc`, `lint`, `build`).
+- Backend tests should be validated via Docker in local environment.
+
+---
+
 ## Verification Workflow Used
 
 ## Frontend
@@ -267,7 +294,7 @@ docker compose exec app php artisan route:list | grep -E "api/v1/(orders|tickets
 ```
 
 Latest observed status after fixes:
-- `18 passed (72 assertions)` in backend feature/unit tests.
+- `20 passed (85 assertions)` in backend feature/unit tests (before closeout additions).
 - Frontend typecheck, lint, and production build all passing.
 
 ---
@@ -288,8 +315,8 @@ Latest observed status after fixes:
 
 Current status:
 - Phase 3 complete and validated.
-- Phase 4 expanded with workload ranking, consultant metrics API, customer scheduling-link generation, and richer ticket detail meeting/timeline UI.
+- Phase 4 complete with customer/admin/consultant workflows, workload + metrics APIs, scheduling-link generation, notification hooks, and comment attachments.
 
 Next practical build items:
-1. Notification hooks (assignment, comment, status changes).
-2. Ticket attachment support for comments (S3) per roadmap.
+1. Phase 5 integrations kickoff.
+2. Notifications delivery channels (email/SMS/push) on top of DB notification events.

@@ -30,14 +30,17 @@ Track implementation and remaining work for Phase 4 (consultant workflow and tic
 - [x] Customer scheduling-link generation flow
   - [x] `POST /api/v1/tickets/{ticket}/schedule-link`
 - [x] Customer ticket detail meeting block + status timeline polish
+- [x] Notification hooks for assignment, status updates, and comments
+- [x] Ticket comment attachments (S3)
+  - [x] `POST /api/v1/tickets/{ticket}/comments` with multipart attachments
+  - [x] `POST /api/v1/consultant/tickets/{ticket}/comments` with multipart attachments
 
 ## Validation Snapshot
 - Frontend: typecheck/lint/build passing
-- Backend: run locally in Docker to validate new endpoint tests
+- Backend: run locally in Docker to validate final notification + attachment tests
 
 ## Remaining (Phase 4)
-- [ ] Notification hooks for assignment, status updates, and comments
-- [ ] Ticket comment attachments (S3)
+- [x] None. Phase 4 implementation scope is complete.
 
 ## References
 - Execution journal: `docs/execution-journal-phase2b-phase4.md`

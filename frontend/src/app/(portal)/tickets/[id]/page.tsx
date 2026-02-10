@@ -73,6 +73,7 @@ export default function TicketDetailPage() {
   const ticketId = Number(params.id);
 
   const [commentBody, setCommentBody] = useState('');
+  const [commentFiles, setCommentFiles] = useState<File[]>([]);
   const [isInternal, setIsInternal] = useState(false);
   const [statusValue, setStatusValue] = useState<TicketStatus | ''>('');
   const [consultantIdValue, setConsultantIdValue] = useState<string>('');
@@ -113,14 +114,28 @@ export default function TicketDetailPage() {
 
   const addCommentMutation = useMutation({
     mutationFn: async () => {
-      const res = await api.post<ApiResponse<TicketComment>>(`/tickets/${ticketId}/comments`, {
+      const hasFiles = commentFiles.length > 0;
+      const payload = hasFiles ? new FormData() : {
         body: commentBody,
         is_internal: canUseInternalComments ? isInternal : false,
-      });
+      };
+
+      if (payload instanceof FormData) {
+        if (commentBody.trim()) {
+          payload.append('body', commentBody);
+        }
+        payload.append('is_internal', String(canUseInternalComments ? isInternal : false));
+        commentFiles.forEach((file) => payload.append('attachments[]', file));
+      }
+
+      const res = await api.post<ApiResponse<TicketComment>>(`/tickets/${ticketId}/comments`, payload, payload instanceof FormData
+        ? { headers: { 'Content-Type': 'multipart/form-data' } }
+        : undefined);
       return res.data.data;
     },
     onSuccess: async () => {
       setCommentBody('');
+      setCommentFiles([]);
       setIsInternal(false);
       setActionError(null);
       await queryClient.invalidateQueries({ queryKey: ['ticket', ticketId] });
@@ -190,7 +205,7 @@ export default function TicketDetailPage() {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (!commentBody.trim()) return;
+    if (!commentBody.trim() && commentFiles.length === 0) return;
     addCommentMutation.mutate();
   };
 
@@ -459,6 +474,18 @@ export default function TicketDetailPage() {
                     </div>
                   </div>
                   <p className="mt-2 text-sm text-wisebox-text-secondary whitespace-pre-wrap">{comment.body}</p>
+                  {(comment.attachments ?? []).length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {(comment.attachments ?? []).map((attachment) => (
+                        <span
+                          key={attachment}
+                          className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                        >
+                          {attachment.split('/').pop()}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -471,6 +498,27 @@ export default function TicketDetailPage() {
               placeholder="Write a message..."
               rows={4}
             />
+            <div className="space-y-2">
+              <input
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                onChange={(e) => setCommentFiles(Array.from(e.target.files ?? []))}
+                className="block w-full text-sm text-wisebox-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-wisebox-primary-50 file:px-3 file:py-1.5 file:text-wisebox-primary-700"
+              />
+              {commentFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {commentFiles.map((file) => (
+                    <span
+                      key={`${file.name}-${file.size}`}
+                      className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                    >
+                      {file.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
             {canUseInternalComments && (
               <label className="flex items-center gap-2 text-sm text-wisebox-text-secondary">
                 <input
@@ -484,7 +532,7 @@ export default function TicketDetailPage() {
             <Button
               type="submit"
               className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600"
-              disabled={addCommentMutation.isPending || !commentBody.trim()}
+              disabled={addCommentMutation.isPending || (!commentBody.trim() && commentFiles.length === 0)}
             >
               {addCommentMutation.isPending ? (
                 <>

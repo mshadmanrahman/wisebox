@@ -5,9 +5,12 @@ namespace Tests\Feature;
 use App\Models\Property;
 use App\Models\Service;
 use App\Models\Ticket;
+use App\Models\TicketComment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -107,6 +110,10 @@ class ConsultantTicketApiTest extends TestCase
             'meeting_url' => 'https://meet.google.com/abc-defg-hij',
             'meeting_duration_minutes' => 30,
         ]);
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $customer->id,
+            'type' => 'ticket.status.updated',
+        ]);
 
         $this->postJson("/api/v1/consultant/tickets/{$ticket->id}/comments", [
             'body' => 'Customer-facing update',
@@ -118,6 +125,10 @@ class ConsultantTicketApiTest extends TestCase
             'ticket_id' => $ticket->id,
             'user_id' => $consultant->id,
             'is_internal' => false,
+        ]);
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $customer->id,
+            'type' => 'ticket.comment.added',
         ]);
     }
 
@@ -206,6 +217,46 @@ class ConsultantTicketApiTest extends TestCase
             ->assertJsonPath('data.kpis.window_days', 30)
             ->assertJsonPath('data.kpis.completed_in_window_count', 1)
             ->assertJsonPath('data.status_breakdown.completed', 1);
+    }
+
+    public function test_consultant_comment_supports_file_attachments(): void
+    {
+        Storage::fake('local');
+
+        $consultant = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+        $customer = User::factory()->create();
+        $service = $this->createService();
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-10006',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'consultant_id' => $consultant->id,
+            'service_id' => $service->id,
+            'title' => 'Consultant attachment ticket',
+            'priority' => 'medium',
+            'status' => 'in_progress',
+        ]);
+
+        Sanctum::actingAs($consultant);
+
+        $this->post("/api/v1/consultant/tickets/{$ticket->id}/comments", [
+            'body' => 'Attachment from consultant',
+            'is_internal' => false,
+            'attachments' => [
+                UploadedFile::fake()->create('consultant-note.pdf', 100, 'application/pdf'),
+            ],
+        ], ['Accept' => 'application/json'])->assertCreated();
+
+        $comment = TicketComment::query()->latest('id')->first();
+        $this->assertNotNull($comment);
+        $this->assertIsArray($comment->attachments);
+        $this->assertCount(1, $comment->attachments);
+        Storage::disk('local')->assertExists($comment->attachments[0]);
     }
 
     private function createPropertyForUser(User $user): Property
