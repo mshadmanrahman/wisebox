@@ -78,6 +78,19 @@ npm run dev
 
 GitHub Actions runs the same command on push and PR via `.github/workflows/validate.yml`.
 
+### Deployment Helpers
+
+```bash
+# Backend deploy commands on production host
+./scripts/deploy-backend.sh
+
+# Verify Vercel production env export file
+./scripts/verify-vercel-env.sh --env-file=frontend/.env.production.vercel
+
+# Production smoke checks after deploy
+APP_BASE_URL=https://mywisebox.com API_BASE_URL=https://api.mywisebox.com/api/v1 ./scripts/smoke-production.sh
+```
+
 ## Environment Variables
 
 Copy the example files and configure:

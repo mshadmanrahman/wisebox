@@ -289,6 +289,10 @@
   - `docs/phase8-kickoff-deployment.md`
   - `docs/deployment/env-matrix.md`
   - `docs/deployment/production-runbook.md`
+- Deployment execution scripts added:
+  - `scripts/deploy-backend.sh`
+  - `scripts/verify-vercel-env.sh`
+  - `scripts/smoke-production.sh`
 - Phase 8 initial scope locked:
   - backend production rollout path (EC2/Forge)
   - frontend production rollout path (Vercel)

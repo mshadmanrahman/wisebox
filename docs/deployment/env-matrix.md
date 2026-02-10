@@ -51,6 +51,13 @@ This document defines required production environment variables and where each v
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Conditional | Google auth client | set if Google login is enabled |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Conditional | Stripe publishable key for frontend checkout UI | set if needed by frontend flow |
 
+Verification helper:
+
+```bash
+# after pulling production env vars from Vercel
+./scripts/verify-vercel-env.sh --env-file=frontend/.env.production.vercel
+```
+
 ## GitHub Actions secrets (optional for deployment automation)
 
 | Secret | Required if automated deploy | Purpose |

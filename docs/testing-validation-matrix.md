@@ -163,3 +163,11 @@ Minimum required smoke checks:
 2. Login + protected route redirect behavior works.
 3. One end-to-end service -> order -> ticket path succeeds.
 4. Stripe and Calendly webhook deliveries are confirmed.
+
+Automated baseline smoke script:
+
+```bash
+APP_BASE_URL=https://mywisebox.com \
+API_BASE_URL=https://api.mywisebox.com/api/v1 \
+./scripts/smoke-production.sh
+```

@@ -60,6 +60,9 @@ Open items for Phase 8:
 
 - `docs/deployment/env-matrix.md`
 - `docs/deployment/production-runbook.md`
+- `scripts/deploy-backend.sh`
+- `scripts/verify-vercel-env.sh`
+- `scripts/smoke-production.sh`
 
 ## Definition of done (Phase 8)
 

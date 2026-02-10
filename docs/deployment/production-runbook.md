@@ -23,6 +23,11 @@ git push origin main
 
 3. Confirm env matrix values are complete:
 - See `docs/deployment/env-matrix.md`.
+- Verify frontend production env export:
+
+```bash
+./scripts/verify-vercel-env.sh --env-file=frontend/.env.production.vercel
+```
 
 ## 1) Backend deployment (EC2/Forge)
 
@@ -43,6 +48,11 @@ php artisan view:cache
 
 4. Restart queue workers and php-fpm/nginx if needed.
 5. Verify scheduler is active (`* * * * * php artisan schedule:run`).
+6. Optional helper script for repeatable deploy step execution:
+
+```bash
+./scripts/deploy-backend.sh
+```
 
 ## 2) Frontend deployment (Vercel)
 
@@ -83,6 +93,14 @@ Checks:
 3. Validate event delivery in Calendly logs.
 
 ## 5) Production smoke test checklist
+
+Run scripted smoke checks:
+
+```bash
+APP_BASE_URL=https://mywisebox.com \
+API_BASE_URL=https://api.mywisebox.com/api/v1 \
+./scripts/smoke-production.sh
+```
 
 ### API and auth
 
