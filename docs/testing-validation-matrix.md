@@ -70,6 +70,10 @@ npm run build
 
 - Tooling: Playwright smoke harness under `frontend/tests/e2e`.
 - Current smoke coverage:
+  - `/`
+  - `/about`
+  - `/faq`
+  - `/contact`
   - `/login`
   - `/register`
   - `/forgot-password`

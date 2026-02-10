@@ -14,7 +14,7 @@
 | Phase 3: Payments | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 4: Consultant Workflow | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 5: Integrations | COMPLETE | 2026-02-10 | 2026-02-10 |
-| Phase 6: Dashboard & Assessment | IN PROGRESS | 2026-02-10 | - |
+| Phase 6: Dashboard & Assessment | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 7: Marketing Site | IN PROGRESS | 2026-02-10 | - |
 | Phase 8: Deployment | NOT STARTED | - | - |
 
@@ -256,6 +256,27 @@
     - login-to-dashboard authenticated flow with API mocking
     - notification center filter + pagination interactions
     - property detail assessment history rendering
+- Marketing implementation (current slice):
+  - Added reusable marketing component layer:
+    - `frontend/src/components/marketing/content.ts`
+    - `frontend/src/components/marketing/marketing-header.tsx`
+    - `frontend/src/components/marketing/marketing-footer.tsx`
+    - `frontend/src/components/marketing/faq-accordion.tsx`
+    - `frontend/src/components/marketing/pricing-table.tsx`
+  - Replaced default Next.js starter home page with complete marketing landing page on `/`.
+  - Added new public marketing pages:
+    - `/about`
+    - `/faq`
+    - `/contact`
+  - Added SEO surface:
+    - root metadata + Open Graph baseline in `frontend/src/app/layout.tsx`
+    - JSON-LD on landing page
+    - `frontend/src/app/robots.ts`
+    - `frontend/src/app/sitemap.ts`
+  - Expanded smoke E2E route coverage for public pages (`/`, `/about`, `/faq`, `/contact`).
+- Known route constraint:
+  - `/services` currently points to authenticated portal ordering flow (`frontend/src/app/(portal)/services/page.tsx`).
+  - Public marketing `/services` content is pending route split/refactor to avoid path collision.
 
 ---
 

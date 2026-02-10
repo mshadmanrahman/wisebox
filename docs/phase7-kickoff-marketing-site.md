@@ -1,7 +1,7 @@
 # Phase 7 Kickoff: Marketing Site
 
 Date: 2026-02-10  
-Status: Started
+Status: In progress
 
 ## Objective
 
@@ -62,6 +62,23 @@ Deliver a production-ready marketing surface that improves acquisition and conve
   - login-to-dashboard workflow
   - notification center interactions
   - assessment history render path
+
+## Progress snapshot (current)
+
+Completed:
+- Built modular marketing component primitives under `frontend/src/components/marketing`.
+- Implemented full public landing page at `/` with hero, pain points, workflow, features, pricing, trust, and FAQ.
+- Implemented public pages: `/about`, `/faq`, `/contact`.
+- Added SEO baseline:
+  - route-level metadata (root + page-level)
+  - JSON-LD on landing page
+  - `sitemap.xml` and `robots.txt` via App Router metadata routes
+- Expanded smoke E2E coverage for marketing route reachability.
+
+Pending:
+- `/services` marketing/public variant: currently blocked by route collision because `/services` is still the authenticated portal ordering page.
+- Final copy polish and visual QA pass for mobile/tablet breakpoints.
+- CI run confirmation for the updated marketing routes.
 
 ## Definition of done (Phase 7)
 

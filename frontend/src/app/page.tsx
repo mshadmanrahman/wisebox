@@ -1,101 +1,228 @@
-import Image from "next/image";
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Landmark,
+  ShieldCheck,
+  BellRing,
+  FolderKanban,
+  Handshake,
+  Wallet,
+  Scale,
+  Users,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { FaqAccordion } from '@/components/marketing/faq-accordion';
+import { MarketingFooter } from '@/components/marketing/marketing-footer';
+import { MarketingHeader } from '@/components/marketing/marketing-header';
+import {
+  marketingFaqs,
+  marketingFeatures,
+  marketingHowItWorks,
+  marketingPainPoints,
+  pricingPlans,
+} from '@/components/marketing/content';
+import { PricingTable } from '@/components/marketing/pricing-table';
+
+export const metadata: Metadata = {
+  title: 'Property Management for Diaspora Families',
+  description:
+    'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
+  openGraph: {
+    title: 'Wisebox | Property Management for Diaspora Families',
+    description:
+      'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
+    type: 'website',
+    url: 'https://mywisebox.com',
+  },
+};
+
+const featureIcons = [
+  FolderKanban,
+  Landmark,
+  Handshake,
+  Scale,
+  BellRing,
+  Wallet,
+  ShieldCheck,
+  Users,
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Wisebox',
+  url: 'https://mywisebox.com',
+  description:
+    'Secure property management for diaspora families, including document tracking and consultant workflows.',
+  sameAs: ['https://mywisebox.com/about', 'https://mywisebox.com/contact'],
+};
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <>
+      <MarketingHeader />
+      <main className="bg-gradient-to-b from-teal-50 via-white to-white">
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-x-0 top-0 -z-10 h-60 bg-[radial-gradient(circle_at_top_right,_#99f6e4,_transparent_55%)]" />
+          <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
+            <div className="space-y-6">
+              <Badge className="bg-wisebox-primary-100 text-wisebox-primary-700 hover:bg-wisebox-primary-100">
+                Built for property owners and diaspora families
+              </Badge>
+              <h1 className="text-4xl font-bold leading-tight text-wisebox-text-primary sm:text-5xl">
+                Manage Your Ancestral Properties From Anywhere in the World
+              </h1>
+              <p className="text-lg text-wisebox-text-secondary">
+                Wisebox unifies documents, tickets, consultant support, and assessment insights into one
+                secure operating system for your properties.
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
+                  <Link href="/assessment">
+                    Get Free Assessment
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="border-teal-200 text-wisebox-primary-700 hover:bg-teal-50">
+                  <Link href="/register">Start Managing Properties</Link>
+                </Button>
+              </div>
+            </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+            <Card className="border-teal-100 shadow-xl shadow-teal-100/40">
+              <CardHeader>
+                <CardTitle className="text-wisebox-text-primary">Why families choose Wisebox</CardTitle>
+                <CardDescription>One workspace to reduce legal and operational chaos.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {['Track document readiness', 'Coordinate consultant support', 'Get status updates in real time'].map((item) => (
+                  <div key={item} className="flex items-center gap-3 rounded-md border border-teal-100 px-3 py-2">
+                    <CheckCircle2 className="h-4 w-4 text-wisebox-primary-600" />
+                    <p className="text-sm text-wisebox-text-secondary">{item}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-6 max-w-3xl">
+            <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Common pain points we solve</h2>
+            <p className="mt-2 text-wisebox-text-secondary">
+              Property operations often become fragmented when owners live across borders.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {marketingPainPoints.map((item) => (
+              <Card key={item.title} className="border-gray-200">
+                <CardHeader>
+                  <CardTitle className="text-lg text-wisebox-text-primary">{item.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-6 text-wisebox-text-secondary">{item.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-wisebox-surface">
+          <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="mb-6 max-w-3xl">
+              <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">How Wisebox works</h2>
+              <p className="mt-2 text-wisebox-text-secondary">Three steps to establish reliable property operations.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {marketingHowItWorks.map((item) => (
+                <Card key={item.step} className="border-teal-100 bg-white">
+                  <CardHeader>
+                    <p className="text-sm font-semibold text-wisebox-primary-600">Step {item.step}</p>
+                    <CardTitle className="text-lg text-wisebox-text-primary">{item.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm leading-6 text-wisebox-text-secondary">{item.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-6 max-w-3xl">
+            <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Core platform capabilities</h2>
+            <p className="mt-2 text-wisebox-text-secondary">
+              Designed for real-world property workflows, not just static document storage.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {marketingFeatures.map((item, index) => {
+              const Icon = featureIcons[index] ?? FolderKanban;
+              return (
+                <Card key={item.title} className="border-gray-200">
+                  <CardHeader>
+                    <div className="mb-2 flex items-center justify-between">
+                      <Icon className="h-5 w-5 text-wisebox-primary-700" />
+                      {item.comingSoon ? (
+                        <Badge variant="outline" className="border-amber-200 text-amber-700">
+                          Coming soon
+                        </Badge>
+                      ) : null}
+                    </div>
+                    <CardTitle className="text-lg text-wisebox-text-primary">{item.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm leading-6 text-wisebox-text-secondary">{item.description}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="bg-wisebox-surface">
+          <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="mb-6 max-w-3xl">
+              <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Pricing built for every stage</h2>
+              <p className="mt-2 text-wisebox-text-secondary">
+                Start free, then upgrade when you need deeper workflows and service support.
+              </p>
+            </div>
+            <PricingTable plans={pricingPlans} />
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <Card className="border-teal-200 bg-gradient-to-r from-teal-50 to-cyan-50">
+            <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-wisebox-text-primary">Your documents are encrypted and secure</h2>
+                <p className="mt-1 text-sm text-wisebox-text-secondary">
+                  Wisebox is designed with secure APIs, permissioned workflows, and audit-friendly status tracking.
+                </p>
+              </div>
+              <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
+                <Link href="/assessment">Run Free Assessment</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Frequently asked questions</h2>
+            <p className="mt-2 text-wisebox-text-secondary">Answers to the most common onboarding questions.</p>
+          </div>
+          <FaqAccordion faqs={marketingFaqs} />
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      <MarketingFooter />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    </>
   );
 }
