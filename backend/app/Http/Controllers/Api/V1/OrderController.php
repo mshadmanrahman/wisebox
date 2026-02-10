@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Contracts\GovernmentGatewayAdapter;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Service;
@@ -19,7 +20,8 @@ class OrderController extends Controller
     public function __construct(
         private StripeService $stripeService,
         private OrderFulfillmentService $fulfillmentService,
-        private TransactionalEmailService $transactionalEmailService
+        private TransactionalEmailService $transactionalEmailService,
+        private GovernmentGatewayAdapter $governmentGatewayAdapter
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -61,6 +63,19 @@ class OrderController extends Controller
             return response()->json([
                 'message' => 'One or more selected services are unavailable.',
             ], 422);
+        }
+
+        if (config('services.government.enabled', false)) {
+            foreach ($services as $service) {
+                if (!$this->governmentGatewayAdapter->supportsService($service)) {
+                    continue;
+                }
+
+                $this->governmentGatewayAdapter->buildIntakePayload($service, [
+                    'user_id' => (int) $user->id,
+                    'property_id' => (int) $validated['property_id'],
+                ]);
+            }
         }
 
         $order = DB::transaction(function () use ($validated, $services, $user) {

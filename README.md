@@ -117,6 +117,7 @@ For the complete end-to-end dossier covering every commit and artifact from Phas
 - [Phase 7 Marketing Kickoff](./docs/phase7-kickoff-marketing-site.md)
 - [Phase 8 Deployment Kickoff](./docs/phase8-kickoff-deployment.md)
 - [Phase 9 Local-First Kickoff](./docs/phase9-kickoff-local-first.md)
+- [Phase 9 Slice 1: Government Adapter Readiness](./docs/phase9-slice1-government-adapter.md)
 - [Production Deployment Runbook](./docs/deployment/production-runbook.md)
 - [Forge Production Checklist](./docs/deployment/forge-production-checklist.md)
 - [Forge UI Paste Blocks](./docs/deployment/forge-ui-paste-blocks.md)

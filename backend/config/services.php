@@ -60,4 +60,9 @@ return [
         'verify_sid' => env('TWILIO_VERIFY_SID'),
     ],
 
+    'government' => [
+        'enabled' => env('GOVERNMENT_INTEGRATION_ENABLED', false),
+        'adapter' => env('GOVERNMENT_INTEGRATION_ADAPTER', 'null'),
+    ],
+
 ];

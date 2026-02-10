@@ -323,6 +323,20 @@
   - Continue feature delivery and testing in local/CI while production cutover remains deferred
 - Validation discipline retained:
   - `./scripts/validate.sh --with-e2e` is required before push
+- Slice 1 completed: Government adapter readiness layer
+  - Added contract + null/mock implementations:
+    - `backend/app/Contracts/GovernmentGatewayAdapter.php`
+    - `backend/app/Services/Government/NullGovernmentGatewayAdapter.php`
+    - `backend/app/Services/Government/MockGovernmentGatewayAdapter.php`
+  - Added container wiring + config flags:
+    - `backend/app/Providers/AppServiceProvider.php`
+    - `backend/config/services.php`
+  - Added gated no-op runtime hook in order flow:
+    - `backend/app/Http/Controllers/Api/V1/OrderController.php`
+  - Added unit tests:
+    - `backend/tests/Unit/GovernmentGatewayAdapterTest.php`
+  - Added slice note:
+    - `docs/phase9-slice1-government-adapter.md`
 
 ---
 

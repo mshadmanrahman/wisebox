@@ -39,6 +39,8 @@ This document defines required production environment variables and where each v
 | `CALENDLY_WEBHOOK_SECRET` | Yes | Calendly webhook signing secret | from Calendly webhook subscription |
 | `CALENDLY_BOOKING_URL` | Conditional | fallback booking URL | required if using fallback flow |
 | `CALENDLY_EVENT_TYPE_URI` | Conditional | event type for scheduling-link flow | required for API-generated links |
+| `GOVERNMENT_INTEGRATION_ENABLED` | Optional | enables government adapter invocation in order flow | default `false` |
+| `GOVERNMENT_INTEGRATION_ADAPTER` | Optional | government adapter provider key | `null` or `mock` |
 | `MAIL_MAILER` + SMTP vars | Yes | outbound email for OTP/notifications | production SMTP provider |
 | `TWILIO_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_FROM_NUMBER` / `TWILIO_VERIFY_SID` | Conditional | SMS OTP | required if SMS OTP enabled |
 
