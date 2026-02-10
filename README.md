@@ -117,6 +117,7 @@ For the complete end-to-end dossier covering every commit and artifact from Phas
 - [Phase 7 Marketing Kickoff](./docs/phase7-kickoff-marketing-site.md)
 - [Phase 8 Deployment Kickoff](./docs/phase8-kickoff-deployment.md)
 - [Production Deployment Runbook](./docs/deployment/production-runbook.md)
+- [Forge Production Checklist](./docs/deployment/forge-production-checklist.md)
 - [Production Environment Matrix](./docs/deployment/env-matrix.md)
 - [Testing & Validation Matrix](./docs/testing-validation-matrix.md)
 - [Stripe Local Testing](./docs/stripe-local-testing.md)

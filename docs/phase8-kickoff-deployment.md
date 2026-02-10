@@ -3,6 +3,9 @@
 Date: 2026-02-10  
 Status: In progress
 
+Preferred backend path selected:
+- Laravel Forge (`docs/deployment/forge-production-checklist.md`)
+
 ## Objective
 
 Deploy Wisebox to production with a stable release process for backend, frontend, and third-party integrations while preserving all validation gates.
@@ -60,6 +63,7 @@ Open items for Phase 8:
 
 - `docs/deployment/env-matrix.md`
 - `docs/deployment/production-runbook.md`
+- `docs/deployment/forge-production-checklist.md`
 - `scripts/deploy-backend.sh`
 - `scripts/verify-vercel-env.sh`
 - `scripts/smoke-production.sh`

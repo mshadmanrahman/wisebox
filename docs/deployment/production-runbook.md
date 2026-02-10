@@ -4,6 +4,9 @@ Date: 2026-02-10
 
 This runbook is the operational path for deploying Wisebox production safely.
 
+Preferred backend target:
+- Laravel Forge path: `docs/deployment/forge-production-checklist.md`
+
 ## 0) Preflight (required before every release)
 
 1. Ensure `main` is green locally:
