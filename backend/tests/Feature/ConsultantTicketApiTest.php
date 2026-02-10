@@ -161,6 +161,7 @@ class ConsultantTicketApiTest extends TestCase
                 'user_id' => $consultantB->id,
                 'is_available' => true,
                 'max_concurrent_tickets' => 8,
+                'calendly_url' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
