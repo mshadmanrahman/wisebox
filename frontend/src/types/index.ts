@@ -36,6 +36,12 @@ export interface UserProfile {
   country: string | null;
   preferred_language: 'en' | 'bn';
   timezone: string;
+  notification_preferences?: {
+    order_updates?: boolean;
+    ticket_updates?: boolean;
+    consultant_updates?: boolean;
+    marketing_updates?: boolean;
+  } | null;
 }
 
 export interface ConsultantProfile {
@@ -386,6 +392,8 @@ export interface PropertyAssessment {
 export interface RecommendedService {
   id: number;
   name: string;
+  slug?: string;
+  reason?: string;
   price: number;
 }
 

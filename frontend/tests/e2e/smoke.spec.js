@@ -20,4 +20,11 @@ test.describe('Wisebox smoke', () => {
     await expect(page).toHaveURL(/\/forgot-password/);
     await expect(page.locator('input[type="email"]')).toHaveCount(1);
   });
+
+  test('free assessment page is reachable', async ({ page }) => {
+    const response = await page.goto('/assessment');
+    expect(response?.ok()).toBeTruthy();
+    await expect(page).toHaveURL(/\/assessment/);
+    await expect(page.getByText('Free Property Assessment')).toHaveCount(1);
+  });
 });

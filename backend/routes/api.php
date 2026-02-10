@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\AssessmentController;
 use App\Http\Controllers\Api\V1\CalendlyWebhookController;
 use App\Http\Controllers\Api\V1\ConsultantTicketController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\StripeWebhookController;
 use App\Http\Controllers\Api\V1\TicketController;
@@ -43,6 +45,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/resend-otp', [AuthController::class, 'resendOtp']);
             Route::get('/me', [AuthController::class, 'me']);
             Route::put('/me', [AuthController::class, 'updateMe']);
+            Route::put('/change-password', [AuthController::class, 'changePassword']);
         });
 
         // Phase 2: Properties
@@ -79,11 +82,20 @@ Route::prefix('v1')->group(function () {
             Route::put('tickets/{ticket}', [ConsultantTicketController::class, 'update']);
             Route::post('tickets/{ticket}/comments', [ConsultantTicketController::class, 'addComment']);
         });
+
+        // Phase 6: Notifications and assessments
+        Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::patch('notifications/read-all', [NotificationController::class, 'markAllRead']);
+        Route::patch('notifications/{notificationId}/read', [NotificationController::class, 'markRead']);
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::get('properties/{property}/assessment', [AssessmentController::class, 'propertyAssessment']);
     });
 
     // Public routes (no auth)
     Route::post('/webhooks/stripe', StripeWebhookController::class);
     Route::post('/webhooks/calendly', CalendlyWebhookController::class);
+    Route::get('/assessments/questions', [AssessmentController::class, 'questions']);
+    Route::post('/assessments/free', [AssessmentController::class, 'freeAssessment']);
 
     // Phase 2: Locations
     Route::prefix('locations')->group(function () {

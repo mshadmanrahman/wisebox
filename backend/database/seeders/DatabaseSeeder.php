@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             OwnershipStatusSeeder::class,
             OwnershipTypeSeeder::class,
             DocumentTypeSeeder::class,
+            AssessmentQuestionSeeder::class,
 
             // Location data
             LocationSeeder::class,

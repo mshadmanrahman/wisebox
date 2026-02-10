@@ -20,12 +20,14 @@ class UserProfile extends Model
         'country',
         'preferred_language',
         'timezone',
+        'notification_preferences',
     ];
 
     protected function casts(): array
     {
         return [
             'date_of_birth' => 'date',
+            'notification_preferences' => 'array',
         ];
     }
 

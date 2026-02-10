@@ -90,7 +90,7 @@ cp frontend/.env.local.example frontend/.env.local
 ## Build Log
 
 See [BUILD-LOG.md](./BUILD-LOG.md) for step-by-step documentation of every build action. This enables freeze/resume development at any point.
-For a full chronological execution breakdown (Phase 2B through current Phase 4), see [Execution Journal](./docs/execution-journal-phase2b-phase4.md).
+For a full chronological execution breakdown (Phase 2B through Phase 4), see [Execution Journal](./docs/execution-journal-phase2b-phase4.md).
 For the complete end-to-end dossier covering every commit and artifact from Phase 0 through Phase 4, see [Exhaustive Build Dossier](./docs/phase0-to-phase4-exhaustive-log.md).
 
 ## Documentation
@@ -100,6 +100,7 @@ For the complete end-to-end dossier covering every commit and artifact from Phas
 - [Execution Journal (Phase 2B-4)](./docs/execution-journal-phase2b-phase4.md)
 - [Exhaustive Build Dossier (Phase 0-4)](./docs/phase0-to-phase4-exhaustive-log.md)
 - [Phase 5 Kickoff (OTP + Notifications)](./docs/phase5-kickoff-otp-notifications.md)
+- [Phase 6 Dashboard & Assessment](./docs/phase6-dashboard-assessment.md)
 - [Testing & Validation Matrix](./docs/testing-validation-matrix.md)
 - [Stripe Local Testing](./docs/stripe-local-testing.md)
 - [GitHub Remote Ops Runbook](./docs/github/remote-ops-runbook.md)

@@ -73,6 +73,7 @@ npm run build
   - `/login`
   - `/register`
   - `/forgot-password`
+  - `/assessment`
 - Dev server origin policy:
   - `frontend/next.config.mjs` includes `allowedDevOrigins` host entries for both `127.0.0.1` and `localhost`.
 - Command:
@@ -96,7 +97,7 @@ Use route checks after backend feature additions:
 
 ```bash
 cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
-docker compose exec app php artisan route:list | grep -E 'api/v1/(orders|tickets|consultant|consultants|webhooks/stripe|webhooks/calendly|auth/verify-otp|auth/resend-otp)'
+docker compose exec app php artisan route:list | grep -E 'api/v1/(orders|tickets|consultant|consultants|notifications|assessments|webhooks/stripe|webhooks/calendly|auth/verify-otp|auth/resend-otp|auth/change-password)'
 ```
 
 ## Release Gate (Required Before Push)

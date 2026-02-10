@@ -13,8 +13,8 @@
 | Phase 2: Core Systems | COMPLETE | 2026-02-09 | 2026-02-10 |
 | Phase 3: Payments | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 4: Consultant Workflow | COMPLETE | 2026-02-10 | 2026-02-10 |
-| Phase 5: Integrations | IN PROGRESS | 2026-02-10 | - |
-| Phase 6: Dashboard & Assessment | NOT STARTED | - | - |
+| Phase 5: Integrations | COMPLETE | 2026-02-10 | 2026-02-10 |
+| Phase 6: Dashboard & Assessment | IN PROGRESS | 2026-02-10 | - |
 | Phase 7: Marketing Site | NOT STARTED | - | - |
 | Phase 8: Deployment | NOT STARTED | - | - |
 
@@ -196,6 +196,40 @@
 - CI automation:
   - Added GitHub Actions workflow `.github/workflows/validate.yml` for push/PR validation.
   - Workflow runs full matrix including Playwright via `./scripts/validate.sh --with-e2e`.
+
+## Phase 6: Dashboard & Assessment (Started 2026-02-10)
+
+- Backend assessment system:
+  - Added `assessment_questions` table + `AssessmentQuestionSeeder` (15 weighted yes/no questions).
+  - Added public endpoints:
+    - `GET /api/v1/assessments/questions`
+    - `POST /api/v1/assessments/free`
+  - Added authenticated endpoint:
+    - `GET /api/v1/properties/{property}/assessment`
+  - Added `PropertyAssessmentService` for weighted scoring, risk factors, and service recommendations.
+- Notification center backend:
+  - Added `NotificationController` and `InAppNotification` model.
+  - Added endpoints:
+    - `GET /api/v1/notifications`
+    - `GET /api/v1/notifications/unread-count`
+    - `PATCH /api/v1/notifications/{notificationId}/read`
+    - `PATCH /api/v1/notifications/read-all`
+- Settings backend enhancements:
+  - Added `PUT /api/v1/auth/change-password`.
+  - Extended `PUT /api/v1/auth/me` to persist `notification_preferences`.
+  - Added `notification_preferences` JSON column to `user_profiles`.
+- Frontend portal updates:
+  - Replaced placeholder dashboard with hero, quick actions, property preview, activity feed, and notification preview.
+  - Added public lead-magnet page: `/assessment`.
+  - Added full notification center page: `/notifications`.
+  - Added account settings page: `/settings`.
+  - Added header bell with unread badge + dropdown interactions.
+  - Protected `/notifications` in middleware.
+- Test additions for Phase 6:
+  - `AssessmentApiTest`
+  - `NotificationApiTest`
+  - `AuthSettingsTest`
+  - Playwright smoke test now includes `/assessment`.
 
 ---
 

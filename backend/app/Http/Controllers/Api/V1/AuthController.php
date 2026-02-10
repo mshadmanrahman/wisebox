@@ -267,6 +267,11 @@ class AuthController extends Controller
             'country' => ['sometimes', 'nullable', 'string', 'size:3'],
             'preferred_language' => ['sometimes', 'in:en,bn'],
             'timezone' => ['sometimes', 'string', 'max:50'],
+            'notification_preferences' => ['sometimes', 'array'],
+            'notification_preferences.order_updates' => ['sometimes', 'boolean'],
+            'notification_preferences.ticket_updates' => ['sometimes', 'boolean'],
+            'notification_preferences.consultant_updates' => ['sometimes', 'boolean'],
+            'notification_preferences.marketing_updates' => ['sometimes', 'boolean'],
         ]);
 
         if (!empty($profileFields)) {
@@ -278,6 +283,33 @@ class AuthController extends Controller
 
         return response()->json([
             'data' => $user->fresh()->load('profile'),
+        ]);
+    }
+
+    /**
+     * Change password for authenticated user.
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults(), 'different:current_password'],
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($validated['current_password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['The current password is incorrect.'],
+            ]);
+        }
+
+        $user->update([
+            'password' => $validated['password'],
+        ]);
+
+        return response()->json([
+            'message' => 'Password updated successfully.',
         ]);
     }
 }
