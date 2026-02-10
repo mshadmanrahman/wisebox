@@ -291,6 +291,7 @@
   - `docs/deployment/production-runbook.md`
   - `docs/deployment/forge-production-checklist.md`
   - `docs/deployment/forge-ui-paste-blocks.md`
+  - `docs/deployment/phase8-execution-tracker.md`
 - Deployment execution scripts added:
   - `scripts/deploy-backend.sh`
   - `scripts/verify-vercel-env.sh`
@@ -305,6 +306,9 @@
   - post-deploy smoke + rollback procedure
 - Validation discipline retained:
   - preflight requires `./scripts/validate.sh --with-e2e` before release execution
+- Phase 8 execution tracking:
+  - Added live rollout tracker with status/evidence rows in `docs/deployment/phase8-execution-tracker.md`
+  - Next pending execution step: provision Forge server + `api.mywisebox.com` site
 
 ---
 

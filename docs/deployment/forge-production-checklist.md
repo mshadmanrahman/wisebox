@@ -7,6 +7,9 @@ This is the target-specific deployment checklist for Wisebox using Laravel Forge
 For copy/paste-ready Forge values:
 - `docs/deployment/forge-ui-paste-blocks.md`
 
+For live rollout progress tracking:
+- `docs/deployment/phase8-execution-tracker.md`
+
 ## 1) Infrastructure prerequisites
 
 1. AWS account with:

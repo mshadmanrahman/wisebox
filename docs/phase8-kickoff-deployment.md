@@ -65,6 +65,7 @@ Open items for Phase 8:
 - `docs/deployment/production-runbook.md`
 - `docs/deployment/forge-production-checklist.md`
 - `docs/deployment/forge-ui-paste-blocks.md`
+- `docs/deployment/phase8-execution-tracker.md`
 - `scripts/deploy-backend.sh`
 - `scripts/verify-vercel-env.sh`
 - `scripts/smoke-production.sh`
