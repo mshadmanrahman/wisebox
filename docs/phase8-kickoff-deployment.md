@@ -1,7 +1,7 @@
 # Phase 8 Kickoff: Deployment and Production
 
 Date: 2026-02-10  
-Status: In progress
+Status: Deferred (local pre-prod gate complete)
 
 Preferred backend path selected:
 - Laravel Forge (`docs/deployment/forge-production-checklist.md`)
@@ -26,12 +26,15 @@ Completed:
 - Public marketing routes and workspace routes are split and stable (`/services` and `/workspace/services`).
 - Health endpoint available at `GET /api/v1`.
 
-Open items for Phase 8:
+Open items for Phase 8 (deferred until production cutover window):
 - Provision production backend host and managed DB/Redis.
 - Configure production secrets across backend and Vercel.
 - Configure DNS records and SSL.
 - Register production webhook endpoints for Stripe and Calendly.
 - Execute production smoke checks.
+
+Current decision:
+- Continue local feature development while keeping production rollout artifacts ready.
 
 ## Work tracks
 

@@ -16,7 +16,8 @@
 | Phase 5: Integrations | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 6: Dashboard & Assessment | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 7: Marketing Site | COMPLETE | 2026-02-10 | 2026-02-10 |
-| Phase 8: Deployment | IN PROGRESS | 2026-02-10 | - |
+| Phase 8: Deployment | DEFERRED (PRE-PROD COMPLETE) | 2026-02-10 | - |
+| Phase 9: Local-First Feature Development | IN PROGRESS | 2026-02-10 | - |
 
 ---
 
@@ -308,7 +309,20 @@
   - preflight requires `./scripts/validate.sh --with-e2e` before release execution
 - Phase 8 execution tracking:
   - Added live rollout tracker with status/evidence rows in `docs/deployment/phase8-execution-tracker.md`
-  - Next pending execution step: provision Forge server + `api.mywisebox.com` site
+  - Deployment cutover steps set to deferred state pending release window selection
+  - Local validation baseline confirmed green before defer decision:
+    - backend: 42 tests passing (217 assertions)
+    - frontend: typecheck + lint + build passing
+    - e2e: 14 tests passing
+
+## Phase 9: Local-First Feature Development (Started 2026-02-10)
+
+- Kickoff artifact created:
+  - `docs/phase9-kickoff-local-first.md`
+- Direction locked:
+  - Continue feature delivery and testing in local/CI while production cutover remains deferred
+- Validation discipline retained:
+  - `./scripts/validate.sh --with-e2e` is required before push
 
 ---
 
