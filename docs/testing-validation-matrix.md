@@ -150,3 +150,16 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 - Trigger: push + pull request against `main`
 - CI gate command: `./scripts/validate.sh --with-e2e`
 - Artifacts: Playwright report and test results are uploaded on each run.
+
+## Phase 8 Production Smoke Gate
+
+After each production deployment, run the checklist in:
+
+- `docs/deployment/production-runbook.md`
+
+Minimum required smoke checks:
+
+1. `GET /api/v1` health endpoint responds `200`.
+2. Login + protected route redirect behavior works.
+3. One end-to-end service -> order -> ticket path succeeds.
+4. Stripe and Calendly webhook deliveries are confirmed.

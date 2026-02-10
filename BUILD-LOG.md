@@ -15,8 +15,8 @@
 | Phase 4: Consultant Workflow | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 5: Integrations | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 6: Dashboard & Assessment | COMPLETE | 2026-02-10 | 2026-02-10 |
-| Phase 7: Marketing Site | IN PROGRESS | 2026-02-10 | - |
-| Phase 8: Deployment | NOT STARTED | - | - |
+| Phase 7: Marketing Site | COMPLETE | 2026-02-10 | 2026-02-10 |
+| Phase 8: Deployment | IN PROGRESS | 2026-02-10 | - |
 
 ---
 
@@ -282,6 +282,21 @@
   - Expanded smoke E2E route coverage for public pages (`/`, `/about`, `/faq`, `/contact`, `/services`).
   - Added E2E assertion for `/services` CTA auth behavior:
     - unauthenticated click on "Open Services Workspace" redirects to `/login?redirect=%2Fworkspace%2Fservices`
+
+## Phase 8: Deployment and Production (Started 2026-02-10)
+
+- Kickoff and planning artifacts created:
+  - `docs/phase8-kickoff-deployment.md`
+  - `docs/deployment/env-matrix.md`
+  - `docs/deployment/production-runbook.md`
+- Phase 8 initial scope locked:
+  - backend production rollout path (EC2/Forge)
+  - frontend production rollout path (Vercel)
+  - DNS/TLS verification
+  - Stripe + Calendly production webhook verification
+  - post-deploy smoke + rollback procedure
+- Validation discipline retained:
+  - preflight requires `./scripts/validate.sh --with-e2e` before release execution
 
 ---
 
