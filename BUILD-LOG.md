@@ -1,6 +1,7 @@
 # Wisebox MVP Build Log
 
 > Step-by-step documentation of every build action. This file enables freeze/resume at any point.
+> Detailed chronology and implementation method for Phase 2B-4: `docs/execution-journal-phase2b-phase4.md`.
 
 ## Build Status
 
@@ -10,7 +11,7 @@
 | Phase 1: Authentication | COMPLETE | 2026-02-09 | 2026-02-09 |
 | Phase 2: Core Systems | COMPLETE | 2026-02-09 | 2026-02-10 |
 | Phase 3: Payments | COMPLETE | 2026-02-10 | 2026-02-10 |
-| Phase 4: Consultant Workflow | IN PROGRESS | 2026-02-10 | - |
+| Phase 4: Consultant Workflow | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 5: Integrations | NOT STARTED | - | - |
 | Phase 6: Dashboard & Assessment | NOT STARTED | - | - |
 | Phase 7: Marketing Site | NOT STARTED | - | - |
@@ -109,6 +110,42 @@
   - `GET /api/v1/consultants` (admin consultant directory with open-ticket counts)
   - Internal notes are hidden from customers in ticket detail/comment responses
   - Role-aware ticket filters and status controls in portal ticket UI
+- Consultant workflow expansion:
+  - Added consultant API scope:
+    - `GET /api/v1/consultant/dashboard`
+    - `GET /api/v1/consultant/metrics`
+    - `GET /api/v1/consultant/tickets`
+    - `GET /api/v1/consultant/tickets/{id}`
+    - `PUT /api/v1/consultant/tickets/{id}`
+    - `POST /api/v1/consultant/tickets/{id}/comments`
+  - Added consultant assignment intelligence endpoint:
+    - `GET /api/v1/consultants/workload`
+  - Added Calendly webhook ingestion:
+    - `POST /api/v1/webhooks/calendly`
+    - Supports `invitee.created` and `invitee.canceled` ticket schedule updates
+    - Signature verification using `CALENDLY_WEBHOOK_SECRET`
+  - Added customer scheduling-link endpoint:
+    - `POST /api/v1/tickets/{id}/schedule-link`
+    - Uses consultant Calendly URL and falls back to `CALENDLY_BOOKING_URL`
+  - Added consultant portal pages:
+    - `/consultant/tickets`
+    - `/consultant/tickets/{id}`
+  - Improved customer ticket detail:
+    - Status timeline chips
+    - Meeting block with schedule metadata and scheduling-link action
+  - Added notification hooks (DB-backed) for:
+    - consultant assignment
+    - status updates
+    - public comment updates
+  - Added ticket comment attachment support:
+    - multipart upload support on customer + consultant comment endpoints
+    - attachment persistence in `ticket_comments.attachments`
+    - file handling uses S3 in production and local disk in non-production
+  - Added automated tests:
+    - `ConsultantTicketApiTest`
+    - `CalendlyWebhookTest`
+    - notification hook assertions
+    - ticket comment attachment assertions
 
 ---
 

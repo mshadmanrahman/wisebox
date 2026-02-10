@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 
-const navLinks = [
+const baseNavLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/properties', label: 'Properties' },
   { href: '/services', label: 'Services' },
@@ -42,6 +42,11 @@ function PortalHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const isConsultantRole =
+    user?.role === 'consultant' || user?.role === 'admin' || user?.role === 'super_admin';
+  const navLinks = isConsultantRole
+    ? [...baseNavLinks, { href: '/consultant/tickets', label: 'Consultant' }]
+    : baseNavLinks;
 
   const handleLogout = async () => {
     await logout();

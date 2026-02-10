@@ -4,9 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Property;
 use App\Models\Ticket;
+use App\Models\TicketComment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -157,6 +160,139 @@ class TicketApiTest extends TestCase
         $this->getJson('/api/v1/consultants')
             ->assertOk()
             ->assertJsonFragment(['id' => $consultant->id]);
+    }
+
+    public function test_customer_can_generate_scheduling_link_for_assigned_ticket(): void
+    {
+        $customer = User::factory()->create();
+        $consultant = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+
+        DB::table('consultant_profiles')->insert([
+            'user_id' => $consultant->id,
+            'calendly_url' => 'https://calendly.com/wisebox-consultant/intake',
+            'is_available' => true,
+            'max_concurrent_tickets' => 8,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00005',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'consultant_id' => $consultant->id,
+            'title' => 'Need a scheduling link',
+            'priority' => 'medium',
+            'status' => 'assigned',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $response = $this->postJson("/api/v1/tickets/{$ticket->id}/schedule-link")
+            ->assertOk()
+            ->assertJsonPath('data.consultant.id', $consultant->id);
+
+        $bookingUrl = (string) $response->json('data.booking_url');
+
+        $this->assertStringContainsString('https://calendly.com/wisebox-consultant/intake', $bookingUrl);
+        $this->assertStringContainsString('ticket_id='.$ticket->id, $bookingUrl);
+        $this->assertStringContainsString('ticket_number='.urlencode($ticket->ticket_number), $bookingUrl);
+        $this->assertStringContainsString('customer_email='.urlencode((string) $customer->email), $bookingUrl);
+    }
+
+    public function test_comment_supports_file_attachments(): void
+    {
+        Storage::fake('local');
+
+        $customer = User::factory()->create();
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00006',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'title' => 'Attachment test ticket',
+            'priority' => 'medium',
+            'status' => 'open',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $response = $this->post("/api/v1/tickets/{$ticket->id}/comments", [
+            'body' => 'Please see attached files.',
+            'attachments' => [
+                UploadedFile::fake()->create('evidence.pdf', 80, 'application/pdf'),
+                UploadedFile::fake()->image('photo.jpg'),
+            ],
+        ], ['Accept' => 'application/json']);
+
+        $response->assertCreated()
+            ->assertJsonPath('data.ticket_id', $ticket->id);
+
+        $comment = TicketComment::query()->latest('id')->first();
+        $this->assertNotNull($comment);
+        $this->assertIsArray($comment->attachments);
+        $this->assertCount(2, $comment->attachments);
+
+        foreach ($comment->attachments as $path) {
+            Storage::disk('local')->assertExists($path);
+        }
+    }
+
+    public function test_assignment_and_public_comment_create_notifications(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+        $consultant = User::factory()->create([
+            'role' => 'consultant',
+            'status' => 'active',
+        ]);
+        $customer = User::factory()->create();
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00007',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'title' => 'Notification hook ticket',
+            'priority' => 'high',
+            'status' => 'open',
+        ]);
+
+        Sanctum::actingAs($admin);
+
+        $this->patchJson("/api/v1/tickets/{$ticket->id}/assign", [
+            'consultant_id' => $consultant->id,
+        ])->assertOk();
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $consultant->id,
+            'type' => 'ticket.assigned',
+        ]);
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $customer->id,
+            'type' => 'ticket.consultant.assigned',
+        ]);
+
+        Sanctum::actingAs($consultant);
+
+        $this->postJson("/api/v1/tickets/{$ticket->id}/comments", [
+            'body' => 'Public consultant update',
+            'is_internal' => false,
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $customer->id,
+            'type' => 'ticket.comment.added',
+            'title' => 'Ticket updated by consultant',
+        ]);
     }
 
     private function createPropertyForUser(User $user): Property
