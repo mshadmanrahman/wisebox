@@ -334,6 +334,179 @@ test.describe('Wisebox authenticated workflows', () => {
     await expect(page.getByText('10 unread in total • 10 result(s)')).toBeVisible();
   });
 
+  test('orders list and order detail render for authenticated users', async ({ page }) => {
+    await applyAuthenticatedSession(page);
+    await mockNotificationEndpoints(page, []);
+
+    await page.route('**/api/v1/orders', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [
+            {
+              id: 77,
+              order_number: 'WB-2026-00077',
+              property_id: 1,
+              user_id: E2E_USER.id,
+              subtotal: 250,
+              tax: 0,
+              discount: 0,
+              total: 250,
+              currency: 'USD',
+              payment_status: 'pending',
+              status: 'pending',
+              created_at: '2026-02-10T08:00:00.000000Z',
+              updated_at: '2026-02-10T08:00:00.000000Z',
+            },
+          ],
+          per_page: 10,
+          total: 1,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.route('**/api/v1/orders/77', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 77,
+            order_number: 'WB-2026-00077',
+            property_id: 1,
+            user_id: E2E_USER.id,
+            subtotal: 250,
+            tax: 0,
+            discount: 0,
+            total: 250,
+            currency: 'USD',
+            payment_status: 'pending',
+            status: 'pending',
+            created_at: '2026-02-10T08:00:00.000000Z',
+            updated_at: '2026-02-10T08:00:00.000000Z',
+            items: [
+              {
+                id: 1,
+                order_id: 77,
+                service_id: 5,
+                quantity: 1,
+                unit_price: 250,
+                total_price: 250,
+                service: {
+                  id: 5,
+                  name: 'Document Review',
+                },
+              },
+            ],
+          },
+        }),
+      });
+    });
+
+    await page.goto('/orders');
+    await expect(page.getByText('My Orders')).toBeVisible();
+    await expect(page.getByText('WB-2026-00077')).toBeVisible();
+
+    await page.getByRole('link', { name: 'View order' }).click();
+    await expect(page).toHaveURL(/\/orders\/77$/);
+    await expect(page.getByRole('button', { name: 'Pay with Stripe' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Cancel Order' })).toBeVisible();
+    await expect(page.getByText('Document Review')).toBeVisible();
+  });
+
+  test('tickets list and detail render for authenticated users', async ({ page }) => {
+    await applyAuthenticatedSession(page);
+    await mockNotificationEndpoints(page, []);
+
+    await page.route('**/api/v1/tickets', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [
+            {
+              id: 19,
+              ticket_number: 'TK-2026-00019',
+              property_id: 1,
+              customer_id: E2E_USER.id,
+              consultant_id: 14,
+              service_id: 7,
+              title: 'Need title verification',
+              description: 'Please review my ownership documents.',
+              priority: 'medium',
+              status: 'assigned',
+              created_at: '2026-02-10T08:10:00.000000Z',
+              updated_at: '2026-02-10T09:10:00.000000Z',
+              property: { id: 1, property_name: 'North Plot' },
+              service: { id: 7, name: 'Title Check' },
+              customer: { id: E2E_USER.id, name: E2E_USER.name },
+              consultant: { id: 14, name: 'Consultant One' },
+            },
+          ],
+          per_page: 15,
+          total: 1,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.route('**/api/v1/tickets/19', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 19,
+            ticket_number: 'TK-2026-00019',
+            property_id: 1,
+            customer_id: E2E_USER.id,
+            consultant_id: 14,
+            service_id: 7,
+            title: 'Need title verification',
+            description: 'Please review my ownership documents.',
+            priority: 'medium',
+            status: 'assigned',
+            scheduled_at: null,
+            meeting_duration_minutes: null,
+            meeting_url: null,
+            created_at: '2026-02-10T08:10:00.000000Z',
+            updated_at: '2026-02-10T09:10:00.000000Z',
+            property: { id: 1, property_name: 'North Plot' },
+            service: { id: 7, name: 'Title Check' },
+            customer: { id: E2E_USER.id, name: E2E_USER.name, email: E2E_USER.email },
+            consultant: { id: 14, name: 'Consultant One', email: 'consultant@wisebox.test' },
+            comments: [
+              {
+                id: 900,
+                ticket_id: 19,
+                user_id: 14,
+                body: 'Please upload your latest mutation copy.',
+                is_internal: false,
+                attachments: [],
+                created_at: '2026-02-10T09:00:00.000000Z',
+                user: { id: 14, name: 'Consultant One' },
+              },
+            ],
+          },
+        }),
+      });
+    });
+
+    await page.goto('/tickets');
+    await expect(page.getByRole('heading', { name: 'Tickets' })).toBeVisible();
+    await expect(page.getByText('TK-2026-00019')).toBeVisible();
+
+    await page.getByRole('link', { name: 'Open ticket' }).click();
+    await expect(page).toHaveURL(/\/tickets\/19$/);
+    await expect(page.getByText('Status Timeline')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Get scheduling link' })).toBeVisible();
+    await expect(page.getByText('Please upload your latest mutation copy.')).toBeVisible();
+  });
+
   test('property detail renders assessment history', async ({ page }) => {
     await applyAuthenticatedSession(page);
 
