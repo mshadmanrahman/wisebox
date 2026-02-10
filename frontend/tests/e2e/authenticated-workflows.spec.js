@@ -48,7 +48,7 @@ async function applyAuthenticatedSession(page) {
     {
       name: 'wisebox_token',
       value: AUTH_TOKEN,
-      url: 'http://127.0.0.1:3000',
+      domain: '127.0.0.1',
       path: '/',
       sameSite: 'Lax',
     },
