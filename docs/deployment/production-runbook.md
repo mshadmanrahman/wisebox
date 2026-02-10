@@ -6,6 +6,7 @@ This runbook is the operational path for deploying Wisebox production safely.
 
 Preferred backend target:
 - Laravel Forge path: `docs/deployment/forge-production-checklist.md`
+- Forge UI paste blocks: `docs/deployment/forge-ui-paste-blocks.md`
 
 ## 0) Preflight (required before every release)
 

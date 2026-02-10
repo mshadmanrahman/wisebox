@@ -4,6 +4,9 @@ Date: 2026-02-10
 
 This is the target-specific deployment checklist for Wisebox using Laravel Forge for backend and Vercel for frontend.
 
+For copy/paste-ready Forge values:
+- `docs/deployment/forge-ui-paste-blocks.md`
+
 ## 1) Infrastructure prerequisites
 
 1. AWS account with:

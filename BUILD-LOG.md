@@ -290,6 +290,7 @@
   - `docs/deployment/env-matrix.md`
   - `docs/deployment/production-runbook.md`
   - `docs/deployment/forge-production-checklist.md`
+  - `docs/deployment/forge-ui-paste-blocks.md`
 - Deployment execution scripts added:
   - `scripts/deploy-backend.sh`
   - `scripts/verify-vercel-env.sh`
