@@ -49,6 +49,8 @@ yarn-debug.log*
 # Testing
 coverage/
 .phpunit.result.cache
+playwright-report/
+test-results/
 
 # Misc
 .vercel

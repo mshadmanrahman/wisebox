@@ -173,6 +173,14 @@
 - Stability fixes from validation feedback:
   - Added Sanctum migration for `personal_access_tokens` to support token creation in registration tests.
   - Updated `User` model fillable fields to include `email_verified_at` and `phone_verified_at` so OTP verification updates persist.
+- E2E harness kickoff:
+  - Added Playwright config at `frontend/playwright.config.js`
+  - Added smoke spec at `frontend/tests/e2e/smoke.spec.js` covering `/login`, `/register`, `/forgot-password`
+  - Added frontend scripts:
+    - `npm run test:e2e`
+    - `npm run test:e2e:headed`
+    - `npm run test:e2e:ui`
+  - Extended root validation script with `--with-e2e` option.
 
 ---
 

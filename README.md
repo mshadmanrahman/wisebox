@@ -71,6 +71,9 @@ npm run dev
 
 # Frontend-only fast path
 ./scripts/validate.sh --frontend-only
+
+# Include Playwright smoke E2E
+./scripts/validate.sh --with-e2e
 ```
 
 ## Environment Variables

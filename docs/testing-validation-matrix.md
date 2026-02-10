@@ -68,11 +68,25 @@ npm run build
 
 ### 5. E2E tests
 
-- Status: not yet implemented in-repo.
-- Planned tool: Playwright.
-- Phase 5 goal:
-  - add `playwright` test harness
-  - add smoke flows for auth, orders, tickets, and properties.
+- Tooling: Playwright smoke harness under `frontend/tests/e2e`.
+- Current smoke coverage:
+  - `/login`
+  - `/register`
+  - `/forgot-password`
+- Command:
+
+```bash
+cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox/frontend"
+npm run test:e2e
+```
+
+- First-time setup (local machine):
+
+```bash
+cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox/frontend"
+npm install -D @playwright/test
+npx playwright install --with-deps chromium
+```
 
 ## Route Surface Validation
 
@@ -97,6 +111,13 @@ One-command shortcut:
 ```bash
 cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 ./scripts/validate.sh
+```
+
+Include E2E in the same run:
+
+```bash
+cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
+./scripts/validate.sh --with-e2e
 ```
 
 ## Daily Workflow
