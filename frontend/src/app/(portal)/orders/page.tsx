@@ -36,7 +36,7 @@ export default function OrdersPage() {
           </p>
         </div>
         <Button asChild className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600">
-          <Link href="/services">Add Services</Link>
+          <Link href="/workspace/services">Add Services</Link>
         </Button>
       </div>
 
@@ -54,7 +54,7 @@ export default function OrdersPage() {
               Start by selecting services for one of your properties.
             </p>
             <Button asChild variant="outline">
-              <Link href="/services">Browse Services</Link>
+              <Link href="/workspace/services">Browse Services</Link>
             </Button>
           </CardContent>
         </Card>

@@ -89,7 +89,7 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
               {recommendation(pct)}
             </p>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/services">
+              <Link href="/workspace/services">
                 View Services
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>

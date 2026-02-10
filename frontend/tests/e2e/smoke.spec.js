@@ -29,6 +29,13 @@ test.describe('Wisebox smoke', () => {
     await expect(page.getByRole('heading', { name: 'Contact Wisebox' })).toBeVisible();
   });
 
+  test('services page is reachable', async ({ page }) => {
+    const response = await page.goto('/services');
+    expect(response?.ok()).toBeTruthy();
+    await expect(page).toHaveURL(/\/services/);
+    await expect(page.getByRole('heading', { name: 'Wisebox Services' })).toBeVisible();
+  });
+
   test('login page is reachable', async ({ page }) => {
     const response = await page.goto('/login');
     expect(response?.ok()).toBeTruthy();

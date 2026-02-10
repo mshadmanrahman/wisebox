@@ -268,15 +268,17 @@
     - `/about`
     - `/faq`
     - `/contact`
+    - `/services`
+  - Resolved services route collision:
+    - Moved authenticated service ordering workspace to `/workspace/services`
+    - Updated portal navigation and action links to use `/workspace/services`
+    - Updated middleware protection from `/services` to `/workspace`
   - Added SEO surface:
     - root metadata + Open Graph baseline in `frontend/src/app/layout.tsx`
     - JSON-LD on landing page
     - `frontend/src/app/robots.ts`
     - `frontend/src/app/sitemap.ts`
-  - Expanded smoke E2E route coverage for public pages (`/`, `/about`, `/faq`, `/contact`).
-- Known route constraint:
-  - `/services` currently points to authenticated portal ordering flow (`frontend/src/app/(portal)/services/page.tsx`).
-  - Public marketing `/services` content is pending route split/refactor to avoid path collision.
+  - Expanded smoke E2E route coverage for public pages (`/`, `/about`, `/faq`, `/contact`, `/services`).
 
 ---
 

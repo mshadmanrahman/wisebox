@@ -26,7 +26,7 @@ import type { Notification } from '@/types';
 const baseNavLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/properties', label: 'Properties' },
-  { href: '/services', label: 'Services' },
+  { href: '/workspace/services', label: 'Services' },
   { href: '/orders', label: 'Orders' },
   { href: '/tickets', label: 'Tickets' },
 ];

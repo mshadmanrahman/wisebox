@@ -129,7 +129,7 @@ export default function TicketsPage() {
               Try changing filters or create new service orders to generate tickets.
             </p>
             <Button asChild variant="outline">
-              <Link href="/services">Book Services</Link>
+              <Link href="/workspace/services">Book Services</Link>
             </Button>
           </CardContent>
         </Card>

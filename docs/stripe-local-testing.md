@@ -32,7 +32,7 @@ Stripe CLI prints a webhook secret (`whsec_...`). Copy it into `STRIPE_WEBHOOK_S
 ## End-to-End Payment Test
 
 1. Log in as a customer.
-2. Go to `/services`.
+2. Go to `/workspace/services`.
 3. Select a property and one paid service.
 4. Create order, then click **Pay with Stripe** on `/orders/{id}`.
 5. Complete payment with Stripe test card:
@@ -49,7 +49,7 @@ Any ZIP/postal code
 
 ## Free Service Path Test
 
-1. Select only free services in `/services`.
+1. Select only free services in `/workspace/services`.
 2. Create order.
 3. Confirm order becomes `paid` immediately and ticket is created without Stripe redirect.
 

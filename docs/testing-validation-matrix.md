@@ -74,6 +74,7 @@ npm run build
   - `/about`
   - `/faq`
   - `/contact`
+  - `/services`
   - `/login`
   - `/register`
   - `/forgot-password`

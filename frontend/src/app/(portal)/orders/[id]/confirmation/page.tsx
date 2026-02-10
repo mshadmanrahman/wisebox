@@ -77,7 +77,7 @@ export default function OrderConfirmationPage() {
               <Link href="/orders">Back to Orders</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/services">Book More Services</Link>
+              <Link href="/workspace/services">Book More Services</Link>
             </Button>
           </div>
         </CardContent>
