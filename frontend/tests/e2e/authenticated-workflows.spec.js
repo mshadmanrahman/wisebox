@@ -535,6 +535,8 @@ test.describe('Wisebox authenticated workflows', () => {
 
     let profileSaved = false;
     let passwordChanged = false;
+    let profilePayload = null;
+    let passwordPayload = null;
     let profileState = { ...E2E_USER_WITH_PROFILE };
 
     await page.route(/.*\/api\/v1\/auth\/me$/, async (route) => {
@@ -542,6 +544,7 @@ test.describe('Wisebox authenticated workflows', () => {
 
       if (method === 'PUT') {
         const payload = route.request().postDataJSON();
+        profilePayload = payload;
         profileSaved = true;
         profileState = {
           ...profileState,
@@ -572,6 +575,7 @@ test.describe('Wisebox authenticated workflows', () => {
     });
 
     await page.route('**/api/v1/auth/change-password', async (route) => {
+      passwordPayload = route.request().postDataJSON();
       passwordChanged = true;
       await route.fulfill({
         status: 200,
@@ -590,6 +594,7 @@ test.describe('Wisebox authenticated workflows', () => {
     await page.getByRole('button', { name: 'Save changes' }).click();
     await saveProfileRequest;
     expect(profileSaved).toBeTruthy();
+    expect(profilePayload.notification_preferences.marketing_updates).toBeTruthy();
 
     await page.getByRole('tab', { name: 'Password' }).click();
     await expect(page.getByText('Change your password securely.')).toBeVisible();
@@ -603,6 +608,9 @@ test.describe('Wisebox authenticated workflows', () => {
     await page.getByRole('button', { name: 'Update password' }).click();
     await updatePasswordRequest;
     expect(passwordChanged).toBeTruthy();
+    expect(passwordPayload.current_password).toBe('CurrentPass123!');
+    expect(passwordPayload.password).toBe('NewPass123!');
+    expect(passwordPayload.password_confirmation).toBe('NewPass123!');
   });
 
   test('authenticated user can create order from services workspace', async ({ page }) => {
@@ -878,6 +886,254 @@ test.describe('Wisebox authenticated workflows', () => {
     await expect(page).toHaveURL(/\/consultant\/tickets\/44$/);
     await expect(page.getByText('Update Ticket')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Add Comment' })).toBeVisible();
+  });
+
+  test('customer can submit ticket comment mutation from ticket detail', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
+
+    let postedPayload = null;
+    const comments = [];
+
+    await page.route('**/api/v1/tickets/25', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 25,
+            ticket_number: 'TK-2026-00025',
+            property_id: 1,
+            customer_id: E2E_USER.id,
+            consultant_id: 14,
+            service_id: 7,
+            title: 'Ticket mutation test',
+            description: 'Ensure comment write works',
+            priority: 'medium',
+            status: 'assigned',
+            created_at: '2026-02-10T08:10:00.000000Z',
+            updated_at: '2026-02-10T09:10:00.000000Z',
+            property: { id: 1, property_name: 'North Plot' },
+            service: { id: 7, name: 'Title Check' },
+            customer: { id: E2E_USER.id, name: E2E_USER.name, email: E2E_USER.email },
+            consultant: { id: 14, name: 'Consultant One', email: 'consultant@wisebox.test' },
+            comments,
+          },
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/tickets\/25\/comments$/, async (route) => {
+      postedPayload = route.request().postDataJSON();
+      comments.push({
+        id: 1,
+        ticket_id: 25,
+        user_id: E2E_USER.id,
+        body: postedPayload.body,
+        is_internal: postedPayload.is_internal,
+        attachments: [],
+        created_at: '2026-02-10T10:30:00.000000Z',
+        user: { id: E2E_USER.id, name: E2E_USER.name },
+      });
+
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: comments[0],
+        }),
+      });
+    });
+
+    await page.goto('/tickets/25');
+    await page.getByPlaceholder('Write a message...').fill('Customer follow-up update');
+    const sendCommentRequest = page.waitForResponse(
+      (response) => response.url().includes('/api/v1/tickets/25/comments') && response.request().method() === 'POST'
+    );
+    await page.getByRole('button', { name: 'Send message' }).click();
+    await sendCommentRequest;
+
+    expect(postedPayload.body).toBe('Customer follow-up update');
+    expect(postedPayload.is_internal).toBeFalsy();
+    await expect(page.getByText('Customer follow-up update')).toBeVisible();
+  });
+
+  test('consultant can submit update and internal comment mutations', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_CONSULTANT);
+    await mockNotificationEndpoints(page, []);
+
+    let updatePayload = null;
+    let consultantCommentPayload = null;
+    const comments = [];
+
+    const ticketData = {
+      id: 45,
+      ticket_number: 'TK-2026-00045',
+      property_id: 9,
+      customer_id: 100,
+      consultant_id: E2E_CONSULTANT.id,
+      service_id: 31,
+      title: 'Consultant mutation ticket',
+      description: 'Verify update and note write paths',
+      priority: 'high',
+      status: 'assigned',
+      scheduled_at: null,
+      meeting_url: null,
+      meeting_duration_minutes: null,
+      resolution_notes: null,
+      created_at: '2026-02-10T09:00:00.000000Z',
+      updated_at: '2026-02-10T10:00:00.000000Z',
+      property: {
+        id: 9,
+        property_name: 'Workspace Property',
+        documents: [],
+      },
+      service: {
+        id: 31,
+        name: 'Title Search',
+      },
+      customer: {
+        id: 100,
+        name: 'Customer Alpha',
+        email: 'customer-alpha@wisebox.test',
+      },
+      comments,
+    };
+
+    await page.route(/.*\/api\/v1\/consultant\/tickets\/45(?:\?.*)?$/, async (route) => {
+      if (route.request().method() === 'PUT') {
+        updatePayload = route.request().postDataJSON();
+        ticketData.status = updatePayload.status || ticketData.status;
+        ticketData.resolution_notes = updatePayload.resolution_notes || ticketData.resolution_notes;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: ticketData }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: ticketData }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/consultant\/tickets\/45\/comments$/, async (route) => {
+      consultantCommentPayload = route.request().postDataJSON();
+      comments.push({
+        id: 2,
+        ticket_id: 45,
+        user_id: E2E_CONSULTANT.id,
+        body: consultantCommentPayload.body,
+        is_internal: consultantCommentPayload.is_internal,
+        attachments: [],
+        created_at: '2026-02-10T10:35:00.000000Z',
+        user: {
+          id: E2E_CONSULTANT.id,
+          name: E2E_CONSULTANT.name,
+        },
+      });
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: comments[0] }),
+      });
+    });
+
+    await page.goto('/consultant/tickets/45');
+
+    await page.getByRole('combobox').first().click();
+    await page.getByRole('option', { name: 'completed' }).click();
+    await page.getByPlaceholder('Add completion notes or summary...').fill('Completed after consultant review.');
+
+    const updateRequest = page.waitForResponse(
+      (response) => response.url().includes('/api/v1/consultant/tickets/45') && response.request().method() === 'PUT'
+    );
+    await page.getByRole('button', { name: 'Save Updates' }).click();
+    await updateRequest;
+
+    expect(updatePayload.status).toBe('completed');
+    expect(updatePayload.resolution_notes).toBe('Completed after consultant review.');
+
+    await page.getByPlaceholder('Write an update...').fill('Internal consultant note');
+    await page.getByLabel('Internal note (not visible to customer)').check();
+    const addCommentRequest = page.waitForResponse(
+      (response) => response.url().includes('/api/v1/consultant/tickets/45/comments') && response.request().method() === 'POST'
+    );
+    await page.getByRole('button', { name: 'Add Comment' }).click();
+    await addCommentRequest;
+
+    expect(consultantCommentPayload.body).toBe('Internal consultant note');
+    expect(consultantCommentPayload.is_internal).toBeTruthy();
+    await expect(page.getByText('Internal consultant note')).toBeVisible();
+  });
+
+  test('authenticated list pages show expected empty states', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
+
+    await page.route(/.*\/api\/v1\/orders(?:\?.*)?$/, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [],
+          per_page: 10,
+          total: 0,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/tickets(?:\?.*)?$/, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [],
+          per_page: 15,
+          total: 0,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/properties(?:\?.*)?$/, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: [],
+          meta: {
+            current_page: 1,
+            from: null,
+            last_page: 1,
+            per_page: 15,
+            to: null,
+            total: 0,
+          },
+          links: {
+            first: '/api/v1/properties?page=1',
+            last: '/api/v1/properties?page=1',
+            prev: null,
+            next: null,
+          },
+        }),
+      });
+    });
+
+    await page.goto('/orders');
+    await expect(page.getByText('No orders yet')).toBeVisible();
+
+    await page.goto('/tickets');
+    await expect(page.getByText('No tickets found')).toBeVisible();
+
+    await page.goto('/properties');
+    await expect(page.getByText('No properties yet')).toBeVisible();
   });
 
   test('property detail renders assessment history', async ({ page }) => {

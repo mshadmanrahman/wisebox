@@ -371,6 +371,17 @@
   - Added role-aware authenticated session seeding helper for Playwright tests
   - Added slice note:
     - `docs/phase9-slice4-authenticated-e2e-expansion.md`
+- Slice 5 completed: Mutation + empty-state E2E hardening
+  - Extended authenticated workflow suite for mutation assertions:
+    - settings profile/password payload checks
+    - customer ticket comment payload checks
+    - consultant ticket update/internal comment payload checks
+  - Added authenticated empty-state assertions for:
+    - orders list (`/orders`)
+    - tickets list (`/tickets`)
+    - properties list (`/properties`)
+  - Added slice note:
+    - `docs/phase9-slice5-mutation-and-empty-state-e2e.md`
 
 ---
 
