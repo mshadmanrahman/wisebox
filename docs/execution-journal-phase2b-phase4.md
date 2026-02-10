@@ -1,6 +1,7 @@
 # Execution Journal: Phase 2B to Phase 4
 
 This document records the implementation sequence, decisions, fixes, and verification workflow used to build Wisebox from Phase 2B through current Phase 4 progress.
+For full Phase 0-4 coverage (including complete commit/file appendix), see `docs/phase0-to-phase4-exhaustive-log.md`.
 
 ## Scope Covered
 
