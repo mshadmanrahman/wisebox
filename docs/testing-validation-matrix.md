@@ -87,6 +87,9 @@ npm run build
   - Orders list/detail rendering behaviors
   - Tickets list/detail rendering behaviors
   - Property detail assessment history rendering
+  - Settings profile preference save + password change request behaviors
+  - Services workspace order-initiation behavior
+  - Consultant workspace list/detail rendering behavior
 - Dev server origin policy:
   - `frontend/next.config.mjs` includes `allowedDevOrigins` host entries for both `127.0.0.1` and `localhost`.
 - Command:

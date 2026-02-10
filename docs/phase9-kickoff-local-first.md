@@ -59,3 +59,4 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 1. `docs/phase9-slice1-government-adapter.md`
 2. `docs/phase9-slice2-service-catalog-api.md`
 3. `docs/phase9-slice3-orders-tickets-edge-hardening.md`
+4. `docs/phase9-slice4-authenticated-e2e-expansion.md`

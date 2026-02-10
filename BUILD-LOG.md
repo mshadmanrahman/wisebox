@@ -362,6 +362,15 @@
     - tickets list/detail rendering flow
   - Added slice note:
     - `docs/phase9-slice3-orders-tickets-edge-hardening.md`
+- Slice 4 completed: Authenticated E2E expansion
+  - Expanded authenticated workflow suite:
+    - `frontend/tests/e2e/authenticated-workflows.spec.js`
+    - settings profile save + password change request coverage
+    - services workspace order-initiation coverage
+    - consultant workspace list/detail rendering coverage
+  - Added role-aware authenticated session seeding helper for Playwright tests
+  - Added slice note:
+    - `docs/phase9-slice4-authenticated-e2e-expansion.md`
 
 ---
 
