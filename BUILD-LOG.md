@@ -382,6 +382,15 @@
     - properties list (`/properties`)
   - Added slice note:
     - `docs/phase9-slice5-mutation-and-empty-state-e2e.md`
+- Slice 6 completed: Negative-path + role-boundary E2E hardening
+  - Extended authenticated workflow suite:
+    - customer scheduling-link failure path (`/tickets/{id}/schedule-link`)
+    - customer ticket comment failure path (`/tickets/{id}/comments`)
+    - consultant update/comment failure paths (`/consultant/tickets/{id}` + `/consultant/tickets/{id}/comments`)
+    - consultant workspace role gate for non-consultant users
+  - Added explicit UI error-surface assertions for backend message propagation in ticket workflows
+  - Added slice note:
+    - `docs/phase9-slice6-negative-path-and-role-boundary-e2e.md`
 
 ---
 

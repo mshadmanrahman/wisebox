@@ -91,6 +91,9 @@ npm run build
   - Services workspace order-initiation behavior
   - Consultant workspace list/detail rendering behavior
   - Customer and consultant ticket mutation submission behaviors (payload-level assertions)
+  - Customer and consultant ticket mutation error rendering (negative-path API responses)
+  - Scheduling-link mutation failure rendering for customer ticket detail
+  - Consultant workspace role-boundary gating for non-consultant users
   - Empty-state rendering behavior for orders, tickets, and properties list pages
 - Dev server origin policy:
   - `frontend/next.config.mjs` includes `allowedDevOrigins` host entries for both `127.0.0.1` and `localhost`.

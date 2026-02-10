@@ -1070,6 +1070,215 @@ test.describe('Wisebox authenticated workflows', () => {
     await expect(page.getByText('Internal consultant note')).toBeVisible();
   });
 
+  test('customer sees scheduling link API failure on ticket detail', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
+
+    await page.route('**/api/v1/tickets/26', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 26,
+            ticket_number: 'TK-2026-00026',
+            property_id: 1,
+            customer_id: E2E_USER.id,
+            consultant_id: 14,
+            service_id: 7,
+            title: 'Schedule link failure test',
+            description: 'Test scheduling error rendering',
+            priority: 'medium',
+            status: 'assigned',
+            scheduled_at: null,
+            meeting_duration_minutes: null,
+            meeting_url: null,
+            created_at: '2026-02-10T08:10:00.000000Z',
+            updated_at: '2026-02-10T09:10:00.000000Z',
+            property: { id: 1, property_name: 'North Plot' },
+            service: { id: 7, name: 'Title Check' },
+            customer: { id: E2E_USER.id, name: E2E_USER.name, email: E2E_USER.email },
+            consultant: { id: 14, name: 'Consultant One', email: 'consultant@wisebox.test' },
+            comments: [],
+          },
+        }),
+      });
+    });
+
+    await page.route('**/api/v1/tickets/26/schedule-link', async (route) => {
+      await route.fulfill({
+        status: 422,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: 'Consultant calendar is not configured.',
+        }),
+      });
+    });
+
+    await page.goto('/tickets/26');
+    const schedulingRequest = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/tickets/26/schedule-link') &&
+        response.request().method() === 'POST'
+    );
+    await page.getByRole('button', { name: 'Get scheduling link' }).click();
+    await schedulingRequest;
+    await expect(page.getByText('Consultant calendar is not configured.')).toBeVisible();
+  });
+
+  test('customer sees comment mutation failure on ticket detail', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
+
+    await page.route('**/api/v1/tickets/27', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 27,
+            ticket_number: 'TK-2026-00027',
+            property_id: 1,
+            customer_id: E2E_USER.id,
+            consultant_id: 14,
+            service_id: 7,
+            title: 'Comment failure test',
+            description: 'Ensure failed comment mutation surfaces error',
+            priority: 'medium',
+            status: 'assigned',
+            scheduled_at: null,
+            meeting_duration_minutes: null,
+            meeting_url: null,
+            created_at: '2026-02-10T08:10:00.000000Z',
+            updated_at: '2026-02-10T09:10:00.000000Z',
+            property: { id: 1, property_name: 'North Plot' },
+            service: { id: 7, name: 'Title Check' },
+            customer: { id: E2E_USER.id, name: E2E_USER.name, email: E2E_USER.email },
+            consultant: { id: 14, name: 'Consultant One', email: 'consultant@wisebox.test' },
+            comments: [],
+          },
+        }),
+      });
+    });
+
+    await page.route('**/api/v1/tickets/27/comments', async (route) => {
+      await route.fulfill({
+        status: 422,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: 'Comment body is required.',
+        }),
+      });
+    });
+
+    await page.goto('/tickets/27');
+    await page.getByPlaceholder('Write a message...').fill('This should fail server-side');
+    const commentRequest = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/tickets/27/comments') &&
+        response.request().method() === 'POST'
+    );
+    await page.getByRole('button', { name: 'Send message' }).click();
+    await commentRequest;
+    await expect(page.getByText('Comment body is required.')).toBeVisible();
+  });
+
+  test('consultant detail mutations render backend errors and customer role is blocked', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
+
+    await page.goto('/consultant/tickets/46');
+    await expect(page.getByText('Consultant access required.')).toBeVisible();
+
+    await applyAuthenticatedSession(page, E2E_CONSULTANT);
+
+    const ticketData = {
+      id: 46,
+      ticket_number: 'TK-2026-00046',
+      property_id: 9,
+      customer_id: 100,
+      consultant_id: E2E_CONSULTANT.id,
+      service_id: 31,
+      title: 'Consultant error rendering test',
+      description: 'Verify update/comment failures render feedback',
+      priority: 'high',
+      status: 'assigned',
+      scheduled_at: null,
+      meeting_url: null,
+      meeting_duration_minutes: null,
+      resolution_notes: null,
+      created_at: '2026-02-10T09:00:00.000000Z',
+      updated_at: '2026-02-10T10:00:00.000000Z',
+      property: {
+        id: 9,
+        property_name: 'Workspace Property',
+        documents: [],
+      },
+      service: {
+        id: 31,
+        name: 'Title Search',
+      },
+      customer: {
+        id: 100,
+        name: 'Customer Alpha',
+        email: 'customer-alpha@wisebox.test',
+      },
+      comments: [],
+    };
+
+    await page.route(/.*\/api\/v1\/consultant\/tickets\/46(?:\?.*)?$/, async (route) => {
+      if (route.request().method() === 'PUT') {
+        await route.fulfill({
+          status: 422,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: 'Invalid status transition.',
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: ticketData }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/consultant\/tickets\/46\/comments$/, async (route) => {
+      await route.fulfill({
+        status: 422,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: 'Comment cannot be empty.',
+        }),
+      });
+    });
+
+    await page.goto('/consultant/tickets/46');
+
+    await page.getByRole('combobox').first().click();
+    await page.getByRole('option', { name: 'completed' }).click();
+    const updateRequest = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/consultant/tickets/46') &&
+        response.request().method() === 'PUT'
+    );
+    await page.getByRole('button', { name: 'Save Updates' }).click();
+    await updateRequest;
+    await expect(page.getByText('Invalid status transition.')).toBeVisible();
+
+    await page.getByPlaceholder('Write an update...').fill('Trigger failing comment');
+    const commentRequest = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/consultant/tickets/46/comments') &&
+        response.request().method() === 'POST'
+    );
+    await page.getByRole('button', { name: 'Add Comment' }).click();
+    await commentRequest;
+    await expect(page.getByText('Comment cannot be empty.')).toBeVisible();
+  });
+
   test('authenticated list pages show expected empty states', async ({ page }) => {
     await applyAuthenticatedSession(page, E2E_USER);
     await mockNotificationEndpoints(page, []);

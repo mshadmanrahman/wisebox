@@ -61,3 +61,4 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 3. `docs/phase9-slice3-orders-tickets-edge-hardening.md`
 4. `docs/phase9-slice4-authenticated-e2e-expansion.md`
 5. `docs/phase9-slice5-mutation-and-empty-state-e2e.md`
+6. `docs/phase9-slice6-negative-path-and-role-boundary-e2e.md`
