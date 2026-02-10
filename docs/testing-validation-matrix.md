@@ -84,6 +84,8 @@ npm run build
   - Public services CTA redirect behavior (`/services` -> `/login?redirect=%2Fworkspace%2Fservices` for unauthenticated users)
   - Login form flow to `/dashboard` (mocked API)
   - Notification center filter + pagination behaviors
+  - Orders list/detail rendering behaviors
+  - Tickets list/detail rendering behaviors
   - Property detail assessment history rendering
 - Dev server origin policy:
   - `frontend/next.config.mjs` includes `allowedDevOrigins` host entries for both `127.0.0.1` and `localhost`.

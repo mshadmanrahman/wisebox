@@ -122,6 +122,29 @@ class TicketApiTest extends TestCase
             ->assertJsonPath('data.0.body', 'Public update for the customer.');
     }
 
+    public function test_customer_cannot_create_internal_comment(): void
+    {
+        $customer = User::factory()->create();
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00010',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'title' => 'Internal note permission check',
+            'priority' => 'medium',
+            'status' => 'open',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson("/api/v1/tickets/{$ticket->id}/comments", [
+            'body' => 'Customer should not create internal comments.',
+            'is_internal' => true,
+        ])->assertForbidden()
+            ->assertJsonPath('message', 'Only consultants and admins can create internal comments.');
+    }
+
     public function test_admin_can_assign_consultant_to_ticket(): void
     {
         $admin = User::factory()->create([
@@ -207,6 +230,27 @@ class TicketApiTest extends TestCase
         $this->assertStringContainsString('ticket_id='.$ticket->id, $bookingUrl);
         $this->assertStringContainsString('ticket_number='.urlencode($ticket->ticket_number), $bookingUrl);
         $this->assertStringContainsString('customer_email='.urlencode((string) $customer->email), $bookingUrl);
+    }
+
+    public function test_scheduling_link_requires_assigned_consultant(): void
+    {
+        $customer = User::factory()->create();
+        $property = $this->createPropertyForUser($customer);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TK-2026-00011',
+            'property_id' => $property->id,
+            'customer_id' => $customer->id,
+            'title' => 'Needs assignment first',
+            'priority' => 'medium',
+            'status' => 'open',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson("/api/v1/tickets/{$ticket->id}/schedule-link")
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'This ticket has no assigned consultant yet.');
     }
 
     public function test_scheduling_link_uses_calendly_api_when_event_type_is_configured(): void

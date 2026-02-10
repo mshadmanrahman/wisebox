@@ -201,6 +201,71 @@ class OrderApiTest extends TestCase
         });
     }
 
+    public function test_checkout_for_already_paid_order_returns_confirmation_url(): void
+    {
+        $user = User::factory()->create();
+        $property = $this->createPropertyForUser($user);
+        $service = $this->createService(price: 0.00, pricingType: 'free');
+
+        Sanctum::actingAs($user);
+
+        $orderId = $this->postJson('/api/v1/orders', [
+            'property_id' => $property->id,
+            'items' => [
+                ['service_id' => $service->id],
+            ],
+        ])->assertCreated()->json('data.id');
+
+        $this->postJson("/api/v1/orders/{$orderId}/checkout")
+            ->assertOk()
+            ->assertJsonPath('message', 'Order is already paid.')
+            ->assertJsonPath('data.confirmation_url', "/orders/{$orderId}/confirmation");
+    }
+
+    public function test_customer_cannot_cancel_paid_order(): void
+    {
+        $user = User::factory()->create();
+        $property = $this->createPropertyForUser($user);
+        $service = $this->createService(price: 0.00, pricingType: 'free');
+
+        Sanctum::actingAs($user);
+
+        $orderId = $this->postJson('/api/v1/orders', [
+            'property_id' => $property->id,
+            'items' => [
+                ['service_id' => $service->id],
+            ],
+        ])->assertCreated()->json('data.id');
+
+        $this->postJson("/api/v1/orders/{$orderId}/cancel")
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'Only pending orders can be cancelled.');
+    }
+
+    public function test_customer_cannot_checkout_cancelled_order(): void
+    {
+        $user = User::factory()->create();
+        $property = $this->createPropertyForUser($user);
+        $service = $this->createService(price: 55.00, pricingType: 'paid');
+
+        Sanctum::actingAs($user);
+
+        $orderId = $this->postJson('/api/v1/orders', [
+            'property_id' => $property->id,
+            'items' => [
+                ['service_id' => $service->id],
+            ],
+        ])->assertCreated()->json('data.id');
+
+        $this->postJson("/api/v1/orders/{$orderId}/cancel")
+            ->assertOk()
+            ->assertJsonPath('data.status', 'cancelled');
+
+        $this->postJson("/api/v1/orders/{$orderId}/checkout")
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'Only pending orders can be checked out.');
+    }
+
     private function createPropertyForUser(User $user): Property
     {
         $propertyTypeId = DB::table('property_types')->insertGetId([

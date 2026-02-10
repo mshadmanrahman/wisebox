@@ -346,6 +346,22 @@
     - `backend/tests/Feature/ServiceCatalogApiTest.php`
   - Added slice note:
     - `docs/phase9-slice2-service-catalog-api.md`
+- Slice 3 completed: Orders and tickets edge-case hardening
+  - Added order edge-case feature coverage:
+    - `backend/tests/Feature/OrderApiTest.php`
+    - checkout on already-paid orders returns confirmation URL
+    - paid orders cannot be cancelled
+    - cancelled orders cannot be checked out
+  - Added ticket edge-case feature coverage:
+    - `backend/tests/Feature/TicketApiTest.php`
+    - customers cannot post internal comments
+    - scheduling link requires assigned consultant
+  - Expanded authenticated E2E coverage:
+    - `frontend/tests/e2e/authenticated-workflows.spec.js`
+    - orders list/detail rendering flow
+    - tickets list/detail rendering flow
+  - Added slice note:
+    - `docs/phase9-slice3-orders-tickets-edge-hardening.md`
 
 ---
 
