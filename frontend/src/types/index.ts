@@ -224,6 +224,7 @@ export interface ServiceCategory {
   slug: string;
   description: string | null;
   icon: string | null;
+  active_services_count?: number;
   is_active: boolean;
   sort_order: number;
 }

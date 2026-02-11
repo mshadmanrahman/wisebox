@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 use Twilio\Rest\Client;
 
 class OtpService
@@ -42,7 +43,14 @@ class OtpService
             return;
         }
 
-        $user->notify(new OtpCodeNotification($code, self::OTP_TTL_MINUTES));
+        try {
+            $user->notify(new OtpCodeNotification($code, self::OTP_TTL_MINUTES));
+        } catch (Throwable $exception) {
+            Log::warning('Email OTP delivery failed; continuing without hard failure.', [
+                'user_id' => $user->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
     }
 
     public function verify(User $user, string $code): ?string
@@ -106,4 +114,3 @@ class OtpService
         return "otp:rate-limit:{$userId}";
     }
 }
-

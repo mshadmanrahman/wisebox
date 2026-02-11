@@ -39,6 +39,7 @@ import {
 import { LocationCascade } from '@/components/property/location-cascade';
 import { CoOwnerFields } from '@/components/property/co-owner-fields';
 import { DocumentUploadItem } from '@/components/property/document-upload-item';
+import { RadioCardGroup } from '@/components/forms';
 import type {
   PropertyType,
   OwnershipStatus,
@@ -61,7 +62,8 @@ const SIZE_UNITS: { value: SizeUnit; label: string }[] = [
 
 const PROPERTY_TYPE_ICONS: Record<string, React.ReactNode> = {
   land: <Tractor className="h-6 w-6" />,
-  apartment: <Building2 className="h-6 w-6" />,
+  building: <Building2 className="h-6 w-6" />,
+  apartment: <Home className="h-6 w-6" />,
   commercial: <Store className="h-6 w-6" />,
   agricultural: <Tractor className="h-6 w-6" />,
   industrial: <Factory className="h-6 w-6" />,
@@ -71,7 +73,7 @@ const PROPERTY_TYPE_ICONS: Record<string, React.ReactNode> = {
 const coOwnerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   relationship: z.string().min(1, 'Relationship is required'),
-  ownership_percentage: z.number().min(1, 'Must be at least 1%').max(99, 'Must be under 100%'),
+  ownership_percentage: z.number().min(1, 'Must be at least 1%').max(100, 'Cannot exceed 100%'),
   phone: z.string(),
   email: z.string(),
 });
@@ -262,6 +264,13 @@ export default function AddPropertyPage() {
   });
 
   const onStep1Submit = (data: Step1FormData) => {
+    if (coOwnerTotal > 100) {
+      setStep1Error(
+        `Co-owner percentages cannot exceed 100% (current total: ${coOwnerTotal}%).`
+      );
+      return;
+    }
+
     setStep1Error(null);
     createPropertyMutation.mutate(data);
   };
@@ -350,38 +359,19 @@ export default function AddPropertyPage() {
                     name="property_type_id"
                     control={control}
                     render={({ field }) => (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {propertyTypes?.map((pt) => (
-                          <button
-                            key={pt.id}
-                            type="button"
-                            onClick={() => field.onChange(pt.id)}
-                            className={`
-                              flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all
-                              ${
-                                field.value === pt.id
-                                  ? 'border-teal-500 ring-2 ring-teal-200 bg-teal-50'
-                                  : 'border-gray-200 hover:border-gray-300 bg-white'
-                              }
-                            `}
-                          >
-                            <span
-                              className={
-                                field.value === pt.id ? 'text-teal-600' : 'text-gray-400'
-                              }
-                            >
-                              {getPropertyTypeIcon(pt.slug)}
-                            </span>
-                            <span
-                              className={`text-sm font-medium ${
-                                field.value === pt.id ? 'text-teal-700' : 'text-gray-700'
-                              }`}
-                            >
-                              {pt.name}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
+                      <RadioCardGroup
+                        options={
+                          propertyTypes?.map((pt) => ({
+                            value: pt.id.toString(),
+                            label: pt.name,
+                            icon: getPropertyTypeIcon(pt.slug),
+                          })) || []
+                        }
+                        value={field.value ? field.value.toString() : ''}
+                        onValueChange={(val) => field.onChange(Number(val))}
+                        columns={3}
+                        size="md"
+                      />
                     )}
                   />
                   {errors.property_type_id && (
@@ -391,29 +381,27 @@ export default function AddPropertyPage() {
 
                 <Separator />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div className="space-y-2">
                     <Label>Ownership Status *</Label>
+                    <p className="text-sm text-wisebox-text-secondary">How did you acquire this property?</p>
                     <Controller
                       name="ownership_status_id"
                       control={control}
                       render={({ field }) => (
-                        <Select
+                        <RadioCardGroup
+                          options={
+                            ownershipStatuses?.map((os) => ({
+                              value: os.id.toString(),
+                              label: os.display_label,
+                              description: os.bengali_label || undefined,
+                            })) || []
+                          }
                           value={field.value ? field.value.toString() : ''}
                           onValueChange={(val) => field.onChange(Number(val))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="How did you acquire it?" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ownershipStatuses?.map((os) => (
-                              <SelectItem key={os.id} value={os.id.toString()}>
-                                {os.display_label}
-                                {os.bengali_label ? ` (${os.bengali_label})` : ''}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          columns={2}
+                          size="sm"
+                        />
                       )}
                     />
                     {errors.ownership_status_id && (
@@ -423,25 +411,23 @@ export default function AddPropertyPage() {
 
                   <div className="space-y-2">
                     <Label>Ownership Type *</Label>
+                    <p className="text-sm text-wisebox-text-secondary">Who owns this property?</p>
                     <Controller
                       name="ownership_type_id"
                       control={control}
                       render={({ field }) => (
-                        <Select
+                        <RadioCardGroup
+                          options={
+                            ownershipTypes?.map((ot) => ({
+                              value: ot.id.toString(),
+                              label: ot.name,
+                            })) || []
+                          }
                           value={field.value ? field.value.toString() : ''}
                           onValueChange={(val) => field.onChange(Number(val))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Sole, Joint, or Co-Ownership?" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ownershipTypes?.map((ot) => (
-                              <SelectItem key={ot.id} value={ot.id.toString()}>
-                                {ot.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          columns={2}
+                          size="sm"
+                        />
                       )}
                     />
                     {errors.ownership_type_id && (

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { type ReactNode, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, Bell, CalendarCheck, Plus, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Bell, CalendarCheck, Plus, ShieldCheck } from 'lucide-react';
 import api from '@/lib/api';
 import { PropertyCard } from '@/components/property/property-card';
 import { Badge } from '@/components/ui/badge';
@@ -26,16 +26,61 @@ function relativeTime(value: string): string {
   return `${days}d ago`;
 }
 
+function resolveHeroCtaHref(
+  rawUrl: string | null | undefined,
+  fallback = '/properties/new'
+): string {
+  const value = rawUrl?.trim();
+
+  if (!value) return fallback;
+  if (value.startsWith('/')) return value;
+
+  // Guard against malformed values like "localhost" or empty host links.
+  if (!/^https?:\/\//i.test(value)) return fallback;
+
+  try {
+    const parsed = new URL(value);
+    const localHostnames = new Set(['localhost', '127.0.0.1']);
+
+    if (localHostnames.has(parsed.hostname)) {
+      const path = `${parsed.pathname || ''}${parsed.search}${parsed.hash}`;
+      if (!path || path === '/' || /^\/localhost\/?$/i.test(path)) {
+        return fallback;
+      }
+
+      return path.startsWith('/') ? path : `/${path}`;
+    }
+
+    return value;
+  } catch {
+    return fallback;
+  }
+}
+
 export default function DashboardPage() {
   const [activeSlide, setActiveSlide] = useState(0);
 
-  const { data: summary } = useQuery({
+  const {
+    data: summary,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['dashboard', 'summary'],
     queryFn: async () => {
       const response = await api.get<ApiResponse<DashboardSummary>>('/dashboard/summary');
       return response.data.data;
     },
+    retry: 2,
   });
+  const hasSummary = Boolean(summary);
+  const errorMessage =
+    (error as { response?: { data?: { message?: string } }; message?: string } | null)?.response?.data?.message ||
+    (error as { message?: string } | null)?.message ||
+    'Please try again in a moment.';
+
   const sliders = summary?.hero_slides ?? [];
   const topProperties = summary?.properties_preview ?? [];
   const notifications = summary?.notifications_preview ?? [];
@@ -62,6 +107,7 @@ export default function DashboardPage() {
   }, [activeSlide, sliders.length]);
 
   const currentSlide = sliders[activeSlide] ?? null;
+  const heroCtaHref = resolveHeroCtaHref(currentSlide?.cta_url, '/properties/new');
 
   const activities =
     notifications.length > 0
@@ -78,8 +124,53 @@ export default function DashboardPage() {
           at: ticket.updated_at,
         }));
 
+  if (isLoading && !hasSummary) {
+    return (
+      <div className="px-6 py-8">
+        <Card>
+          <CardContent className="p-6 text-sm text-wisebox-text-secondary">
+            Loading dashboard summary...
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isError && !hasSummary) {
+    return (
+      <div className="px-6 py-8 space-y-4">
+        <h1 className="text-2xl font-bold text-wisebox-text-primary">Wisebox Dashboard</h1>
+        <Card className="border-red-200 bg-red-50/60">
+          <CardContent className="p-6 space-y-3">
+            <div className="flex items-center gap-2 text-red-700 font-medium">
+              <AlertTriangle className="h-4 w-4" />
+              Could not load dashboard summary.
+            </div>
+            <p className="text-sm text-red-700/90">{errorMessage}</p>
+            <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? 'Retrying...' : 'Retry'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="px-6 py-8 space-y-6">
+      {isError && hasSummary && (
+        <Card className="border-amber-200 bg-amber-50/70">
+          <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-amber-800">
+              Showing previously loaded dashboard data. {errorMessage}
+            </p>
+            <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? 'Retrying...' : 'Retry'}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       <Card className="border-wisebox-primary-100 overflow-hidden">
         <CardContent className="p-0">
           <div className="bg-gradient-to-r from-wisebox-primary-700 via-wisebox-primary-600 to-wisebox-primary-500 text-white p-8 sm:p-10 min-h-[220px] flex flex-col justify-between">
@@ -94,7 +185,7 @@ export default function DashboardPage() {
             </div>
             <div className="pt-5 flex flex-wrap items-center gap-3">
               <Button asChild className="bg-white text-wisebox-primary-700 hover:bg-white/90">
-                <Link href={currentSlide?.cta_url || '/properties/new'}>
+                <Link href={heroCtaHref}>
                   {currentSlide?.cta_text || 'Add New Property'}
                 </Link>
               </Button>

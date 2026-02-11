@@ -62,3 +62,7 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 4. `docs/phase9-slice4-authenticated-e2e-expansion.md`
 5. `docs/phase9-slice5-mutation-and-empty-state-e2e.md`
 6. `docs/phase9-slice6-negative-path-and-role-boundary-e2e.md`
+7. `docs/phase9-slice7-ui-resilience-retry-recovery.md`
+8. `docs/phase9-slice8-dashboard-notification-caching.md`
+9. `docs/phase9-slice9-service-workspace-discovery.md`
+10. `docs/phase9-slice10-service-catalog-sorting.md`

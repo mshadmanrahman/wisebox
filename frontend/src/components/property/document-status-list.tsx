@@ -35,6 +35,44 @@ interface DocumentsResponse {
   uploaded: PropertyDocument[];
 }
 
+function normalizeDocumentsResponse(payload: unknown): DocumentsResponse {
+  if (!payload || typeof payload !== 'object') {
+    return { document_types: [], uploaded: [] };
+  }
+
+  const data = payload as {
+    document_types?: unknown;
+    uploaded?: unknown;
+  };
+
+  if (Array.isArray(data.document_types) && Array.isArray(data.uploaded)) {
+    return {
+      document_types: data.document_types as DocumentType[],
+      uploaded: data.uploaded as PropertyDocument[],
+    };
+  }
+
+  // Backward compatibility with legacy shape:
+  // [{ document_type, uploaded, document }]
+  if (Array.isArray(payload)) {
+    const rows = payload as Array<{
+      document_type?: DocumentType;
+      document?: PropertyDocument | null;
+    }>;
+
+    return {
+      document_types: rows
+        .map((row) => row.document_type)
+        .filter((docType): docType is DocumentType => Boolean(docType)),
+      uploaded: rows
+        .map((row) => row.document)
+        .filter((doc): doc is PropertyDocument => Boolean(doc)),
+    };
+  }
+
+  return { document_types: [], uploaded: [] };
+}
+
 const docStatusConfig: Record<
   PropertyDocument['status'],
   { label: string; className: string }
@@ -97,7 +135,7 @@ export function DocumentStatusList({
       const res = await api.get<ApiResponse<DocumentsResponse>>(
         `/properties/${propertyId}/documents`
       );
-      return res.data.data;
+      return normalizeDocumentsResponse(res.data.data);
     },
   });
 
@@ -134,7 +172,10 @@ export function DocumentStatusList({
   const { document_types, uploaded } = data;
 
   const uploadedByType = new Map<number, PropertyDocument>();
-  for (const doc of uploaded) {
+  for (const doc of uploaded ?? []) {
+    if (doc.has_document === false) {
+      continue;
+    }
     uploadedByType.set(doc.document_type_id, doc);
   }
 
@@ -293,6 +334,11 @@ function DocumentRow({
     },
   });
 
+  const rawAcceptedFormats = docType.accepted_formats as unknown;
+  const acceptedFormats: string[] = Array.isArray(rawAcceptedFormats)
+    ? rawAcceptedFormats.map((format) => String(format).toLowerCase())
+    : [];
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
@@ -307,7 +353,7 @@ function DocumentRow({
     onDrop,
     maxFiles: 1,
     maxSize: docType.max_file_size_mb * 1024 * 1024,
-    accept: docType.accepted_formats.reduce(
+    accept: acceptedFormats.reduce(
       (acc, format) => {
         const mimeMap: Record<string, string> = {
           pdf: 'application/pdf',

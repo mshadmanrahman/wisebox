@@ -617,11 +617,31 @@ test.describe('Wisebox authenticated workflows', () => {
     await applyAuthenticatedSession(page, E2E_USER);
     await mockNotificationEndpoints(page, []);
 
-    await page.route('**/api/v1/services', async (route) => {
+    await page.route('**/api/v1/service-categories', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
+          data: [
+            {
+              id: 1,
+              name: 'Legal',
+              slug: 'legal',
+              is_active: true,
+              sort_order: 1,
+              active_services_count: 1,
+            },
+          ],
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/services(?:\?.*)?$/, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
           data: [
             {
               id: 31,
@@ -633,6 +653,11 @@ test.describe('Wisebox authenticated workflows', () => {
               is_featured: true,
             },
           ],
+          from: 1,
+          last_page: 1,
+          per_page: 6,
+          to: 1,
+          total: 1,
         }),
       });
     });
@@ -733,6 +758,237 @@ test.describe('Wisebox authenticated workflows', () => {
 
     await expect(page).toHaveURL(/\/orders\/501$/);
     await expect(page.getByRole('button', { name: 'Pay with Stripe' })).toBeVisible();
+  });
+
+  test('services workspace supports filters and pagination while keeping selected services', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
+
+    const allServices = [
+      {
+        id: 31,
+        name: 'Title Search',
+        short_description: 'Verify ownership history',
+        pricing_type: 'paid',
+        price: 150,
+        currency: 'USD',
+        is_featured: true,
+        category: { slug: 'legal' },
+      },
+      {
+        id: 32,
+        name: 'Mutation Filing',
+        short_description: 'Mutation support for legal transfer',
+        pricing_type: 'physical',
+        price: 80,
+        currency: 'USD',
+        is_featured: false,
+        category: { slug: 'legal' },
+      },
+      {
+        id: 33,
+        name: 'Power of Attorney Drafting',
+        short_description: 'Draft and review POA documents',
+        pricing_type: 'paid',
+        price: 120,
+        currency: 'USD',
+        is_featured: true,
+        category: { slug: 'legal' },
+      },
+      {
+        id: 34,
+        name: 'Document Review',
+        short_description: 'Review uploaded land documents',
+        pricing_type: 'free',
+        price: 0,
+        currency: 'USD',
+        is_featured: false,
+        category: { slug: 'legal' },
+      },
+      {
+        id: 35,
+        name: 'Survey Coordination',
+        short_description: 'Coordinate on-ground survey team',
+        pricing_type: 'physical',
+        price: 60,
+        currency: 'USD',
+        is_featured: false,
+        category: { slug: 'survey' },
+      },
+      {
+        id: 36,
+        name: 'Boundary Mapping',
+        short_description: 'Boundary and mouza alignment checks',
+        pricing_type: 'paid',
+        price: 95,
+        currency: 'USD',
+        is_featured: false,
+        category: { slug: 'survey' },
+      },
+      {
+        id: 37,
+        name: 'On-site Survey Plus',
+        short_description: 'Full site survey and verification',
+        pricing_type: 'physical',
+        price: 220,
+        currency: 'USD',
+        is_featured: true,
+        category: { slug: 'survey' },
+      },
+    ];
+
+    await page.route('**/api/v1/service-categories', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: [
+            {
+              id: 1,
+              name: 'Legal',
+              slug: 'legal',
+              is_active: true,
+              sort_order: 1,
+              active_services_count: 4,
+            },
+            {
+              id: 2,
+              name: 'Survey',
+              slug: 'survey',
+              is_active: true,
+              sort_order: 2,
+              active_services_count: 3,
+            },
+          ],
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/services(?:\?.*)?$/, async (route) => {
+      const requestUrl = new URL(route.request().url());
+      const pageParam = Number(requestUrl.searchParams.get('page') || '1');
+      const perPage = Number(requestUrl.searchParams.get('per_page') || '6');
+      const query = (requestUrl.searchParams.get('q') || '').toLowerCase();
+      const categorySlug = requestUrl.searchParams.get('category_slug');
+      const pricingType = requestUrl.searchParams.get('pricing_type');
+      const featured = requestUrl.searchParams.get('featured');
+      const sort = requestUrl.searchParams.get('sort') || 'recommended';
+
+      const filtered = allServices.filter((service) => {
+        if (query) {
+          const haystack = `${service.name} ${service.short_description}`.toLowerCase();
+          if (!haystack.includes(query)) {
+            return false;
+          }
+        }
+        if (categorySlug && service.category.slug !== categorySlug) {
+          return false;
+        }
+        if (pricingType && service.pricing_type !== pricingType) {
+          return false;
+        }
+        if (featured === '1' && !service.is_featured) {
+          return false;
+        }
+        return true;
+      });
+
+      const sorted = [...filtered];
+      if (sort === 'price_low') {
+        sorted.sort((a, b) => a.price - b.price || a.id - b.id);
+      } else if (sort === 'price_high') {
+        sorted.sort((a, b) => b.price - a.price || a.id - b.id);
+      } else if (sort === 'name_asc') {
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sort === 'name_desc') {
+        sorted.sort((a, b) => b.name.localeCompare(a.name));
+      }
+
+      const safePerPage = Math.max(1, perPage);
+      const total = sorted.length;
+      const currentPage = Math.max(1, pageParam);
+      const lastPage = Math.max(1, Math.ceil(total / safePerPage));
+      const offset = (currentPage - 1) * safePerPage;
+      const data = sorted.slice(offset, offset + safePerPage);
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: currentPage,
+          data,
+          from: data.length ? offset + 1 : null,
+          last_page: lastPage,
+          per_page: safePerPage,
+          to: data.length ? offset + data.length : null,
+          total,
+        }),
+      });
+    });
+
+    await page.route(/.*\/api\/v1\/properties(?:\?.*)?$/, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [
+            {
+              id: 9,
+              user_id: E2E_USER.id,
+              property_name: 'Workspace Property',
+              property_type_id: 1,
+              ownership_status_id: 1,
+              ownership_type_id: 1,
+              status: 'active',
+              completion_percentage: 76,
+              completion_status: 'yellow',
+              created_at: '2026-02-10T00:00:00.000000Z',
+              updated_at: '2026-02-10T00:00:00.000000Z',
+            },
+          ],
+          per_page: 100,
+          total: 1,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.goto('/workspace/services');
+    await expect(page.getByRole('heading', { name: 'Choose Services' })).toBeVisible();
+    await expect(page.getByText('7 service(s) found')).toBeVisible();
+
+    const firstServiceTitle = page.locator('button h3').first();
+    await expect(firstServiceTitle).toHaveText('Title Search');
+    await page.getByRole('combobox').nth(3).click();
+    await page.getByRole('option', { name: 'Price: High to Low' }).click();
+    await expect(firstServiceTitle).toHaveText('On-site Survey Plus');
+    await page.getByRole('combobox').nth(3).click();
+    await page.getByRole('option', { name: 'Name: A to Z' }).click();
+    await expect(firstServiceTitle).toHaveText('Boundary Mapping');
+    await page.getByRole('combobox').nth(3).click();
+    await page.getByRole('option', { name: 'Recommended order' }).click();
+    await expect(firstServiceTitle).toHaveText('Title Search');
+
+    await page.getByRole('button', { name: /Title Search/ }).click();
+    await page.getByRole('button', { name: 'Next' }).click();
+    await expect(page.getByRole('button', { name: /On-site Survey Plus/ })).toBeVisible();
+    await page.getByRole('button', { name: /On-site Survey Plus/ }).click();
+    await expect(page.getByText('USD 370.00')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Previous' }).click();
+    await expect(page.getByRole('button', { name: /Title Search/ })).toBeVisible();
+
+    await page.getByRole('combobox').nth(1).click();
+    await page.getByRole('option', { name: 'Survey (3)' }).click();
+    await expect(page.getByText('3 service(s) found')).toBeVisible();
+
+    await page.getByPlaceholder('Search services by name or keywords').fill('plus');
+    await expect(page.getByRole('button', { name: /On-site Survey Plus/ })).toBeVisible();
+    await expect(page.getByText('1 service(s) found')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Clear filters' }).click();
+    await expect(page.getByText('7 service(s) found')).toBeVisible();
   });
 
   test('consultant user can access consultant workspace list and detail', async ({ page }) => {
@@ -1277,6 +1533,263 @@ test.describe('Wisebox authenticated workflows', () => {
     await page.getByRole('button', { name: 'Add Comment' }).click();
     await commentRequest;
     await expect(page.getByText('Comment cannot be empty.')).toBeVisible();
+  });
+
+  test('dashboard summary recovers after transient API failure', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+
+    let attempts = 0;
+    await page.route('**/api/v1/dashboard/summary', async (route) => {
+      attempts += 1;
+      if (attempts <= 3) {
+        await route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: 'Dashboard temporarily unavailable.',
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            hero_slides: [
+              {
+                id: 1,
+                title: 'Recovered dashboard summary',
+                subtitle: 'Retry succeeded.',
+                image_path: null,
+                cta_text: 'Add New Property',
+                cta_url: '/properties/new',
+                is_active: true,
+                sort_order: 1,
+              },
+            ],
+            properties_preview: [],
+            tickets_preview: [],
+            notifications_preview: [],
+            unread_notifications_count: 0,
+            counts: { properties_total: 0, tickets_total: 0, tickets_open: 0 },
+          },
+        }),
+      });
+    });
+
+    await page.goto('/dashboard');
+    await expect(page.getByText('Could not load dashboard summary.')).toBeVisible();
+    const retryRequest = page.waitForResponse(
+      (response) => response.url().includes('/api/v1/dashboard/summary') && response.status() === 200
+    );
+    await page.getByRole('button', { name: 'Retry' }).click();
+    await retryRequest;
+    await expect(page.getByText('Recovered dashboard summary')).toBeVisible();
+  });
+
+  test('notifications page recovers after transient API failure', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+
+    await page.route('**/api/v1/notifications/unread-count', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: { unread_count: 1 },
+        }),
+      });
+    });
+
+    let attempts = 0;
+    await page.route(/.*\/api\/v1\/notifications(?:\?.*)?$/, async (route) => {
+      if (route.request().method() !== 'GET') {
+        await route.continue();
+        return;
+      }
+
+      attempts += 1;
+      // Next.js dev + React strict mode can trigger duplicate initial fetches.
+      // Fail enough attempts to guarantee the UI enters explicit error state first.
+      if (attempts <= 6) {
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: 'Notification service timeout.',
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [
+            {
+              id: 'notif-recovered',
+              user_id: E2E_USER.id,
+              type: 'ticket.comment.added',
+              title: 'Recovered notification stream',
+              body: 'Notifications loaded after retry.',
+              data: null,
+              read_at: null,
+              created_at: '2026-02-10T12:00:00.000000Z',
+            },
+          ],
+          first_page_url: '/api/v1/notifications?page=1',
+          from: 1,
+          last_page: 1,
+          last_page_url: '/api/v1/notifications?page=1',
+          links: [],
+          next_page_url: null,
+          path: '/api/v1/notifications',
+          per_page: 10,
+          prev_page_url: null,
+          to: 1,
+          total: 1,
+        }),
+      });
+    });
+
+    await page.goto('/notifications');
+    await expect(page.getByText('Could not load notifications.')).toBeVisible();
+
+    const retryRequest = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/notifications') &&
+        response.request().method() === 'GET' &&
+        response.status() === 200
+    );
+    await page.getByRole('button', { name: 'Retry' }).click();
+    await retryRequest;
+    await expect(page.getByText('Recovered notification stream')).toBeVisible();
+  });
+
+  test('orders list recovers after transient API failure', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+
+    let attempts = 0;
+    await page.route('**/api/v1/orders', async (route) => {
+      attempts += 1;
+      if (attempts <= 3) {
+        await route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: 'Orders backend unavailable.',
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [
+            {
+              id: 88,
+              order_number: 'WB-2026-00088',
+              property_id: 1,
+              user_id: E2E_USER.id,
+              subtotal: 250,
+              tax: 0,
+              discount: 0,
+              total: 250,
+              currency: 'USD',
+              payment_status: 'pending',
+              status: 'pending',
+              created_at: '2026-02-10T08:00:00.000000Z',
+              updated_at: '2026-02-10T08:00:00.000000Z',
+            },
+          ],
+          per_page: 10,
+          total: 1,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.goto('/orders');
+    await expect(page.getByText('Could not load orders.')).toBeVisible();
+
+    const retryRequest = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/orders') &&
+        response.request().method() === 'GET' &&
+        response.status() === 200
+    );
+    await page.getByRole('button', { name: 'Retry' }).click();
+    await retryRequest;
+    await expect(page.getByText('WB-2026-00088')).toBeVisible();
+  });
+
+  test('tickets list recovers after transient API failure', async ({ page }) => {
+    await applyAuthenticatedSession(page, E2E_USER);
+
+    let attempts = 0;
+    await page.route(/.*\/api\/v1\/tickets(?:\?.*)?$/, async (route) => {
+      attempts += 1;
+      if (attempts <= 3) {
+        await route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: 'Ticket service unavailable.',
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current_page: 1,
+          data: [
+            {
+              id: 29,
+              ticket_number: 'TK-2026-00029',
+              property_id: 1,
+              customer_id: E2E_USER.id,
+              consultant_id: 14,
+              service_id: 7,
+              title: 'Recovered tickets list',
+              description: 'Tickets loaded after retry.',
+              priority: 'medium',
+              status: 'assigned',
+              created_at: '2026-02-10T08:10:00.000000Z',
+              updated_at: '2026-02-10T09:10:00.000000Z',
+              property: { id: 1, property_name: 'North Plot' },
+              service: { id: 7, name: 'Title Check' },
+              customer: { id: E2E_USER.id, name: E2E_USER.name },
+              consultant: { id: 14, name: 'Consultant One' },
+            },
+          ],
+          per_page: 15,
+          total: 1,
+          last_page: 1,
+        }),
+      });
+    });
+
+    await page.goto('/tickets');
+    await expect(page.getByText('Could not load tickets.')).toBeVisible();
+
+    const retryRequest = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/tickets') &&
+        response.request().method() === 'GET' &&
+        response.status() === 200
+    );
+    await page.getByRole('button', { name: 'Retry' }).click();
+    await retryRequest;
+    await expect(page.getByText('TK-2026-00029')).toBeVisible();
   });
 
   test('authenticated list pages show expected empty states', async ({ page }) => {

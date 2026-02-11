@@ -38,17 +38,12 @@ class DocumentController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        // Map document types with upload status
-        $result = $allDocTypes->map(function ($docType) use ($documents) {
-            $uploaded = $documents->where('document_type_id', $docType->id)->first();
-            return [
-                'document_type' => $docType,
-                'uploaded' => $uploaded !== null,
-                'document' => $uploaded,
-            ];
-        });
-
-        return response()->json(['data' => $result]);
+        return response()->json([
+            'data' => [
+                'document_types' => $allDocTypes->values(),
+                'uploaded' => $documents->values(),
+            ],
+        ]);
     }
 
     /**

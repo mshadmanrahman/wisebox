@@ -72,6 +72,7 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
     enabled: !!value.upazila_id,
     staleTime: Infinity,
   });
+  const hasMouzaOptions = (mouzas?.length ?? 0) > 0;
 
   const handleDivisionChange = (divisionId: string) => {
     onChange({
@@ -201,11 +202,18 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
                   ? 'Select upazila first'
                   : mouzasLoading
                     ? 'Loading...'
-                    : 'Select mouza'
+                    : hasMouzaOptions
+                      ? 'Select mouza'
+                      : 'No mouza available'
               }
             />
           </SelectTrigger>
           <SelectContent>
+            {!mouzasLoading && value.upazila_id && !hasMouzaOptions && (
+              <SelectItem value="__none" disabled>
+                No mouza available for selected upazila
+              </SelectItem>
+            )}
             {mouzas?.map((mz) => (
               <SelectItem key={mz.id} value={mz.id.toString()}>
                 {mz.name}

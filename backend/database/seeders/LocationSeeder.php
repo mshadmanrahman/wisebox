@@ -12,6 +12,7 @@ class LocationSeeder extends Seeder
         $this->seedDivisions();
         $this->seedDistricts();
         $this->seedUpazilas();
+        $this->seedMouzas();
     }
 
     private function seedDivisions(): void
@@ -129,6 +130,47 @@ class LocationSeeder extends Seeder
                 DB::table('upazilas')->updateOrInsert(
                     ['name' => $upazilaName, 'district_id' => $districtId],
                     ['bn_name' => null]
+                );
+            }
+        }
+    }
+
+    private function seedMouzas(): void
+    {
+        // Representative mouzas for common upazilas used in local testing.
+        $mouzasByUpazila = [
+            'Mirpur' => ['Pallabi', 'Kazipara', 'Shewrapara', 'Monipur', 'Rupnagar'],
+            'Tejgaon' => ['Tejgaon Industrial Area', 'Nikunja', 'Karwan Bazar'],
+            'Gulshan' => ['Gulshan', 'Banani', 'Badda'],
+            'Uttara' => ['Uttara', 'Diabari', 'Dakshinkhan'],
+            'Savar' => ['Hemayetpur', 'Amin Bazar', 'Ashulia'],
+            'Keraniganj' => ['Zinzira', 'Kalatia', 'Rohitpur'],
+            'Dhamrai' => ['Dhamrai', 'Kulla', 'Sutipara'],
+            'Gazipur Sadar' => ['Joydebpur', 'Pubail', 'Kashimpur'],
+            'Narayanganj Sadar' => ['Fatullah', 'Siddhirganj', 'Kutubpur'],
+            'Rajshahi Sadar' => ['Boalia', 'Shah Makhdum', 'Katakhali'],
+            'Sylhet Sadar' => ['Jalalabad', 'Tukerbazar', 'Khadimnagar'],
+            'Khulna' => ['Khalishpur', 'Daulatpur', 'Sonadanga'],
+            'Comilla Sadar' => ['Kotwali', 'Kandirpar', 'Chandpur'],
+            'Cox\'s Bazar Sadar' => ['Jhilongja', 'Khurushkul', 'Pokkhali'],
+            'Barishal Sadar' => ['Kawnia', 'Rupatali', 'Chandmari'],
+            'Mymensingh Sadar' => ['Char Ishwardia', 'Shambhuganj', 'Maskanda'],
+            'Bogura Sadar' => ['Matidali', 'Nishindara', 'Erulia'],
+        ];
+
+        foreach ($mouzasByUpazila as $upazilaName => $mouzaNames) {
+            $upazilaId = DB::table('upazilas')->where('name', $upazilaName)->value('id');
+            if (!$upazilaId) {
+                continue;
+            }
+
+            foreach ($mouzaNames as $index => $mouzaName) {
+                DB::table('mouzas')->updateOrInsert(
+                    ['upazila_id' => $upazilaId, 'name' => $mouzaName],
+                    [
+                        'bn_name' => null,
+                        'jl_number' => (string) ($index + 1),
+                    ]
                 );
             }
         }

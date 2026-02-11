@@ -76,6 +76,7 @@ type EditPropertyForm = z.infer<typeof editPropertySchema>;
 
 const propertyTypeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   land: Trees,
+  building: Building2,
   apartment: Building2,
   commercial: Factory,
   agricultural: Wheat,

@@ -18,14 +18,13 @@ class ServiceCatalogController extends Controller
             'category_slug' => ['nullable', 'string', 'max:100'],
             'pricing_type' => ['nullable', Rule::in(['free', 'paid', 'physical'])],
             'featured' => ['nullable', 'boolean'],
+            'sort' => ['nullable', Rule::in(['recommended', 'price_low', 'price_high', 'name_asc', 'name_desc'])],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
 
         $query = Service::query()
             ->with('category:id,name,slug')
-            ->active()
-            ->orderBy('sort_order')
-            ->orderBy('id');
+            ->active();
 
         if (!empty($validated['q'])) {
             $search = trim((string) $validated['q']);
@@ -51,6 +50,19 @@ class ServiceCatalogController extends Controller
             $query->where('is_featured', (bool) $validated['featured']);
         }
 
+        $sort = (string) ($validated['sort'] ?? 'recommended');
+        if ($sort === 'price_low') {
+            $query->orderBy('price')->orderBy('sort_order')->orderBy('id');
+        } elseif ($sort === 'price_high') {
+            $query->orderByDesc('price')->orderBy('sort_order')->orderBy('id');
+        } elseif ($sort === 'name_asc') {
+            $query->orderBy('name')->orderBy('id');
+        } elseif ($sort === 'name_desc') {
+            $query->orderByDesc('name')->orderBy('id');
+        } else {
+            $query->orderBy('sort_order')->orderBy('id');
+        }
+
         if (!empty($validated['per_page'])) {
             $services = $query->paginate((int) $validated['per_page']);
 
@@ -64,6 +76,11 @@ class ServiceCatalogController extends Controller
     {
         $categories = ServiceCategory::query()
             ->where('is_active', true)
+            ->withCount([
+                'services as active_services_count' => function ($query) {
+                    $query->where('is_active', true);
+                },
+            ])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
@@ -71,4 +88,3 @@ class ServiceCatalogController extends Controller
         return response()->json(['data' => $categories]);
     }
 }
-

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
 import type { ApiResponse, Notification, PaginatedResponse } from '@/types';
@@ -29,6 +29,8 @@ export function useNotifications(options: number | NotificationsQueryOptions = 2
 
   return useQuery({
     queryKey: ['notifications', normalized],
+    placeholderData: keepPreviousData,
+    retry: 2,
     queryFn: async () => {
       const response = await api.get<PaginatedResponse<Notification> & {
         current_page?: number;
@@ -85,6 +87,7 @@ export function useUnreadNotificationsCount() {
       return response.data.data.unread_count;
     },
     staleTime: 15 * 1000,
+    retry: 2,
   });
 }
 

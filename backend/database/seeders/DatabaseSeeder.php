@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
 
             // Content
             FaqSeeder::class,
+
+            // Local admin access
+            AdminUserSeeder::class,
         ]);
     }
 }

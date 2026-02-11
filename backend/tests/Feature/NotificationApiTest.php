@@ -73,6 +73,10 @@ class NotificationApiTest extends TestCase
             'read_at' => null,
         ]);
 
+        $this->getJson('/api/v1/notifications/unread-count')
+            ->assertOk()
+            ->assertJsonPath('data.unread_count', 1);
+
         $this->patchJson('/api/v1/notifications/read-all')
             ->assertOk()
             ->assertJsonPath('data.marked_count', 1);

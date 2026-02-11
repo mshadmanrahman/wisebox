@@ -30,7 +30,7 @@ interface CoOwnerFieldsProps {
 
 export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFieldsProps) {
   const totalCoOwnerPercentage = coOwners.reduce((sum, co) => sum + (co.ownership_percentage || 0), 0);
-  const exceeds100 = totalCoOwnerPercentage >= 100;
+  const exceeds100 = totalCoOwnerPercentage > 100;
 
   const addCoOwner = () => {
     onChange([
@@ -119,7 +119,7 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
               <Input
                 type="number"
                 min={1}
-                max={99}
+                max={100}
                 placeholder="e.g. 25"
                 value={coOwner.ownership_percentage || ''}
                 onChange={(e) =>

@@ -29,12 +29,6 @@ const RadioCardGroup = React.forwardRef<
     3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
   }
 
-  const cardSizes = {
-    sm: 'p-3 gap-2',
-    md: 'p-4 gap-3',
-    lg: 'p-6 gap-4',
-  }
-
   return (
     <RadioGroupPrimitive.Root
       ref={ref}

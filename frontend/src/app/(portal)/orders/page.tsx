@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
+import { AlertTriangle } from 'lucide-react';
 import api from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,15 +17,21 @@ function paymentBadgeClass(status: Order['payment_status']): string {
 }
 
 export default function OrdersPage() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: ['orders'],
     queryFn: async () => {
       const res = await api.get<PaginatedResponse<Order>>('/orders');
       return res.data;
     },
+    retry: 2,
   });
 
+  const hasData = Boolean(data);
   const orders = data?.data ?? [];
+  const errorMessage =
+    (error as { response?: { data?: { message?: string } }; message?: string } | null)?.response?.data?.message ||
+    (error as { message?: string } | null)?.message ||
+    'Please try again in a moment.';
 
   return (
     <div className="px-6 py-8 space-y-6">
@@ -34,19 +41,50 @@ export default function OrdersPage() {
           <p className="text-wisebox-text-secondary mt-1">
             Track checkout status and service fulfillment.
           </p>
+          {isFetching && hasData && (
+            <p className="text-xs text-wisebox-text-secondary mt-1">Refreshing orders...</p>
+          )}
         </div>
         <Button asChild className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600">
           <Link href="/workspace/services">Add Services</Link>
         </Button>
       </div>
 
-      {isLoading && (
+      {isError && !hasData && (
+        <Card className="border-red-200 bg-red-50/60">
+          <CardContent className="p-6 space-y-3">
+            <div className="flex items-center gap-2 text-red-700 font-medium">
+              <AlertTriangle className="h-4 w-4" />
+              Could not load orders.
+            </div>
+            <p className="text-sm text-red-700/90">{errorMessage}</p>
+            <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? 'Retrying...' : 'Retry'}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {isError && hasData && (
+        <Card className="border-amber-200 bg-amber-50/70">
+          <CardContent className="p-4 flex items-center justify-between gap-3">
+            <p className="text-sm text-amber-800">
+              Showing previously loaded orders. {errorMessage}
+            </p>
+            <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? 'Retrying...' : 'Retry'}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {isLoading && !hasData && (
         <Card>
           <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading orders...</CardContent>
         </Card>
       )}
 
-      {!isLoading && orders.length === 0 && (
+      {!isLoading && !isError && orders.length === 0 && (
         <Card>
           <CardContent className="p-6 space-y-3">
             <h2 className="font-semibold text-wisebox-text-primary">No orders yet</h2>

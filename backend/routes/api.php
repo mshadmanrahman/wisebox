@@ -187,7 +187,7 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/document-types', function () {
         return response()->json([
-            'data' => \Illuminate\Support\Facades\DB::table('document_types')
+            'data' => \App\Models\DocumentType::query()
                 ->where('is_active', true)
                 ->orderBy('sort_order')
                 ->get(),

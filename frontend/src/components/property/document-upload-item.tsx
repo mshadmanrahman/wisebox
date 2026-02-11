@@ -41,6 +41,38 @@ export function DocumentUploadItem({
   propertyId,
   onUploadComplete,
 }: DocumentUploadItemProps) {
+  const rawAcceptedFormats = documentType.accepted_formats as unknown;
+  const acceptedFormats: string[] = (() => {
+    if (Array.isArray(rawAcceptedFormats)) {
+      return rawAcceptedFormats
+        .map((fmt) => String(fmt).trim().toLowerCase())
+        .filter(Boolean);
+    }
+
+    if (typeof rawAcceptedFormats === 'string') {
+      const trimmed = rawAcceptedFormats.trim();
+      if (!trimmed) return [];
+
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed
+            .map((fmt) => String(fmt).trim().toLowerCase())
+            .filter(Boolean);
+        }
+      } catch {
+        // Not JSON; fall back to comma-separated values.
+      }
+
+      return trimmed
+        .split(',')
+        .map((fmt) => fmt.trim().toLowerCase())
+        .filter(Boolean);
+    }
+
+    return [];
+  })();
+
   const [state, setState] = useState<ItemState>(
     uploadedDocument?.has_document === false
       ? 'missing'
@@ -116,7 +148,7 @@ export function DocumentUploadItem({
   );
 
   const acceptMap: Record<string, string[]> = {};
-  documentType.accepted_formats.forEach((fmt) => {
+  acceptedFormats.forEach((fmt) => {
     const mimeMap: Record<string, string> = {
       pdf: 'application/pdf',
       jpg: 'image/jpeg',
@@ -142,7 +174,7 @@ export function DocumentUploadItem({
       if (rejection?.errors[0]?.code === 'file-too-large') {
         setError(`File exceeds ${documentType.max_file_size_mb}MB limit.`);
       } else if (rejection?.errors[0]?.code === 'file-invalid-type') {
-        setError(`Accepted formats: ${documentType.accepted_formats.join(', ')}`);
+        setError(`Accepted formats: ${acceptedFormats.join(', ') || 'pdf, jpg, png, doc, docx'}`);
       } else {
         setError('File rejected. Check format and size.');
       }
@@ -197,7 +229,7 @@ export function DocumentUploadItem({
           )}
           <p className="text-xs text-gray-400 mt-0.5">
             Score weight: {documentType.score_weight} | Max: {documentType.max_file_size_mb}MB |
-            Formats: {documentType.accepted_formats.join(', ')}
+            Formats: {acceptedFormats.join(', ') || 'Not specified'}
           </p>
         </div>
 
@@ -271,7 +303,7 @@ export function DocumentUploadItem({
               </p>
             )}
             <p className="text-xs text-gray-400 mt-1">
-              {documentType.accepted_formats.join(', ').toUpperCase()} up to {documentType.max_file_size_mb}MB
+              {(acceptedFormats.join(', ').toUpperCase() || 'PDF, JPG, PNG, DOC, DOCX')} up to {documentType.max_file_size_mb}MB
             </p>
           </div>
 
@@ -279,6 +311,21 @@ export function DocumentUploadItem({
             <div className="space-y-1">
               <Progress value={uploadProgress} className="h-2" />
               <p className="text-xs text-gray-500 text-right">{uploadProgress}%</p>
+            </div>
+          )}
+
+          {state === 'idle' && (
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs text-gray-600 hover:text-amber-700"
+                onClick={handleDontHaveThis}
+                disabled={markMissingMutation.isPending}
+              >
+                Actually, I don&apos;t have this
+              </Button>
             </div>
           )}
         </div>

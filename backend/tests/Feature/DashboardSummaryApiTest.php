@@ -32,13 +32,24 @@ class DashboardSummaryApiTest extends TestCase
                 'updated_at' => now(),
             ],
             [
+                'title' => 'Malformed localhost slide',
+                'subtitle' => 'CTA should be normalized',
+                'image_path' => 'slides/localhost.jpg',
+                'cta_text' => 'Talk to expert',
+                'cta_url' => 'localhost:3000/tickets',
+                'is_active' => true,
+                'sort_order' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'title' => 'Inactive slide',
                 'subtitle' => 'Should be hidden',
                 'image_path' => 'slides/inactive.jpg',
                 'cta_text' => null,
                 'cta_url' => null,
                 'is_active' => false,
-                'sort_order' => 2,
+                'sort_order' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -103,13 +114,14 @@ class DashboardSummaryApiTest extends TestCase
             ->assertJsonPath('data.counts.tickets_total', 1)
             ->assertJsonPath('data.counts.tickets_open', 1)
             ->assertJsonPath('data.unread_notifications_count', 1)
-            ->assertJsonCount(1, 'data.hero_slides')
+            ->assertJsonCount(2, 'data.hero_slides')
             ->assertJsonCount(1, 'data.properties_preview')
             ->assertJsonCount(1, 'data.tickets_preview')
             ->assertJsonCount(1, 'data.notifications_preview');
 
         $this->assertSame($property->id, (int) $response->json('data.properties_preview.0.id'));
         $this->assertSame($user->id, (int) $response->json('data.notifications_preview.0.user_id'));
+        $this->assertSame('/tickets', $response->json('data.hero_slides.1.cta_url'));
     }
 
     private function createPropertyForUser(User $user, string $name): Property

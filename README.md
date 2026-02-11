@@ -4,17 +4,17 @@ Digital property management platform for the South Asian diaspora. Manage ancest
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Laravel 12 (PHP 8.4 in Docker), Filament 4, Sanctum |
-| Frontend | Next.js 14 (TypeScript), Tailwind CSS, shadcn/ui |
-| Database | MySQL 8 |
-| Cache/Queue | Redis 7 |
-| Payments | Stripe |
-| Scheduling | Calendly API |
-| File Storage | AWS S3 |
-| Frontend Hosting | Vercel |
-| Backend Hosting | AWS EC2 / Laravel Forge |
+| Layer            | Technology                                          |
+| ---------------- | --------------------------------------------------- |
+| Backend          | Laravel 12 (PHP 8.4 in Docker), Filament 4, Sanctum |
+| Frontend         | Next.js 14 (TypeScript), Tailwind CSS, shadcn/ui    |
+| Database         | MySQL 8                                             |
+| Cache/Queue      | Redis 7                                             |
+| Payments         | Stripe                                              |
+| Scheduling       | Calendly API                                        |
+| File Storage     | AWS S3                                              |
+| Frontend Hosting | Vercel                                              |
+| Backend Hosting  | AWS EC2 / Laravel Forge                             |
 
 ## Project Structure
 

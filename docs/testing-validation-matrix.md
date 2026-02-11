@@ -36,6 +36,8 @@ docker compose exec app php artisan test --testsuite=Feature
   - Calendly webhook sync
   - Consultant workload and ticket assignment flows
   - OTP delivery and verification flow
+  - Dashboard summary scoping + aggregate counts
+  - Notification filtering, pagination, and unread-count cache invalidation
 - Command:
 
 ```bash
@@ -89,11 +91,14 @@ npm run build
   - Property detail assessment history rendering
   - Settings profile preference save + password change request behaviors
   - Services workspace order-initiation behavior
+  - Services workspace filters + pagination behavior with cross-page selection persistence
+  - Services workspace sort behavior (recommended, price, and name ranking)
   - Consultant workspace list/detail rendering behavior
   - Customer and consultant ticket mutation submission behaviors (payload-level assertions)
   - Customer and consultant ticket mutation error rendering (negative-path API responses)
   - Scheduling-link mutation failure rendering for customer ticket detail
   - Consultant workspace role-boundary gating for non-consultant users
+  - Dashboard, notifications, orders, and tickets retry-and-recover UI behavior after transient API failures
   - Empty-state rendering behavior for orders, tickets, and properties list pages
 - Dev server origin policy:
   - `frontend/next.config.mjs` includes `allowedDevOrigins` host entries for both `127.0.0.1` and `localhost`.

@@ -8,18 +8,29 @@ use App\Models\Property;
 use App\Models\Ticket;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
 {
+    private const HERO_SLIDES_CACHE_KEY = 'dashboard:hero-slides:v1';
+
+    private const HERO_SLIDES_CACHE_TTL_SECONDS = 300;
+
     public function summary(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        $sliders = DB::table('sliders')
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
+        $sliders = Cache::remember(
+            self::HERO_SLIDES_CACHE_KEY,
+            now()->addSeconds(self::HERO_SLIDES_CACHE_TTL_SECONDS),
+            static fn () => DB::table('sliders')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get()
+        );
+        $sliders = $this->sanitizeSlides($sliders);
 
         $properties = Property::query()
             ->where('user_id', $user->id)
@@ -46,6 +57,12 @@ class DashboardController extends Controller
             ->get();
 
         $ticketOpenStatuses = ['open', 'assigned', 'in_progress', 'awaiting_customer', 'awaiting_consultant', 'scheduled'];
+        $ticketOpenStatusBindings = implode(', ', array_fill(0, count($ticketOpenStatuses), '?'));
+
+        $ticketStats = (clone $ticketsBaseQuery)
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN status IN ({$ticketOpenStatusBindings}) THEN 1 ELSE 0 END) as open_total", $ticketOpenStatuses)
+            ->first();
 
         $notifications = InAppNotification::query()
             ->where('user_id', $user->id)
@@ -67,10 +84,80 @@ class DashboardController extends Controller
                 'unread_notifications_count' => $unreadCount,
                 'counts' => [
                     'properties_total' => Property::query()->where('user_id', $user->id)->count(),
-                    'tickets_total' => (clone $ticketsBaseQuery)->count(),
-                    'tickets_open' => (clone $ticketsBaseQuery)->whereIn('status', $ticketOpenStatuses)->count(),
+                    'tickets_total' => (int) ($ticketStats->total ?? 0),
+                    'tickets_open' => (int) ($ticketStats->open_total ?? 0),
                 ],
             ],
         ]);
+    }
+
+    /**
+     * @param  Collection<int, object>  $slides
+     * @return Collection<int, object>
+     */
+    private function sanitizeSlides(Collection $slides): Collection
+    {
+        return $slides->map(function (object $slide): object {
+            if (property_exists($slide, 'cta_url')) {
+                $slide->cta_url = $this->sanitizeCtaUrl($slide->cta_url);
+            }
+
+            return $slide;
+        });
+    }
+
+    private function sanitizeCtaUrl(mixed $rawUrl): ?string
+    {
+        if (! is_string($rawUrl)) {
+            return null;
+        }
+
+        $value = trim($rawUrl);
+
+        if ($value === '') {
+            return null;
+        }
+
+        if (str_starts_with($value, '/')) {
+            return $this->normalizeLocalPath($value);
+        }
+
+        if (! preg_match('/^https?:\/\//i', $value)) {
+            if (preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/i', $value, $matches) === 1) {
+                return $this->normalizeLocalPath((string) ($matches[3] ?? ''));
+            }
+
+            return null;
+        }
+
+        $parsed = parse_url($value);
+        if ($parsed === false || ! isset($parsed['host'])) {
+            return null;
+        }
+
+        $host = strtolower((string) $parsed['host']);
+        if (! in_array($host, ['localhost', '127.0.0.1'], true)) {
+            return $value;
+        }
+
+        $path = (string) ($parsed['path'] ?? '');
+        if (isset($parsed['query']) && $parsed['query'] !== '') {
+            $path .= '?'.$parsed['query'];
+        }
+        if (isset($parsed['fragment']) && $parsed['fragment'] !== '') {
+            $path .= '#'.$parsed['fragment'];
+        }
+
+        return $this->normalizeLocalPath($path);
+    }
+
+    private function normalizeLocalPath(string $path): ?string
+    {
+        $value = trim($path);
+        if ($value === '' || $value === '/' || preg_match('/^\/localhost\/?$/i', $value) === 1) {
+            return null;
+        }
+
+        return str_starts_with($value, '/') ? $value : '/'.ltrim($value, '/');
     }
 }

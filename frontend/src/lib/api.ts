@@ -8,12 +8,12 @@ export const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: true,
+  // Removed withCredentials - we're using tokens, not cookies
 });
 
-// Request interceptor: attach auth token
+// Request interceptor: attach Bearer token from localStorage
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+  async (config: InternalAxiosRequestConfig) => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('wisebox_token');
       if (token && config.headers) {
@@ -28,7 +28,8 @@ api.interceptors.request.use(
 // Response interceptor: handle 401 (unauthorized)
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    // If unauthorized, clear token and redirect to login
     if (error.response?.status === 401 && typeof window !== 'undefined') {
       localStorage.removeItem('wisebox_token');
       // Only redirect if not already on login page

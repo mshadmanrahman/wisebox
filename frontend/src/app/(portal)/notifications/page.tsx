@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Bell, CheckCheck, Search } from 'lucide-react';
+import { AlertTriangle, Bell, CheckCheck, Search } from 'lucide-react';
 import {
   useMarkAllNotificationsRead,
   useMarkNotificationRead,
@@ -49,13 +49,18 @@ export default function NotificationsPage() {
     [page, statusFilter, typeFilter, query]
   );
 
-  const { data, isLoading } = useNotifications(listParams);
+  const { data, isLoading, isFetching, isError, error, refetch } = useNotifications(listParams);
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   const markReadMutation = useMarkNotificationRead();
   const markAllMutation = useMarkAllNotificationsRead();
 
+  const hasData = Boolean(data);
   const notifications = data?.data ?? [];
   const meta = data?.meta;
+  const errorMessage =
+    (error as { response?: { data?: { message?: string } }; message?: string } | null)?.response?.data?.message ||
+    (error as { message?: string } | null)?.message ||
+    'Please try again in a moment.';
 
   return (
     <div className="px-6 py-8 space-y-6">
@@ -63,6 +68,9 @@ export default function NotificationsPage() {
         <div>
           <h1 className="text-2xl font-bold text-wisebox-text-primary">Notification Center</h1>
           <p className="text-wisebox-text-secondary mt-1">Track assignments, ticket updates, and order events.</p>
+          {isFetching && hasData && (
+            <p className="text-xs text-wisebox-text-secondary mt-1">Refreshing notifications...</p>
+          )}
         </div>
         <Button
           variant="outline"
@@ -113,9 +121,33 @@ export default function NotificationsPage() {
         </CardContent>
       </Card>
 
-      {isLoading ? (
+      {isError && !hasData ? (
+        <Card className="border-red-200 bg-red-50/60">
+          <CardContent className="p-6 space-y-3">
+            <div className="flex items-center gap-2 text-red-700 font-medium">
+              <AlertTriangle className="h-4 w-4" />
+              Could not load notifications.
+            </div>
+            <p className="text-sm text-red-700/90">{errorMessage}</p>
+            <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? 'Retrying...' : 'Retry'}
+            </Button>
+          </CardContent>
+        </Card>
+      ) : isLoading && !hasData ? (
         <Card>
           <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading notifications...</CardContent>
+        </Card>
+      ) : isError && hasData ? (
+        <Card className="border-amber-200 bg-amber-50/70">
+          <CardContent className="p-4 flex items-center justify-between gap-3">
+            <p className="text-sm text-amber-800">
+              Showing previously loaded notifications. {errorMessage}
+            </p>
+            <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? 'Retrying...' : 'Retry'}
+            </Button>
+          </CardContent>
         </Card>
       ) : notifications.length === 0 ? (
         <Card>

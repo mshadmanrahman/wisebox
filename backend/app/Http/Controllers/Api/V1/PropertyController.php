@@ -56,15 +56,8 @@ class PropertyController extends Controller
             'co_owners.*.nid_number' => ['nullable', 'string', 'max:50'],
         ]);
 
-        // Validate co-owner percentages total 100% if co-owners exist
-        if (!empty($validated['co_owners'])) {
-            $total = collect($validated['co_owners'])->sum('ownership_percentage');
-            if (abs($total - 100) > 0.01) {
-                return response()->json([
-                    'message' => 'Co-owner percentages must total 100%.',
-                    'errors' => ['co_owners' => ["Total is {$total}%, must be 100%."]],
-                ], 422);
-            }
+        if ($coOwnerValidationError = $this->validateCoOwnerOwnership($validated['co_owners'] ?? null)) {
+            return $coOwnerValidationError;
         }
 
         $property = DB::transaction(function () use ($request, $validated) {
@@ -155,6 +148,12 @@ class PropertyController extends Controller
             'co_owners.*.nid_number' => ['nullable', 'string', 'max:50'],
         ]);
 
+        if (array_key_exists('co_owners', $validated)) {
+            if ($coOwnerValidationError = $this->validateCoOwnerOwnership($validated['co_owners'])) {
+                return $coOwnerValidationError;
+            }
+        }
+
         DB::transaction(function () use ($property, $validated) {
             $coOwners = $validated['co_owners'] ?? null;
             unset($validated['co_owners']);
@@ -209,5 +208,27 @@ class PropertyController extends Controller
         return response()->json([
             'data' => ['last_draft_at' => $property->last_draft_at],
         ]);
+    }
+
+    private function validateCoOwnerOwnership(?array $coOwners): ?JsonResponse
+    {
+        if (empty($coOwners)) {
+            return null;
+        }
+
+        $total = (float) collect($coOwners)->sum(function ($coOwner) {
+            return (float) ($coOwner['ownership_percentage'] ?? 0);
+        });
+
+        if ($total > 100.01) {
+            $formattedTotal = rtrim(rtrim(number_format($total, 2, '.', ''), '0'), '.');
+
+            return response()->json([
+                'message' => 'Co-owner percentages cannot exceed 100%.',
+                'errors' => ['co_owners' => ["Total is {$formattedTotal}% and must be 100% or less."]],
+            ], 422);
+        }
+
+        return null;
     }
 }

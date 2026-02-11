@@ -114,17 +114,89 @@ class ServiceCatalogApiTest extends TestCase
             ->assertJsonCount(2, 'data');
     }
 
+    public function test_services_endpoint_supports_sorting_options(): void
+    {
+        $categoryId = $this->createCategory('General', 'general', true, 1);
+
+        $this->createService($categoryId, [
+            'name' => 'Zulu Service',
+            'slug' => 'zulu-service',
+            'price' => 25.00,
+            'sort_order' => 3,
+        ]);
+
+        $this->createService($categoryId, [
+            'name' => 'Alpha Service',
+            'slug' => 'alpha-service',
+            'price' => 99.00,
+            'sort_order' => 2,
+        ]);
+
+        $this->createService($categoryId, [
+            'name' => 'Middle Service',
+            'slug' => 'middle-service',
+            'price' => 49.00,
+            'sort_order' => 1,
+        ]);
+
+        $this->getJson('/api/v1/services?sort=price_high')
+            ->assertOk()
+            ->assertJsonPath('data.0.slug', 'alpha-service')
+            ->assertJsonPath('data.1.slug', 'middle-service')
+            ->assertJsonPath('data.2.slug', 'zulu-service');
+
+        $this->getJson('/api/v1/services?sort=name_asc')
+            ->assertOk()
+            ->assertJsonPath('data.0.slug', 'alpha-service')
+            ->assertJsonPath('data.1.slug', 'middle-service')
+            ->assertJsonPath('data.2.slug', 'zulu-service');
+
+        $this->getJson('/api/v1/services?sort=name_desc')
+            ->assertOk()
+            ->assertJsonPath('data.0.slug', 'zulu-service')
+            ->assertJsonPath('data.1.slug', 'middle-service')
+            ->assertJsonPath('data.2.slug', 'alpha-service');
+    }
+
     public function test_public_service_categories_endpoint_returns_active_sorted_categories(): void
     {
-        $this->createCategory('Inactive', 'inactive-category', false, 0);
-        $this->createCategory('Second Category', 'second-category', true, 2);
-        $this->createCategory('First Category', 'first-category', true, 1);
+        $inactiveCategoryId = $this->createCategory('Inactive', 'inactive-category', false, 0);
+        $secondCategoryId = $this->createCategory('Second Category', 'second-category', true, 2);
+        $firstCategoryId = $this->createCategory('First Category', 'first-category', true, 1);
+
+        $this->createService($firstCategoryId, [
+            'name' => 'First Active Service',
+            'slug' => 'first-active-service',
+            'is_active' => true,
+        ]);
+        $this->createService($firstCategoryId, [
+            'name' => 'First Inactive Service',
+            'slug' => 'first-inactive-service',
+            'is_active' => false,
+        ]);
+        $this->createService($secondCategoryId, [
+            'name' => 'Second Active Service A',
+            'slug' => 'second-active-service-a',
+            'is_active' => true,
+        ]);
+        $this->createService($secondCategoryId, [
+            'name' => 'Second Active Service B',
+            'slug' => 'second-active-service-b',
+            'is_active' => true,
+        ]);
+        $this->createService($inactiveCategoryId, [
+            'name' => 'Inactive Category Service',
+            'slug' => 'inactive-category-service',
+            'is_active' => true,
+        ]);
 
         $this->getJson('/api/v1/service-categories')
             ->assertOk()
             ->assertJsonCount(2, 'data')
             ->assertJsonPath('data.0.slug', 'first-category')
-            ->assertJsonPath('data.1.slug', 'second-category');
+            ->assertJsonPath('data.0.active_services_count', 1)
+            ->assertJsonPath('data.1.slug', 'second-category')
+            ->assertJsonPath('data.1.active_services_count', 2);
     }
 
     private function createCategory(string $name, string $slug, bool $isActive, int $sortOrder): int
@@ -165,4 +237,3 @@ class ServiceCatalogApiTest extends TestCase
         ], $overrides));
     }
 }
-
