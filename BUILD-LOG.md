@@ -391,6 +391,93 @@
   - Added explicit UI error-surface assertions for backend message propagation in ticket workflows
   - Added slice note:
     - `docs/phase9-slice6-negative-path-and-role-boundary-e2e.md`
+- Slice 7 completed: UI resilience + retry/recovery hardening
+  - Added retry-aware error states for key portal pages:
+    - `frontend/src/app/(portal)/dashboard/page.tsx`
+    - `frontend/src/app/(portal)/notifications/page.tsx`
+    - `frontend/src/app/(portal)/orders/page.tsx`
+    - `frontend/src/app/(portal)/tickets/page.tsx`
+  - Added safer stale-data behavior in notifications and tickets queries:
+    - `frontend/src/hooks/use-notifications.ts`
+    - query retries and previous-data preservation during refetch
+  - Expanded authenticated E2E suite with transient-failure recovery coverage for:
+    - dashboard summary
+    - notifications list
+    - orders list
+    - tickets list
+  - Added slice note:
+    - `docs/phase9-slice7-ui-resilience-retry-recovery.md`
+- Slice 8 completed: Dashboard and notifications caching/performance pass
+  - Optimized dashboard summary endpoint:
+    - `backend/app/Http/Controllers/Api/V1/DashboardController.php`
+    - cached active hero slides for 5 minutes
+    - consolidated ticket total/open counts into one aggregate query
+  - Added unread-count caching + mutation invalidation:
+    - `backend/app/Http/Controllers/Api/V1/NotificationController.php`
+    - per-user unread count cache with 30-second TTL
+    - cache invalidation on `markRead` and `markAllRead`
+  - Extended notification feature coverage:
+    - `backend/tests/Feature/NotificationApiTest.php`
+    - unread-count assertions after read mutation to verify cache refresh
+  - Added slice note:
+    - `docs/phase9-slice8-dashboard-notification-caching.md`
+- Slice 9 completed: Service workspace discovery and filtering pass
+  - Enriched service category metadata for filter UX:
+    - `backend/app/Http/Controllers/Api/V1/ServiceCatalogController.php`
+    - category payload now includes `active_services_count` scoped to active services
+  - Expanded category endpoint feature coverage:
+    - `backend/tests/Feature/ServiceCatalogApiTest.php`
+    - active-only service counts asserted in sorted category response
+  - Upgraded authenticated services workspace UX:
+    - `frontend/src/app/(portal)/workspace/services/page.tsx`
+    - added catalog search/category/pricing/featured filters
+    - added server-driven pagination controls
+    - preserved selected services across filter/page transitions
+  - Updated frontend contract + E2E coverage:
+    - `frontend/src/types/index.ts`
+    - `frontend/tests/e2e/authenticated-workflows.spec.js`
+    - added service-filter + pagination workflow assertions
+    - stabilized notifications transient-failure E2E retry threshold in dev strict-mode runs
+  - Added slice note:
+    - `docs/phase9-slice9-service-workspace-discovery.md`
+- Slice 10 completed: Service catalog sorting + workspace ranking controls
+  - Extended service catalog API sorting contract:
+    - `backend/app/Http/Controllers/Api/V1/ServiceCatalogController.php`
+    - added `sort` query validation and ordering modes:
+      - `recommended` (default)
+      - `price_low`
+      - `price_high`
+      - `name_asc`
+      - `name_desc`
+  - Expanded service catalog feature coverage:
+    - `backend/tests/Feature/ServiceCatalogApiTest.php`
+    - added assertions for price and name sorting paths
+  - Added authenticated workspace sort controls:
+    - `frontend/src/app/(portal)/workspace/services/page.tsx`
+    - added sort selector wired to server query params
+    - preserved compatibility with existing filters/pagination/selection persistence
+  - Expanded E2E coverage for ranking behavior:
+    - `frontend/tests/e2e/authenticated-workflows.spec.js`
+    - verifies sorting by price and name plus restore to recommended ranking
+  - Added slice note:
+    - `docs/phase9-slice10-service-catalog-sorting.md`
+- Slice 11 completed: Local QA hardening + dashboard CTA/data-shape resilience
+  - Hardened dashboard hero CTA handling in portal UI:
+    - `frontend/src/app/(portal)/dashboard/page.tsx`
+    - Added malformed URL fallback and localhost URL normalization for local routing safety
+  - Added server-side sanitation for hero slide CTA payloads:
+    - `backend/app/Http/Controllers/Api/V1/DashboardController.php`
+    - Prevents malformed `cta_url` values from propagating to clients
+  - Added dashboard summary regression assertions:
+    - `backend/tests/Feature/DashboardSummaryApiTest.php`
+    - Verifies malformed local CTA values normalize to safe internal routes
+  - Local QA follow-up hardening touched onboarding/document flow safety paths:
+    - `frontend/src/components/property/document-upload-item.tsx`
+    - `frontend/src/components/property/document-status-list.tsx`
+    - `frontend/src/components/property/co-owner-fields.tsx`
+    - `frontend/src/components/property/location-cascade.tsx`
+  - Added slice note:
+    - `docs/phase9-slice11-local-qa-hardening.md`
 
 ---
 

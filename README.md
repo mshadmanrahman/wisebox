@@ -35,19 +35,26 @@ wisebox/
 ### Prerequisites
 
 - Docker and Docker Compose
-- Node.js 18+ (v24 recommended)
-- npm 9+
+- nvm (recommended) + Node.js 22 LTS
+- npm 10+
 
 ### Development Setup
 
 ```bash
-# 1. Start backend services (Laravel + MySQL + Redis)
+# 0. From repo root
+cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
+
+# 1. Use the supported Node runtime for Next.js 14
+nvm install 22
+nvm use 22
+
+# 2. Start backend services (Laravel + MySQL + Redis)
 docker compose up -d
 
-# 2. Run database migrations and seeders
+# 3. Run database migrations and seeders
 docker compose exec app php artisan migrate --seed
 
-# 3. Start frontend dev server
+# 4. Start frontend dev server
 cd frontend
 npm install
 npm run dev
@@ -57,11 +64,28 @@ npm run dev
 
 | Service | URL |
 |---------|-----|
-| Frontend | http://localhost:3000 |
+| Frontend (marketing + auth pages) | http://localhost:3000 |
+| Frontend portal (after login) | http://localhost:3000/dashboard |
 | Backend API | http://localhost:8000/api/v1 |
 | Admin Panel | http://localhost:8000/admin |
 | MySQL | localhost:3306 |
 | Redis | localhost:6379 |
+
+If `npm run dev` fails with a Node version message, run `nvm use 22` and retry.
+
+### Local Admin Login
+
+After `docker compose up -d` and `php artisan migrate --seed`, a local admin user is auto-seeded:
+
+- URL: `http://localhost:8000/admin/login`
+- Email: `admin@wisebox.local`
+- Password: `Admin123!`
+
+You can override these in `backend/.env` with `ADMIN_NAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD`, then run:
+
+```bash
+docker compose exec app php artisan db:seed --class=AdminUserSeeder
+```
 
 ### Validation
 
@@ -119,6 +143,16 @@ For the complete end-to-end dossier covering every commit and artifact from Phas
 - [Phase 9 Local-First Kickoff](./docs/phase9-kickoff-local-first.md)
 - [Phase 9 Slice 1: Government Adapter Readiness](./docs/phase9-slice1-government-adapter.md)
 - [Phase 9 Slice 2: Service Catalog API](./docs/phase9-slice2-service-catalog-api.md)
+- [Phase 9 Slice 3: Orders and Tickets Edge Hardening](./docs/phase9-slice3-orders-tickets-edge-hardening.md)
+- [Phase 9 Slice 4: Authenticated E2E Expansion](./docs/phase9-slice4-authenticated-e2e-expansion.md)
+- [Phase 9 Slice 5: Mutation and Empty-State E2E](./docs/phase9-slice5-mutation-and-empty-state-e2e.md)
+- [Phase 9 Slice 6: Negative-Path and Role-Boundary E2E](./docs/phase9-slice6-negative-path-and-role-boundary-e2e.md)
+- [Phase 9 Slice 7: UI Resilience and Retry Recovery](./docs/phase9-slice7-ui-resilience-retry-recovery.md)
+- [Phase 9 Slice 8: Dashboard and Notification Caching](./docs/phase9-slice8-dashboard-notification-caching.md)
+- [Phase 9 Slice 9: Service Workspace Discovery](./docs/phase9-slice9-service-workspace-discovery.md)
+- [Phase 9 Slice 10: Service Catalog Sorting](./docs/phase9-slice10-service-catalog-sorting.md)
+- [Phase 9 Slice 11: Local QA Hardening](./docs/phase9-slice11-local-qa-hardening.md)
+- [Progress Summary (Phase 1-9)](./docs/progress-summary-phase1-9.md)
 - [Production Deployment Runbook](./docs/deployment/production-runbook.md)
 - [Forge Production Checklist](./docs/deployment/forge-production-checklist.md)
 - [Forge UI Paste Blocks](./docs/deployment/forge-ui-paste-blocks.md)
