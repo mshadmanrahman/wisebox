@@ -1,0 +1,247 @@
+"use client"
+
+import { Check, X, Clock, FileText } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import type { DocumentType, PropertyDocument } from '@/types'
+
+interface DocumentChecklistItemProps {
+  documentType: DocumentType
+  uploadedDocument?: PropertyDocument | null
+  compact?: boolean
+}
+
+type DocStatus = 'uploaded' | 'missing' | 'pending'
+
+export function DocumentChecklistItem({
+  documentType,
+  uploadedDocument,
+  compact = true
+}: DocumentChecklistItemProps) {
+  const status: DocStatus = uploadedDocument?.has_document === false
+    ? 'missing'
+    : uploadedDocument
+      ? 'uploaded'
+      : 'pending'
+
+  const statusConfig = {
+    uploaded: {
+      icon: Check,
+      bgColor: 'bg-wisebox-status-success/10',
+      textColor: 'text-wisebox-status-success',
+      borderColor: 'border-wisebox-status-success/20',
+      label: 'Uploaded',
+    },
+    missing: {
+      icon: X,
+      bgColor: 'bg-wisebox-status-danger/10',
+      textColor: 'text-wisebox-status-danger',
+      borderColor: 'border-wisebox-status-danger/20',
+      label: 'Missing',
+    },
+    pending: {
+      icon: Clock,
+      bgColor: 'bg-gray-50',
+      textColor: 'text-gray-400',
+      borderColor: 'border-gray-200',
+      label: 'Pending',
+    },
+  }
+
+  const config = statusConfig[status]
+  const StatusIcon = config.icon
+
+  if (compact) {
+    return (
+      <div
+        className={cn(
+          'flex items-center gap-2 rounded-md border p-2.5 transition-colors',
+          config.bgColor,
+          config.borderColor
+        )}
+      >
+        <div className={cn('flex h-5 w-5 items-center justify-center rounded-full', config.bgColor)}>
+          <StatusIcon className={cn('h-3 w-3', config.textColor)} strokeWidth={2.5} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-medium text-wisebox-text-primary truncate">
+              {documentType.name}
+            </span>
+            {documentType.category === 'primary' && (
+              <Badge
+                variant="outline"
+                className="h-4 px-1 text-[10px] leading-none bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200"
+              >
+                Primary
+              </Badge>
+            )}
+          </div>
+          {uploadedDocument?.file_name && status === 'uploaded' && (
+            <div className="flex items-center gap-1 mt-0.5">
+              <FileText className="h-3 w-3 text-gray-400" />
+              <span className="text-xs text-wisebox-text-secondary truncate">
+                {uploadedDocument.file_name}
+              </span>
+            </div>
+          )}
+        </div>
+        <Badge
+          variant="outline"
+          className={cn(
+            'text-[10px] leading-none h-4 px-1.5',
+            status === 'uploaded' && 'bg-wisebox-status-success/10 text-wisebox-status-success border-wisebox-status-success/20',
+            status === 'missing' && 'bg-wisebox-status-danger/10 text-wisebox-status-danger border-wisebox-status-danger/20',
+            status === 'pending' && 'bg-gray-100 text-gray-500 border-gray-200'
+          )}
+        >
+          {config.label}
+        </Badge>
+      </div>
+    )
+  }
+
+  // Non-compact view (for potential future use)
+  return (
+    <div
+      className={cn(
+        'flex items-start gap-3 rounded-lg border p-4 transition-colors',
+        config.bgColor,
+        config.borderColor
+      )}
+    >
+      <div className={cn('flex h-8 w-8 items-center justify-center rounded-full', config.bgColor)}>
+        <StatusIcon className={cn('h-4 w-4', config.textColor)} strokeWidth={2.5} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <h4 className="text-sm font-semibold text-wisebox-text-primary">{documentType.name}</h4>
+          <Badge
+            variant={documentType.category === 'primary' ? 'default' : 'secondary'}
+            className={
+              documentType.category === 'primary'
+                ? 'bg-wisebox-primary-100 text-wisebox-primary-800 border-wisebox-primary-200 hover:bg-wisebox-primary-100'
+                : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-100'
+            }
+          >
+            {documentType.category === 'primary' ? 'Primary' : 'Secondary'}
+          </Badge>
+          {documentType.is_required && (
+            <Badge variant="outline" className="text-wisebox-status-danger border-wisebox-status-danger/20">
+              Required
+            </Badge>
+          )}
+        </div>
+        {documentType.description && (
+          <p className="text-xs text-wisebox-text-secondary mt-1">{documentType.description}</p>
+        )}
+        {uploadedDocument?.file_name && status === 'uploaded' && (
+          <div className="flex items-center gap-1.5 mt-2">
+            <FileText className="h-3.5 w-3.5 text-gray-400" />
+            <span className="text-sm text-wisebox-text-secondary">{uploadedDocument.file_name}</span>
+            <Check className="h-3.5 w-3.5 text-wisebox-status-success ml-auto" />
+          </div>
+        )}
+      </div>
+      <Badge
+        variant="outline"
+        className={cn(
+          'text-xs',
+          status === 'uploaded' && 'bg-wisebox-status-success/10 text-wisebox-status-success border-wisebox-status-success/20',
+          status === 'missing' && 'bg-wisebox-status-danger/10 text-wisebox-status-danger border-wisebox-status-danger/20',
+          status === 'pending' && 'bg-gray-100 text-gray-500 border-gray-200'
+        )}
+      >
+        {config.label}
+      </Badge>
+    </div>
+  )
+}
+
+interface DocumentChecklistProps {
+  documentTypes: DocumentType[]
+  uploadedDocuments: PropertyDocument[]
+  columns?: 1 | 2
+}
+
+export function DocumentChecklist({
+  documentTypes,
+  uploadedDocuments,
+  columns = 2
+}: DocumentChecklistProps) {
+  const getDocForType = (docTypeId: number): PropertyDocument | null => {
+    return uploadedDocuments.find((pd) => pd.document_type_id === docTypeId) ?? null
+  }
+
+  const primaryDocs = documentTypes.filter((dt) => dt.category === 'primary')
+  const secondaryDocs = documentTypes.filter((dt) => dt.category === 'secondary')
+
+  const uploadedCount = uploadedDocuments.filter((doc) => doc.has_document !== false).length
+  const totalCount = documentTypes.length
+  const completionPct = totalCount > 0 ? Math.round((uploadedCount / totalCount) * 100) : 0
+
+  const progressColor =
+    completionPct >= 80
+      ? 'text-wisebox-status-success'
+      : completionPct >= 50
+        ? 'text-wisebox-status-warning'
+        : 'text-wisebox-status-danger'
+
+  const progressBgColor =
+    completionPct >= 80
+      ? 'bg-wisebox-status-success'
+      : completionPct >= 50
+        ? 'bg-wisebox-status-warning'
+        : 'bg-wisebox-status-danger'
+
+  const gridCols = columns === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-wisebox-text-primary">Document Checklist</h3>
+        <div className="flex items-center gap-2">
+          <span className={cn('text-sm font-semibold', progressColor)}>
+            {uploadedCount}/{totalCount}
+          </span>
+          <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className={cn('h-full transition-all duration-300', progressBgColor)}
+              style={{ width: `${completionPct}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {primaryDocs.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-wisebox-text-secondary">Primary Documents</h4>
+          <div className={cn('grid gap-2', gridCols)}>
+            {primaryDocs.map((dt) => (
+              <DocumentChecklistItem
+                key={dt.id}
+                documentType={dt}
+                uploadedDocument={getDocForType(dt.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {secondaryDocs.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-wisebox-text-secondary">Secondary Documents</h4>
+          <div className={cn('grid gap-2', gridCols)}>
+            {secondaryDocs.map((dt) => (
+              <DocumentChecklistItem
+                key={dt.id}
+                documentType={dt}
+                uploadedDocument={getDocForType(dt.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
