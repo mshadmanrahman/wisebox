@@ -4,14 +4,19 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
+use App\Models\User;
 use App\Services\CalendlyWebhookService;
+use App\Services\TransactionalEmailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CalendlyWebhookController extends Controller
 {
     public function __construct(
-        private CalendlyWebhookService $calendlyWebhookService
+        private CalendlyWebhookService $calendlyWebhookService,
+        private TransactionalEmailService $transactionalEmailService
     ) {}
 
     public function __invoke(Request $request): JsonResponse
@@ -81,6 +86,38 @@ class CalendlyWebhookController extends Controller
         }
 
         $ticket->update($updates);
+
+        // Send meeting scheduled email + in-app notification to customer
+        $ticket->load(['customer', 'consultant', 'property']);
+
+        if ($ticket->customer) {
+            $scheduledAt = $startTime ? \Carbon\Carbon::parse($startTime) : now();
+            $duration = $durationMinutes ?: 30;
+            $link = is_string($meetingUrl) ? $meetingUrl : '';
+
+            if ($link) {
+                $this->transactionalEmailService->sendMeetingScheduled(
+                    $ticket->customer,
+                    $ticket,
+                    $link,
+                    $scheduledAt,
+                    $duration,
+                );
+            }
+
+            $this->createNotification(
+                (int) $ticket->customer_id,
+                'ticket.meeting.scheduled',
+                'Meeting scheduled',
+                "Your meeting for ticket {$ticket->ticket_number} has been scheduled.",
+                [
+                    'ticket_id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                    'meeting_url' => $link,
+                    'scheduled_at' => $scheduledAt->toISOString(),
+                ]
+            );
+        }
     }
 
     private function handleInviteeCanceled(array $payload): void
@@ -96,6 +133,8 @@ class CalendlyWebhookController extends Controller
             $nextStatus = $ticket->status;
         }
 
+        $previousStatus = $ticket->status;
+
         $ticket->update([
             'calendly_event_id' => null,
             'calendly_event_url' => null,
@@ -104,6 +143,30 @@ class CalendlyWebhookController extends Controller
             'meeting_duration_minutes' => null,
             'status' => $nextStatus,
         ]);
+
+        // Notify customer about meeting cancellation
+        $ticket->load(['customer']);
+
+        if ($ticket->customer && $previousStatus !== $nextStatus) {
+            $this->createNotification(
+                (int) $ticket->customer_id,
+                'ticket.meeting.cancelled',
+                'Meeting cancelled',
+                "The scheduled meeting for ticket {$ticket->ticket_number} has been cancelled.",
+                [
+                    'ticket_id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                    'from_status' => $previousStatus,
+                    'to_status' => $nextStatus,
+                ]
+            );
+
+            $this->transactionalEmailService->sendTicketStatusUpdated(
+                $ticket->customer,
+                $ticket,
+                $previousStatus
+            );
+        }
     }
 
     private function resolveTicket(array $payload): ?Ticket
@@ -124,6 +187,24 @@ class CalendlyWebhookController extends Controller
         }
 
         return null;
+    }
+
+    private function createNotification(
+        int $userId,
+        string $type,
+        string $title,
+        ?string $body = null,
+        array $data = []
+    ): void {
+        DB::table('notifications')->insert([
+            'id' => (string) Str::uuid(),
+            'user_id' => $userId,
+            'type' => $type,
+            'title' => $title,
+            'body' => $body,
+            'data' => !empty($data) ? json_encode($data, JSON_UNESCAPED_SLASHES) : null,
+            'created_at' => now(),
+        ]);
     }
 
     private function extractTicketId(array $payload): ?int

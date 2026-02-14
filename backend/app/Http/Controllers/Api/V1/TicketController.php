@@ -86,6 +86,11 @@ class TicketController extends Controller
 
         $ticket->load(['property', 'service', 'customer', 'consultant']);
 
+        $customer = $ticket->customer;
+        if ($customer) {
+            $this->transactionalEmailService->sendTicketCreated($customer, $ticket);
+        }
+
         return response()->json(['data' => $ticket], 201);
     }
 
@@ -159,6 +164,23 @@ class TicketController extends Controller
                 $customer = User::query()->find($ticket->customer_id);
                 if ($customer) {
                     $this->transactionalEmailService->sendTicketStatusUpdated($customer, $ticket, $previousStatus);
+                }
+            }
+
+            // Notify admins when a ticket is completed
+            if ($ticket->status === 'completed') {
+                $admins = User::whereIn('role', ['admin', 'super_admin'])->get();
+                foreach ($admins as $admin) {
+                    $this->createNotification(
+                        (int) $admin->id,
+                        'ticket.completed',
+                        'Ticket completed',
+                        "Ticket {$ticket->ticket_number} has been marked as completed.",
+                        [
+                            'ticket_id' => $ticket->id,
+                            'ticket_number' => $ticket->ticket_number,
+                        ]
+                    );
                 }
             }
         }
