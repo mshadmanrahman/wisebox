@@ -63,9 +63,9 @@ test.describe('Wisebox smoke', () => {
   });
 
   test('free assessment page is reachable', async ({ page }) => {
-    const response = await page.goto('/assessment');
+    const response = await page.goto('/assessment/start');
     expect(response?.ok()).toBeTruthy();
-    await expect(page).toHaveURL(/\/assessment/);
+    await expect(page).toHaveURL(/\/assessment\/start/);
     await expect(page.getByText('Free Property Assessment')).toHaveCount(1);
   });
 });

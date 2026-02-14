@@ -108,7 +108,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
-                  <Link href="/assessment">
+                  <Link href="/assessment/start">
                     Get Free Assessment
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
@@ -237,7 +237,7 @@ export default function Home() {
                 </p>
               </div>
               <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
-                <Link href="/assessment">Run Free Assessment</Link>
+                <Link href="/assessment/start">Run Free Assessment</Link>
               </Button>
             </CardContent>
           </Card>

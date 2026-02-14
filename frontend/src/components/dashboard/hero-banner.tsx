@@ -122,7 +122,7 @@ export function DashboardHeroBanner({
               variant="outline"
               className="border-white/50 bg-transparent text-white hover:bg-white/10 hover:text-white"
             >
-              <Link href="/assessment">Get Free Assessment</Link>
+              <Link href="/assessment/start">Get Free Assessment</Link>
             </Button>
           </div>
 

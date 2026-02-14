@@ -16,7 +16,7 @@ export function MarketingHeader() {
               {item.label}
             </Link>
           ))}
-          <Link href="/assessment" className="transition-colors hover:text-wisebox-primary-700">
+          <Link href="/assessment/start" className="transition-colors hover:text-wisebox-primary-700">
             Free Assessment
           </Link>
         </nav>

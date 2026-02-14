@@ -9,15 +9,15 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Free assessment flow (unauthenticated)', () => {
   test('assessment page loads and displays form', async ({ page }) => {
-    const response = await page.goto('/assessment');
+    const response = await page.goto('/assessment/start');
     expect(response?.ok()).toBeTruthy();
-    await expect(page).toHaveURL(/\/assessment/);
+    await expect(page).toHaveURL(/\/assessment\/start/);
     await expect(page.getByText('Free Property Assessment')).toBeVisible();
     await expect(page.locator('form')).toBeVisible();
   });
 
   test('assessment form validates required fields', async ({ page }) => {
-    await page.goto('/assessment');
+    await page.goto('/assessment/start');
 
     // Try submitting empty form
     await page.getByRole('button', { name: /Submit|Get Assessment/i }).click();
@@ -27,7 +27,7 @@ test.describe('Free assessment flow (unauthenticated)', () => {
   });
 
   test('assessment form accepts valid input and shows results', async ({ page }) => {
-    await page.goto('/assessment');
+    await page.goto('/assessment/start');
 
     // Mock assessment API response
     await page.route('**/api/v1/assessments/free', async (route) => {
@@ -71,7 +71,7 @@ test.describe('Free assessment flow (unauthenticated)', () => {
   });
 
   test('assessment results show CTA to create account', async ({ page }) => {
-    await page.goto('/assessment');
+    await page.goto('/assessment/start');
 
     // Mock assessment API response
     await page.route('**/api/v1/assessments/free', async (route) => {
@@ -107,7 +107,7 @@ test.describe('Free assessment flow (unauthenticated)', () => {
   });
 
   test('assessment form handles API errors gracefully', async ({ page }) => {
-    await page.goto('/assessment');
+    await page.goto('/assessment/start');
 
     // Mock API error
     await page.route('**/api/v1/assessments/free', async (route) => {

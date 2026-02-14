@@ -96,7 +96,7 @@ export default function AboutPage() {
                 </p>
               </div>
               <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
-                <Link href="/assessment">
+                <Link href="/assessment/start">
                   Get Free Assessment
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

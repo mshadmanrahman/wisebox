@@ -249,7 +249,7 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <Link href="/assessment" className="block group">
+          <Link href="/assessment/start" className="block group">
             <div className="bg-wisebox-background-card border border-wisebox-border rounded-xl p-6 hover:border-wisebox-border-light transition-all hover:shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="bg-wisebox-background-lighter rounded-lg p-3 group-hover:bg-wisebox-primary/20 transition-colors">

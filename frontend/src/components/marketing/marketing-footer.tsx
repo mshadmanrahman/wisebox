@@ -21,7 +21,7 @@ export function MarketingFooter() {
           <Link href="/contact" className="hover:text-wisebox-primary-700">
             Contact
           </Link>
-          <Link href="/assessment" className="hover:text-wisebox-primary-700">
+          <Link href="/assessment/start" className="hover:text-wisebox-primary-700">
             Free Assessment
           </Link>
         </div>

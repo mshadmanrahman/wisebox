@@ -119,7 +119,7 @@ export const pricingPlans: PricingPlan[] = [
     subtitle: 'For getting started',
     description: 'Best for baseline readiness checks and initial organization.',
     ctaLabel: 'Get Free Assessment',
-    ctaHref: '/assessment',
+    ctaHref: '/assessment/start',
     features: [
       'Property profile setup',
       'Baseline assessment score',

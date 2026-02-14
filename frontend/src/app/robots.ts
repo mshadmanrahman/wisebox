@@ -4,7 +4,7 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',
-      allow: ['/', '/about', '/faq', '/contact', '/assessment'],
+      allow: ['/', '/about', '/faq', '/contact', '/assessment/start'],
       disallow: ['/dashboard', '/properties', '/tickets', '/orders', '/settings', '/notifications', '/consultant'],
     },
     sitemap: 'https://mywisebox.com/sitemap.xml',

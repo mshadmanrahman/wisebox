@@ -40,7 +40,7 @@ const defaultCards: CTACardConfig[] = [
   },
   {
     id: "assessment",
-    href: "/assessment",
+    href: "/assessment/start",
     icon: <ShieldCheck className="h-5 w-5" />,
     title: "Get Free Assessment",
     description: "Answer 15 questions and get instant risk insights.",
