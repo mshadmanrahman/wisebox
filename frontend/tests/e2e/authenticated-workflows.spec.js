@@ -297,7 +297,7 @@ test.describe('Wisebox authenticated workflows', () => {
     await page.getByRole('button', { name: 'Sign in' }).click();
 
     await expect(page).toHaveURL(/\/dashboard/);
-    await expect(page.getByText('Wisebox Dashboard')).toBeVisible();
+    await expect(page.getByText(/Hi.*E2E User/)).toBeVisible();
     await expect(page.getByText('2 unread')).toBeVisible();
     await expect(page.getByText('E2E Property')).toBeVisible();
   });
@@ -1301,6 +1301,7 @@ test.describe('Wisebox authenticated workflows', () => {
     await page.goto('/consultant/tickets/45');
 
     await page.getByRole('combobox').first().click();
+    await page.locator('[role="listbox"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.getByRole('option', { name: 'completed' }).click();
     await page.getByPlaceholder('Add completion notes or summary...').fill('Completed after consultant review.');
 
@@ -1514,6 +1515,7 @@ test.describe('Wisebox authenticated workflows', () => {
     await page.goto('/consultant/tickets/46');
 
     await page.getByRole('combobox').first().click();
+    await page.locator('[role="listbox"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.getByRole('option', { name: 'completed' }).click();
     const updateRequest = page.waitForResponse(
       (response) =>
@@ -1537,6 +1539,7 @@ test.describe('Wisebox authenticated workflows', () => {
 
   test('dashboard summary recovers after transient API failure', async ({ page }) => {
     await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
 
     let attempts = 0;
     await page.route('**/api/v1/dashboard/summary', async (route) => {
@@ -1671,6 +1674,7 @@ test.describe('Wisebox authenticated workflows', () => {
 
   test('orders list recovers after transient API failure', async ({ page }) => {
     await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
 
     let attempts = 0;
     await page.route('**/api/v1/orders', async (route) => {
@@ -1731,6 +1735,7 @@ test.describe('Wisebox authenticated workflows', () => {
 
   test('tickets list recovers after transient API failure', async ({ page }) => {
     await applyAuthenticatedSession(page, E2E_USER);
+    await mockNotificationEndpoints(page, []);
 
     let attempts = 0;
     await page.route(/.*\/api\/v1\/tickets(?:\?.*)?$/, async (route) => {
