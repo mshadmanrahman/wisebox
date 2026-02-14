@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { FormEvent, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Loader2, Send } from 'lucide-react';
+import { ArrowLeft, Loader2, Send, FileText, X, Download, Eye, Mail } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { DynamicFormRenderer, ConsultationFormTemplate } from '@/components/consultation/dynamic-form-renderer';
 import type { ApiResponse, PropertyDocument, Ticket, TicketComment, TicketStatus } from '@/types';
 
 const STATUS_OPTIONS: TicketStatus[] = [
@@ -42,11 +43,11 @@ const STATUS_FLOW: TicketStatus[] = [
 ];
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-100 text-green-700';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-100 text-blue-700';
-  if (status === 'scheduled') return 'bg-purple-100 text-purple-700';
-  if (status === 'cancelled') return 'bg-gray-100 text-gray-600';
-  return 'bg-amber-100 text-amber-700';
+  if (status === 'completed') return 'bg-green-500/20 text-green-400';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
+  if (status === 'scheduled') return 'bg-purple-500/20 text-purple-400';
+  if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
+  return 'bg-amber-500/20 text-amber-400';
 }
 
 function toLocalDateTimeValue(dateString: string | null | undefined): string {
@@ -69,11 +70,17 @@ export default function ConsultantTicketDetailPage() {
   const [meetingUrlValue, setMeetingUrlValue] = useState('');
   const [durationValue, setDurationValue] = useState('');
   const [resolutionNotesValue, setResolutionNotesValue] = useState('');
+  const [consultationNotesValue, setConsultationNotesValue] = useState('');
+  const [selectedSlotIndex, setSelectedSlotIndex] = useState<number | null>(null);
 
   const [commentBody, setCommentBody] = useState('');
   const [commentFiles, setCommentFiles] = useState<File[]>([]);
   const [isInternal, setIsInternal] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<ConsultationFormTemplate | null>(null);
+  const [showSendFormModal, setShowSendFormModal] = useState(false);
 
   const { data: ticket, isLoading } = useQuery({
     queryKey: ['consultant-ticket', ticketId],
@@ -82,6 +89,77 @@ export default function ConsultantTicketDetailPage() {
       return res.data.data;
     },
     enabled: isConsultantRole && Number.isFinite(ticketId),
+  });
+
+  const { data: consultantTemplates } = useQuery({
+    queryKey: ['consultation-templates', 'consultant'],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<ConsultationFormTemplate[]>>('/consultation-forms/', {
+        params: { audience: 'consultant' },
+      });
+      return res.data.data;
+    },
+    enabled: isConsultantRole,
+  });
+
+  const { data: customerTemplates } = useQuery({
+    queryKey: ['consultation-templates', 'customer'],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<ConsultationFormTemplate[]>>('/consultation-forms/', {
+        params: { audience: 'customer' },
+      });
+      return res.data.data;
+    },
+    enabled: isConsultantRole,
+  });
+
+  const { data: responses } = useQuery({
+    queryKey: ['ticket-responses', ticketId],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<Array<{
+        id: number;
+        template: { name: string };
+        summary: string;
+        created_at: string;
+      }>>>(`/consultation-forms/tickets/${ticketId}/responses`);
+      return res.data.data;
+    },
+    enabled: isConsultantRole && Number.isFinite(ticketId),
+  });
+
+  const { data: invitations } = useQuery({
+    queryKey: ['ticket-invitations', ticketId],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<Array<{
+        id: number;
+        template: { id: number; name: string };
+        customer_email: string;
+        status: string;
+        sent_at: string;
+        completed_at: string | null;
+        expires_at: string;
+      }>>>(`/consultant/tickets/${ticketId}/form-invitations`);
+      return res.data.data;
+    },
+    enabled: isConsultantRole && Number.isFinite(ticketId),
+  });
+
+  const sendFormMutation = useMutation({
+    mutationFn: async (templateId: number) => {
+      const res = await api.post(`/consultant/tickets/${ticketId}/send-form`, {
+        template_id: templateId,
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      setShowSendFormModal(false);
+      setActionError(null);
+      await queryClient.invalidateQueries({ queryKey: ['ticket-invitations', ticketId] });
+    },
+    onError: (err: unknown) => {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      setActionError(axiosErr.response?.data?.message || 'Failed to send form to customer.');
+    },
   });
 
   const effectiveStatus = useMemo(() => statusValue || ticket?.status || '', [statusValue, ticket?.status]);
@@ -110,6 +188,10 @@ export default function ConsultantTicketDetailPage() {
         payload.resolution_notes = resolutionNotesValue;
       }
 
+      if (consultationNotesValue) {
+        payload.consultation_notes = consultationNotesValue;
+      }
+
       const res = await api.put<ApiResponse<Ticket>>(`/consultant/tickets/${ticketId}`, payload);
       return res.data.data;
     },
@@ -122,6 +204,31 @@ export default function ConsultantTicketDetailPage() {
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
       setActionError(axiosErr.response?.data?.message || 'Failed to update ticket.');
+    },
+  });
+
+  const confirmSlotMutation = useMutation({
+    mutationFn: async () => {
+      if (selectedSlotIndex === null) {
+        throw new Error('Please select a time slot');
+      }
+
+      const res = await api.post<ApiResponse<Ticket>>(`/consultant/tickets/${ticketId}/confirm-slot`, {
+        slot_index: selectedSlotIndex,
+        duration_minutes: durationValue ? Number(durationValue) : 60,
+      });
+      return res.data.data;
+    },
+    onSuccess: async () => {
+      setActionError(null);
+      setSelectedSlotIndex(null);
+      await queryClient.invalidateQueries({ queryKey: ['consultant-ticket', ticketId] });
+      await queryClient.invalidateQueries({ queryKey: ['consultant-tickets'] });
+      await queryClient.invalidateQueries({ queryKey: ['consultant-dashboard'] });
+    },
+    onError: (err: unknown) => {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      setActionError(axiosErr.response?.data?.message || 'Failed to confirm time slot.');
     },
   });
 
@@ -214,8 +321,8 @@ export default function ConsultantTicketDetailPage() {
                 key={step}
                 className={`px-2.5 py-1 rounded-full text-xs border ${
                   step === ticket.status
-                    ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
-                    : 'bg-white text-wisebox-text-secondary border-gray-200'
+                    ? 'bg-wisebox-primary-500/15 text-wisebox-primary-400 border-wisebox-primary-500/30'
+                    : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
                 }`}
               >
                 {step}
@@ -251,6 +358,57 @@ export default function ConsultantTicketDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      {ticket.preferred_time_slots && Array.isArray(ticket.preferred_time_slots) && ticket.preferred_time_slots.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Preferred Time Slots</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-wisebox-text-secondary">
+              Customer has provided {ticket.preferred_time_slots.length} preferred time slots. Select one to create a Google Meet consultation.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {ticket.preferred_time_slots.map((slot: { date: string; time: string; display: string }, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedSlotIndex(index)}
+                  className={`p-4 rounded-lg border-2 text-left transition-all ${
+                    selectedSlotIndex === index
+                      ? 'border-wisebox-primary-500 bg-wisebox-primary-500/10'
+                      : 'border-wisebox-border hover:border-wisebox-primary-500/50 bg-wisebox-background-card'
+                  }`}
+                >
+                  <div className="font-medium text-wisebox-text-primary">
+                    {slot.display || `${new Date(slot.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} at ${slot.time}`}
+                  </div>
+                  {selectedSlotIndex === index && (
+                    <div className="mt-2 text-xs text-wisebox-primary-400 font-medium">✓ Selected</div>
+                  )}
+                </button>
+              ))}
+            </div>
+            {selectedSlotIndex !== null && (
+              <div className="pt-4 border-t">
+                <Button
+                  onClick={() => confirmSlotMutation.mutate()}
+                  disabled={confirmSlotMutation.isPending}
+                  className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600 w-full sm:w-auto"
+                >
+                  {confirmSlotMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Creating Google Meet...
+                    </>
+                  ) : (
+                    'Confirm & Create Google Meet'
+                  )}
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
@@ -314,6 +472,19 @@ export default function ConsultantTicketDetailPage() {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label>Consultation Notes</Label>
+            <Textarea
+              rows={5}
+              value={consultationNotesValue || ticket.consultation_notes || ''}
+              onChange={(e) => setConsultationNotesValue(e.target.value)}
+              placeholder="Add consultation notes, recommendations, findings, and action items..."
+            />
+            <p className="text-xs text-wisebox-text-secondary">
+              These notes will be saved to the property record and visible in the consultation history.
+            </p>
+          </div>
+
           <Button
             onClick={() => updateMutation.mutate()}
             disabled={updateMutation.isPending}
@@ -330,7 +501,7 @@ export default function ConsultantTicketDetailPage() {
           </Button>
 
           {actionError && (
-            <p className="text-sm text-red-600 border border-red-200 bg-red-50 rounded-md px-3 py-2">
+            <p className="text-sm text-red-400 border border-red-500/30 bg-red-500/10 rounded-md px-3 py-2">
               {actionError}
             </p>
           )}
@@ -356,15 +527,240 @@ export default function ConsultantTicketDetailPage() {
                       {doc.has_document ? doc.file_name : 'Marked as missing'}
                     </p>
                   </div>
-                  <Badge className={doc.has_document ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}>
-                    {doc.has_document ? doc.status : 'missing'}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    {doc.has_document && (
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="sm"
+                        className="text-wisebox-primary-400 hover:text-wisebox-primary-300"
+                      >
+                        <a
+                          href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/documents/${doc.id}/download`}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            api.get(`/documents/${doc.id}/download`, { responseType: 'blob' })
+                              .then((res) => {
+                                const url = window.URL.createObjectURL(new Blob([res.data], { type: doc.mime_type }));
+                                if (doc.mime_type === 'application/pdf' || doc.mime_type.startsWith('image/')) {
+                                  window.open(url, '_blank');
+                                } else {
+                                  const link = document.createElement('a');
+                                  link.href = url;
+                                  link.download = doc.file_name;
+                                  link.click();
+                                  window.URL.revokeObjectURL(url);
+                                }
+                              })
+                              .catch(() => setActionError('Failed to download document.'));
+                          }}
+                        >
+                          {doc.mime_type === 'application/pdf' || doc.mime_type?.startsWith('image/')
+                            ? <><Eye className="h-4 w-4 mr-1" />View</>
+                            : <><Download className="h-4 w-4 mr-1" />Download</>
+                          }
+                        </a>
+                      </Button>
+                    )}
+                    <Badge className={doc.has_document ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}>
+                      {doc.has_document ? doc.status : 'missing'}
+                    </Badge>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Consultation Forms</CardTitle>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setShowSendFormModal(true)}
+                variant="outline"
+                size="sm"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Send to Customer
+              </Button>
+              <Button
+                onClick={() => setShowFormModal(true)}
+                className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600"
+                size="sm"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Fill Form
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Sent Invitations */}
+          {invitations && invitations.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-wisebox-text-secondary uppercase tracking-wider">Sent to Customer</p>
+              {invitations.map((inv) => (
+                <div key={inv.id} className="rounded-md border p-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-wisebox-text-primary">{inv.template.name}</p>
+                    <p className="text-xs text-wisebox-text-secondary">
+                      Sent {new Date(inv.sent_at).toLocaleString()} to {inv.customer_email}
+                    </p>
+                  </div>
+                  <Badge className={
+                    inv.status === 'completed'
+                      ? 'bg-green-500/20 text-green-400'
+                      : inv.status === 'expired' || new Date(inv.expires_at) < new Date()
+                        ? 'bg-wisebox-background-lighter text-wisebox-text-secondary'
+                        : 'bg-amber-500/20 text-amber-400'
+                  }>
+                    {inv.status === 'completed'
+                      ? 'Completed'
+                      : new Date(inv.expires_at) < new Date()
+                        ? 'Expired'
+                        : 'Pending'}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Completed Responses */}
+          {!responses || responses.length === 0 ? (
+            <p className="text-sm text-wisebox-text-secondary">
+              No consultation forms completed yet. Click "Fill Form" to complete an assessment, or "Send to Customer" to request the customer fills one out.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-xs font-medium text-wisebox-text-secondary uppercase tracking-wider">Completed Responses</p>
+              {responses.map((response) => (
+                <div key={response.id} className="rounded-md border p-3 bg-wisebox-background-lighter">
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <p className="font-medium text-wisebox-text-primary">{response.template.name}</p>
+                    <span className="text-xs text-wisebox-text-secondary">
+                      {new Date(response.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  {response.summary && (
+                    <p className="text-sm text-wisebox-text-secondary whitespace-pre-wrap">
+                      {response.summary}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Form Modal */}
+      {showFormModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-wisebox-background-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {!selectedTemplate ? (
+              <>
+                <div className="p-6 border-b flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Select Consultation Form</h3>
+                  <button
+                    onClick={() => setShowFormModal(false)}
+                    className="text-wisebox-text-muted hover:text-wisebox-text-secondary"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="p-6 space-y-3 overflow-y-auto">
+                  {consultantTemplates?.map((template) => (
+                    <button
+                      key={template.id}
+                      onClick={() => setSelectedTemplate(template)}
+                      className="w-full text-left p-4 rounded-lg border-2 border-wisebox-border hover:border-wisebox-primary-500 hover:bg-wisebox-primary-500/10 transition-all"
+                    >
+                      <h4 className="font-semibold text-wisebox-text-primary mb-1">{template.name}</h4>
+                      <p className="text-sm text-wisebox-text-secondary">{template.description}</p>
+                      <p className="text-xs text-wisebox-text-muted mt-2">
+                        {template.fields.length} fields
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="p-6 border-b flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">{selectedTemplate.name}</h3>
+                  <button
+                    onClick={() => {
+                      setSelectedTemplate(null);
+                      setShowFormModal(false);
+                    }}
+                    className="text-wisebox-text-muted hover:text-wisebox-text-secondary"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="p-6 overflow-y-auto">
+                  <DynamicFormRenderer
+                    template={selectedTemplate}
+                    ticketId={ticketId}
+                    onSuccess={() => {
+                      setSelectedTemplate(null);
+                      setShowFormModal(false);
+                    }}
+                    onCancel={() => setSelectedTemplate(null)}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Send Form to Customer Modal */}
+      {showSendFormModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-wisebox-background-card rounded-lg max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="p-6 border-b flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Send Form to Customer</h3>
+              <button
+                onClick={() => setShowSendFormModal(false)}
+                className="text-wisebox-text-muted hover:text-wisebox-text-secondary"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-2 overflow-y-auto">
+              <p className="text-sm text-wisebox-text-secondary mb-4">
+                Select a form to send to <span className="font-medium text-wisebox-text-primary">{ticket.customer?.email ?? 'the customer'}</span>. They will receive an email with a link to fill it out (no login required).
+              </p>
+              {customerTemplates?.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => sendFormMutation.mutate(template.id)}
+                  disabled={sendFormMutation.isPending}
+                  className="w-full text-left p-4 rounded-lg border-2 border-wisebox-border hover:border-wisebox-primary-500 hover:bg-wisebox-primary-500/10 transition-all disabled:opacity-50"
+                >
+                  <h4 className="font-semibold text-wisebox-text-primary mb-1">{template.name}</h4>
+                  <p className="text-sm text-wisebox-text-secondary">{template.description}</p>
+                  <p className="text-xs text-wisebox-text-muted mt-2">
+                    {template.fields.length} fields
+                  </p>
+                </button>
+              ))}
+              {sendFormMutation.isPending && (
+                <div className="flex items-center gap-2 text-sm text-wisebox-text-secondary pt-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending form invitation...
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <Card>
         <CardHeader>
@@ -376,11 +772,11 @@ export default function ConsultantTicketDetailPage() {
           ) : (
             <div className="space-y-3">
               {(ticket.comments ?? []).map((comment) => (
-                <div key={comment.id} className="rounded-md border p-3 bg-white">
+                <div key={comment.id} className="rounded-md border p-3 bg-wisebox-background-card">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? 'User'}</p>
                     <div className="flex items-center gap-2">
-                      {comment.is_internal && <Badge className="bg-purple-100 text-purple-700">Internal</Badge>}
+                      {comment.is_internal && <Badge className="bg-purple-500/20 text-purple-400">Internal</Badge>}
                       <span className="text-xs text-wisebox-text-secondary">{new Date(comment.created_at).toLocaleString()}</span>
                     </div>
                   </div>
@@ -390,7 +786,7 @@ export default function ConsultantTicketDetailPage() {
                       {(comment.attachments ?? []).map((attachment) => (
                         <span
                           key={attachment}
-                          className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                          className="rounded-full border border-wisebox-border bg-wisebox-background-lighter px-2.5 py-1 text-xs text-wisebox-text-secondary"
                         >
                           {attachment.split('/').pop()}
                         </span>
@@ -415,14 +811,14 @@ export default function ConsultantTicketDetailPage() {
                 multiple
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 onChange={(e) => setCommentFiles(Array.from(e.target.files ?? []))}
-                className="block w-full text-sm text-wisebox-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-wisebox-primary-50 file:px-3 file:py-1.5 file:text-wisebox-primary-700"
+                className="block w-full text-sm text-wisebox-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-wisebox-primary-500/20 file:px-3 file:py-1.5 file:text-wisebox-primary-400"
               />
               {commentFiles.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {commentFiles.map((file) => (
                     <span
                       key={`${file.name}-${file.size}`}
-                      className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                      className="rounded-full border border-wisebox-border bg-wisebox-background-lighter px-2.5 py-1 text-xs text-wisebox-text-secondary"
                     >
                       {file.name}
                     </span>
