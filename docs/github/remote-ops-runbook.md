@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Remote GitHub Ops Runbook (for local execution)
 
 Because Codex sandbox may not have outbound network access, run these commands locally to complete GitHub operations.
@@ -43,3 +50,6 @@ gh pr view -R mshadmanrahman/wisebox --web
 gh pr checks -R mshadmanrahman/wisebox
 ```
 
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

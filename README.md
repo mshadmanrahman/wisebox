@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Wisebox
 
 Digital property management platform for the South Asian diaspora. Manage ancestral properties, verify documents, and connect with legal experts from anywhere in the world.
@@ -34,17 +41,28 @@ wisebox/
 
 ### Prerequisites
 
-- Docker and Docker Compose
-- nvm (recommended) + Node.js 22 LTS
-- npm 10+
+- **Docker Desktop** (latest) with Docker Compose
+- **Node.js 22 LTS** (via nvm recommended)
+- **npm 10+**
+- **Playwright** (for E2E tests)
 
-### Development Setup
+### Quick Start (One Command)
 
 ```bash
-# 0. From repo root
-cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
+./scripts/dev-setup.sh
+```
 
-# 1. Use the supported Node runtime for Next.js 14
+This script will:
+1. Install dependencies (backend + frontend)
+2. Copy environment files
+3. Start Docker services
+4. Run migrations and seeders
+5. Start the frontend dev server
+
+### Manual Setup
+
+```bash
+# 1. Use Node 22 for frontend compatibility
 nvm install 22
 nvm use 22
 
@@ -54,11 +72,24 @@ docker compose up -d
 # 3. Run database migrations and seeders
 docker compose exec app php artisan migrate --seed
 
-# 4. Start frontend dev server
+# 4. Clear Laravel config cache (important after env changes)
+docker compose exec app php artisan config:clear
+
+# 5. Install frontend dependencies and start dev server
 cd frontend
 npm install
 npm run dev
 ```
+
+### First-Time Setup Notes
+
+**Backend Authentication**: This project uses **token-based authentication** (not cookie-based):
+- Laravel Sanctum configured for stateless JWT tokens
+- Frontend stores tokens in localStorage
+- No CORS issues with cross-origin requests
+- Perfect for SPA + API architecture
+
+**Node Version**: Frontend requires **Node 22** (not 23+). If you see "Unsupported Node.js version" errors, run `nvm use 22`.
 
 ### URLs
 
@@ -87,10 +118,46 @@ You can override these in `backend/.env` with `ADMIN_NAME`, `ADMIN_EMAIL`, and `
 docker compose exec app php artisan db:seed --class=AdminUserSeeder
 ```
 
-### Validation
+### Testing
 
+**Backend Tests** (PHPUnit):
 ```bash
-# Full backend + frontend validation gate
+docker compose exec app php artisan test
+```
+
+**Frontend E2E Tests** (Playwright - 62 comprehensive tests):
+```bash
+cd frontend
+source ~/.nvm/nvm.sh && nvm use 22
+
+# Run all E2E tests (unauthenticated + authenticated + integration)
+npm run test:e2e
+
+# Run specific test suites
+npx playwright test tests/unauthenticated  # 24 tests (marketing, assessment, auth)
+npx playwright test tests/authenticated    # 37 tests (dashboard, properties, documents, orders, tickets)
+npx playwright test tests/integration      # 1 test (full customer journey)
+
+# Debug mode with UI
+npx playwright test --ui
+
+# Generate HTML report
+npx playwright test --reporter=html
+npx playwright show-report
+```
+
+**Test Coverage**:
+- **Authentication**: Login, register, OTP bypass (`000000` test code), password reset
+- **Dashboard**: Hero banner, CTAs, real-time updates, notifications
+- **Properties**: CRUD operations, 2-step creation, status indicators (green/yellow/red)
+- **Documents**: Upload, primary/secondary classification, progress tracking
+- **Orders**: Service catalog, cart management, Stripe checkout (mocked)
+- **Tickets**: Comments, Calendly scheduling (mocked), access control
+- **Integration**: Full user journey from registration to consultation scheduling
+
+**Validation** (Combined Backend + Frontend):
+```bash
+# Full validation gate
 ./scripts/validate.sh
 
 # Frontend-only fast path
@@ -100,7 +167,7 @@ docker compose exec app php artisan db:seed --class=AdminUserSeeder
 ./scripts/validate.sh --with-e2e
 ```
 
-GitHub Actions runs the same command on push and PR via `.github/workflows/validate.yml`.
+GitHub Actions runs validation on push and PR via `.github/workflows/validate.yml`.
 
 ### Deployment Helpers
 
@@ -115,6 +182,45 @@ GitHub Actions runs the same command on push and PR via `.github/workflows/valid
 APP_BASE_URL=https://mywisebox.com API_BASE_URL=https://api.mywisebox.com/api/v1 ./scripts/smoke-production.sh
 ```
 
+## Architecture
+
+### Authentication Flow
+
+**Token-Based Authentication** (Stateless):
+1. User logs in via `/api/v1/auth/login`
+2. Backend generates JWT token with `wb_` prefix
+3. Frontend stores token in localStorage
+4. All API requests include `Authorization: Bearer {token}` header
+5. No cookies, no CSRF tokens, no CORS complexity
+
+**Benefits**:
+- Works across different origins (localhost:3000 → localhost:8000)
+- Mobile-friendly (no cookie restrictions)
+- Simpler client code
+- Easier to test
+
+### Key Features
+
+**UI Components** (Production-Ready):
+- `RadioCardGroup`: Visual card selection for forms
+- 2-Step Property Registration: Simplified user flow
+- Interactive Document Checklist: "Have/Don't have" quick inventory
+- Dashboard: Hero banner with auto-rotation, action CTAs
+- Assessment Tool: Mobile-first large buttons (80px height)
+- Color-Coded Status: Green (80%+), Yellow (50-79%), Red (<50%)
+
+**E2E Test Suite** (102 tests):
+- 62 new comprehensive tests covering all critical flows
+- 40 legacy tests from earlier phases
+- Hybrid testing: Real backend + mocked externals (Stripe, Calendly)
+- Performance optimized: <30s per test (except integration)
+- CI/CD ready with parallel execution
+
+**OTP Bypass** (E2E Testing):
+- Test code: `000000`
+- Automatically bypasses SMS verification in test environments
+- Enables fast E2E test execution
+
 ## Environment Variables
 
 Copy the example files and configure:
@@ -122,6 +228,84 @@ Copy the example files and configure:
 ```bash
 cp backend/.env.example backend/.env
 cp frontend/.env.local.example frontend/.env.local
+```
+
+**Required Backend Variables**:
+- `APP_KEY`: Laravel encryption key (generate with `php artisan key:generate`)
+- `DB_*`: MySQL connection details
+- `SANCTUM_TOKEN_PREFIX`: Token prefix (default: `wb_`)
+- `REDIS_*`: Redis connection for cache and queues
+
+**Required Frontend Variables**:
+- `NEXT_PUBLIC_API_URL`: Backend API URL (default: `http://localhost:8000/api/v1`)
+
+See `.env.example` files for complete configuration options.
+
+## Troubleshooting
+
+### Common Issues
+
+**CORS Errors**: Should not occur with token-based auth. If you see CORS errors:
+```bash
+# Clear Laravel config cache
+docker compose exec app php artisan config:clear
+docker compose exec app php artisan config:cache
+
+# Restart services
+docker compose restart
+```
+
+**Node Version Errors**: Frontend requires Node 22:
+```bash
+nvm install 22
+nvm use 22
+cd frontend && npm install
+```
+
+**Database Connection Failed**:
+```bash
+# Check MySQL is running
+docker compose ps
+
+# Restart database
+docker compose restart mysql
+
+# Re-run migrations
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+**Frontend Won't Start**:
+```bash
+# Check Node version
+node --version  # Should be v22.x.x
+
+# Clear Next.js cache
+cd frontend
+rm -rf .next node_modules
+npm install
+npm run dev
+```
+
+**E2E Tests Failing**:
+```bash
+# Ensure backend is running
+docker compose ps
+
+# Clear test artifacts
+cd frontend
+npx playwright clean
+
+# Reinstall Playwright browsers
+npx playwright install
+
+# Run tests with debug output
+npx playwright test --headed --debug
+```
+
+**Admin Panel 404**: Ensure you've run seeders:
+```bash
+docker compose exec app php artisan migrate --seed
+docker compose exec app php artisan db:seed --class=AdminUserSeeder
 ```
 
 ## Build Log
@@ -163,3 +347,6 @@ For the complete end-to-end dossier covering every commit and artifact from Phas
 - [GitHub Remote Ops Runbook](./docs/github/remote-ops-runbook.md)
 - [API Documentation](./docs/api/)
 - [Architecture](./docs/architecture/)
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

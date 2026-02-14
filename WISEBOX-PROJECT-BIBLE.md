@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Wisebox Project Bible
 
 > **Last updated:** 2026-02-08
@@ -630,3 +637,6 @@ All meeting transcripts available via Granola app. Key meeting IDs for reference
 ---
 
 *This document was generated on 2026-02-08 from: Obsidian vault (20 notes), Granola meeting transcripts (20+ meetings), backend admin panel live audit, frontend browser testing, business plan PDF, and local project files.*
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Production Environment Matrix
 
 Date: 2026-02-10
@@ -77,3 +84,6 @@ Verification helper:
 2. Rotate Stripe/Calendly/API keys after incident or team-member offboarding.
 3. Keep separate credentials for staging and production.
 4. Use least-privilege IAM policies for S3 access.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

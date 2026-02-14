@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 1: Government Adapter Readiness Layer
 
 Date: 2026-02-10  
@@ -48,3 +55,6 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 docker compose exec app php artisan test --filter=GovernmentGatewayAdapterTest
 ./scripts/validate.sh --with-e2e
 ```
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

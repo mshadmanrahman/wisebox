@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 8 Execution Tracker (Forge + Vercel)
 
 Date: 2026-02-10  
@@ -50,3 +57,6 @@ API_BASE_URL=https://api.mywisebox.com/api/v1 \
 - Use `docs/deployment/forge-ui-paste-blocks.md` to avoid manual copy/paste mistakes in Forge UI.
 - Do not mark Phase 8 complete until webhook delivery is verified in both Stripe and Calendly dashboards.
 - Local development may continue while this tracker stays in deferred state.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

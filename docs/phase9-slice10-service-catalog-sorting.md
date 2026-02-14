@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 10: Service Catalog Sorting and Workspace Ranking Controls
 
 Date: 2026-02-11  
@@ -68,3 +75,6 @@ Result:
 - `docs/testing-validation-matrix.md`
 - `README.md`
 - `docs/phase9-slice10-service-catalog-sorting.md`
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

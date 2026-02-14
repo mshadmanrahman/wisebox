@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 5: Mutation and Empty-State E2E Hardening
 
 Date: 2026-02-10  
@@ -35,3 +42,6 @@ Authenticated E2E now validates both:
 cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 ./scripts/validate.sh --with-e2e
 ```
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

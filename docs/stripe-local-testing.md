@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Stripe Local Testing Guide
 
 This project uses Stripe Checkout for paid service orders and a webhook endpoint to finalize order state.
@@ -78,3 +85,6 @@ stripe trigger charge.refunded
 - `Stripe webhook secret is not configured`: missing `STRIPE_WEBHOOK_SECRET`.
 - Signature error: old or wrong `whsec_...` value.
 - Success/cancel redirect wrong host: check `FRONTEND_URL`.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

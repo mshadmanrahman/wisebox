@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 9: Service Workspace Discovery and Filtering
 
 Date: 2026-02-11  
@@ -72,3 +79,6 @@ Result:
 - `docs/phase9-kickoff-local-first.md`
 - `docs/testing-validation-matrix.md`
 - `docs/phase9-slice9-service-workspace-discovery.md`
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

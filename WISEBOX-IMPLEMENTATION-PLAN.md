@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Wisebox: Full Rebuild Implementation Plan
 
 > **Created:** 2026-02-08
@@ -3182,3 +3189,6 @@ This flow diagram updates the following sections of the plan:
 ---
 
 *End of Implementation Plan*
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

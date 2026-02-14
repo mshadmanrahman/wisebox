@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 7 Kickoff: Marketing Site
 
 Date: 2026-02-10  
@@ -92,3 +99,6 @@ Pending:
   - `BUILD-LOG.md`
   - `docs/testing-validation-matrix.md`
   - phase-specific delivery notes.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

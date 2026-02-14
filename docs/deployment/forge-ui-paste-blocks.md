@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Forge UI Paste Blocks (Wisebox)
 
 Date: 2026-02-10
@@ -98,3 +105,6 @@ Expected critical checks:
 - `/services` returns 200.
 - `/workspace/services` redirects unauthenticated users to login.
 - unauthenticated `GET /api/v1/orders` returns 401.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

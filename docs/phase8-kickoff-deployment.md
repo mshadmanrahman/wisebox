@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 8 Kickoff: Deployment and Production
 
 Date: 2026-02-10  
@@ -80,3 +87,6 @@ Current decision:
 3. Stripe and Calendly webhooks verified in production.
 4. Deployment runbook and env matrix are complete and tested.
 5. Post-deploy smoke checklist passes without manual hotfixes.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

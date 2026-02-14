@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 3: Orders and Tickets Edge-Case Hardening
 
 Date: 2026-02-10  
@@ -41,3 +48,6 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 docker compose exec app php artisan test --filter='OrderApiTest|TicketApiTest'
 ./scripts/validate.sh --with-e2e
 ```
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

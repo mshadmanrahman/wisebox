@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 4: Consultant Workspace APIs + Calendly Webhook Flow
 
 ## Summary
@@ -41,3 +48,6 @@ This PR advances Phase 4 by introducing a dedicated consultant ticket workspace,
 - No PAT secrets are committed.
 - Calendly webhook verification honors `CALENDLY_WEBHOOK_SECRET`.
 - Meeting scheduling fields on tickets are updated from webhook events.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

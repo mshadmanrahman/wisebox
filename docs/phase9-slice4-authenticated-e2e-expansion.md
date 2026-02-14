@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 4: Authenticated E2E Expansion
 
 Date: 2026-02-10  
@@ -38,3 +45,6 @@ Authenticated E2E now includes:
 cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 ./scripts/validate.sh --with-e2e
 ```
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

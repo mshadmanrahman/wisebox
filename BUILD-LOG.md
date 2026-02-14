@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Wisebox MVP Build Log
 
 > Step-by-step documentation of every build action. This file enables freeze/resume at any point.
@@ -505,3 +512,6 @@ To resume building after a stop:
 | State management | Zustand | Lightweight, simple for auth + form drafts |
 | API client | TanStack Query + Axios | Caching, auto-refetch, interceptors |
 | Deployment target | Vercel (frontend) | User requirement; optimized for Next.js |
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

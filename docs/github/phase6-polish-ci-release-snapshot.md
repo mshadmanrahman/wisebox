@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 6 Polish CI and Release Snapshot
 
 Date: 2026-02-10  
@@ -66,3 +73,6 @@ gh run download "$RUN_ID" -R mshadmanrahman/wisebox -D /tmp/wisebox-ci-artifacts
 cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox/frontend"
 npx playwright show-report
 ```
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

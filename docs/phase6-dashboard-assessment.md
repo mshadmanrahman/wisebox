@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 6: Dashboard, Assessment, Settings, and Notification Center
 
 Date: 2026-02-10
@@ -169,3 +176,6 @@ Blocked by sandbox restrictions (run on local machine):
 ## Known next steps inside Phase 6
 
 1. Add backend assertions for recommendation-service mapping behavior edge cases.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

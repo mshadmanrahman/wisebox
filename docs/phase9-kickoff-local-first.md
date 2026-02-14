@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Kickoff: Local-First Feature Development
 
 Date: 2026-02-10  
@@ -66,3 +73,6 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 8. `docs/phase9-slice8-dashboard-notification-caching.md`
 9. `docs/phase9-slice9-service-workspace-discovery.md`
 10. `docs/phase9-slice10-service-catalog-sorting.md`
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

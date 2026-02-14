@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 6: Negative-Path and Role-Boundary E2E Hardening
 
 Date: 2026-02-10  
@@ -58,3 +65,6 @@ Expected result:
 - `docs/phase9-kickoff-local-first.md`
 - `docs/testing-validation-matrix.md`
 - `docs/phase9-slice6-negative-path-and-role-boundary-e2e.md`
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

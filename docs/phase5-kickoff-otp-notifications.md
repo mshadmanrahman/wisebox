@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 5 Kickoff: OTP Integration and Notification Delivery Baseline
 
 Date: 2026-02-10
@@ -109,3 +116,6 @@ Follow-on slices completed after this kickoff:
 - CI validation automation:
   - `.github/workflows/validate.yml`
   - executes `./scripts/validate.sh --with-e2e` on push/PR
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

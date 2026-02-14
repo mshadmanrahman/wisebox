@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Execution Journal: Phase 2B to Phase 4
 
 This document records the implementation sequence, decisions, fixes, and verification workflow used to build Wisebox from Phase 2B through current Phase 4 progress.
@@ -321,3 +328,6 @@ Current status:
 Next practical build items:
 1. Phase 5 integrations kickoff.
 2. Notifications delivery channels (email/SMS/push) on top of DB notification events.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

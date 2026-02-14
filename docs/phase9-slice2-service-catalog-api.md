@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 2: Service Catalog API Filters and Pagination
 
 Date: 2026-02-10  
@@ -51,3 +58,6 @@ cd "/Users/connectshadman/Documents/Vibe Coding/_hobby/wisebox"
 docker compose exec app php artisan test --filter=ServiceCatalogApiTest
 ./scripts/validate.sh --with-e2e
 ```
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

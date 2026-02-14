@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Wisebox Progress Summary (Phase 1-9)
 
 _Last updated: 2026-02-11_
@@ -72,3 +79,6 @@ For implementation details and exact file-level notes, see:
 - Phase 0-4 exhaustive dossier: `docs/phase0-to-phase4-exhaustive-log.md`
 - Phase 5-9 slice notes: `docs/phase5-kickoff-otp-notifications.md` and `docs/phase9-slice*.md`
 
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

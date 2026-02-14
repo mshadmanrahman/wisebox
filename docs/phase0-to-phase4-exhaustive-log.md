@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Wisebox Exhaustive Build Dossier (Phase 0 to Phase 4)
 
 This document is the canonical, exhaustive record of what was built, how it was built, what changed, how it was validated, and how Phase 4 was closed.
@@ -803,3 +810,6 @@ This appendix lists file paths touched in each commit, in chronological order.
 
 **Files changed:**
 - none (merge commit; tree matches merged head)
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Production Deployment Runbook
 
 Date: 2026-02-10
@@ -143,3 +150,6 @@ API_BASE_URL=https://api.mywisebox.com/api/v1 \
 
 4. Incident logging:
 - Record incident timeline, failing step, and remediation in ops notes before next deploy.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

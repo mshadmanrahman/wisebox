@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 4 Progress Tracking: Consultant Workflow & Ticketing
 
 ## Objective
@@ -47,3 +54,6 @@ Track implementation and remaining work for Phase 4 (consultant workflow and tic
 - Stripe local testing: `docs/stripe-local-testing.md`
 - Core commits:
   - `0f1e807`, `d994bad`, `096679e`, `2ad8a79`, `7df0ba6`, `1a32681`, `4a088ff`
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

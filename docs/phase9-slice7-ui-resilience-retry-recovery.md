@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 7: UI Resilience and Retry Recovery
 
 Date: 2026-02-10  
@@ -70,3 +77,6 @@ Expected:
 - `docs/phase9-kickoff-local-first.md`
 - `docs/testing-validation-matrix.md`
 - `docs/phase9-slice7-ui-resilience-retry-recovery.md`
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

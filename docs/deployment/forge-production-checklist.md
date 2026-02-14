@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Laravel Forge Production Checklist (Recommended Path)
 
 Date: 2026-02-10
@@ -190,3 +197,6 @@ API_BASE_URL=https://api.mywisebox.com/api/v1 \
 
 3. Incident capture:
 - Document failure point and remediation before next release.
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

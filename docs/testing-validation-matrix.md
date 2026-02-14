@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Wisebox Testing and Validation Matrix
 
 Date: 2026-02-10
@@ -186,3 +193,6 @@ APP_BASE_URL=https://mywisebox.com \
 API_BASE_URL=https://api.mywisebox.com/api/v1 \
 ./scripts/smoke-production.sh
 ```
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

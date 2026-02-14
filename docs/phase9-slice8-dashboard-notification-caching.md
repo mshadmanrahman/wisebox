@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 8: Dashboard and Notifications Caching Pass
 
 Date: 2026-02-11  
@@ -61,3 +68,6 @@ Expected:
 - `docs/phase9-kickoff-local-first.md`
 - `docs/testing-validation-matrix.md`
 - `docs/phase9-slice8-dashboard-notification-caching.md`
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

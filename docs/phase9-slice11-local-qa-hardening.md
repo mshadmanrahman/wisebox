@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 # Phase 9 Slice 11: Local QA Hardening and Navigation/Data-Shape Resilience
 
 _Date: 2026-02-11_
@@ -62,3 +69,6 @@ Stabilize local user flows based on real manual QA findings (dashboard CTA navig
 - External deployment/cutover remains out of scope in this slice.
 - This slice is focused on local usability, reliability, and QA feedback closure.
 
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]
