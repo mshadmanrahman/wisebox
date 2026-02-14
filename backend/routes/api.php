@@ -24,6 +24,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Top-level health check (for Railway / load balancer probes)
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]);
+});
+
 Route::prefix('v1')->group(function () {
 
     // Health check
