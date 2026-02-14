@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AdminConsultationController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AssessmentController;
 use App\Http\Controllers\Api\V1\CalendlyWebhookController;
 use App\Http\Controllers\Api\V1\ConsultantTicketController;
 use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\PublicFormController;
+use App\Http\Controllers\Api\V1\FreeConsultationController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\ServiceCatalogController;
@@ -58,6 +61,7 @@ Route::prefix('v1')->group(function () {
         Route::get('properties/{property}/documents', [\App\Http\Controllers\Api\V1\DocumentController::class, 'index']);
         Route::post('properties/{property}/documents', [\App\Http\Controllers\Api\V1\DocumentController::class, 'store']);
         Route::post('properties/{property}/documents/{documentTypeId}/mark-missing', [\App\Http\Controllers\Api\V1\DocumentController::class, 'markMissing']);
+        Route::get('documents/{document}/download', [\App\Http\Controllers\Api\V1\DocumentController::class, 'download']);
         Route::delete('properties/{property}/documents/{document}', [\App\Http\Controllers\Api\V1\DocumentController::class, 'destroy']);
 
         // Phase 3: Orders
@@ -77,12 +81,44 @@ Route::prefix('v1')->group(function () {
 
         // Consultant workflow
         Route::prefix('consultant')->group(function () {
+            Route::get('stats', [ConsultantTicketController::class, 'stats']);
             Route::get('dashboard', [ConsultantTicketController::class, 'dashboard']);
             Route::get('metrics', [ConsultantTicketController::class, 'metrics']);
             Route::get('tickets', [ConsultantTicketController::class, 'index']);
             Route::get('tickets/{ticket}', [ConsultantTicketController::class, 'show']);
             Route::put('tickets/{ticket}', [ConsultantTicketController::class, 'update']);
             Route::post('tickets/{ticket}/comments', [ConsultantTicketController::class, 'addComment']);
+            Route::post('tickets/{ticket}/confirm-slot', [ConsultantTicketController::class, 'confirmSlot']);
+            Route::post('tickets/{ticket}/send-form', [ConsultantTicketController::class, 'sendForm']);
+            Route::get('tickets/{ticket}/form-invitations', [ConsultantTicketController::class, 'formInvitations']);
+        });
+
+        // Consultation Forms
+        Route::prefix('consultation-forms')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Api\V1\ConsultationFormController::class, 'index']);
+            Route::get('templates/{template}', [\App\Http\Controllers\Api\V1\ConsultationFormController::class, 'show']);
+            Route::post('tickets/{ticket}/submit', [\App\Http\Controllers\Api\V1\ConsultationFormController::class, 'submitResponse']);
+            Route::get('tickets/{ticket}/responses', [\App\Http\Controllers\Api\V1\ConsultationFormController::class, 'ticketResponses']);
+        });
+
+        // Free Consultation Requests (user-facing)
+        Route::get('free-consultations', [FreeConsultationController::class, 'index']);
+        Route::post('free-consultations', [FreeConsultationController::class, 'store']);
+        Route::get('free-consultations/{ticket}', [FreeConsultationController::class, 'show']);
+
+        // Admin: Consultation Management
+        Route::prefix('admin/consultations')->group(function () {
+            Route::get('/', [AdminConsultationController::class, 'index']);
+            Route::get('consultants', [AdminConsultationController::class, 'consultants']);
+            Route::get('{ticket}', [AdminConsultationController::class, 'show']);
+            Route::patch('{ticket}/approve', [AdminConsultationController::class, 'approve']);
+            Route::patch('{ticket}/reject', [AdminConsultationController::class, 'reject']);
+        });
+
+        // Property Journal & Recommendations
+        Route::prefix('properties/{property}')->group(function () {
+            Route::get('journal', [\App\Http\Controllers\Api\V1\PropertyJournalController::class, 'show']);
+            Route::get('recommendations', [\App\Http\Controllers\Api\V1\PropertyJournalController::class, 'recommendations']);
         });
 
         // Phase 6: Notifications and assessments
@@ -93,6 +129,13 @@ Route::prefix('v1')->group(function () {
         Route::get('dashboard/summary', [DashboardController::class, 'summary']);
         Route::get('properties/{property}/assessment', [AssessmentController::class, 'propertyAssessment']);
         Route::get('properties/{property}/assessments', [AssessmentController::class, 'history']);
+        Route::get('properties/{property}/consultations', [\App\Http\Controllers\Api\V1\PropertyController::class, 'consultations']);
+    });
+
+    // Public forms (no auth required, token-based access)
+    Route::prefix('public-forms')->group(function () {
+        Route::get('{token}', [PublicFormController::class, 'show']);
+        Route::post('{token}/submit', [PublicFormController::class, 'submit']);
     });
 
     // Public routes (no auth)

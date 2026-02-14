@@ -50,6 +50,10 @@ class OrderController extends Controller
             'items.*.service_id' => ['required', 'integer', 'distinct', 'exists:services,id'],
             'items.*.quantity' => ['nullable', 'integer', 'min:1', 'max:10'],
             'notes' => ['nullable', 'string'],
+            'preferred_time_slots' => ['nullable', 'array', 'min:2', 'max:5'],
+            'preferred_time_slots.*.date' => ['required_with:preferred_time_slots', 'date', 'after:today'],
+            'preferred_time_slots.*.time' => ['required_with:preferred_time_slots', 'string', 'regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'],
+            'preferred_time_slots.*.display' => ['required_with:preferred_time_slots', 'string'],
         ]);
 
         $serviceIds = collect($validated['items'])->pluck('service_id')->values();
@@ -119,8 +123,14 @@ class OrderController extends Controller
 
             $order->items()->createMany($items);
 
+            // Store preferred time slots if provided
+            if (!empty($validated['preferred_time_slots'])) {
+                $order->preferred_time_slots = $validated['preferred_time_slots'];
+                $order->save();
+            }
+
             if ($total <= 0) {
-                $this->fulfillmentService->createFromOrder($order);
+                $this->fulfillmentService->createFromOrder($order, $validated['preferred_time_slots'] ?? null);
             }
 
             return $order;

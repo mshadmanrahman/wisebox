@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
             // Content
             FaqSeeder::class,
 
+            // Consultation form templates (depends on services)
+            ConsultationFormTemplateSeeder::class,
+
             // Local admin access
             AdminUserSeeder::class,
         ]);

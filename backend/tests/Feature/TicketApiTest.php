@@ -6,6 +6,7 @@ use App\Models\Property;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 use App\Models\User;
+use App\Notifications\TicketCreatedNotification;
 use App\Notifications\TicketLifecycleNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -75,6 +76,59 @@ class TicketApiTest extends TestCase
 
         $this->getJson("/api/v1/tickets/{$ticket->id}")
             ->assertForbidden();
+    }
+
+    public function test_ticket_creation_sends_confirmation_email_to_customer(): void
+    {
+        Notification::fake();
+
+        $customer = User::factory()->create();
+        $property = $this->createPropertyForUser($customer);
+
+        $service = DB::table('services')->insertGetId([
+            'name' => 'Ownership Verification',
+            'slug' => 'ownership-verification-'.uniqid(),
+            'pricing_type' => 'free',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/tickets', [
+            'property_id' => $property->id,
+            'service_id' => $service,
+            'title' => 'Please verify my property ownership',
+            'description' => 'I need help with my deed.',
+            'priority' => 'medium',
+        ])->assertCreated()
+            ->assertJsonPath('data.status', 'open')
+            ->assertJsonPath('data.customer_id', $customer->id);
+
+        Notification::assertSentTo($customer, TicketCreatedNotification::class, function (TicketCreatedNotification $notification) use ($property) {
+            return $notification->propertyName === $property->property_name
+                && $notification->serviceName === 'Ownership Verification';
+        });
+    }
+
+    public function test_ticket_creation_sends_email_even_without_service(): void
+    {
+        Notification::fake();
+
+        $customer = User::factory()->create();
+        $property = $this->createPropertyForUser($customer);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/tickets', [
+            'property_id' => $property->id,
+            'title' => 'General inquiry',
+        ])->assertCreated();
+
+        Notification::assertSentTo($customer, TicketCreatedNotification::class, function (TicketCreatedNotification $notification) {
+            return $notification->serviceName === null;
+        });
     }
 
     public function test_internal_comments_are_hidden_from_customers(): void

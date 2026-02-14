@@ -12,7 +12,7 @@ class Order extends Model
         'order_number', 'user_id', 'property_id',
         'subtotal', 'tax', 'discount', 'total', 'currency',
         'payment_status', 'stripe_payment_intent_id', 'stripe_checkout_session_id',
-        'paid_at', 'status', 'notes',
+        'paid_at', 'status', 'notes', 'preferred_time_slots',
     ];
 
     protected function casts(): array
@@ -23,6 +23,7 @@ class Order extends Model
             'discount' => 'decimal:2',
             'total' => 'decimal:2',
             'paid_at' => 'datetime',
+            'preferred_time_slots' => 'array',
         ];
     }
 

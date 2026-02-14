@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\ConsultationFormInvitation;
+use App\Models\ConsultationFormTemplate;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 use App\Models\User;
@@ -18,8 +20,37 @@ use Illuminate\Validation\Rule;
 class ConsultantTicketController extends Controller
 {
     public function __construct(
-        private TransactionalEmailService $transactionalEmailService
-    ) {}
+        private TransactionalEmailService $transactionalEmailService,
+        private ?\App\Services\GoogleCalendarService $googleCalendarService = null
+    ) {
+        $this->googleCalendarService = $googleCalendarService ?? app(\App\Services\GoogleCalendarService::class);
+    }
+
+    /**
+     * Get consultant dashboard stats (simplified for main dashboard)
+     */
+    public function stats(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $this->ensureConsultantScope($user);
+
+        $baseQuery = $this->consultantBaseQuery($user);
+
+        $stats = [
+            'assigned' => (clone $baseQuery)->where('status', 'assigned')->count(),
+            'scheduled' => (clone $baseQuery)->where('status', 'scheduled')->count(),
+            'completed_this_month' => (clone $baseQuery)
+                ->where('status', 'completed')
+                ->whereBetween('resolved_at', [now()->startOfMonth(), now()->endOfMonth()])
+                ->count(),
+            'pending_action' => (clone $baseQuery)
+                ->where('status', 'assigned')
+                ->whereNotNull('preferred_time_slots')
+                ->count(),
+        ];
+
+        return response()->json(['data' => $stats]);
+    }
 
     public function dashboard(Request $request): JsonResponse
     {
@@ -178,6 +209,7 @@ class ConsultantTicketController extends Controller
             'scheduled_at' => ['sometimes', 'nullable', 'date'],
             'meeting_duration_minutes' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:480'],
             'resolution_notes' => ['sometimes', 'nullable', 'string'],
+            'consultation_notes' => ['sometimes', 'nullable', 'string'],
         ]);
 
         $previousStatus = $ticket->status;
@@ -274,7 +306,7 @@ class ConsultantTicketController extends Controller
             if ($ticket->customer_id) {
                 $customer = User::query()->find($ticket->customer_id);
                 if ($customer) {
-                    $this->transactionalEmailService->sendTicketCommentAdded($customer, $ticket, 'Consultant');
+                    $this->transactionalEmailService->sendTicketCommentAdded($customer, $ticket, 'Consultant', $bodyText);
                 }
             }
         }
@@ -282,6 +314,192 @@ class ConsultantTicketController extends Controller
         $comment->load('user:id,name,email');
 
         return response()->json(['data' => $comment], 201);
+    }
+
+    /**
+     * Confirm a time slot and create Google Meet link
+     */
+    public function confirmSlot(Request $request, Ticket $ticket): JsonResponse
+    {
+        $user = $request->user();
+        $this->ensureCanAccessTicket($user, $ticket);
+
+        $validated = $request->validate([
+            'slot_index' => ['required', 'integer', 'min:0'],
+            'duration_minutes' => ['nullable', 'integer', 'min:15', 'max:480'],
+        ]);
+
+        // Get preferred time slots
+        $preferredSlots = $ticket->preferred_time_slots;
+        if (empty($preferredSlots) || !is_array($preferredSlots)) {
+            return response()->json([
+                'message' => 'This ticket does not have preferred time slots.',
+            ], 422);
+        }
+
+        $slotIndex = $validated['slot_index'];
+        if (!isset($preferredSlots[$slotIndex])) {
+            return response()->json([
+                'message' => 'Invalid slot index.',
+            ], 422);
+        }
+
+        $selectedSlot = $preferredSlots[$slotIndex];
+        $duration = $validated['duration_minutes'] ?? 60;
+
+        try {
+            // Parse the selected time slot
+            $slotDate = $selectedSlot['date'] ?? null;
+            $slotTime = $selectedSlot['time'] ?? null;
+
+            if (!$slotDate || !$slotTime) {
+                return response()->json([
+                    'message' => 'Selected slot is missing date or time information.',
+                ], 422);
+            }
+
+            // Combine date and time into a Carbon instance
+            $startTime = \Carbon\Carbon::parse("{$slotDate} {$slotTime}");
+
+            // Create Google Meet meeting
+            $meetingData = $this->googleCalendarService->createConsultationMeeting(
+                $ticket,
+                $startTime,
+                $duration
+            );
+
+            // Update ticket with meeting details
+            $ticket->update([
+                'scheduled_at' => $startTime,
+                'meeting_url' => $meetingData['meet_link'],
+                'meeting_duration_minutes' => $duration,
+                'status' => 'scheduled',
+            ]);
+
+            // Send notification to customer
+            $this->createNotification(
+                (int) $ticket->customer_id,
+                'ticket.meeting.scheduled',
+                'Meeting scheduled',
+                "Your consultation for ticket {$ticket->ticket_number} has been scheduled for {$startTime->format('M d, Y \a\t g:i A')}.",
+                [
+                    'ticket_id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                    'scheduled_at' => $startTime->toISOString(),
+                    'meet_link' => $meetingData['meet_link'],
+                    'calendar_link' => $meetingData['calendar_link'],
+                ]
+            );
+
+            // Send meeting confirmation email to customer
+            if ($ticket->customer_id) {
+                $customer = User::query()->find($ticket->customer_id);
+                if ($customer && $customer->email) {
+                    $this->transactionalEmailService->sendMeetingScheduled(
+                        $customer,
+                        $ticket,
+                        $meetingData['meet_link'],
+                        $startTime,
+                        $duration,
+                    );
+                }
+            }
+
+            $ticket->load(['customer:id,name,email', 'consultant:id,name,email', 'property:id,property_name', 'service:id,name']);
+
+            return response()->json([
+                'data' => $ticket,
+                'meeting' => $meetingData,
+            ]);
+
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to create consultation meeting', [
+                'ticket_id' => $ticket->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'message' => 'Failed to create meeting: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Send a consultation form to the customer via email
+     */
+    public function sendForm(Request $request, Ticket $ticket): JsonResponse
+    {
+        $user = $request->user();
+        $this->ensureCanAccessTicket($user, $ticket);
+
+        $validated = $request->validate([
+            'template_id' => ['required', 'exists:consultation_form_templates,id'],
+        ]);
+
+        $template = ConsultationFormTemplate::findOrFail($validated['template_id']);
+
+        // Resolve customer email from the ticket's customer
+        $customer = $ticket->customer;
+        if (!$customer || !$customer->email) {
+            return response()->json([
+                'message' => 'This ticket does not have a customer with a valid email.',
+            ], 422);
+        }
+
+        $invitation = ConsultationFormInvitation::create([
+            'ticket_id' => $ticket->id,
+            'template_id' => $template->id,
+            'consultant_id' => $user->id,
+            'customer_email' => $customer->email,
+            'status' => 'pending',
+            'sent_at' => now(),
+            'expires_at' => now()->addDays(7),
+        ]);
+
+        $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
+        $formUrl = "{$frontendUrl}/forms/{$invitation->token}";
+
+        $this->transactionalEmailService->sendFormInvitation(
+            $customer->email,
+            $ticket,
+            $template->name,
+            $formUrl,
+        );
+
+        // Notify customer in-app
+        $this->createNotification(
+            (int) $ticket->customer_id,
+            'ticket.form.sent',
+            'Consultation form requested',
+            "Your consultant has sent you a form to complete for ticket {$ticket->ticket_number}. Check your email.",
+            [
+                'ticket_id' => $ticket->id,
+                'ticket_number' => $ticket->ticket_number,
+                'template_name' => $template->name,
+                'invitation_id' => $invitation->id,
+            ]
+        );
+
+        $invitation->load('template');
+
+        return response()->json(['data' => $invitation], 201);
+    }
+
+    /**
+     * List form invitations sent for a ticket
+     */
+    public function formInvitations(Request $request, Ticket $ticket): JsonResponse
+    {
+        $user = $request->user();
+        $this->ensureCanAccessTicket($user, $ticket);
+
+        $invitations = ConsultationFormInvitation::where('ticket_id', $ticket->id)
+            ->with('template:id,name')
+            ->latest()
+            ->get();
+
+        return response()->json(['data' => $invitations]);
     }
 
     private function consultantBaseQuery(User $user)

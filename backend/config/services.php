@@ -65,4 +65,15 @@ return [
         'adapter' => env('GOVERNMENT_INTEGRATION_ADAPTER', 'null'),
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect_uri' => env('GOOGLE_REDIRECT_URI', env('APP_URL') . '/auth/google/callback'),
+        'access_token' => env('GOOGLE_ACCESS_TOKEN'),
+    ],
+
+    'brevo' => [
+        'api_key' => env('BREVO_API_KEY'),
+    ],
+
 ];

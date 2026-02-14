@@ -59,12 +59,14 @@ class AuthController extends Controller
 
     /**
      * Login with email and password.
+     * Optionally accepts a 'portal' param to enforce role-based access.
      */
     public function login(Request $request): JsonResponse
     {
         $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'portal' => ['nullable', 'in:user,admin,consultant'],
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -78,6 +80,19 @@ class AuthController extends Controller
         if ($user->status !== 'active') {
             throw ValidationException::withMessages([
                 'email' => ['Your account has been suspended.'],
+            ]);
+        }
+
+        // Enforce portal-based role check
+        $portal = $request->input('portal');
+        if ($portal === 'admin' && !$user->isAdmin()) {
+            throw ValidationException::withMessages([
+                'email' => ['This account does not have admin access.'],
+            ]);
+        }
+        if ($portal === 'consultant' && !$user->isConsultant() && !$user->isAdmin()) {
+            throw ValidationException::withMessages([
+                'email' => ['This account does not have consultant access.'],
             ]);
         }
 
@@ -106,20 +121,120 @@ class AuthController extends Controller
 
     /**
      * Login or register via Google OAuth.
+     * Accepts a Google ID token (from frontend Google Sign-In), validates it,
+     * and creates/logs in the user.
      */
     public function googleAuth(Request $request): JsonResponse
     {
         $request->validate([
             'id_token' => ['required', 'string'],
+            'role' => ['nullable', 'in:customer,consultant,admin'],
         ]);
 
-        // In production, validate the Google ID token
-        // For now, we'll accept the token and look up by google_id
-        // TODO: Implement proper Google token validation via Socialite
+        // Verify Google ID token using Google's tokeninfo endpoint
+        $googleUser = $this->verifyGoogleToken($request->input('id_token'));
+
+        if (!$googleUser) {
+            throw ValidationException::withMessages([
+                'id_token' => ['Invalid or expired Google token.'],
+            ]);
+        }
+
+        $email = $googleUser['email'] ?? null;
+        $googleId = $googleUser['sub'] ?? null;
+        $name = $googleUser['name'] ?? $googleUser['given_name'] ?? 'User';
+        $avatarUrl = $googleUser['picture'] ?? null;
+
+        if (!$email || !$googleId) {
+            throw ValidationException::withMessages([
+                'id_token' => ['Could not retrieve email from Google account.'],
+            ]);
+        }
+
+        // Find existing user by google_id or email
+        $user = User::where('google_id', $googleId)->first()
+            ?? User::where('email', $email)->first();
+
+        $isNewUser = false;
+
+        if ($user) {
+            // Update google_id if not set (user previously registered with email)
+            if (!$user->google_id) {
+                $user->update(['google_id' => $googleId]);
+            }
+            if ($avatarUrl && !$user->avatar_url) {
+                $user->update(['avatar_url' => $avatarUrl]);
+            }
+        } else {
+            // Create new user
+            $user = User::create([
+                'name' => $name,
+                'email' => $email,
+                'google_id' => $googleId,
+                'avatar_url' => $avatarUrl,
+                'email_verified_at' => now(), // Google emails are pre-verified
+                'role' => 'customer',
+                'status' => 'active',
+                'password' => Hash::make(\Illuminate\Support\Str::random(32)),
+            ]);
+
+            $user->profile()->create([
+                'preferred_language' => 'en',
+                'timezone' => 'UTC',
+            ]);
+
+            $isNewUser = true;
+        }
+
+        if ($user->status !== 'active') {
+            throw ValidationException::withMessages([
+                'email' => ['Your account has been suspended.'],
+            ]);
+        }
+
+        $user->update(['last_login_at' => now()]);
+        $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Google OAuth not yet configured. Use email/password login.',
-        ], 501);
+            'data' => [
+                'user' => $user->load('profile'),
+                'token' => $token,
+                'is_new_user' => $isNewUser,
+            ],
+        ]);
+    }
+
+    /**
+     * Verify a Google ID token using Google's tokeninfo endpoint.
+     */
+    private function verifyGoogleToken(string $idToken): ?array
+    {
+        try {
+            $clientId = config('services.google.client_id');
+
+            // Use Google's tokeninfo endpoint for validation
+            $response = \Illuminate\Support\Facades\Http::get('https://oauth2.googleapis.com/tokeninfo', [
+                'id_token' => $idToken,
+            ]);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $payload = $response->json();
+
+            // Verify the audience matches our client ID
+            if ($clientId && ($payload['aud'] ?? '') !== $clientId) {
+                return null;
+            }
+
+            return $payload;
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Google token verification failed', [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
     }
 
     /**

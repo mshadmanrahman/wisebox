@@ -19,6 +19,7 @@ class TicketLifecycleNotification extends Notification implements ShouldQueue
         public readonly string $frontendUrl,
         public readonly ?string $fromStatus = null,
         public readonly ?string $actor = null,
+        public readonly ?string $commentBody = null,
     ) {
         $this->onQueue('notifications');
     }
@@ -40,6 +41,12 @@ class TicketLifecycleNotification extends Notification implements ShouldQueue
             ->greeting('Hello '.$notifiable->name.',')
             ->line($lineOne)
             ->line("Ticket: {$this->ticketNumber}");
+
+        if ($this->commentBody) {
+            $message->line('---');
+            $message->line($this->commentBody);
+            $message->line('---');
+        }
 
         if ($this->status !== null) {
             $message->line("Current status: {$this->status}");

@@ -7,7 +7,7 @@ use App\Models\Ticket;
 
 class OrderFulfillmentService
 {
-    public function createFromOrder(Order $order): void
+    public function createFromOrder(Order $order, ?array $preferredTimeSlots = null): void
     {
         $order->loadMissing(['items.service']);
 
@@ -30,6 +30,16 @@ class OrderFulfillmentService
             }
 
             $serviceName = $item->service?->name ?? 'Service Request';
+            $isConsultation = $this->isConsultationService($item->service?->name ?? '');
+
+            // Build description with time slots if consultation
+            $description = "Created from order {$order->order_number}";
+            if ($isConsultation && !empty($preferredTimeSlots)) {
+                $description .= "\n\nPreferred Time Slots:\n";
+                foreach ($preferredTimeSlots as $index => $slot) {
+                    $description .= sprintf("%d. %s\n", $index + 1, $slot['display']);
+                }
+            }
 
             Ticket::create([
                 'ticket_number' => $this->generateTicketNumber(),
@@ -38,11 +48,18 @@ class OrderFulfillmentService
                 'customer_id' => $order->user_id,
                 'service_id' => $item->service_id,
                 'title' => $serviceName,
-                'description' => "Created from order {$order->order_number}",
-                'priority' => 'medium',
+                'description' => $description,
+                'priority' => $isConsultation ? 'high' : 'medium',
                 'status' => 'open',
+                'preferred_time_slots' => $isConsultation ? $preferredTimeSlots : null,
             ]);
         }
+    }
+
+    private function isConsultationService(string $serviceName): bool
+    {
+        $serviceName = strtolower($serviceName);
+        return str_contains($serviceName, 'consultation') || str_contains($serviceName, 'consult');
     }
 
     private function generateTicketNumber(): string

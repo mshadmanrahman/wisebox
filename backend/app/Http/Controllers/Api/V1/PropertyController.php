@@ -210,6 +210,39 @@ class PropertyController extends Controller
         ]);
     }
 
+    /**
+     * Get consultation tickets for a property.
+     */
+    public function consultations(Request $request, Property $property): JsonResponse
+    {
+        if ($property->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $tickets = $property->tickets()
+            ->with(['consultant', 'service'])
+            ->latest()
+            ->paginate($request->get('per_page', 10));
+
+        // Transform tickets to match frontend expectations
+        $tickets->getCollection()->transform(function ($ticket) {
+            return [
+                'id' => $ticket->id,
+                'ticket_number' => $ticket->ticket_number,
+                'title' => $ticket->title,
+                'status' => $ticket->status,
+                'created_at' => $ticket->created_at->toISOString(),
+                'scheduled_at' => $ticket->scheduled_at?->toISOString(),
+                'completed_at' => $ticket->completed_at?->toISOString(),
+                'meet_link' => $ticket->meet_link,
+                'consultant_name' => $ticket->consultant?->name,
+                'consultation_notes' => $ticket->consultation_notes,
+            ];
+        });
+
+        return response()->json($tickets);
+    }
+
     private function validateCoOwnerOwnership(?array $coOwners): ?JsonResponse
     {
         if (empty($coOwners)) {

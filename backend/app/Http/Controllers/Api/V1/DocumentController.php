@@ -138,6 +138,37 @@ class DocumentController extends Controller
     }
 
     /**
+     * Download/view a document file.
+     * Accessible by the document owner, consultants, and admins.
+     */
+    public function download(Request $request, PropertyDocument $document)
+    {
+        $user = $request->user();
+        $isStaff = in_array($user->role, ['consultant', 'admin', 'super_admin']);
+        $isOwner = $document->user_id === $user->id;
+
+        if (!$isStaff && !$isOwner) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        if (!$document->has_document || !$document->file_path) {
+            return response()->json(['message' => 'No file available for this document.'], 404);
+        }
+
+        $disk = config('app.env') === 'production' ? 'documents' : 'local';
+
+        if (!Storage::disk($disk)->exists($document->file_path)) {
+            return response()->json(['message' => 'File not found on storage.'], 404);
+        }
+
+        return Storage::disk($disk)->download(
+            $document->file_path,
+            $document->file_name,
+            ['Content-Type' => $document->mime_type]
+        );
+    }
+
+    /**
      * Delete a document.
      */
     public function destroy(Request $request, Property $property, PropertyDocument $document): JsonResponse
