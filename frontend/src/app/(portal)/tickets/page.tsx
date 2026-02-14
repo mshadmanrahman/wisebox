@@ -13,11 +13,11 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { PaginatedResponse, Ticket, TicketStatus } from '@/types';
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-100 text-green-700';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-100 text-blue-700';
+  if (status === 'completed') return 'bg-green-500/20 text-green-400';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
   if (status === 'scheduled') return 'bg-purple-100 text-purple-700';
-  if (status === 'cancelled') return 'bg-gray-100 text-gray-600';
-  return 'bg-amber-100 text-amber-700';
+  if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
+  return 'bg-amber-500/20 text-amber-400';
 }
 
 export default function TicketsPage() {
@@ -93,7 +93,7 @@ export default function TicketsPage() {
                 className={`px-3 py-1.5 rounded-md border ${
                   assignedFilter === 'all'
                     ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
-                    : 'bg-white text-wisebox-text-secondary border-gray-200'
+                    : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
                 }`}
                 onClick={() => setAssignedFilter('all')}
               >
@@ -104,7 +104,7 @@ export default function TicketsPage() {
                 className={`px-3 py-1.5 rounded-md border ${
                   assignedFilter === 'assigned'
                     ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
-                    : 'bg-white text-wisebox-text-secondary border-gray-200'
+                    : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
                 }`}
                 onClick={() => setAssignedFilter('assigned')}
               >
@@ -115,7 +115,7 @@ export default function TicketsPage() {
                 className={`px-3 py-1.5 rounded-md border ${
                   assignedFilter === 'unassigned'
                     ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
-                    : 'bg-white text-wisebox-text-secondary border-gray-200'
+                    : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
                 }`}
                 onClick={() => setAssignedFilter('unassigned')}
               >

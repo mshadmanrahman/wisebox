@@ -1,3 +1,10 @@
+---
+tags:
+  - VibeCoding
+  - VibeCoding/Hobby
+  - Wisebox
+---
+
 ## Wisebox Frontend (Next.js)
 
 This app runs the local Wisebox UI (marketing + portal).
@@ -39,3 +46,6 @@ npm run build
 npm run start
 npm run lint
 ```
+
+## Related
+- [[Vibe Coding/_hobby/README|Hobby Projects Index]]

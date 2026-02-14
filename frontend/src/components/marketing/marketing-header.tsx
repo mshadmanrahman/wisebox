@@ -4,7 +4,7 @@ import { marketingNavLinks } from '@/components/marketing/content';
 
 export function MarketingHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-teal-100/80 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-wisebox-border bg-wisebox-background/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" className="text-lg font-bold tracking-tight text-wisebox-primary-700">
           Wisebox
@@ -22,7 +22,7 @@ export function MarketingHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button asChild variant="outline" className="hidden border-teal-200 text-wisebox-primary-700 sm:inline-flex">
+          <Button asChild variant="outline" className="hidden border-wisebox-border text-wisebox-primary-400 sm:inline-flex">
             <Link href="/login">Sign in</Link>
           </Button>
           <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">

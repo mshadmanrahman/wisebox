@@ -1,30 +1,48 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Routes that require authentication
-const protectedPaths = ['/dashboard', '/properties', '/workspace', '/tickets', '/orders', '/consultant', '/settings', '/notifications'];
+// Routes that require authentication (user portal)
+const userProtectedPaths = ['/dashboard', '/properties', '/workspace', '/tickets', '/orders', '/settings', '/notifications'];
+
+// Admin-only routes
+const adminProtectedPaths = ['/admin/dashboard', '/admin/consultations'];
+
+// Consultant-only routes
+const consultantProtectedPaths = ['/consultant'];
 
 // Routes only for unauthenticated users
 const authPaths = ['/login', '/register', '/forgot-password'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Check for auth token in cookies (set by Zustand persist)
-  // Note: Zustand persists to localStorage, not cookies.
-  // For SSR middleware, we check a cookie that the client sets.
   const token = request.cookies.get('wisebox_token')?.value;
 
-  // Protected routes: redirect to login if no token
-  const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
-  if (isProtected && !token) {
+  // Protected user routes: redirect to login if no token
+  const isUserProtected = userProtectedPaths.some((path) => pathname.startsWith(path));
+  if (isUserProtected && !token) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
+  // Protected admin routes: redirect to admin login if no token
+  const isAdminProtected = adminProtectedPaths.some((path) => pathname.startsWith(path));
+  if (isAdminProtected && !token) {
+    const loginUrl = new URL('/login/admin', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Protected consultant routes: redirect to consultant login if no token
+  const isConsultantProtected = consultantProtectedPaths.some((path) => pathname.startsWith(path));
+  if (isConsultantProtected && !token) {
+    const loginUrl = new URL('/login/consultant', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
   // Auth routes: redirect to dashboard if already logged in
-  const isAuthRoute = authPaths.some((path) => pathname.startsWith(path));
+  const isAuthRoute = authPaths.some((path) => pathname === path || pathname.startsWith(path + '/'));
   if (isAuthRoute && token) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
@@ -42,6 +60,8 @@ export const config = {
     '/consultant/:path*',
     '/settings/:path*',
     '/notifications/:path*',
+    '/admin/:path*',
+    '/login/:path*',
     '/login',
     '/register',
     '/forgot-password',

@@ -19,9 +19,9 @@ function scoreColor(status: 'red' | 'yellow' | 'green'): string {
 }
 
 function scoreBgColor(status: 'red' | 'yellow' | 'green'): string {
-  if (status === 'green') return 'bg-green-50 border-green-200';
-  if (status === 'yellow') return 'bg-amber-50 border-amber-200';
-  return 'bg-red-50 border-red-200';
+  if (status === 'green') return 'bg-green-500/10 border-green-500/20';
+  if (status === 'yellow') return 'bg-amber-500/10 border-amber-500/20';
+  return 'bg-red-500/10 border-red-500/20';
 }
 
 function scoreRingColor(status: 'red' | 'yellow' | 'green'): string {

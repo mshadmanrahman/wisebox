@@ -53,8 +53,8 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between rounded-lg bg-teal-50 px-4 py-3">
-        <span className="text-sm font-medium text-teal-800">
+      <div className="flex items-center justify-between rounded-lg bg-wisebox-primary-50 px-4 py-3">
+        <span className="text-sm font-medium text-wisebox-primary-800">
           Your ownership: {ownerPercentage}%
         </span>
         {exceeds100 && (
@@ -68,17 +68,17 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
       {coOwners.map((coOwner, index) => (
         <div
           key={index}
-          className="relative rounded-lg border border-gray-200 bg-white p-4 space-y-3"
+          className="relative rounded-lg border border-wisebox-border bg-wisebox-background-card p-4 space-y-3"
         >
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-wisebox-text-secondary">
               Co-Owner {index + 1}
             </span>
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-gray-400 hover:text-red-500"
+              className="h-7 w-7 text-wisebox-text-muted hover:text-red-500"
               onClick={() => removeCoOwner(index)}
             >
               <X className="h-4 w-4" />

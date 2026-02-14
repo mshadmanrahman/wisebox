@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Bell, ChevronDown, LogOut, Settings, User } from 'lucide-react';
@@ -47,9 +48,34 @@ export default function PortalLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    // persist API only available client-side; check if already hydrated
+    if (useAuthStore.persist?.hasHydrated?.()) {
+      setHasHydrated(true);
+    } else {
+      const unsub = useAuthStore.persist.onFinishHydration(() => {
+        setHasHydrated(true);
+      });
+      return unsub;
+    }
+  }, []);
+
+  // Prevent rendering with stale default state before Zustand hydration
+  if (!hasHydrated) {
+    return (
+      <Providers>
+        <div className="min-h-screen bg-wisebox-background flex items-center justify-center">
+          <div className="text-wisebox-text-secondary text-sm">Loading...</div>
+        </div>
+      </Providers>
+    );
+  }
+
   return (
     <Providers>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-wisebox-background">
         <PortalHeader />
         <main className="max-w-7xl mx-auto">{children}</main>
       </div>
@@ -64,10 +90,9 @@ function PortalHeader() {
 
   const isConsultantRole =
     user?.role === 'consultant' || user?.role === 'admin' || user?.role === 'super_admin';
+  const isAdminRole =
+    user?.role === 'admin' || user?.role === 'super_admin';
 
-  const navLinks = isConsultantRole
-    ? [...baseNavLinks, { href: '/consultant/tickets', label: 'Consultant' }]
-    : baseNavLinks;
 
   const { data: notificationsData } = useNotifications(6);
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
@@ -82,67 +107,96 @@ function PortalHeader() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <header className="bg-wisebox-background-card border-b border-wisebox-border px-6 py-4">
       <div className="flex items-center justify-between max-w-7xl mx-auto gap-4">
-        <div className="flex items-center gap-8 min-w-0">
-          <Link href="/dashboard" className="text-xl font-bold text-wisebox-primary-700">
-            Wisebox
-          </Link>
-          <nav className="hidden md:flex items-center gap-1 text-sm">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    'px-3 py-2 rounded-md font-medium transition-colors whitespace-nowrap',
-                    isActive
-                      ? 'bg-wisebox-primary-50 text-wisebox-primary-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+        <Link href="/dashboard" className="text-xl font-bold text-white flex items-center gap-2">
+          <div className="w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded flex items-center justify-center">
+            <div className="w-4 h-4 border-2 border-white rounded-sm"></div>
+          </div>
+          Wisebox
+        </Link>
 
-        <div className="flex items-center gap-2">
+        <nav className="hidden md:flex items-center gap-6 text-sm">
+          <Link
+            href="/properties"
+            className="text-wisebox-text-secondary hover:text-white transition-colors"
+          >
+            Assets
+          </Link>
+          <Link
+            href="/workspace/services"
+            className="text-wisebox-text-secondary hover:text-white transition-colors"
+          >
+            Services
+          </Link>
+          <Link
+            href="/orders"
+            className="text-wisebox-text-secondary hover:text-white transition-colors"
+          >
+            Billing
+          </Link>
+          {isConsultantRole && (
+            <Link
+              href="/consultant"
+              className="text-wisebox-text-secondary hover:text-white transition-colors"
+            >
+              Consultant
+            </Link>
+          )}
+          {isAdminRole && (
+            <Link
+              href="/admin/dashboard"
+              className="text-amber-400 hover:text-amber-300 transition-colors"
+            >
+              Admin
+            </Link>
+          )}
+        </nav>
+
+        <div className="flex items-center gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="relative text-white hover:bg-wisebox-background-lighter">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </Button>
+            </DropdownMenuTrigger>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative text-white hover:bg-wisebox-background-lighter">
+                <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-wisebox-primary-600 text-white text-[10px] leading-[18px] text-center">
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-wisebox-primary text-white text-[10px] leading-[18px] text-center">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[340px]">
-              <DropdownMenuLabel className="flex items-center justify-between">
+            <DropdownMenuContent align="end" className="w-[340px] bg-wisebox-background-card border-wisebox-border">
+              <DropdownMenuLabel className="flex items-center justify-between text-white">
                 <span>Notifications</span>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-xs"
+                  className="h-7 px-2 text-xs text-wisebox-text-secondary hover:text-white hover:bg-wisebox-background-lighter"
                   onClick={() => markAllMutation.mutate()}
                   disabled={unreadCount === 0 || markAllMutation.isPending}
                 >
                   Mark all read
                 </Button>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="bg-wisebox-border" />
               {notifications.length === 0 ? (
-                <div className="px-2 py-4 text-sm text-muted-foreground">No notifications yet.</div>
+                <div className="px-2 py-4 text-sm text-wisebox-text-secondary">No notifications yet.</div>
               ) : (
                 notifications.slice(0, 5).map((notification: Notification) => (
                   <DropdownMenuItem
                     key={notification.id}
-                    className="flex flex-col items-start gap-1 p-3 cursor-pointer"
+                    className="flex flex-col items-start gap-1 p-3 cursor-pointer hover:bg-wisebox-background-lighter"
                     onSelect={() => {
                       if (!notification.read_at) {
                         markReadMutation.mutate(notification.id);
@@ -150,11 +204,11 @@ function PortalHeader() {
                     }}
                   >
                     <div className="w-full flex items-start justify-between gap-2">
-                      <span className="text-sm font-medium text-wisebox-text-primary line-clamp-1">
+                      <span className="text-sm font-medium text-white line-clamp-1">
                         {notification.title}
                       </span>
                       {!notification.read_at && (
-                        <span className="mt-1 h-2 w-2 rounded-full bg-wisebox-primary-600" />
+                        <span className="mt-1 h-2 w-2 rounded-full bg-wisebox-primary" />
                       )}
                     </div>
                     {notification.body && (
@@ -162,13 +216,13 @@ function PortalHeader() {
                         {notification.body}
                       </span>
                     )}
-                    <span className="text-[11px] text-muted-foreground">{relativeTime(notification.created_at)}</span>
+                    <span className="text-[11px] text-wisebox-text-muted">{relativeTime(notification.created_at)}</span>
                   </DropdownMenuItem>
                 ))
               )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/notifications" className="cursor-pointer">
+              <DropdownMenuSeparator className="bg-wisebox-border" />
+              <DropdownMenuItem asChild className="hover:bg-wisebox-background-lighter">
+                <Link href="/notifications" className="cursor-pointer text-white">
                   Open notification center
                 </Link>
               </DropdownMenuItem>
@@ -177,26 +231,26 @@ function PortalHeader() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2 text-sm">
-                <User className="h-4 w-4" />
-                <span className="max-w-[140px] truncate">{user?.name ?? 'Account'}</span>
-                <ChevronDown className="h-3 w-3 opacity-50" />
+              <Button variant="ghost" size="icon" className="rounded-full bg-wisebox-text-muted/20 hover:bg-wisebox-text-muted/30 text-white h-8 w-8">
+                <span className="text-sm font-medium">
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'S'}
+                </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 bg-wisebox-background-card border-wisebox-border">
               {user && (
                 <>
-                  <div className="px-2 py-1.5 text-sm text-muted-foreground truncate">{user.email}</div>
-                  <DropdownMenuSeparator />
+                  <div className="px-2 py-1.5 text-sm text-wisebox-text-secondary truncate">{user.email}</div>
+                  <DropdownMenuSeparator className="bg-wisebox-border" />
                 </>
               )}
-              <DropdownMenuItem asChild>
-                <Link href="/settings" className="cursor-pointer">
+              <DropdownMenuItem asChild className="hover:bg-wisebox-background-lighter">
+                <Link href="/settings" className="cursor-pointer text-white">
                   <Settings className="h-4 w-4 mr-2" />
                   Settings
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:bg-wisebox-background-lighter">
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </DropdownMenuItem>

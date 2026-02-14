@@ -309,6 +309,7 @@ export interface Ticket {
   service?: Service;
   title: string;
   description: string | null;
+  preferred_time_slots: Array<{ date: string; time: string; display: string }> | null;
   calendly_event_id: string | null;
   calendly_event_url: string | null;
   meeting_url: string | null;
@@ -316,8 +317,10 @@ export interface Ticket {
   meeting_duration_minutes: number | null;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   status: TicketStatus;
+  is_free_consultation: boolean;
   resolved_at: string | null;
   resolution_notes: string | null;
+  consultation_notes: string | null;
   created_at: string;
   updated_at: string;
   comments?: TicketComment[];
@@ -465,6 +468,28 @@ export interface FAQ {
   category: string | null;
   is_active: boolean;
   sort_order: number;
+}
+
+// === Consultation Requests ===
+export interface ConsultationRequest {
+  id: number;
+  ticket_number: string;
+  title: string;
+  description: string | null;
+  status: TicketStatus;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  preferred_time_slots: Array<{ date: string; time: string }> | null;
+  is_free_consultation: boolean;
+  property_id: number;
+  property?: Property;
+  customer_id: number;
+  customer?: User;
+  consultant_id: number | null;
+  consultant?: User;
+  meeting_url: string | null;
+  scheduled_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // === API Response Wrappers ===

@@ -43,7 +43,7 @@ export function AssessmentQuestionCard({
               "min-h-[80px]",
               value === true
                 ? "border-wisebox-status-success bg-wisebox-status-success/10 text-wisebox-status-success"
-                : "border-wisebox-border bg-white text-wisebox-text-primary hover:border-wisebox-status-success/40 hover:bg-wisebox-status-success/5"
+                : "border-wisebox-border bg-wisebox-background-card text-wisebox-text-primary hover:border-wisebox-status-success/40 hover:bg-wisebox-status-success/5"
             )}
           >
             <Check
@@ -62,18 +62,18 @@ export function AssessmentQuestionCard({
             disabled={disabled}
             className={cn(
               "flex items-center justify-center gap-2 rounded-lg border-2 py-5 sm:py-6 text-base sm:text-lg font-semibold transition-all",
-              "hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2",
+              "hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-wisebox-border-light focus:ring-offset-2",
               "disabled:cursor-not-allowed disabled:opacity-50",
               "min-h-[80px]",
               value === false
-                ? "border-gray-400 bg-gray-50 text-gray-700"
-                : "border-wisebox-border bg-white text-wisebox-text-primary hover:border-gray-300 hover:bg-gray-50"
+                ? "border-wisebox-border-light bg-wisebox-background-lighter text-wisebox-text-secondary"
+                : "border-wisebox-border bg-wisebox-background-card text-wisebox-text-primary hover:border-wisebox-border-light hover:bg-wisebox-background-lighter"
             )}
           >
             <X
               className={cn(
                 "h-6 w-6 sm:h-7 sm:w-7",
-                value === false && "text-gray-600"
+                value === false && "text-wisebox-text-secondary"
               )}
               strokeWidth={2.5}
             />

@@ -41,9 +41,9 @@ export function DocumentChecklistItem({
     },
     pending: {
       icon: Clock,
-      bgColor: 'bg-gray-50',
-      textColor: 'text-gray-400',
-      borderColor: 'border-gray-200',
+      bgColor: 'bg-wisebox-background-card',
+      textColor: 'text-wisebox-text-muted',
+      borderColor: 'border-wisebox-border',
       label: 'Pending',
     },
   }
@@ -79,7 +79,7 @@ export function DocumentChecklistItem({
           </div>
           {uploadedDocument?.file_name && status === 'uploaded' && (
             <div className="flex items-center gap-1 mt-0.5">
-              <FileText className="h-3 w-3 text-gray-400" />
+              <FileText className="h-3 w-3 text-wisebox-text-muted" />
               <span className="text-xs text-wisebox-text-secondary truncate">
                 {uploadedDocument.file_name}
               </span>
@@ -92,7 +92,7 @@ export function DocumentChecklistItem({
             'text-[10px] leading-none h-4 px-1.5',
             status === 'uploaded' && 'bg-wisebox-status-success/10 text-wisebox-status-success border-wisebox-status-success/20',
             status === 'missing' && 'bg-wisebox-status-danger/10 text-wisebox-status-danger border-wisebox-status-danger/20',
-            status === 'pending' && 'bg-gray-100 text-gray-500 border-gray-200'
+            status === 'pending' && 'bg-wisebox-background-lighter text-wisebox-text-muted border-wisebox-border'
           )}
         >
           {config.label}
@@ -121,7 +121,7 @@ export function DocumentChecklistItem({
             className={
               documentType.category === 'primary'
                 ? 'bg-wisebox-primary-100 text-wisebox-primary-800 border-wisebox-primary-200 hover:bg-wisebox-primary-100'
-                : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-100'
+                : 'bg-wisebox-background-lighter text-wisebox-text-secondary border-wisebox-border hover:bg-wisebox-background-lighter'
             }
           >
             {documentType.category === 'primary' ? 'Primary' : 'Secondary'}
@@ -137,7 +137,7 @@ export function DocumentChecklistItem({
         )}
         {uploadedDocument?.file_name && status === 'uploaded' && (
           <div className="flex items-center gap-1.5 mt-2">
-            <FileText className="h-3.5 w-3.5 text-gray-400" />
+            <FileText className="h-3.5 w-3.5 text-wisebox-text-muted" />
             <span className="text-sm text-wisebox-text-secondary">{uploadedDocument.file_name}</span>
             <Check className="h-3.5 w-3.5 text-wisebox-status-success ml-auto" />
           </div>
@@ -149,7 +149,7 @@ export function DocumentChecklistItem({
           'text-xs',
           status === 'uploaded' && 'bg-wisebox-status-success/10 text-wisebox-status-success border-wisebox-status-success/20',
           status === 'missing' && 'bg-wisebox-status-danger/10 text-wisebox-status-danger border-wisebox-status-danger/20',
-          status === 'pending' && 'bg-gray-100 text-gray-500 border-gray-200'
+          status === 'pending' && 'bg-wisebox-background-lighter text-wisebox-text-muted border-wisebox-border'
         )}
       >
         {config.label}
@@ -204,7 +204,7 @@ export function DocumentChecklist({
           <span className={cn('text-sm font-semibold', progressColor)}>
             {uploadedCount}/{totalCount}
           </span>
-          <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="w-24 h-2 bg-wisebox-background-lighter rounded-full overflow-hidden">
             <div
               className={cn('h-full transition-all duration-300', progressBgColor)}
               style={{ width: `${completionPct}%` }}

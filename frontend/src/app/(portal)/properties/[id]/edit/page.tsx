@@ -278,8 +278,8 @@ export default function EditPropertyPage() {
     return (
       <div className="px-6 py-8 space-y-6">
         <div className="animate-pulse space-y-6">
-          <div className="h-5 w-64 rounded bg-gray-200" />
-          <div className="h-96 w-full rounded-xl bg-gray-100" />
+          <div className="h-5 w-64 rounded bg-wisebox-background-lighter" />
+          <div className="h-96 w-full rounded-xl bg-wisebox-background-card" />
         </div>
       </div>
     );
@@ -366,7 +366,7 @@ export default function EditPropertyPage() {
                             'flex flex-col items-center gap-2 rounded-lg border-2 p-4 text-sm font-medium transition-all',
                             selected
                               ? 'border-wisebox-primary bg-wisebox-primary-50 text-wisebox-primary-700'
-                              : 'border-gray-200 hover:border-gray-300 text-muted-foreground'
+                              : 'border-wisebox-border hover:border-wisebox-border-light text-muted-foreground'
                           )}
                         >
                           <Icon className="h-6 w-6" />

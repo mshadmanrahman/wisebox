@@ -34,7 +34,7 @@ export default function FaqPage() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-white">
+      <main className="bg-wisebox-background">
         <section className="mx-auto w-full max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="mb-8 space-y-3">
             <h1 className="text-4xl font-bold text-wisebox-text-primary sm:text-5xl">Frequently asked questions</h1>
@@ -46,7 +46,7 @@ export default function FaqPage() {
         </section>
 
         <section className="mx-auto w-full max-w-4xl px-4 pb-16 sm:px-6 lg:px-8">
-          <Card className="border-teal-200 bg-teal-50">
+          <Card className="border-wisebox-primary/30 bg-wisebox-background-card">
             <CardContent className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-lg font-semibold text-wisebox-text-primary">Need more help?</p>

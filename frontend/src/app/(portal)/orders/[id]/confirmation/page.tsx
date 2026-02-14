@@ -63,7 +63,7 @@ export default function OrderConfirmationPage() {
             </p>
           )}
 
-          <div className="rounded-md border bg-wisebox-surface px-4 py-3 text-sm">
+          <div className="rounded-md border bg-wisebox-background-lighter px-4 py-3 text-sm">
             <p className="text-wisebox-text-secondary">
               Total: <span className="font-semibold text-wisebox-text-primary">{order.currency} {Number(order.total).toFixed(2)}</span>
             </p>

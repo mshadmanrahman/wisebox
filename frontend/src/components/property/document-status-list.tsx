@@ -79,19 +79,19 @@ const docStatusConfig: Record<
 > = {
   uploaded: {
     label: 'Uploaded',
-    className: 'bg-blue-100 text-blue-700',
+    className: 'bg-blue-500/20 text-blue-400',
   },
   under_review: {
     label: 'Under Review',
-    className: 'bg-amber-100 text-amber-700',
+    className: 'bg-amber-500/20 text-amber-400',
   },
   verified: {
     label: 'Verified',
-    className: 'bg-green-100 text-green-700',
+    className: 'bg-green-500/20 text-green-400',
   },
   rejected: {
     label: 'Rejected',
-    className: 'bg-red-100 text-red-700',
+    className: 'bg-red-500/20 text-red-400',
   },
 };
 
@@ -144,11 +144,11 @@ export function DocumentStatusList({
       <Card>
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-4 w-1/3 rounded bg-gray-200" />
-            <div className="h-2 w-full rounded bg-gray-200" />
+            <div className="h-4 w-1/3 rounded bg-wisebox-background-lighter" />
+            <div className="h-2 w-full rounded bg-wisebox-background-lighter" />
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 w-full rounded bg-gray-100" />
+                <div key={i} className="h-12 w-full rounded bg-wisebox-background-lighter" />
               ))}
             </div>
           </div>
@@ -206,7 +206,7 @@ export function DocumentStatusList({
               {completionPercentage}%
             </span>
           </div>
-          <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+          <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-wisebox-background-lighter">
             <div
               className={cn(
                 'h-full rounded-full transition-all',
@@ -381,7 +381,7 @@ function DocumentRow({
           {uploaded ? (
             <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0 text-wisebox-status-success" />
           ) : (
-            <Minus className="h-4 w-4 mt-0.5 shrink-0 text-gray-400" />
+            <Minus className="h-4 w-4 mt-0.5 shrink-0 text-wisebox-text-muted" />
           )}
           <div className="min-w-0">
             <p className="text-sm font-medium">{docType.name}</p>
@@ -440,7 +440,7 @@ function DocumentRow({
               'flex items-center gap-2 rounded-md border border-dashed p-2 text-xs cursor-pointer transition-colors',
               isDragActive
                 ? 'border-wisebox-primary bg-wisebox-primary-50'
-                : 'border-gray-300 hover:border-wisebox-primary hover:bg-gray-50'
+                : 'border-wisebox-border hover:border-wisebox-primary hover:bg-wisebox-background-lighter'
             )}
           >
             <input {...getInputProps()} />

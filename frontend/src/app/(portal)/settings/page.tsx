@@ -312,12 +312,12 @@ function PreferenceRow({
     <button
       type="button"
       onClick={onToggle}
-      className="w-full flex items-center justify-between rounded-lg border px-3 py-2 text-left hover:bg-gray-50"
+      className="w-full flex items-center justify-between rounded-lg border px-3 py-2 text-left hover:bg-wisebox-background-lighter"
     >
       <span className="text-sm text-wisebox-text-primary">{label}</span>
       <span
         className={`inline-flex h-6 w-11 items-center rounded-full p-1 transition-colors ${
-          checked ? 'bg-wisebox-primary-600 justify-end' : 'bg-gray-300 justify-start'
+          checked ? 'bg-wisebox-primary-600 justify-end' : 'bg-wisebox-background-lighter justify-start'
         }`}
       >
         <span className="h-4 w-4 rounded-full bg-white" />

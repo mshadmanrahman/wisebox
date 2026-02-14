@@ -48,11 +48,11 @@ function timelineStepIndex(status: TicketStatus): number {
 }
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-100 text-green-700';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-100 text-blue-700';
-  if (status === 'scheduled') return 'bg-purple-100 text-purple-700';
-  if (status === 'cancelled') return 'bg-gray-100 text-gray-600';
-  return 'bg-amber-100 text-amber-700';
+  if (status === 'completed') return 'bg-green-500/20 text-green-400';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
+  if (status === 'scheduled') return 'bg-purple-500/20 text-purple-400';
+  if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
+  return 'bg-amber-500/20 text-amber-400';
 }
 
 interface ConsultantOption {
@@ -293,8 +293,8 @@ export default function TicketDetailPage() {
                     key={step.id}
                     className={`px-2.5 py-1 rounded-full text-xs border ${
                       isActive
-                        ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
-                        : 'bg-white text-wisebox-text-secondary border-gray-200'
+                        ? 'bg-wisebox-primary-500/15 text-wisebox-primary-400 border-wisebox-primary-500/30'
+                        : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
                     }`}
                   >
                     {step.label}
@@ -308,13 +308,13 @@ export default function TicketDetailPage() {
               </p>
             )}
             {ticket.status === 'cancelled' && (
-              <p className="text-xs text-red-600">This ticket has been cancelled.</p>
+              <p className="text-xs text-red-400">This ticket has been cancelled.</p>
             )}
           </div>
 
           <div className="space-y-3 pt-2 border-t">
             <div className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4 text-wisebox-primary-600" />
+              <CalendarDays className="h-4 w-4 text-wisebox-primary-400" />
               <p className="font-medium text-wisebox-text-primary">Meeting</p>
             </div>
 
@@ -361,7 +361,7 @@ export default function TicketDetailPage() {
                   href={schedulingUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-wisebox-primary-700 underline underline-offset-2"
+                  className="text-wisebox-primary-400 underline underline-offset-2"
                 >
                   {schedulingUrl}
                 </a>
@@ -444,7 +444,7 @@ export default function TicketDetailPage() {
           )}
 
           {actionError && (
-            <p className="text-sm text-red-600 border border-red-200 bg-red-50 rounded-md px-3 py-2">
+            <p className="text-sm text-red-400 border border-red-500/30 bg-red-500/10 rounded-md px-3 py-2">
               {actionError}
             </p>
           )}
@@ -461,12 +461,12 @@ export default function TicketDetailPage() {
           ) : (
             <div className="space-y-3">
               {(ticket.comments ?? []).map((comment) => (
-                <div key={comment.id} className="rounded-md border p-3 bg-white">
+                <div key={comment.id} className="rounded-md border p-3 bg-wisebox-background-card">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? 'User'}</p>
                     <div className="flex items-center gap-2">
                       {comment.is_internal && (
-                        <Badge className="bg-purple-100 text-purple-700">Internal</Badge>
+                        <Badge className="bg-purple-500/20 text-purple-400">Internal</Badge>
                       )}
                       <span className="text-xs text-wisebox-text-secondary">
                         {new Date(comment.created_at).toLocaleString()}
@@ -479,7 +479,7 @@ export default function TicketDetailPage() {
                       {(comment.attachments ?? []).map((attachment) => (
                         <span
                           key={attachment}
-                          className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                          className="rounded-full border border-wisebox-border bg-wisebox-background-card px-2.5 py-1 text-xs text-wisebox-text-secondary"
                         >
                           {attachment.split('/').pop()}
                         </span>
@@ -504,14 +504,14 @@ export default function TicketDetailPage() {
                 multiple
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 onChange={(e) => setCommentFiles(Array.from(e.target.files ?? []))}
-                className="block w-full text-sm text-wisebox-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-wisebox-primary-50 file:px-3 file:py-1.5 file:text-wisebox-primary-700"
+                className="block w-full text-sm text-wisebox-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-wisebox-primary-500/20 file:px-3 file:py-1.5 file:text-wisebox-primary-400"
               />
               {commentFiles.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {commentFiles.map((file) => (
                     <span
                       key={`${file.name}-${file.size}`}
-                      className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                      className="rounded-full border border-wisebox-border bg-wisebox-background-card px-2.5 py-1 text-xs text-wisebox-text-secondary"
                     >
                       {file.name}
                     </span>

@@ -16,8 +16,8 @@ export function PricingTable({ plans }: PricingTableProps) {
           key={plan.name}
           className={`h-full border ${
             plan.highlighted
-              ? 'border-wisebox-primary-400 shadow-lg shadow-teal-100'
-              : 'border-gray-200 shadow-sm'
+              ? 'border-wisebox-primary-400 shadow-lg shadow-wisebox-primary/10'
+              : 'border-wisebox-border shadow-sm'
           }`}
         >
           <CardHeader>
@@ -40,7 +40,7 @@ export function PricingTable({ plans }: PricingTableProps) {
               className={`w-full ${
                 plan.highlighted
                   ? 'bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700'
-                  : 'bg-white text-wisebox-primary-700 hover:bg-teal-50'
+                  : 'bg-wisebox-background-card text-wisebox-primary-400 border-wisebox-border hover:bg-wisebox-background-lighter'
               }`}
               variant={plan.highlighted ? 'default' : 'outline'}
             >

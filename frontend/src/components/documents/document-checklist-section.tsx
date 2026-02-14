@@ -74,7 +74,7 @@ export function DocumentChecklistSection({
               </span>
             </div>
           </div>
-          <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="relative h-2 bg-wisebox-background-lighter rounded-full overflow-hidden">
             <div
               className={cn("h-full transition-all duration-300", progressBgColor)}
               style={{ width: `${progressPct}%` }}

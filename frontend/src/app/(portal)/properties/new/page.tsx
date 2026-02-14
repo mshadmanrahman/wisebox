@@ -160,7 +160,7 @@ export default function AddPropertyPage() {
 
   const selectedOwnershipType = ownershipTypes?.find((ot) => ot.id === watchedOwnershipTypeId);
   const selectedOwnershipStatus = ownershipStatuses?.find((os) => os.id === watchedOwnershipStatusId);
-  const requiresCoOwners = selectedOwnershipType?.requires_co_owners ?? false;
+  const requiresCoOwners = !!(selectedOwnershipType?.requires_co_owners);
 
   const coOwnerTotal = watchedCoOwners.reduce(
     (sum, co) => sum + (co.ownership_percentage || 0),
@@ -291,20 +291,20 @@ export default function AddPropertyPage() {
 
   return (
     <div className="px-6 py-8">
-      <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
+      <nav className="flex items-center gap-1.5 text-sm text-wisebox-text-muted mb-6">
         <button
           onClick={() => router.push('/properties')}
-          className="hover:text-teal-600 transition-colors"
+          className="hover:text-wisebox-primary transition-colors"
         >
           Properties
         </button>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-gray-900 font-medium">Add New</span>
+        <span className="text-white font-medium">Add New</span>
       </nav>
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Add New Property</h1>
-        <div className="flex items-center gap-3 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-white">Add New Property</h1>
+        <div className="flex items-center gap-3 text-sm text-wisebox-text-muted">
           <span>{overallPct}% complete</span>
           <Progress value={overallPct} className="w-32 h-2" />
         </div>
@@ -324,9 +324,9 @@ export default function AddPropertyPage() {
             <AccordionTrigger className="text-base font-semibold hover:no-underline">
               <div className="flex items-center gap-3">
                 {createdProperty ? (
-                  <CheckCircle2 className="h-5 w-5 text-teal-600" />
+                  <CheckCircle2 className="h-5 w-5 text-wisebox-primary" />
                 ) : (
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-600 text-white text-xs font-bold">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-wisebox-primary text-white text-xs font-bold">
                     1
                   </span>
                 )}
@@ -336,7 +336,7 @@ export default function AddPropertyPage() {
             <AccordionContent className="pt-2 pb-6">
               <form onSubmit={handleSubmit(onStep1Submit)} className="space-y-6">
                 {step1Error && (
-                  <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                  <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md">
                     {step1Error}
                   </div>
                 )}
@@ -462,7 +462,7 @@ export default function AddPropertyPage() {
 
                 <div className="space-y-2">
                   <Label className="text-base font-medium">Location</Label>
-                  <p className="text-sm text-gray-500">Country: Bangladesh</p>
+                  <p className="text-sm text-wisebox-text-muted">Country: Bangladesh</p>
                   <Controller
                     name="division_id"
                     control={control}
@@ -553,7 +553,7 @@ export default function AddPropertyPage() {
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700"
+                    className="w-full sm:w-auto bg-wisebox-primary hover:bg-wisebox-primary-hover"
                     disabled={createPropertyMutation.isPending}
                   >
                     {createPropertyMutation.isPending ? (
@@ -580,15 +580,15 @@ export default function AddPropertyPage() {
                 <span
                   className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                     createdProperty
-                      ? 'bg-teal-600 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      ? 'bg-wisebox-primary text-white'
+                      : 'bg-wisebox-background-lighter text-wisebox-text-muted'
                   }`}
                 >
                   2
                 </span>
                 Upload Documents
                 {createdProperty && totalApplicableDocs > 0 && (
-                  <span className="ml-2 text-sm font-normal text-gray-500">
+                  <span className="ml-2 text-sm font-normal text-wisebox-text-muted">
                     ({uploadedOrHandledCount}/{totalApplicableDocs})
                   </span>
                 )}
@@ -598,7 +598,7 @@ export default function AddPropertyPage() {
               {createdProperty && (
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-wisebox-text-muted">
                       Document completion: {docCompletionPct}%
                     </span>
                     <Progress value={docCompletionPct} className="flex-1 h-2" />
@@ -606,8 +606,8 @@ export default function AddPropertyPage() {
 
                   {primaryDocs.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold text-gray-900">Primary Documents</h3>
-                      <p className="text-sm text-gray-500">
+                      <h3 className="text-lg font-semibold text-white">Primary Documents</h3>
+                      <p className="text-sm text-wisebox-text-muted">
                         Essential documents for property verification.
                       </p>
                       <div className="space-y-3">
@@ -627,8 +627,8 @@ export default function AddPropertyPage() {
                   {secondaryDocs.length > 0 && (
                     <div className="space-y-3">
                       <Separator />
-                      <h3 className="text-lg font-semibold text-gray-900">Secondary Documents</h3>
-                      <p className="text-sm text-gray-500">
+                      <h3 className="text-lg font-semibold text-white">Secondary Documents</h3>
+                      <p className="text-sm text-wisebox-text-muted">
                         Supporting documents that improve your property score.
                       </p>
                       <div className="space-y-3">
@@ -646,7 +646,7 @@ export default function AddPropertyPage() {
                   )}
 
                   {applicableDocTypes.length === 0 && (
-                    <p className="text-sm text-gray-500 py-4">
+                    <p className="text-sm text-wisebox-text-muted py-4">
                       No document types available for this property configuration.
                     </p>
                   )}
@@ -654,7 +654,7 @@ export default function AddPropertyPage() {
                   <div className="pt-4">
                     <Button
                       type="button"
-                      className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700"
+                      className="w-full sm:w-auto bg-wisebox-primary hover:bg-wisebox-primary-hover"
                       onClick={handleFinish}
                     >
                       Finish

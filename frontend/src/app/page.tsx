@@ -91,9 +91,9 @@ export default function Home() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-gradient-to-b from-teal-50 via-white to-white">
+      <main className="bg-wisebox-background">
         <section className="relative overflow-hidden">
-          <div className="absolute inset-x-0 top-0 -z-10 h-60 bg-[radial-gradient(circle_at_top_right,_#99f6e4,_transparent_55%)]" />
+          <div className="absolute inset-x-0 top-0 -z-10 h-60 bg-[radial-gradient(circle_at_top_right,_rgba(20,184,166,0.15),_transparent_55%)]" />
           <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
             <div className="space-y-6">
               <Badge className="bg-wisebox-primary-100 text-wisebox-primary-700 hover:bg-wisebox-primary-100">
@@ -116,21 +116,21 @@ export default function Home() {
                 <Button
                   asChild
                   variant="outline"
-                  className="border-teal-200 text-wisebox-primary-700 hover:bg-teal-50"
+                  className="border-wisebox-border text-wisebox-primary-400 hover:bg-wisebox-background-lighter"
                 >
                   <Link href="/register">Start Managing Properties</Link>
                 </Button>
               </div>
             </div>
 
-            <Card className="border-teal-100 shadow-xl shadow-teal-100/40">
+            <Card className="border-wisebox-border shadow-xl shadow-wisebox-primary/10 bg-wisebox-background-card">
               <CardHeader>
                 <CardTitle className="text-wisebox-text-primary">Why families choose Wisebox</CardTitle>
                 <CardDescription>One workspace to reduce legal and operational chaos.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {['Track document readiness', 'Coordinate consultant support', 'Get status updates in real time'].map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-md border border-teal-100 px-3 py-2">
+                  <div key={item} className="flex items-center gap-3 rounded-md border border-wisebox-border px-3 py-2">
                     <CheckCircle2 className="h-4 w-4 text-wisebox-primary-600" />
                     <p className="text-sm text-wisebox-text-secondary">{item}</p>
                   </div>
@@ -149,7 +149,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {marketingPainPoints.map((item) => (
-              <Card key={item.title} className="border-gray-200">
+              <Card key={item.title} className="border-wisebox-border bg-wisebox-background-card">
                 <CardHeader>
                   <CardTitle className="text-lg text-wisebox-text-primary">{item.title}</CardTitle>
                 </CardHeader>
@@ -161,7 +161,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-wisebox-surface">
+        <section className="bg-wisebox-background-lighter">
           <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="mb-6 max-w-3xl">
               <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">How Wisebox works</h2>
@@ -169,7 +169,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {marketingHowItWorks.map((item) => (
-                <Card key={item.step} className="border-teal-100 bg-white">
+                <Card key={item.step} className="border-wisebox-border bg-wisebox-background-card">
                   <CardHeader>
                     <p className="text-sm font-semibold text-wisebox-primary-600">Step {item.step}</p>
                     <CardTitle className="text-lg text-wisebox-text-primary">{item.title}</CardTitle>
@@ -194,7 +194,7 @@ export default function Home() {
             {marketingFeatures.map((item, index) => {
               const Icon = featureIcons[index] ?? FolderKanban;
               return (
-                <Card key={item.title} className="border-gray-200">
+                <Card key={item.title} className="border-wisebox-border bg-wisebox-background-card">
                   <CardHeader>
                     <div className="mb-2 flex items-center justify-between">
                       <Icon className="h-5 w-5 text-wisebox-primary-700" />
@@ -215,7 +215,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-wisebox-surface">
+        <section className="bg-wisebox-background-lighter">
           <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="mb-6 max-w-3xl">
               <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Pricing built for every stage</h2>
@@ -228,7 +228,7 @@ export default function Home() {
         </section>
 
         <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <Card className="border-teal-200 bg-gradient-to-r from-teal-50 to-cyan-50">
+          <Card className="border-wisebox-primary/30 bg-wisebox-background-card">
             <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-wisebox-text-primary">Your documents are encrypted and secure</h2>

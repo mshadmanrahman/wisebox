@@ -17,23 +17,23 @@ const statusConfig: Record<
 > = {
   draft: {
     label: 'Draft',
-    className: 'bg-gray-100 text-gray-700 border-gray-200',
+    className: 'bg-wisebox-background-lighter text-wisebox-text-secondary border-wisebox-border',
   },
   active: {
     label: 'Active',
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    className: 'bg-green-500/20 text-green-400 border-green-500/30',
   },
   under_review: {
     label: 'Under Review',
-    className: 'bg-amber-50 text-amber-700 border-amber-200',
+    className: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
   },
   verified: {
     label: 'Verified',
-    className: 'bg-teal-50 text-teal-700 border-teal-200',
+    className: 'bg-wisebox-primary/20 text-wisebox-primary-400 border-wisebox-primary/30',
   },
   archived: {
     label: 'Archived',
-    className: 'bg-slate-100 text-slate-500 border-slate-200',
+    className: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
   },
 };
 
@@ -96,7 +96,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
                 {pct}%
               </span>
             </div>
-            <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+            <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-wisebox-background-lighter">
               <div
                 className={cn(
                   'h-full rounded-full transition-all',

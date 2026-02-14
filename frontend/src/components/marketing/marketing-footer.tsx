@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-teal-100 bg-white">
+    <footer className="border-t border-wisebox-border bg-wisebox-background">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 text-sm sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2">
           <p className="text-base font-semibold text-wisebox-primary-700">Wisebox</p>

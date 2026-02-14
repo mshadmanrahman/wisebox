@@ -60,7 +60,7 @@ export default function PublicServicesPage() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-white">
+      <main className="bg-wisebox-background">
         <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <Badge className="bg-wisebox-primary-100 text-wisebox-primary-700 hover:bg-wisebox-primary-100">
@@ -78,19 +78,19 @@ export default function PublicServicesPage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="border-teal-200 text-wisebox-primary-700 hover:bg-teal-50">
+              <Button asChild variant="outline" className="border-wisebox-border text-wisebox-primary-400 hover:bg-wisebox-background-lighter">
                 <Link href="/workspace/services">Open Services Workspace</Link>
               </Button>
             </div>
           </div>
         </section>
 
-        <section className="bg-wisebox-surface">
+        <section className="bg-wisebox-background-lighter">
           <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
             <h2 className="mb-6 text-2xl font-bold text-wisebox-text-primary sm:text-3xl">What you can do with Wisebox</h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               {marketingFeatures.map((feature) => (
-                <Card key={feature.title} className="border-gray-200 bg-white">
+                <Card key={feature.title} className="border-wisebox-border bg-wisebox-background-card">
                   <CardHeader>
                     <CardTitle className="text-lg text-wisebox-text-primary">{feature.title}</CardTitle>
                   </CardHeader>

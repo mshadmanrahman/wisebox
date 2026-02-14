@@ -25,7 +25,7 @@ export function DocumentChecklistItem({
   disabled = false,
 }: DocumentChecklistItemProps) {
   return (
-    <div className="rounded-lg border border-wisebox-border bg-white p-3 space-y-2">
+    <div className="rounded-lg border border-wisebox-border bg-wisebox-background-card p-3 space-y-2">
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -68,7 +68,7 @@ export function DocumentChecklistItem({
             "disabled:cursor-not-allowed disabled:opacity-50",
             value === "have"
               ? "border-wisebox-primary-600 bg-wisebox-primary-50 text-wisebox-primary-700"
-              : "border-wisebox-border bg-white text-wisebox-text-secondary"
+              : "border-wisebox-border bg-wisebox-background-card text-wisebox-text-secondary"
           )}
         >
           <Check className={cn("h-4 w-4", value === "have" && "text-wisebox-primary-600")} />
@@ -81,14 +81,14 @@ export function DocumentChecklistItem({
           disabled={disabled}
           className={cn(
             "flex-1 flex items-center justify-center gap-1.5 rounded-md border-2 px-3 py-2 text-sm font-medium transition-all",
-            "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2",
+            "hover:bg-wisebox-background-lighter focus:outline-none focus:ring-2 focus:ring-wisebox-border-light focus:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50",
             value === "dont-have"
-              ? "border-gray-400 bg-gray-50 text-gray-700"
-              : "border-wisebox-border bg-white text-wisebox-text-secondary"
+              ? "border-wisebox-border-light bg-wisebox-background-lighter text-wisebox-text-secondary"
+              : "border-wisebox-border bg-wisebox-background-card text-wisebox-text-secondary"
           )}
         >
-          <X className={cn("h-4 w-4", value === "dont-have" && "text-gray-600")} />
+          <X className={cn("h-4 w-4", value === "dont-have" && "text-wisebox-text-secondary")} />
           <span>Don&apos;t have</span>
         </button>
       </div>

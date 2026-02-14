@@ -104,17 +104,17 @@ function SkeletonGrid() {
       {Array.from({ length: 3 }).map((_, i) => (
         <Card key={i} className="h-[180px] p-6 space-y-4">
           <div className="flex items-start justify-between">
-            <div className="h-5 w-2/3 rounded bg-gray-200 animate-pulse" />
-            <div className="h-5 w-16 rounded bg-gray-200 animate-pulse" />
+            <div className="h-5 w-2/3 rounded bg-wisebox-background-lighter animate-pulse" />
+            <div className="h-5 w-16 rounded bg-wisebox-background-lighter animate-pulse" />
           </div>
-          <div className="h-4 w-1/3 rounded bg-gray-200 animate-pulse" />
-          <div className="h-3 w-1/2 rounded bg-gray-200 animate-pulse" />
+          <div className="h-4 w-1/3 rounded bg-wisebox-background-lighter animate-pulse" />
+          <div className="h-3 w-1/2 rounded bg-wisebox-background-lighter animate-pulse" />
           <div className="space-y-1.5 pt-2">
             <div className="flex justify-between">
-              <div className="h-3 w-16 rounded bg-gray-200 animate-pulse" />
-              <div className="h-3 w-8 rounded bg-gray-200 animate-pulse" />
+              <div className="h-3 w-16 rounded bg-wisebox-background-lighter animate-pulse" />
+              <div className="h-3 w-8 rounded bg-wisebox-background-lighter animate-pulse" />
             </div>
-            <div className="h-1.5 w-full rounded-full bg-gray-200 animate-pulse" />
+            <div className="h-1.5 w-full rounded-full bg-wisebox-background-lighter animate-pulse" />
           </div>
         </Card>
       ))}

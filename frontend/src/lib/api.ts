@@ -29,9 +29,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    // If unauthorized, clear token and redirect to login
+    // If unauthorized, clear ALL auth state (localStorage + cookie) and redirect
     if (error.response?.status === 401 && typeof window !== 'undefined') {
       localStorage.removeItem('wisebox_token');
+      localStorage.removeItem('wisebox-auth');
+      document.cookie = 'wisebox_token=; path=/; max-age=0';
       // Only redirect if not already on login page
       if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login';

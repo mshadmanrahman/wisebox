@@ -52,7 +52,7 @@ export default function AboutPage() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-white">
+      <main className="bg-wisebox-background">
         <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <h1 className="text-4xl font-bold text-wisebox-text-primary sm:text-5xl">About Wisebox</h1>
@@ -67,12 +67,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="bg-wisebox-surface">
+        <section className="bg-wisebox-background-lighter">
           <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-4 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
             {pillars.map((pillar) => {
               const Icon = pillar.icon;
               return (
-                <Card key={pillar.title} className="border-gray-200 bg-white">
+                <Card key={pillar.title} className="border-wisebox-border bg-wisebox-background-card">
                   <CardHeader>
                     <Icon className="h-5 w-5 text-wisebox-primary-700" />
                     <CardTitle className="text-lg text-wisebox-text-primary">{pillar.title}</CardTitle>
@@ -87,7 +87,7 @@ export default function AboutPage() {
         </section>
 
         <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <Card className="border-teal-200 bg-gradient-to-r from-teal-50 to-cyan-50">
+          <Card className="border-wisebox-primary/30 bg-wisebox-background-card">
             <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-2xl font-semibold text-wisebox-text-primary">Start with a free readiness check</h2>

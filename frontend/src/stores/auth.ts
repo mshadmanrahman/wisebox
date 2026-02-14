@@ -105,7 +105,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'wisebox-auth',
-      partialize: (state) => ({ token: state.token }),
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

@@ -174,7 +174,7 @@ export default function NotificationsPage() {
                 key={notification.id}
                 className={`rounded-lg border p-4 transition-colors ${
                   notification.read_at
-                    ? 'border-gray-200 bg-white'
+                    ? 'border-wisebox-border bg-wisebox-background-card'
                     : 'border-wisebox-primary-200 bg-wisebox-primary-50/40'
                 }`}
               >
