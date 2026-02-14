@@ -1,0 +1,51 @@
+{
+  "_comment": "S3 bucket policy for wisebox-documents. Create bucket in ap-southeast-1.",
+  "_bucket_structure": {
+    "documents/{property_id}/{doc_type_slug}/{uuid}.{ext}": "Property verification documents (PDF, JPG, PNG). Written by Laravel DocumentController.",
+    "embeddings/{property_id}/{document_id}.json": "Future RAG pipeline: chunked document embeddings for vector search.",
+    "exports/{user_id}/{export_id}.zip": "Future: user data export archives."
+  },
+  "_setup_steps": [
+    "1. Create bucket: aws s3 mb s3://wisebox-documents --region ap-southeast-1",
+    "2. Create IAM user: wisebox-s3-prod with programmatic access",
+    "3. Attach this policy to the IAM user",
+    "4. Add IAM credentials to Railway environment variables",
+    "5. Enable versioning: aws s3api put-bucket-versioning --bucket wisebox-documents --versioning-configuration Status=Enabled",
+    "6. Set lifecycle rule: transition to IA after 90 days, Glacier after 365 days"
+  ],
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "WiseboxAppReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::wisebox-documents",
+        "arn:aws:s3:::wisebox-documents/*"
+      ]
+    },
+    {
+      "Sid": "WiseboxRAGReadOnly",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::wisebox-documents",
+        "arn:aws:s3:::wisebox-documents/documents/*",
+        "arn:aws:s3:::wisebox-documents/embeddings/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/service": "rag-pipeline"
+        }
+      }
+    }
+  ]
+}
