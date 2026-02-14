@@ -30,6 +30,9 @@ class DatabaseSeeder extends Seeder
 
             // Local admin access
             AdminUserSeeder::class,
+
+            // E2E test users (customer, consultant, admin with test passwords)
+            TestUserSeeder::class,
         ]);
     }
 }

@@ -33,6 +33,8 @@ jobs:
           docker compose exec -T -u root app chown -R www:www /var/www/html
           docker compose exec -T app composer install --no-interaction --prefer-dist --no-progress
           docker compose exec -T app php artisan key:generate --force
+          docker compose exec -T app php artisan migrate --force
+          docker compose exec -T app php artisan db:seed --force
 
       - name: Install frontend dependencies
         run: npm ci --prefix frontend
