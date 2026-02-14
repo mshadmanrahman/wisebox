@@ -12,8 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Removed statefulApi() to enable token-based authentication
-        // Frontend will use Bearer tokens instead of cookies
+        // Token-based auth (no statefulApi/cookies)
+        // Security headers for all API responses
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

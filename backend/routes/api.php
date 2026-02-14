@@ -31,8 +31,8 @@ Route::prefix('v1')->group(function () {
         return response()->json(['status' => 'ok']);
     });
 
-    // Auth routes (public)
-    Route::prefix('auth')->group(function () {
+    // Auth routes (public, rate-limited: 5 attempts/min)
+    Route::prefix('auth')->middleware('throttle:auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/google', [AuthController::class, 'googleAuth']);
@@ -40,8 +40,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/reset-password', [AuthController::class, 'resetPassword']);
     });
 
-    // Auth routes (protected)
-    Route::middleware('auth:sanctum')->group(function () {
+    // Auth routes (protected, rate-limited: 120 req/min per user)
+    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
         // Auth management
         Route::prefix('auth')->group(function () {
@@ -138,11 +138,17 @@ Route::prefix('v1')->group(function () {
         Route::post('{token}/submit', [PublicFormController::class, 'submit']);
     });
 
-    // Public routes (no auth)
-    Route::post('/webhooks/stripe', StripeWebhookController::class);
-    Route::post('/webhooks/calendly', CalendlyWebhookController::class);
-    Route::get('/assessments/questions', [AssessmentController::class, 'questions']);
-    Route::post('/assessments/free', [AssessmentController::class, 'freeAssessment']);
+    // Webhooks (rate-limited: 60 req/min)
+    Route::middleware('throttle:webhooks')->group(function () {
+        Route::post('/webhooks/stripe', StripeWebhookController::class);
+        Route::post('/webhooks/calendly', CalendlyWebhookController::class);
+    });
+
+    // Public assessment routes (rate-limited: 30 req/min)
+    Route::middleware('throttle:public')->group(function () {
+        Route::get('/assessments/questions', [AssessmentController::class, 'questions']);
+        Route::post('/assessments/free', [AssessmentController::class, 'freeAssessment']);
+    });
 
     // Phase 2: Locations
     Route::prefix('locations')->group(function () {
