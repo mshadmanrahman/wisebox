@@ -25,6 +25,7 @@ tags:
 | Phase 7: Marketing Site | COMPLETE | 2026-02-10 | 2026-02-10 |
 | Phase 8: Deployment | DEFERRED (PRE-PROD COMPLETE) | 2026-02-10 | - |
 | Phase 9: Local-First Feature Development | IN PROGRESS | 2026-02-10 | - |
+| Phase 10: Ticket Lifecycle Production Hardening | COMPLETE | 2026-02-14 | 2026-02-14 |
 
 ---
 
@@ -485,6 +486,75 @@ tags:
     - `frontend/src/components/property/location-cascade.tsx`
   - Added slice note:
     - `docs/phase9-slice11-local-qa-hardening.md`
+
+## Phase 10: Ticket Lifecycle Production Hardening (2026-02-14)
+
+Full audit and fix of the end-to-end ticket lifecycle:
+**signup > property > order > ticket > consultant assignment > scheduling > meeting > completion**
+
+### Audit Methodology
+- 3 parallel codebase explorations: auth flow, property/order flow, consultant/scheduling flow
+- 7 bugs and gaps identified across admin UI, webhooks, and notification paths
+- All fixes verified against 68 passing tests (324 assertions, zero regressions)
+
+### Bugs Fixed
+
+| # | File | Bug | Fix |
+|---|------|-----|-----|
+| 1 | `Schemas/TicketForm.php` | Form reads `meet_link` but controllers write `meeting_url`; admin sees empty meeting link | Replaced `meet_link` with `meeting_url`, updated label |
+| 2 | `Schemas/TicketForm.php` | Status dropdown missing 4 of 9 statuses | Added `in_progress`, `awaiting_customer`, `awaiting_consultant`, `cancelled` |
+| 3 | `Schemas/TicketInfolist.php` | Same `meet_link` field mismatch + missing 4 status colors | Replaced field, added color mappings |
+| 4 | `Tables/TicketsTable.php` | Badge column missing colors/icons for 4 statuses; filter missing 4 options | Added closure-based color mapping (avoids PHP duplicate key issue), icons, and filter options |
+| 5 | `CalendlyWebhookController.php` | `invitee.created` updates ticket silently (no email, no notification) | Added `TransactionalEmailService::sendMeetingScheduled()` + in-app notification; parity with Google Calendar path |
+| 6 | `CalendlyWebhookController.php` | `invitee.canceled` clears ticket data but sends no notification | Added status update email + in-app notification to customer |
+| 7 | `Pages/EditTicket.php` | Filament edit doesn't set `resolved_at` when status becomes `completed` | Added `resolved_at = now()` on completion, `null` when moving away |
+| 8 | `TicketController.php` | No admin notification when ticket completes (only customer notified) | Added notification to all admin/super_admin users |
+| 9 | `FreeConsultationController.php` | Customer submits free consultation but receives no confirmation email | Added `sendTicketCreated()` call after ticket creation |
+
+### Technical Notes
+- **Closure-based BadgeColumn colors**: PHP arrays can't have duplicate string keys. When mapping multiple statuses to the same color, use closures: `'warning' => fn ($state) => in_array($state, ['open', 'awaiting_customer'])`
+- **Notification parity**: The Google Calendar path had full branded email + ICS + notification. The Calendly webhook path was silent. Now both paths send equivalent notifications.
+- **`resolved_at` sync**: The API controller already handled this, but the Filament admin edit page didn't. Both paths now behave identically.
+- **`meet_link` column**: Still exists in the DB but we no longer read it. Can be dropped via migration after verifying nothing else references it.
+
+### What Was NOT Changed (and why)
+
+| Item | Reason |
+|------|--------|
+| GoogleCalendarService token TODOs | Calendly is primary scheduling; Google Calendar is optional alternative |
+| Login rate limiting | Infrastructure concern (Cloudflare/nginx), not app code |
+| Email verification middleware | Frontend concern; token is issued at registration |
+| Refresh token mechanism | 24hr Sanctum tokens are fine for current use case |
+| `meet_link` DB column removal | Migration can happen separately after verifying no references |
+
+### Commits
+```
+e8e2858 Fix ticket lifecycle: 7 bugs across admin UI, webhooks, and notifications
+253a67f Add consultation forms, scheduling, and notification infrastructure
+4ae3899 Update backend: auth, orders, tickets, routes, tests, and config
+616d4d4 Update frontend: auth flows, portal pages, components, and tests
+2e65ddc Add documentation, deployment guides, and project setup scripts
+```
+
+### Lifecycle Status (Post-Fix)
+
+| Step | Status |
+|------|--------|
+| Registration + Email OTP | Working |
+| Dashboard | Working |
+| Property creation | Working |
+| Free assessment | Working |
+| Service catalog | Working |
+| Order + Stripe payment | Working |
+| Ticket auto-creation | Working |
+| Free consultation + confirmation email | Working |
+| Admin assigns consultant | Working |
+| Calendly booking webhook + email/notification | Working |
+| Google Calendar confirmSlot | Working |
+| Admin panel: all 9 statuses with colors/icons | Working |
+| Admin panel: meeting_url field | Working |
+| Status > completed with resolved_at | Working |
+| Admin notified on ticket completion | Working |
 
 ---
 
