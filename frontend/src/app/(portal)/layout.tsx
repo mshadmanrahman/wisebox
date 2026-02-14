@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { Bell, ChevronDown, LogOut, Settings, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Bell, LogOut, Settings } from 'lucide-react';
 import { Providers } from '@/components/providers';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth';
 import {
   useMarkAllNotificationsRead,
@@ -23,14 +22,6 @@ import {
   useUnreadNotificationsCount,
 } from '@/hooks/use-notifications';
 import type { Notification } from '@/types';
-
-const baseNavLinks = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/properties', label: 'Properties' },
-  { href: '/workspace/services', label: 'Services' },
-  { href: '/orders', label: 'Orders' },
-  { href: '/tickets', label: 'Tickets' },
-];
 
 function relativeTime(value: string): string {
   const now = Date.now();
@@ -84,7 +75,6 @@ export default function PortalLayout({
 }
 
 function PortalHeader() {
-  const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
 

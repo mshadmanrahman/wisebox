@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import { Calendar, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface TimeSlot {
@@ -38,13 +37,13 @@ function getAvailableDates(): Date[] {
 }
 
 // Generate time slots for a given date
-function getTimeSlotsForDate(date: Date): string[] {
+function getTimeSlotsForDate(): string[] {
   const slots: string[] = [];
 
   // Business hours: 9 AM to 5 PM (Bangladesh time)
   // Slots every 30 minutes
   for (let hour = 9; hour < 17; hour++) {
-    for (let minute of [0, 30]) {
+    for (const minute of [0, 30]) {
       if (hour === 16 && minute === 30) break; // End at 5:00 PM
 
       const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
@@ -76,7 +75,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
 
   const availableDates = useMemo(() => getAvailableDates(), []);
   const availableTimeSlots = useMemo(
-    () => (selectedDate ? getTimeSlotsForDate(selectedDate) : []),
+    () => (selectedDate ? getTimeSlotsForDate() : []),
     [selectedDate]
   );
 
@@ -143,7 +142,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
             Select Your Preferred Time Slots
           </CardTitle>
           <CardDescription className="text-wisebox-text-secondary">
-            Choose {minSlots}-{maxSlots} time slots when you're available for a consultation.
+            Choose {minSlots}-{maxSlots} time slots when you&apos;re available for a consultation.
             Our consultant will confirm one of these times.
           </CardDescription>
         </CardHeader>
@@ -160,7 +159,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
             <div className="flex items-start gap-2 p-3 bg-wisebox-status-success/10 border border-wisebox-status-success/30 rounded-lg">
               <CheckCircle2 className="h-4 w-4 text-wisebox-status-success shrink-0 mt-0.5" />
               <p className="text-sm text-wisebox-status-success">
-                Great! You've selected {selectedSlots.length} time slots.
+                Great! You&apos;ve selected {selectedSlots.length} time slots.
                 {selectedSlots.length < maxSlots && ` You can select up to ${maxSlots - selectedSlots.length} more.`}
               </p>
             </div>

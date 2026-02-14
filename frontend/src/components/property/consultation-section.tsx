@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FreeConsultationDialog } from '@/components/property/free-consultation-dialog';
-import type { Property, ApiResponse, PaginatedResponse } from '@/types';
+import type { Property, PaginatedResponse } from '@/types';
 
 interface ConsultationSectionProps {
   property: Property;
@@ -29,7 +29,7 @@ interface ConsultationTicket {
   consultation_notes: string | null;
 }
 
-const statusConfig: Record<ConsultationTicket['status'], { label: string; icon: React.ComponentType<any>; className: string }> = {
+const statusConfig: Record<ConsultationTicket['status'], { label: string; icon: React.ComponentType<{ className?: string }>; className: string }> = {
   open: {
     label: 'Awaiting Assignment',
     icon: Clock,

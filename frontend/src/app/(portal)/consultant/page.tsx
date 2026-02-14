@@ -7,7 +7,6 @@ import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { PaginatedResponse } from '@/types';
 

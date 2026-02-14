@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { type ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle, ArrowRight, Bell, CalendarCheck, Plus, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Bell, Plus } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
 import { PropertyCard } from '@/components/property/property-card';
@@ -57,7 +57,6 @@ export default function DashboardPage() {
   const notifications = summary?.notifications_preview ?? [];
   const recentTickets = summary?.tickets_preview ?? [];
   const unreadCount = summary?.unread_notifications_count ?? 0;
-  const counts = summary?.counts;
 
   // Hero slides matching the screenshots exactly
   const heroSlides = [
@@ -391,28 +390,3 @@ export default function DashboardPage() {
   );
 }
 
-function QuickActionCard({
-  href,
-  icon,
-  title,
-  description,
-}: {
-  href: string;
-  icon: ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <Link href={href} className="block">
-      <Card className="h-full transition hover:shadow-lg hover:border-wisebox-primary bg-wisebox-background-card border-wisebox-border">
-        <CardContent className="pt-6">
-          <div className="h-10 w-10 rounded-lg bg-wisebox-primary/20 text-wisebox-primary flex items-center justify-center mb-3">
-            {icon}
-          </div>
-          <h3 className="font-semibold text-white">{title}</h3>
-          <p className="text-sm text-wisebox-text-secondary mt-1">{description}</p>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}

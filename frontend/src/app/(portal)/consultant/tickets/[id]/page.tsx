@@ -633,7 +633,7 @@ export default function ConsultantTicketDetailPage() {
           {/* Completed Responses */}
           {!responses || responses.length === 0 ? (
             <p className="text-sm text-wisebox-text-secondary">
-              No consultation forms completed yet. Click "Fill Form" to complete an assessment, or "Send to Customer" to request the customer fills one out.
+              No consultation forms completed yet. Click &quot;Fill Form&quot; to complete an assessment, or &quot;Send to Customer&quot; to request the customer fills one out.
             </p>
           ) : (
             <div className="space-y-3">

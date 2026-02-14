@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, CheckCircle2, ClipboardList, User, Calendar } from 'lucide-react';
 import api from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 interface Recommendation {
   category: string;

@@ -309,7 +309,7 @@ export default function RegisterPage() {
             </svg>
             <p className="text-lg leading-relaxed">
               As a grandfather, I find great comfort in knowing that WiseBox allows me to manage our
-              family's properties in Bangladesh from my home in Toronto. I can easily keep track of all
+              family&apos;s properties in Bangladesh from my home in Toronto. I can easily keep track of all
               the important documents and transactions, ensuring that my children and grandchildren
               will inherit not just assets, but also the wisdom and guidance they need to navigate their
               future.
