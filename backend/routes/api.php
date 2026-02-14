@@ -26,7 +26,21 @@ use Illuminate\Support\Facades\Route;
 
 // Top-level health check (for Railway / load balancer probes)
 Route::get('/health', function () {
-    return response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]);
+    $checks = ['status' => 'ok', 'timestamp' => now()->toIso8601String()];
+
+    // Database connectivity
+    try {
+        \Illuminate\Support\Facades\DB::select('SELECT 1');
+        $checks['database'] = 'connected';
+    } catch (\Throwable $e) {
+        $checks['database'] = 'error: ' . $e->getMessage();
+    }
+
+    // Session driver
+    $checks['session_driver'] = config('session.driver');
+    $checks['cache_store'] = config('cache.default');
+
+    return response()->json($checks);
 });
 
 Route::prefix('v1')->group(function () {
