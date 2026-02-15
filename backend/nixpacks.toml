@@ -3,4 +3,4 @@
 # Railpack auto-installs them via install-php-extensions
 
 [start]
-cmd = "php artisan config:clear && php artisan storage:link --force && php artisan migrate --force && php artisan view:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+cmd = "echo '>>> config:clear' && php artisan config:clear && echo '>>> storage:link' && php artisan storage:link --force && echo '>>> migrate:fresh' && php artisan migrate:fresh --force --seed && echo '>>> view:clear' && php artisan view:clear && echo '>>> Starting server' && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
