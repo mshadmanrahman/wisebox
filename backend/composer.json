@@ -10,6 +10,7 @@
         "ext-intl": "*",
         "ext-zip": "*",
         "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
         "ext-mbstring": "*",
         "ext-gd": "*",
         "ext-bcmath": "*",
