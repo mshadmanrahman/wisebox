@@ -2,9 +2,9 @@
 # PHP version and extensions are declared in composer.json require section
 # Railpack auto-installs them via install-php-extensions
 #
-# NOTE: Railpacks detects Laravel automatically and handles:
-#   - php artisan migrate --force
-#   - php artisan storage:link
-#   - config/route/view caching
-#   - FrankenPHP + Caddy as the web server
-# No [start] section needed; Railpacks' default Laravel flow is preferred.
+# Railpacks detects Laravel and handles: migrate, storage:link,
+# config/route/view caching, FrankenPHP + Caddy.
+# We add db:seed for admin user bootstrapping (idempotent via updateOrCreate).
+
+[start]
+cmd = "php artisan db:seed --force"
