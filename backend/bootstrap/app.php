@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Token-based auth (no statefulApi/cookies)
+        // Trust Railway's reverse proxy (Caddy + LB) so Laravel
+        // correctly reads X-Forwarded-Proto/Host/Port headers
+        $middleware->trustProxies(at: '*');
+
         // Security headers for all API responses
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
     })
