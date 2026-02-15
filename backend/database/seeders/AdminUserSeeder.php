@@ -10,9 +10,11 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = env('ADMIN_EMAIL');
-        $password = env('ADMIN_PASSWORD');
-        $name = env('ADMIN_NAME', 'Wisebox Admin');
+        // Use getenv() instead of env() because Laravel's env() returns null
+        // when config is cached (Railpacks runs config:cache during deploy)
+        $email = getenv('ADMIN_EMAIL') ?: null;
+        $password = getenv('ADMIN_PASSWORD') ?: null;
+        $name = getenv('ADMIN_NAME') ?: 'Wisebox Admin';
 
         // In production, only seed if ADMIN_EMAIL and ADMIN_PASSWORD are explicitly set
         if (app()->environment('production') && (!$email || !$password)) {
