@@ -26,36 +26,17 @@ use Illuminate\Support\Facades\Route;
 
 // Top-level health check (for Railway / load balancer probes)
 Route::get('/health', function () {
-    $checks = ['status' => 'ok', 'timestamp' => now()->toIso8601String()];
+    $status = ['status' => 'ok', 'timestamp' => now()->toIso8601String()];
 
-    // Raw env vars (bypass Laravel config to check if Railway injects them)
-    $checks['raw_env'] = [
-        'SESSION_DRIVER' => getenv('SESSION_DRIVER') ?: '(not set)',
-        'DB_HOST' => getenv('DB_HOST') ?: '(not set)',
-        'DB_DATABASE' => getenv('DB_DATABASE') ?: '(not set)',
-        'APP_ENV' => getenv('APP_ENV') ?: '(not set)',
-    ];
-
-    // Laravel config values (after config layer processes them)
-    $checks['config'] = [
-        'session_driver' => config('session.driver'),
-        'cache_store' => config('cache.default'),
-        'db_host' => config('database.connections.mysql.host'),
-        'db_database' => config('database.connections.mysql.database'),
-    ];
-
-    // Config cache check
-    $checks['config_cached'] = file_exists(base_path('bootstrap/cache/config.php'));
-
-    // Database connectivity
     try {
         \Illuminate\Support\Facades\DB::select('SELECT 1');
-        $checks['database'] = 'connected';
+        $status['database'] = 'connected';
     } catch (\Throwable $e) {
-        $checks['database'] = 'error: ' . $e->getMessage();
+        $status['database'] = 'error';
+        $status['status'] = 'degraded';
     }
 
-    return response()->json($checks);
+    return response()->json($status);
 });
 
 Route::prefix('v1')->group(function () {
