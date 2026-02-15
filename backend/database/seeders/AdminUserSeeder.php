@@ -10,13 +10,18 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        if (!app()->environment(['local', 'testing'])) {
+        $email = env('ADMIN_EMAIL');
+        $password = env('ADMIN_PASSWORD');
+        $name = env('ADMIN_NAME', 'Wisebox Admin');
+
+        // In production, only seed if ADMIN_EMAIL and ADMIN_PASSWORD are explicitly set
+        if (app()->environment('production') && (!$email || !$password)) {
             return;
         }
 
-        $email = env('ADMIN_EMAIL', 'admin@wisebox.local');
-        $password = env('ADMIN_PASSWORD', 'Admin123!');
-        $name = env('ADMIN_NAME', 'Wisebox Admin');
+        // Fall back to defaults for local/testing
+        $email = $email ?: 'admin@wisebox.local';
+        $password = $password ?: 'Admin123!';
 
         User::updateOrCreate(
             ['email' => $email],
