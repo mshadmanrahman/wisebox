@@ -11,6 +11,11 @@ vendor/
 !backend/.env.example
 !frontend/.env.local.example
 
+# Credentials vault (NEVER commit)
+.credentials
+.credentials.*
+client_secret*.json
+
 # Build output
 .next/
 out/
