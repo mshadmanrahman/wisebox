@@ -5,76 +5,83 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Models\User;
-use App\Notifications\FormCompletedNotification;
-use App\Notifications\FormInvitationNotification;
-use App\Notifications\MeetingScheduledNotification;
-use App\Notifications\OrderLifecycleNotification;
-use App\Notifications\TicketCreatedNotification;
-use App\Notifications\TicketLifecycleNotification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * All transactional emails sent via Resend HTTP API (bypasses SMTP).
+ * SMTP is unreliable on Railway due to firewall restrictions on ports 465/587.
+ */
 class TransactionalEmailService
 {
+    // ── Order emails ──────────────────────────────────────────────
+
     public function sendOrderCreated(User $user, Order $order): void
     {
-        $this->notifyOrder($user, $order, 'created');
+        $this->sendOrderEmail($user, $order, 'created', 'Order Confirmed');
     }
 
     public function sendOrderPaid(User $user, Order $order): void
     {
-        $this->notifyOrder($user, $order, 'paid');
+        $this->sendOrderEmail($user, $order, 'paid', 'Payment Received');
     }
 
     public function sendOrderPaymentFailed(User $user, Order $order): void
     {
-        $this->notifyOrder($user, $order, 'failed');
+        $this->sendOrderEmail($user, $order, 'failed', 'Payment Failed');
     }
 
     public function sendOrderCancelled(User $user, Order $order): void
     {
-        $this->notifyOrder($user, $order, 'cancelled');
+        $this->sendOrderEmail($user, $order, 'cancelled', 'Order Cancelled');
     }
 
     public function sendOrderRefunded(User $user, Order $order): void
     {
-        $this->notifyOrder($user, $order, 'refunded');
+        $this->sendOrderEmail($user, $order, 'refunded', 'Order Refunded');
     }
+
+    // ── Ticket emails ─────────────────────────────────────────────
 
     public function sendTicketAssigned(User $user, Ticket $ticket): void
     {
-        $this->notifyTicket($user, $ticket, 'assigned');
+        $this->sendTicketEmail($user, $ticket, 'A consultant has been assigned to your ticket.');
     }
 
     public function sendTicketStatusUpdated(User $user, Ticket $ticket, ?string $fromStatus = null): void
     {
-        $this->notifyTicket($user, $ticket, 'status_updated', $fromStatus);
+        $extra = $fromStatus ? " (was: {$fromStatus})" : '';
+        $this->sendTicketEmail($user, $ticket, "Your ticket status has been updated to <strong>{$ticket->status}</strong>{$extra}.");
     }
 
     public function sendTicketCommentAdded(User $user, Ticket $ticket, string $actor, ?string $commentBody = null): void
     {
-        $this->notifyTicket($user, $ticket, 'comment_added', null, $actor, $commentBody);
+        $body = $commentBody ? "<blockquote>{$commentBody}</blockquote>" : '';
+        $this->sendTicketEmail($user, $ticket, "{$actor} added a comment to your ticket.{$body}");
     }
 
     public function sendTicketCreated(User $customer, Ticket $ticket): void
     {
-        try {
-            $customer->notify(new TicketCreatedNotification(
-                ticketNumber: (string) $ticket->ticket_number,
-                propertyName: (string) ($ticket->property?->property_name ?? 'Your Property'),
-                serviceName: $ticket->service?->name ? (string) $ticket->service->name : null,
-                frontendUrl: (string) config('services.frontend.url', 'http://localhost:3000'),
-                ticketId: (int) $ticket->id,
-            ));
-        } catch (Throwable $exception) {
-            Log::warning('Failed to queue ticket created email.', [
-                'ticket_id' => $ticket->id,
-                'customer_id' => $customer->id,
-                'error' => $exception->getMessage(),
-            ]);
-        }
+        $ticketNumber = (string) $ticket->ticket_number;
+        $propertyName = (string) ($ticket->property?->property_name ?? 'Your Property');
+        $serviceName = $ticket->service?->name ? (string) $ticket->service->name : 'Property Consultation';
+        $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
+        $ticketUrl = "{$frontendUrl}/dashboard/tickets/{$ticket->id}";
+
+        $html = "<h2>Your Ticket Has Been Created</h2>"
+            . "<p>Hello {$customer->name},</p>"
+            . "<p>Your consultation request has been submitted successfully.</p>"
+            . "<p><strong>Ticket:</strong> {$ticketNumber}<br>"
+            . "<strong>Property:</strong> {$propertyName}<br>"
+            . "<strong>Service:</strong> {$serviceName}</p>"
+            . "<p>A consultant will be assigned shortly. You'll receive an email when there's an update.</p>"
+            . $this->ctaButton('View Ticket', $ticketUrl);
+
+        $this->sendViaResend($customer->email, "Ticket {$ticketNumber} created for {$propertyName}", $html, 'ticket_created', ['ticket_id' => $ticket->id]);
     }
+
+    // ── Meeting email ─────────────────────────────────────────────
 
     public function sendMeetingScheduled(
         User $customer,
@@ -83,27 +90,26 @@ class TransactionalEmailService
         \Carbon\Carbon $scheduledAt,
         int $durationMinutes,
     ): void {
-        try {
-            $customer->notify(new MeetingScheduledNotification(
-                ticketNumber: (string) $ticket->ticket_number,
-                propertyName: (string) ($ticket->property?->property_name ?? 'Your Property'),
-                scheduledAt: $scheduledAt->toISOString(),
-                meetLink: $meetLink,
-                durationMinutes: $durationMinutes,
-                consultantName: (string) ($ticket->consultant?->name ?? 'Wisebox Consultant'),
-                frontendUrl: (string) config('services.frontend.url', 'http://localhost:3000'),
-                ticketId: (int) $ticket->id,
-                customerEmail: (string) $customer->email,
-                consultantEmail: (string) ($ticket->consultant?->email ?? ''),
-            ));
-        } catch (Throwable $exception) {
-            Log::warning('Failed to queue meeting scheduled email notification.', [
-                'ticket_id' => $ticket->id,
-                'customer_id' => $customer->id,
-                'error' => $exception->getMessage(),
-            ]);
-        }
+        $ticketNumber = (string) $ticket->ticket_number;
+        $propertyName = (string) ($ticket->property?->property_name ?? 'Your Property');
+        $consultantName = (string) ($ticket->consultant?->name ?? 'Wisebox Consultant');
+        $formattedDate = $scheduledAt->format('l, F j, Y \a\t g:i A');
+
+        $html = "<h2>Consultation Meeting Scheduled</h2>"
+            . "<p>Hello {$customer->name},</p>"
+            . "<p>Your consultation meeting has been scheduled.</p>"
+            . "<p><strong>Ticket:</strong> {$ticketNumber}<br>"
+            . "<strong>Property:</strong> {$propertyName}<br>"
+            . "<strong>Consultant:</strong> {$consultantName}<br>"
+            . "<strong>Date:</strong> {$formattedDate}<br>"
+            . "<strong>Duration:</strong> {$durationMinutes} minutes</p>"
+            . $this->ctaButton('Join Meeting', $meetLink)
+            . "<p style=\"color:#666;font-size:13px;\">Please join a few minutes early. If you need to reschedule, contact your consultant.</p>";
+
+        $this->sendViaResend($customer->email, "Meeting scheduled for {$ticketNumber}", $html, 'meeting_scheduled', ['ticket_id' => $ticket->id]);
     }
+
+    // ── Form emails ───────────────────────────────────────────────
 
     public function sendFormInvitation(
         string $customerEmail,
@@ -115,11 +121,6 @@ class TransactionalEmailService
         $propertyName = (string) ($ticket->property?->property_name ?? 'Your Property');
         $consultantName = (string) ($ticket->consultant?->name ?? 'Wisebox Consultant');
 
-        // Use Resend HTTP API directly (bypasses SMTP, works on all cloud platforms)
-        $apiKey = config('services.resend.key') ?: env('MAIL_PASSWORD');
-        $fromAddress = config('mail.from.address', 'onboarding@resend.dev');
-        $fromName = config('mail.from.name', 'Wisebox');
-
         $html = "<h2>Consultation Form Request</h2>"
             . "<p>Hello,</p>"
             . "<p>Your consultant <strong>{$consultantName}</strong> has requested you to fill out a form for your property consultation.</p>"
@@ -127,40 +128,10 @@ class TransactionalEmailService
             . "<strong>Ticket:</strong> {$ticketNumber}<br>"
             . "<strong>Property:</strong> {$propertyName}</p>"
             . "<p>Please complete this form at your earliest convenience to help us assist you better.</p>"
-            . "<p><a href=\"{$formUrl}\" style=\"background:#2563eb;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;\">Fill Out Form</a></p>"
+            . $this->ctaButton('Fill Out Form', $formUrl)
             . "<p style=\"color:#666;font-size:13px;\">This link will expire in 7 days. No login is required to complete the form.</p>";
 
-        try {
-            $response = Http::withToken($apiKey)
-                ->timeout(10)
-                ->post('https://api.resend.com/emails', [
-                    'from' => "{$fromName} <{$fromAddress}>",
-                    'to' => [$customerEmail],
-                    'subject' => "Please complete: {$templateName} for {$ticketNumber}",
-                    'html' => $html,
-                ]);
-
-            if ($response->successful()) {
-                Log::info('Form invitation email sent via Resend API.', [
-                    'ticket_id' => $ticket->id,
-                    'customer_email' => $customerEmail,
-                    'resend_id' => $response->json('id'),
-                ]);
-            } else {
-                Log::warning('Resend API rejected form invitation email.', [
-                    'ticket_id' => $ticket->id,
-                    'customer_email' => $customerEmail,
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                ]);
-            }
-        } catch (Throwable $exception) {
-            Log::warning('Failed to send form invitation email via Resend API.', [
-                'ticket_id' => $ticket->id,
-                'customer_email' => $customerEmail,
-                'error' => $exception->getMessage(),
-            ]);
-        }
+        $this->sendViaResend($customerEmail, "Please complete: {$templateName} for {$ticketNumber}", $html, 'form_invitation', ['ticket_id' => $ticket->id]);
     }
 
     public function sendFormCompleted(
@@ -168,70 +139,95 @@ class TransactionalEmailService
         Ticket $ticket,
         string $templateName,
     ): void {
-        try {
-            $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
-            $consultant->notify(new FormCompletedNotification(
-                templateName: $templateName,
-                ticketNumber: (string) $ticket->ticket_number,
-                customerEmail: (string) ($ticket->customer?->email ?? 'customer'),
-                ticketUrl: "{$frontendUrl}/consultant/tickets/{$ticket->id}",
-            ));
-        } catch (Throwable $exception) {
-            Log::warning('Failed to queue form completed email notification.', [
-                'ticket_id' => $ticket->id,
-                'consultant_id' => $consultant->id,
-                'error' => $exception->getMessage(),
-            ]);
-        }
+        $ticketNumber = (string) $ticket->ticket_number;
+        $customerEmail = (string) ($ticket->customer?->email ?? 'customer');
+        $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
+        $ticketUrl = "{$frontendUrl}/consultant/tickets/{$ticket->id}";
+
+        $html = "<h2>Form Completed by Customer</h2>"
+            . "<p>Hello {$consultant->name},</p>"
+            . "<p>The customer ({$customerEmail}) has completed the <strong>{$templateName}</strong> form for ticket {$ticketNumber}.</p>"
+            . "<p>Review the responses and proceed with the consultation.</p>"
+            . $this->ctaButton('View Ticket', $ticketUrl);
+
+        $this->sendViaResend($consultant->email, "Form completed: {$templateName} for {$ticketNumber}", $html, 'form_completed', ['ticket_id' => $ticket->id]);
     }
 
-    private function notifyOrder(User $user, Order $order, string $event): void
+    // ── Private helpers ───────────────────────────────────────────
+
+    private function sendTicketEmail(User $user, Ticket $ticket, string $message): void
     {
-        try {
-            $user->notify(new OrderLifecycleNotification(
-                event: $event,
-                orderId: (int) $order->id,
-                orderNumber: (string) $order->order_number,
-                total: (float) $order->total,
-                currency: (string) $order->currency,
-                frontendUrl: (string) config('services.frontend.url', 'http://localhost:3000'),
-            ));
-        } catch (Throwable $exception) {
-            Log::warning('Failed to queue order lifecycle email notification.', [
-                'event' => $event,
-                'order_id' => $order->id,
-                'user_id' => $user->id,
-                'error' => $exception->getMessage(),
-            ]);
-        }
+        $ticketNumber = (string) $ticket->ticket_number;
+        $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
+        $ticketUrl = "{$frontendUrl}/dashboard/tickets/{$ticket->id}";
+
+        $html = "<h2>Ticket Update: {$ticketNumber}</h2>"
+            . "<p>Hello {$user->name},</p>"
+            . "<p>{$message}</p>"
+            . $this->ctaButton('View Ticket', $ticketUrl);
+
+        $this->sendViaResend($user->email, "Update for ticket {$ticketNumber}", $html, 'ticket_update', ['ticket_id' => $ticket->id]);
     }
 
-    private function notifyTicket(
-        User $user,
-        Ticket $ticket,
-        string $event,
-        ?string $fromStatus = null,
-        ?string $actor = null,
-        ?string $commentBody = null,
-    ): void {
+    private function sendOrderEmail(User $user, Order $order, string $event, string $label): void
+    {
+        $orderNumber = (string) $order->order_number;
+        $total = number_format((float) $order->total, 2);
+        $currency = strtoupper((string) $order->currency);
+        $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
+        $orderUrl = "{$frontendUrl}/dashboard/orders/{$order->id}";
+
+        $html = "<h2>{$label}</h2>"
+            . "<p>Hello {$user->name},</p>"
+            . "<p>Your order <strong>{$orderNumber}</strong> ({$currency} {$total}) has been {$event}.</p>"
+            . $this->ctaButton('View Order', $orderUrl);
+
+        $this->sendViaResend($user->email, "{$label}: {$orderNumber}", $html, "order_{$event}", ['order_id' => $order->id]);
+    }
+
+    private function ctaButton(string $label, string $url): string
+    {
+        return "<p><a href=\"{$url}\" style=\"background:#2563eb;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;\">{$label}</a></p>";
+    }
+
+    /**
+     * Send email via Resend HTTP API. Bypasses SMTP entirely.
+     * https://resend.com/docs/api-reference/emails/send-email
+     */
+    private function sendViaResend(string $to, string $subject, string $html, string $tag, array $context = []): void
+    {
+        $apiKey = config('services.resend.key') ?: env('MAIL_PASSWORD');
+        $fromAddress = config('mail.from.address', 'onboarding@resend.dev');
+        $fromName = config('mail.from.name', 'Wisebox');
+
         try {
-            $user->notify(new TicketLifecycleNotification(
-                event: $event,
-                ticketId: (int) $ticket->id,
-                ticketNumber: (string) $ticket->ticket_number,
-                status: $ticket->status ? (string) $ticket->status : null,
-                frontendUrl: (string) config('services.frontend.url', 'http://localhost:3000'),
-                fromStatus: $fromStatus,
-                actor: $actor,
-                commentBody: $commentBody,
-            ));
+            $response = Http::withToken($apiKey)
+                ->timeout(10)
+                ->post('https://api.resend.com/emails', [
+                    'from' => "{$fromName} <{$fromAddress}>",
+                    'to' => [$to],
+                    'subject' => $subject,
+                    'html' => $html,
+                    'tags' => [['name' => 'type', 'value' => $tag]],
+                ]);
+
+            if ($response->successful()) {
+                Log::info("Email sent via Resend [{$tag}]", array_merge($context, [
+                    'to' => $to,
+                    'resend_id' => $response->json('id'),
+                ]));
+            } else {
+                Log::warning("Resend API rejected email [{$tag}]", array_merge($context, [
+                    'to' => $to,
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]));
+            }
         } catch (Throwable $exception) {
-            Log::warning('Failed to queue ticket lifecycle email notification.', [
-                'event' => $event,
-                'ticket_id' => $ticket->id,
-                'user_id' => $user->id,
+            Log::warning("Failed to send email via Resend [{$tag}]", array_merge($context, [
+                'to' => $to,
                 'error' => $exception->getMessage(),
-            ]);
+            ]));
         }
     }
 }
