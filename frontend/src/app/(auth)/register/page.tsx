@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Loader2 } from 'lucide-react';
 import { useGoogleAuth } from '@/hooks/use-google-auth';
 import { AuthTestimonialCarousel } from '@/components/auth/testimonial-carousel';
+import { WiseboxLogo } from '@/components/ui/wisebox-logo';
 
 const COUNTRIES = [
   { code: 'BGD', name: 'Bangladesh', flag: '🇧🇩' },
@@ -92,12 +93,7 @@ export default function RegisterPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
-              <div className="w-5 h-5 border-2 border-white rounded"></div>
-            </div>
-            <span className="text-xl font-semibold text-white">Wisebox</span>
-          </div>
+          <WiseboxLogo variant="light" />
 
           {/* Header */}
           <div>

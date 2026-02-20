@@ -178,27 +178,29 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
             <div className="space-y-3">
               <h3 className="text-sm font-medium flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-white" />
-                Co-owners ({property.co_owners.length})
+                Co-owned by {property.co_owners.length} {property.co_owners.length === 1 ? 'party' : 'parties'}
               </h3>
-              <div className="space-y-2">
-                {property.co_owners.map((owner) => (
-                  <div
-                    key={owner.id}
-                    className="flex items-center justify-between rounded-md border p-3 text-sm"
-                  >
-                    <div>
-                      <p className="font-medium">{owner.name}</p>
-                      {owner.relationship && (
-                        <p className="text-xs text-wisebox-text-secondary">
-                          {owner.relationship}
-                        </p>
-                      )}
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {property.co_owners.slice(0, 4).map((owner) => (
+                    <div
+                      key={owner.id}
+                      className="w-9 h-9 rounded-full bg-wisebox-primary/20 border-2 border-wisebox-background-card flex items-center justify-center text-xs font-medium text-wisebox-primary"
+                      title={`${owner.name} (${owner.ownership_percentage}%)`}
+                    >
+                      {owner.name.charAt(0).toUpperCase()}
                     </div>
-                    <Badge variant="secondary" className="text-xs">
-                      {owner.ownership_percentage}%
-                    </Badge>
-                  </div>
-                ))}
+                  ))}
+                  {property.co_owners.length > 4 && (
+                    <div className="w-9 h-9 rounded-full bg-wisebox-background-lighter border-2 border-wisebox-background-card flex items-center justify-center text-xs font-medium text-wisebox-text-secondary">
+                      +{property.co_owners.length - 4}
+                    </div>
+                  )}
+                </div>
+                <div className="text-sm text-wisebox-text-secondary">
+                  {property.co_owners.slice(0, 3).map(o => o.name).join(', ')}
+                  {property.co_owners.length > 3 && ` +${property.co_owners.length - 3} more`}
+                </div>
               </div>
             </div>
           </>

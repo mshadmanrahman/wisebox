@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bell, LogOut, Settings } from 'lucide-react';
+import { Bell, LogOut, Settings, Sparkles } from 'lucide-react';
 import { Providers } from '@/components/providers';
+import { WiseboxLogo } from '@/components/ui/wisebox-logo';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -99,66 +100,39 @@ function PortalHeader() {
   return (
     <header className="bg-wisebox-background-card border-b border-wisebox-border px-6 py-4">
       <div className="flex items-center justify-between max-w-7xl mx-auto gap-4">
-        <Link href="/dashboard" className="text-xl font-bold text-white flex items-center gap-2">
-          <div className="w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-white rounded-sm"></div>
-          </div>
-          Wisebox
+        <Link href="/dashboard">
+          <WiseboxLogo variant="light" className="hover:opacity-90 transition-opacity" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm">
-          <Link
-            href="/properties"
-            className="text-wisebox-text-secondary hover:text-white transition-colors"
-          >
-            Assets
+          <Link href="/properties" className="text-wisebox-text-secondary hover:text-white transition-colors">
+            Asset
           </Link>
-          <Link
-            href="/workspace/services"
-            className="text-wisebox-text-secondary hover:text-white transition-colors"
-          >
+          <Link href="/assessment/start" className="text-wisebox-text-secondary hover:text-white transition-colors">
+            Learning
+          </Link>
+          <Link href="/workspace/services" className="text-wisebox-text-secondary hover:text-white transition-colors">
             Services
           </Link>
-          <Link
-            href="/orders"
-            className="text-wisebox-text-secondary hover:text-white transition-colors"
-          >
-            Billing
-          </Link>
-          <Link
-            href="/tickets"
-            className="text-wisebox-text-secondary hover:text-white transition-colors"
-          >
-            Consultations
+          <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
+            Settings
           </Link>
           {isConsultantRole && (
-            <Link
-              href="/consultant"
-              className="text-wisebox-text-secondary hover:text-white transition-colors"
-            >
+            <Link href="/consultant" className="text-wisebox-text-secondary hover:text-white transition-colors">
               Consultant
             </Link>
           )}
           {isAdminRole && (
-            <Link
-              href="/admin/dashboard"
-              className="text-amber-400 hover:text-amber-300 transition-colors"
-            >
+            <Link href="/admin/dashboard" className="text-amber-400 hover:text-amber-300 transition-colors">
               Admin
             </Link>
           )}
         </nav>
 
         <div className="flex items-center gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative text-white hover:bg-wisebox-background-lighter">
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </Button>
-            </DropdownMenuTrigger>
-          </DropdownMenu>
+          <Button variant="ghost" size="icon" className="relative text-white hover:bg-wisebox-background-lighter">
+            <Sparkles className="h-5 w-5" />
+          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
