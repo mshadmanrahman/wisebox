@@ -3,10 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { ArrowRight, Loader2, MapPin } from 'lucide-react';
+import { ArrowRight, Calendar, Loader2, MapPin, MessageSquare } from 'lucide-react';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Sheet,
   SheetContent,
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { TimeSlotPicker } from '@/components/consultation/time-slot-picker';
 import { cn } from '@/lib/utils';
 import type { ApiResponse, Order, Property, Service } from '@/types';
 
@@ -28,6 +30,12 @@ interface ServiceDetailPanelProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   properties: Property[];
+}
+
+interface TimeSlot {
+  date: string;
+  time: string;
+  display: string;
 }
 
 function formatPrice(service: Service): string {
@@ -54,24 +62,44 @@ export function ServiceDetailPanel({
 }: ServiceDetailPanelProps) {
   const router = useRouter();
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
+  const [description, setDescription] = useState('');
+  const [preferredSlots, setPreferredSlots] = useState<TimeSlot[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const needsScheduling = service?.requires_meeting ?? false;
+  const hasEnoughSlots = !needsScheduling || preferredSlots.length >= 2;
 
   const createOrderMutation = useMutation({
     mutationFn: async () => {
       if (!selectedPropertyId || !service) {
         throw new Error('Please select a property first.');
       }
+      if (needsScheduling && preferredSlots.length < 2) {
+        throw new Error('Please select at least 2 preferred time slots.');
+      }
 
-      const payload = {
+      const payload: Record<string, unknown> = {
         property_id: Number(selectedPropertyId),
         items: [{ service_id: service.id, quantity: 1 }],
       };
+
+      if (description.trim()) {
+        payload.description = description.trim();
+      }
+      if (needsScheduling && preferredSlots.length > 0) {
+        payload.preferred_slots = preferredSlots;
+      }
 
       const res = await api.post<ApiResponse<Order>>('/orders', payload);
       return res.data.data;
     },
     onSuccess: (order) => {
       onOpenChange(false);
+      // Reset form state
+      setDescription('');
+      setPreferredSlots([]);
+      setSelectedPropertyId('');
+
       if (order.payment_status === 'paid') {
         router.push(`/orders/${order.id}/confirmation`);
         return;
@@ -87,6 +115,7 @@ export function ServiceDetailPanel({
   if (!service) return null;
 
   const price = formatPrice(service);
+  const isFree = service.pricing_type === 'free' || (!service.price || Number(service.price) === 0);
   const gradient = service.category?.slug === 'consultation'
     ? 'from-cyan-600 via-blue-700 to-indigo-800'
     : service.category?.slug === 'legal'
@@ -95,9 +124,20 @@ export function ServiceDetailPanel({
     ? 'from-violet-600 via-purple-700 to-indigo-800'
     : 'from-slate-600 via-slate-700 to-slate-800';
 
+  const ctaLabel = isFree
+    ? 'Book Now'
+    : needsScheduling
+    ? 'Book & Pay'
+    : 'Buy Now';
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg bg-wisebox-background border-wisebox-border overflow-y-auto">
+      <SheetContent
+        className={cn(
+          'w-full bg-wisebox-background border-wisebox-border overflow-y-auto',
+          needsScheduling ? 'sm:max-w-2xl' : 'sm:max-w-lg'
+        )}
+      >
         <SheetHeader className="pb-0">
           {/* Gradient header */}
           <div className={cn('rounded-xl h-24 bg-gradient-to-r -mx-2 mb-4', gradient)} />
@@ -106,7 +146,7 @@ export function ServiceDetailPanel({
             <Badge
               className={cn(
                 'text-sm font-semibold shrink-0',
-                service.pricing_type === 'free'
+                isFree
                   ? 'bg-green-500/20 text-green-400 border-green-500/30'
                   : 'bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30'
               )}
@@ -114,6 +154,12 @@ export function ServiceDetailPanel({
               {price}
             </Badge>
           </div>
+          {service.estimated_duration_minutes && (
+            <p className="text-xs text-wisebox-text-muted flex items-center gap-1 mt-1">
+              <Calendar className="h-3 w-3" />
+              Estimated duration: {service.estimated_duration_minutes} minutes
+            </p>
+          )}
         </SheetHeader>
 
         <div className="space-y-6 mt-6">
@@ -139,31 +185,84 @@ export function ServiceDetailPanel({
             </div>
           )}
 
-          {/* Select Property + Buy */}
-          <div className="space-y-4 border-t border-wisebox-border pt-6">
-            <h3 className="text-sm font-medium text-white">Select a property for this service</h3>
-            <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
-              <SelectTrigger className="bg-wisebox-background-input border-wisebox-border text-white">
-                <SelectValue placeholder="Choose a property" />
-              </SelectTrigger>
-              <SelectContent className="bg-wisebox-background-card border-wisebox-border">
-                {properties.map((property) => (
-                  <SelectItem key={property.id} value={String(property.id)} className="text-white hover:bg-wisebox-background-lighter">
-                    {property.property_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {/* Property Selection + Scheduling + Buy */}
+          <div className="space-y-5 border-t border-wisebox-border pt-6">
+            {/* Step 1: Select Property */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">1</span>
+                Select a property
+              </h3>
+              <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
+                <SelectTrigger className="bg-wisebox-background-input border-wisebox-border text-white">
+                  <SelectValue placeholder="Choose a property" />
+                </SelectTrigger>
+                <SelectContent className="bg-wisebox-background-card border-wisebox-border">
+                  {properties.map((property) => (
+                    <SelectItem key={property.id} value={String(property.id)} className="text-white hover:bg-wisebox-background-lighter">
+                      {property.property_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
+            {/* Step 2: Describe your needs */}
+            {needsScheduling && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                  <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">2</span>
+                  Describe what you need
+                </h3>
+                <div className="relative">
+                  <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-wisebox-text-muted" />
+                  <Textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Briefly describe what you need help with. For example: 'I need verification of land purchase documents for a plot in Dhaka division...'"
+                    className="pl-10 min-h-[100px] bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted resize-none"
+                    maxLength={1000}
+                  />
+                </div>
+                <p className="text-xs text-wisebox-text-muted text-right">
+                  {description.length}/1000
+                </p>
+              </div>
+            )}
+
+            {/* Step 3: Preferred Time Slots */}
+            {needsScheduling && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                  <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">3</span>
+                  Choose preferred time slots
+                </h3>
+                <p className="text-xs text-wisebox-text-secondary">
+                  Select 2-5 time slots when you are available. Our consultant will confirm one of these times after your purchase.
+                </p>
+                <TimeSlotPicker
+                  onSlotsChange={setPreferredSlots}
+                  minSlots={2}
+                  maxSlots={5}
+                />
+              </div>
+            )}
+
+            {/* Error */}
             {error && (
               <div className="rounded-md border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
                 {error}
               </div>
             )}
 
+            {/* CTA Button */}
             <Button
               className="w-full bg-wisebox-primary hover:bg-wisebox-primary-hover text-white"
-              disabled={createOrderMutation.isPending || !selectedPropertyId}
+              disabled={
+                createOrderMutation.isPending ||
+                !selectedPropertyId ||
+                !hasEnoughSlots
+              }
               onClick={() => {
                 setError(null);
                 createOrderMutation.mutate();
@@ -176,11 +275,17 @@ export function ServiceDetailPanel({
                 </>
               ) : (
                 <>
-                  Buy Now
+                  {ctaLabel}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </>
               )}
             </Button>
+
+            {needsScheduling && !hasEnoughSlots && selectedPropertyId && (
+              <p className="text-xs text-center text-wisebox-text-muted">
+                Select at least 2 time slots to enable booking
+              </p>
+            )}
           </div>
 
           {/* Related Properties */}

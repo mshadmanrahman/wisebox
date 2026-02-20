@@ -285,6 +285,8 @@ export interface OrderItem {
 export interface CreateOrderData {
   property_id: number;
   items: { service_id: number }[];
+  description?: string;
+  preferred_slots?: Array<{ date: string; time: string; display: string }>;
 }
 
 export interface CheckoutResponse {
