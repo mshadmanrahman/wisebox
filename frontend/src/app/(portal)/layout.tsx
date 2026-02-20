@@ -137,14 +137,9 @@ function PortalHeader() {
                 Settings
               </Link>
               {isAdminRole && (
-                <>
-                  <Link href="/consultant" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                    Consultant
-                  </Link>
-                  <Link href="/admin/dashboard" className="text-amber-400 hover:text-amber-300 transition-colors">
-                    Admin
-                  </Link>
-                </>
+                <Link href="/admin/dashboard" className="text-amber-400 hover:text-amber-300 transition-colors">
+                  Admin Panel
+                </Link>
               )}
             </>
           )}
