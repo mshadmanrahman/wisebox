@@ -2,13 +2,21 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
+import { Calendar, CheckCircle, Loader2, Sparkles } from 'lucide-react';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { ServiceDetailPanel } from '@/components/services/service-detail-panel';
-import type { ApiResponse, PaginatedResponse, Property, Service, ServiceCategory } from '@/types';
+import { FreeConsultationDialog } from '@/components/property/free-consultation-dialog';
+import type { ApiResponse, PaginatedResponse, Property, Service, ServiceCategory, Ticket } from '@/types';
 
 interface LegacyPaginatedServiceCatalogResponse {
   data: Service[];
@@ -87,6 +95,7 @@ export default function ServicesPage() {
   const [page, setPage] = useState(1);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [consultPropertyId, setConsultPropertyId] = useState<string>('');
 
   useEffect(() => {
     setPage(1);
@@ -124,8 +133,28 @@ export default function ServicesPage() {
     },
   });
 
+  // Check if user already has a free consultation ticket
+  const { data: ticketsData } = useQuery({
+    queryKey: ['tickets', 'free-consultation-check'],
+    queryFn: async () => {
+      const res = await api.get<PaginatedResponse<Ticket>>('/tickets', {
+        params: { per_page: 100 },
+      });
+      return res.data.data;
+    },
+  });
+
+  const hasUsedFreeConsultation = useMemo(
+    () => (ticketsData ?? []).some((t) => t.is_free_consultation),
+    [ticketsData]
+  );
+
   const services = useMemo(() => serviceCatalog?.data ?? [], [serviceCatalog]);
   const serviceMeta = serviceCatalog?.meta;
+
+  const selectedConsultProperty = (properties ?? []).find(
+    (p) => String(p.id) === consultPropertyId
+  );
 
   const openServiceDetail = (service: Service) => {
     setSelectedService(service);
@@ -141,6 +170,95 @@ export default function ServicesPage() {
           Browse our catalog of property services
         </p>
       </div>
+
+      {/* Free Consultation Banner */}
+      {!hasUsedFreeConsultation && (
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-600 via-blue-700 to-indigo-800 p-[1px]">
+          <div className="relative rounded-2xl bg-gradient-to-r from-cyan-600/95 via-blue-700/95 to-indigo-800/95 px-6 py-8 sm:px-8">
+            {/* Decorative pattern overlay */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.06%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50 pointer-events-none" />
+
+            <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              {/* Left: Text */}
+              <div className="space-y-3 lg:max-w-xl">
+                <div className="flex items-center gap-2">
+                  <div className="bg-white/15 rounded-full p-2 backdrop-blur-sm">
+                    <Sparkles className="h-5 w-5 text-white" />
+                  </div>
+                  <Badge className="bg-green-500/20 text-green-300 border-green-400/30 text-xs font-semibold">
+                    FREE
+                  </Badge>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
+                  Get a Free 30-Minute<br className="hidden sm:block" /> Expert Consultation
+                </h2>
+                <p className="text-white/80 text-sm sm:text-base leading-relaxed">
+                  Not sure where to start? Our property experts will review your documents,
+                  assess your situation, and give you a clear action plan. No strings attached.
+                </p>
+                <div className="flex items-center gap-4 text-white/60 text-xs">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" />
+                    30 minutes
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle className="h-3.5 w-3.5" />
+                    No payment required
+                  </span>
+                </div>
+              </div>
+
+              {/* Right: Property selector + CTA */}
+              <div className="flex flex-col gap-3 lg:min-w-[320px]">
+                <label className="text-white/80 text-sm font-medium">
+                  Select a property for your consultation
+                </label>
+                {(properties ?? []).length === 0 ? (
+                  <p className="text-white/60 text-sm">
+                    Add a property first to book a consultation.
+                  </p>
+                ) : (
+                  <Select value={consultPropertyId} onValueChange={setConsultPropertyId}>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white hover:bg-white/15 transition-colors backdrop-blur-sm h-12">
+                      <SelectValue placeholder="Choose your property..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-wisebox-background-card border-wisebox-border">
+                      {(properties ?? []).map((property) => (
+                        <SelectItem key={property.id} value={String(property.id)} className="text-white hover:bg-wisebox-background-lighter">
+                          {property.property_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                {selectedConsultProperty ? (
+                  <FreeConsultationDialog
+                    propertyId={selectedConsultProperty.id}
+                    propertyName={selectedConsultProperty.property_name}
+                    trigger={
+                      <Button className="w-full bg-white hover:bg-gray-100 text-blue-800 font-semibold h-12 text-base shadow-lg">
+                        <Calendar className="h-5 w-5 mr-2" />
+                        Book Free Consultation
+                      </Button>
+                    }
+                  />
+                ) : (
+                  <Button
+                    disabled
+                    className="w-full bg-white/20 text-white/50 cursor-not-allowed h-12 text-base"
+                  >
+                    <Calendar className="h-5 w-5 mr-2" />
+                    {(properties ?? []).length === 0
+                      ? 'Add a Property First'
+                      : 'Select a Property Above'}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tab Filters */}
       <div className="flex items-center gap-2">
