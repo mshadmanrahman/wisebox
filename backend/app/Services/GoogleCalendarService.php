@@ -70,7 +70,7 @@ class GoogleCalendarService
             $createdEvent = $service->events->insert(
                 'primary',
                 $event,
-                ['conferenceDataVersion' => 1]
+                ['conferenceDataVersion' => 1, 'sendUpdates' => 'all']
             );
 
             $meetLink = $createdEvent->getHangoutLink()
