@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -11,8 +10,9 @@ import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Loader2, MapPin } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useGoogleAuth } from '@/hooks/use-google-auth';
+import { AuthTestimonialCarousel } from '@/components/auth/testimonial-carousel';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -191,41 +191,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right side - Testimonial */}
-      <div className="hidden lg:flex lg:w-1/2 bg-wisebox-background-card relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/auth/login-testimonial.jpg"
-            alt="Happy customer"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-600/40"></div>
-        </div>
-
-        <div className="relative z-10 flex flex-col justify-end p-12 text-white">
-          {/* Location badge */}
-          <div className="absolute top-8 right-8 flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm">
-            <MapPin className="w-4 h-4" />
-            <span>Toronto, Canada</span>
-          </div>
-
-          {/* Testimonial */}
-          <div className="max-w-xl space-y-4 bg-gradient-to-t from-black/60 to-transparent p-8 rounded-2xl backdrop-blur-sm">
-            <svg className="w-10 h-10 text-white/80" fill="currentColor" viewBox="0 0 32 32">
-              <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-            </svg>
-            <p className="text-lg leading-relaxed">
-              WiseBox has been a lifesaver for managing my family&apos;s properties back in Bangladesh. Everything is now organized and accessible from Toronto. I can finally sleep peacefully knowing our assets are properly documented and protected.
-            </p>
-            <div>
-              <p className="font-semibold">Ahmed Hassan</p>
-              <p className="text-sm text-white/80">Software Engineer</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Right side - Rotating Testimonials */}
+      <AuthTestimonialCarousel />
     </div>
   );
 }
