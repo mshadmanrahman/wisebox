@@ -3,162 +3,114 @@
 namespace App\Filament\Resources\Tickets\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
+// Simplified infolist without Section/Grid components (Filament 4 compatibility)
 class TicketInfolist
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('Ticket Overview')
-                    ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                TextEntry::make('ticket_number')
-                                    ->label('Ticket #')
-                                    ->copyable(),
+                // Ticket Overview
+                TextEntry::make('ticket_number')
+                    ->label('Ticket #')
+                    ->copyable(),
 
-                                TextEntry::make('status')
-                                    ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
-                                        'open' => 'warning',
-                                        'assigned' => 'info',
-                                        'in_progress' => 'primary',
-                                        'awaiting_customer' => 'warning',
-                                        'awaiting_consultant' => 'info',
-                                        'scheduled' => 'primary',
-                                        'completed' => 'success',
-                                        'cancelled' => 'danger',
-                                        'closed' => 'gray',
-                                        default => 'gray',
-                                    }),
+                TextEntry::make('status')
+                    ->badge()
+                    ->color(fn ($state): string => match ($state) {
+                        'open' => 'warning',
+                        'assigned' => 'info',
+                        'in_progress' => 'primary',
+                        'awaiting_customer' => 'warning',
+                        'awaiting_consultant' => 'info',
+                        'scheduled' => 'primary',
+                        'completed' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    }),
 
-                                TextEntry::make('priority')
-                                    ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
-                                        'high' => 'danger',
-                                        'medium' => 'warning',
-                                        'low' => 'success',
-                                        default => 'gray',
-                                    }),
-                            ]),
+                TextEntry::make('priority')
+                    ->badge()
+                    ->color(fn ($state): string => match ($state) {
+                        'high' => 'danger',
+                        'medium' => 'warning',
+                        'low' => 'success',
+                        default => 'gray',
+                    }),
 
-                        TextEntry::make('title')
-                            ->label('Title')
-                            ->columnSpanFull(),
+                TextEntry::make('title')
+                    ->label('Title'),
 
-                        TextEntry::make('description')
-                            ->label('Description')
-                            ->columnSpanFull()
-                            ->markdown(),
-                    ]),
+                TextEntry::make('description')
+                    ->label('Description')
+                    ->markdown()
+                    ->placeholder('-'),
 
-                Section::make('People Involved')
-                    ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                TextEntry::make('customer.name')
-                                    ->label('Customer'),
+                // People
+                TextEntry::make('customer.name')
+                    ->label('Customer')
+                    ->placeholder('-'),
 
-                                TextEntry::make('customer.email')
-                                    ->label('Customer Email')
-                                    ->copyable(),
+                TextEntry::make('customer.email')
+                    ->label('Customer Email')
+                    ->copyable()
+                    ->placeholder('-'),
 
-                                TextEntry::make('consultant.name')
-                                    ->label('Assigned Consultant')
-                                    ->default('Not assigned yet')
-                                    ->badge()
-                                    ->color(fn ($state) => $state === 'Not assigned yet' ? 'warning' : 'success'),
-                            ]),
-                    ]),
+                TextEntry::make('consultant.name')
+                    ->label('Assigned Consultant')
+                    ->placeholder('Not assigned yet'),
 
-                Section::make('Property & Service')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextEntry::make('property.property_name')
-                                    ->label('Property'),
+                // Property & Service
+                TextEntry::make('property.property_name')
+                    ->label('Property')
+                    ->placeholder('-'),
 
-                                TextEntry::make('service.name')
-                                    ->label('Service'),
+                TextEntry::make('service.name')
+                    ->label('Service')
+                    ->placeholder('-'),
 
-                                TextEntry::make('order.order_number')
-                                    ->label('Order Number')
-                                    ->placeholder('No order')
-                                    ->copyable(),
-                            ]),
-                    ]),
+                TextEntry::make('order.order_number')
+                    ->label('Order Number')
+                    ->placeholder('No order')
+                    ->copyable(),
 
-                Section::make('Preferred Time Slots')
-                    ->schema([
-                        TextEntry::make('preferred_time_slots')
-                            ->label('Customer\'s Preferred Times')
-                            ->formatStateUsing(function ($state) {
-                                if (!$state) {
-                                    return 'No preferred time slots provided';
-                                }
+                // Scheduling
+                TextEntry::make('scheduled_at')
+                    ->label('Scheduled At')
+                    ->dateTime('F j, Y g:i A')
+                    ->placeholder('Not scheduled yet'),
 
-                                return collect($state)
-                                    ->map(fn ($slot, $index) => ($index + 1) . '. ' . $slot['display'])
-                                    ->join('<br>');
-                            })
-                            ->html(),
-                    ])
-                    ->visible(fn ($record) => !empty($record->preferred_time_slots)),
+                TextEntry::make('completed_at')
+                    ->label('Completed At')
+                    ->dateTime('F j, Y g:i A')
+                    ->placeholder('Not completed yet'),
 
-                Section::make('Consultation Details')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextEntry::make('scheduled_at')
-                                    ->label('Scheduled At')
-                                    ->dateTime('F j, Y g:i A')
-                                    ->placeholder('Not scheduled yet'),
+                TextEntry::make('meeting_url')
+                    ->label('Meeting Link')
+                    ->url(fn ($state) => $state)
+                    ->openUrlInNewTab()
+                    ->placeholder('No meeting link yet'),
 
-                                TextEntry::make('completed_at')
-                                    ->label('Completed At')
-                                    ->dateTime('F j, Y g:i A')
-                                    ->placeholder('Not completed yet'),
+                TextEntry::make('consultation_notes')
+                    ->label('Consultation Notes')
+                    ->markdown()
+                    ->placeholder('No notes yet'),
 
-                                TextEntry::make('meeting_url')
-                                    ->label('Meeting Link')
-                                    ->url(fn ($state) => $state)
-                                    ->openUrlInNewTab()
-                                    ->placeholder('No meeting link yet')
-                                    ->columnSpanFull(),
+                // Timeline
+                TextEntry::make('created_at')
+                    ->label('Created')
+                    ->dateTime('M j, Y g:i A'),
 
-                                TextEntry::make('consultation_notes')
-                                    ->label('Consultation Notes')
-                                    ->markdown()
-                                    ->placeholder('No notes yet')
-                                    ->columnSpanFull(),
-                            ]),
-                    ])
-                    ->visible(fn ($record) => $record->service &&
-                        (str_contains(strtolower($record->service->name), 'consultation') ||
-                         str_contains(strtolower($record->service->name), 'consult'))),
+                TextEntry::make('updated_at')
+                    ->label('Last Updated')
+                    ->dateTime('M j, Y g:i A'),
 
-                Section::make('Timeline')
-                    ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                TextEntry::make('created_at')
-                                    ->label('Created')
-                                    ->dateTime('M j, Y g:i A'),
-
-                                TextEntry::make('updated_at')
-                                    ->label('Last Updated')
-                                    ->dateTime('M j, Y g:i A'),
-
-                                TextEntry::make('resolved_at')
-                                    ->label('Resolved At')
-                                    ->dateTime('M j, Y g:i A')
-                                    ->placeholder('Not resolved yet'),
-                            ]),
-                    ]),
+                TextEntry::make('resolved_at')
+                    ->label('Resolved At')
+                    ->dateTime('M j, Y g:i A')
+                    ->placeholder('Not resolved yet'),
             ]);
     }
 }
