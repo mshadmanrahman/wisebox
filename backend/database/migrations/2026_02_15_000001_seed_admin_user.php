@@ -20,7 +20,7 @@ return new class extends Migration
             ['email' => $email],
             [
                 'name' => $name,
-                'password' => Hash::make($password),
+                'password' => $password,  // User model has 'hashed' cast; no manual Hash::make()
                 'role' => 'super_admin',
                 'status' => 'active',
                 'email_verified_at' => now(),

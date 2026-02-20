@@ -12,7 +12,7 @@ return new class extends Migration
             ['email' => 'customer@wiseboxinc.com'],
             [
                 'name' => 'Test Customer',
-                'password' => Hash::make('Wisebox2026!'),
+                'password' => 'Wisebox2026!',  // User model has 'hashed' cast; no manual Hash::make()
                 'role' => 'customer',
                 'status' => 'active',
                 'email_verified_at' => now(),

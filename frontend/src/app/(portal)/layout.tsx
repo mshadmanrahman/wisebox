@@ -125,6 +125,12 @@ function PortalHeader() {
           >
             Billing
           </Link>
+          <Link
+            href="/tickets"
+            className="text-wisebox-text-secondary hover:text-white transition-colors"
+          >
+            Consultations
+          </Link>
           {isConsultantRole && (
             <Link
               href="/consultant"
