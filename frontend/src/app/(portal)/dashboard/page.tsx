@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, ArrowRight, Bell, Plus } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
 import { PropertyCard } from '@/components/property/property-card';
+import { DashboardHeroBanner } from '@/components/dashboard/hero-banner';
+import type { HeroSlide } from '@/components/dashboard/hero-banner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,7 +30,6 @@ function relativeTime(value: string): string {
 
 
 export default function DashboardPage() {
-  const [activeSlide, setActiveSlide] = useState(0);
   const { user } = useAuthStore();
 
   const {
@@ -58,31 +58,18 @@ export default function DashboardPage() {
   const recentTickets = summary?.tickets_preview ?? [];
   const unreadCount = summary?.unread_notifications_count ?? 0;
 
-  // Hero slides matching the screenshots exactly
-  const heroSlides = [
-    {
-      title: 'Get Land Related Service Online',
-      subtitle: 'Learn more about our services',
-      buttonText: 'Learn More',
-      buttonLink: '/workspace/services',
-    },
-    {
-      title: "Don't have all your papers in place?",
-      subtitle: 'Learn how to get the right documents instantly.',
-      buttonText: 'See How',
-      buttonLink: '/workspace/services',
-    },
-  ];
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      setActiveSlide((current) => (current + 1) % heroSlides.length);
-    }, 5000); // Auto-rotate every 5 seconds
-
-    return () => window.clearInterval(interval);
-  }, [heroSlides.length]);
-
-  const currentSlide = heroSlides[activeSlide];
+  // Map API Slider objects to HeroSlide interface for the banner component
+  const heroSlides: HeroSlide[] = (summary?.hero_slides ?? []).map((s) => ({
+    id: s.id,
+    title: s.title,
+    subtitle: s.subtitle,
+    cta_text: s.cta_text,
+    cta_url: s.cta_url,
+    background_color: s.background_color,
+    image_path: s.image_path || null,
+    image_alt: s.image_alt,
+    display_order: s.sort_order,
+  }));
 
   const activities =
     notifications.length > 0
@@ -173,39 +160,12 @@ export default function DashboardPage() {
         </Card>
       )}
 
-      {/* Hero Banner with Rounded Corners */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white p-10 min-h-[260px] flex flex-col justify-between rounded-2xl relative overflow-hidden shadow-xl">
-        <div className="space-y-4 max-w-2xl relative z-10">
-          <h2 className="text-3xl font-bold leading-tight text-cyan-100">
-            {currentSlide.title}
-          </h2>
-          <p className="text-white/90 text-base leading-relaxed">
-            {currentSlide.subtitle}
-          </p>
-        </div>
-        <div className="pt-6 flex items-center justify-between relative z-10">
-          <Button asChild className="bg-white text-slate-800 hover:bg-gray-100 font-semibold px-6 h-12 rounded-lg shadow-md hover:shadow-lg transition-all">
-            <Link href={currentSlide.buttonLink}>
-              {currentSlide.buttonText}
-            </Link>
-          </Button>
-
-          {/* Carousel Dots */}
-          <div className="flex gap-2">
-            {heroSlides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveSlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === activeSlide
-                    ? 'w-8 bg-white'
-                    : 'w-2 bg-white/50 hover:bg-white/70'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Hero Banner */}
+      <DashboardHeroBanner
+        slides={heroSlides}
+        rotationInterval={5000}
+        className="rounded-2xl shadow-xl"
+      />
 
       {/* Guide Section */}
       <div className="space-y-5">

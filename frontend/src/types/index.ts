@@ -456,6 +456,8 @@ export interface Slider {
   image_path: string;
   cta_text: string | null;
   cta_url: string | null;
+  background_color: string | null;
+  image_alt: string | null;
   is_active: boolean;
   sort_order: number;
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -13,6 +14,8 @@ export interface HeroSlide {
   cta_text?: string | null
   cta_url?: string | null
   background_color?: string | null
+  image_path?: string | null
+  image_alt?: string | null
   display_order: number
 }
 
@@ -98,32 +101,47 @@ export function DashboardHeroBanner({
               : undefined
           }
         >
-          <div className="space-y-3 max-w-2xl">
-            <p className="text-white/80 text-sm uppercase tracking-[0.08em]">
-              Wisebox Dashboard
-            </p>
-            <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
-              {currentSlide?.title ?? defaultTitle}
-            </h1>
-            {currentSlide?.subtitle && (
-              <p className="text-white/90 text-sm sm:text-base">
-                {currentSlide.subtitle}
+          <div className="flex items-center gap-8">
+            {/* Left: text content */}
+            <div className="flex-1 space-y-3">
+              <p className="text-white/80 text-sm uppercase tracking-[0.08em]">
+                Wisebox Dashboard
               </p>
+              <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
+                {currentSlide?.title ?? defaultTitle}
+              </h1>
+              {currentSlide?.subtitle && (
+                <p className="text-white/90 text-sm sm:text-base">
+                  {currentSlide.subtitle}
+                </p>
+              )}
+              <div className="pt-5 flex flex-wrap items-center gap-3">
+                <Button asChild className="bg-white text-wisebox-primary-700 hover:bg-white/90">
+                  <Link href={heroCtaHref}>
+                    {currentSlide?.cta_text || defaultCtaText}
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-white/50 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                >
+                  <Link href="/assessment/start">Get Free Assessment</Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: optional image */}
+            {currentSlide?.image_path && (
+              <div className="hidden md:block flex-shrink-0 w-[200px] h-[180px] relative">
+                <Image
+                  src={currentSlide.image_path}
+                  alt={currentSlide.image_alt ?? currentSlide.title ?? ""}
+                  fill
+                  className="object-contain"
+                />
+              </div>
             )}
-          </div>
-          <div className="pt-5 flex flex-wrap items-center gap-3">
-            <Button asChild className="bg-white text-wisebox-primary-700 hover:bg-white/90">
-              <Link href={heroCtaHref}>
-                {currentSlide?.cta_text || defaultCtaText}
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-white/50 bg-transparent text-white hover:bg-white/10 hover:text-white"
-            >
-              <Link href="/assessment/start">Get Free Assessment</Link>
-            </Button>
           </div>
 
           {/* Slide indicators */}

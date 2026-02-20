@@ -7,14 +7,7 @@ import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { DocumentInfoModal } from '@/components/property/document-info-modal';
 import {
   Upload,
   Check,
@@ -73,6 +66,7 @@ export function DocumentUploadItem({
     return [];
   })();
 
+  const [infoOpen, setInfoOpen] = useState(false);
   const [state, setState] = useState<ItemState>(
     uploadedDocument?.has_document === false
       ? 'missing'
@@ -233,28 +227,20 @@ export function DocumentUploadItem({
           </p>
         </div>
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
-              <Info className="h-4 w-4 text-wisebox-text-muted" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{documentType.name}</DialogTitle>
-              <DialogDescription>
-                {documentType.guidance_text || 'No additional guidance available for this document type.'}
-              </DialogDescription>
-            </DialogHeader>
-            {documentType.missing_guidance && (
-              <div className="rounded-md bg-amber-500/10 border border-amber-500/20 p-3">
-                <p className="text-sm text-amber-300">
-                  <strong>If you don&apos;t have this:</strong> {documentType.missing_guidance}
-                </p>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 shrink-0"
+          onClick={() => setInfoOpen(true)}
+        >
+          <Info className="h-4 w-4 text-wisebox-text-muted" />
+        </Button>
+        <DocumentInfoModal
+          slug={documentType.slug}
+          documentTypeName={documentType.name}
+          open={infoOpen}
+          onOpenChange={setInfoOpen}
+        />
       </div>
 
       {state === 'idle' && !showDropzone && (
