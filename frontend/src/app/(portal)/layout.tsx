@@ -108,6 +108,9 @@ function PortalHeader() {
           <Link href="/properties" className="text-wisebox-text-secondary hover:text-white transition-colors">
             Assets
           </Link>
+          <Link href="/learning" className="text-wisebox-text-secondary hover:text-white transition-colors">
+            Learning
+          </Link>
           <Link href="/assessment/start" className="text-wisebox-text-secondary hover:text-white transition-colors">
             Assessment
           </Link>

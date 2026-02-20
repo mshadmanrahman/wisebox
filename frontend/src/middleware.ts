@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // Routes that require authentication (user portal)
-const userProtectedPaths = ['/dashboard', '/properties', '/workspace', '/tickets', '/orders', '/settings', '/notifications'];
+const userProtectedPaths = ['/dashboard', '/properties', '/workspace', '/tickets', '/orders', '/settings', '/notifications', '/learning'];
 
 // Admin-only routes
-const adminProtectedPaths = ['/admin/dashboard', '/admin/consultations'];
+const adminProtectedPaths = ['/admin/dashboard', '/admin/consultations', '/admin/learning'];
 
 // Consultant-only routes
 const consultantProtectedPaths = ['/consultant'];
@@ -60,6 +60,7 @@ export const config = {
     '/consultant/:path*',
     '/settings/:path*',
     '/notifications/:path*',
+    '/learning/:path*',
     '/admin/:path*',
     '/login/:path*',
     '/login',
