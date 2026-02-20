@@ -11,6 +11,7 @@ use App\Notifications\MeetingScheduledNotification;
 use App\Notifications\OrderLifecycleNotification;
 use App\Notifications\TicketCreatedNotification;
 use App\Notifications\TicketLifecycleNotification;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -110,17 +111,51 @@ class TransactionalEmailService
         string $templateName,
         string $formUrl,
     ): void {
+        $ticketNumber = (string) $ticket->ticket_number;
+        $propertyName = (string) ($ticket->property?->property_name ?? 'Your Property');
+        $consultantName = (string) ($ticket->consultant?->name ?? 'Wisebox Consultant');
+
+        // Use Resend HTTP API directly (bypasses SMTP, works on all cloud platforms)
+        $apiKey = config('services.resend.key') ?: env('MAIL_PASSWORD');
+        $fromAddress = config('mail.from.address', 'onboarding@resend.dev');
+        $fromName = config('mail.from.name', 'Wisebox');
+
+        $html = "<h2>Consultation Form Request</h2>"
+            . "<p>Hello,</p>"
+            . "<p>Your consultant <strong>{$consultantName}</strong> has requested you to fill out a form for your property consultation.</p>"
+            . "<p><strong>Form:</strong> {$templateName}<br>"
+            . "<strong>Ticket:</strong> {$ticketNumber}<br>"
+            . "<strong>Property:</strong> {$propertyName}</p>"
+            . "<p>Please complete this form at your earliest convenience to help us assist you better.</p>"
+            . "<p><a href=\"{$formUrl}\" style=\"background:#2563eb;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;\">Fill Out Form</a></p>"
+            . "<p style=\"color:#666;font-size:13px;\">This link will expire in 7 days. No login is required to complete the form.</p>";
+
         try {
-            \Illuminate\Support\Facades\Notification::route('mail', $customerEmail)
-                ->notify(new FormInvitationNotification(
-                    templateName: $templateName,
-                    ticketNumber: (string) $ticket->ticket_number,
-                    propertyName: (string) ($ticket->property?->property_name ?? 'Your Property'),
-                    consultantName: (string) ($ticket->consultant?->name ?? 'Wisebox Consultant'),
-                    formUrl: $formUrl,
-                ));
+            $response = Http::withToken($apiKey)
+                ->timeout(10)
+                ->post('https://api.resend.com/emails', [
+                    'from' => "{$fromName} <{$fromAddress}>",
+                    'to' => [$customerEmail],
+                    'subject' => "Please complete: {$templateName} for {$ticketNumber}",
+                    'html' => $html,
+                ]);
+
+            if ($response->successful()) {
+                Log::info('Form invitation email sent via Resend API.', [
+                    'ticket_id' => $ticket->id,
+                    'customer_email' => $customerEmail,
+                    'resend_id' => $response->json('id'),
+                ]);
+            } else {
+                Log::warning('Resend API rejected form invitation email.', [
+                    'ticket_id' => $ticket->id,
+                    'customer_email' => $customerEmail,
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+            }
         } catch (Throwable $exception) {
-            Log::warning('Failed to queue form invitation email notification.', [
+            Log::warning('Failed to send form invitation email via Resend API.', [
                 'ticket_id' => $ticket->id,
                 'customer_email' => $customerEmail,
                 'error' => $exception->getMessage(),
