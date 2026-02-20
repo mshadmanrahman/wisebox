@@ -29,11 +29,9 @@ class GoogleCalendarService
             GoogleCalendar::CALENDAR_EVENTS,
             GoogleCalendar::CALENDAR,
         ]);
-        $this->client->setAuthConfig([
-            'client_id' => config('services.google.client_id'),
-            'client_secret' => config('services.google.client_secret'),
-            'redirect_uris' => [config('services.google.redirect_uri')],
-        ]);
+        $this->client->setClientId(config('services.google.client_id'));
+        $this->client->setClientSecret(config('services.google.client_secret'));
+        $this->client->setRedirectUri(config('services.google.redirect_uri'));
         $this->client->setAccessType('offline');
         $this->client->setPrompt('consent');
     }
