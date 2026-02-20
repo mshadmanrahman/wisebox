@@ -403,14 +403,14 @@ class ConsultantTicketController extends Controller
             ])
         );
 
-        // Send meeting confirmation email to customer (only if we have a meet link)
-        if ($meetLink && $ticket->customer_id) {
+        // Send meeting confirmation email to customer
+        if ($ticket->customer_id) {
             $customer = User::query()->find($ticket->customer_id);
             if ($customer && $customer->email) {
                 $this->transactionalEmailService->sendMeetingScheduled(
                     $customer,
                     $ticket,
-                    $meetLink,
+                    $meetLink ?? '',
                     $startTime,
                     $duration,
                 );

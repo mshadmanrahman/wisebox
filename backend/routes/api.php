@@ -46,6 +46,43 @@ Route::prefix('v1')->group(function () {
         return response()->json(['status' => 'ok']);
     });
 
+    // Temporary: test meeting email (remove after testing)
+    Route::get('/test-meeting-email/{ticketId}', function (int $ticketId) {
+        $ticket = \App\Models\Ticket::with(['customer', 'consultant', 'property'])->findOrFail($ticketId);
+        $customer = $ticket->customer;
+        if (!$customer || !$customer->email) {
+            return response()->json(['error' => 'Ticket has no customer with email'], 422);
+        }
+
+        // Seed preferred_time_slots if missing (for UI testing)
+        if (empty($ticket->preferred_time_slots)) {
+            $ticket->update([
+                'preferred_time_slots' => [
+                    ['date' => now()->addDays(2)->format('Y-m-d'), 'time' => '10:00'],
+                    ['date' => now()->addDays(3)->format('Y-m-d'), 'time' => '14:00'],
+                    ['date' => now()->addDays(4)->format('Y-m-d'), 'time' => '11:00'],
+                ],
+            ]);
+            $ticket->refresh();
+        }
+
+        $service = app(\App\Services\TransactionalEmailService::class);
+        $service->sendMeetingScheduled(
+            $customer,
+            $ticket,
+            'https://meet.google.com/test-wisebox-demo',
+            \Carbon\Carbon::now()->addDays(2)->setHour(10)->setMinute(0),
+            60,
+        );
+
+        return response()->json([
+            'status' => 'sent',
+            'to' => $customer->email,
+            'ticket' => $ticket->ticket_number,
+            'note' => 'Check Resend dashboard or inbox. Remove this endpoint after testing.',
+        ]);
+    });
+
     // Auth routes (public, rate-limited: 5 attempts/min)
     Route::prefix('auth')->middleware('throttle:auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);

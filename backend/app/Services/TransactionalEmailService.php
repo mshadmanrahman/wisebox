@@ -95,6 +95,10 @@ class TransactionalEmailService
         $consultantName = (string) ($ticket->consultant?->name ?? 'Wisebox Consultant');
         $formattedDate = $scheduledAt->format('l, F j, Y \a\t g:i A');
 
+        $meetSection = $meetLink
+            ? $this->ctaButton('Join Meeting', $meetLink)
+            : "<p><strong>Meeting link:</strong> Your consultant will share the meeting link separately.</p>";
+
         $html = "<h2>Consultation Meeting Scheduled</h2>"
             . "<p>Hello {$customer->name},</p>"
             . "<p>Your consultation meeting has been scheduled.</p>"
@@ -103,7 +107,7 @@ class TransactionalEmailService
             . "<strong>Consultant:</strong> {$consultantName}<br>"
             . "<strong>Date:</strong> {$formattedDate}<br>"
             . "<strong>Duration:</strong> {$durationMinutes} minutes</p>"
-            . $this->ctaButton('Join Meeting', $meetLink)
+            . $meetSection
             . "<p style=\"color:#666;font-size:13px;\">Please join a few minutes early. If you need to reschedule, contact your consultant.</p>";
 
         $this->sendViaResend($customer->email, "Meeting scheduled for {$ticketNumber}", $html, 'meeting_scheduled', ['ticket_id' => $ticket->id]);
