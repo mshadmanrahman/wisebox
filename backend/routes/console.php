@@ -12,7 +12,7 @@ Artisan::command('inspire', function () {
 // --stop-when-empty: exits after clearing the queue so the scheduler isn't blocked.
 // --tries=3: retry failed jobs up to 3 times.
 // --timeout=30: kill any single job that runs longer than 30 seconds.
-Schedule::command('queue:work --stop-when-empty --tries=3 --timeout=30')
+Schedule::command('queue:work --queue=default,notifications --stop-when-empty --tries=3 --timeout=30')
     ->everyMinute()
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/queue-worker.log'));
