@@ -87,7 +87,8 @@ class TicketInfolist
 
                                 TextEntry::make('order.order_number')
                                     ->label('Order Number')
-                                    ->url(fn ($record) => $record->order ? route('filament.admin.resources.orders.view', $record->order) : null),
+                                    ->placeholder('No order')
+                                    ->copyable(),
                             ]),
                     ]),
 

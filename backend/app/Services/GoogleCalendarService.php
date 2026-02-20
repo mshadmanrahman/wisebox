@@ -12,6 +12,7 @@ use Google\Service\Calendar\EventDateTime;
 use Google\Service\Calendar\ConferenceData;
 use Google\Service\Calendar\CreateConferenceRequest;
 use Google\Service\Calendar\ConferenceSolutionKey;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Throwable;
@@ -205,34 +206,38 @@ class GoogleCalendarService
     }
 
     /**
-     * Get access token (placeholder - implement based on your auth strategy)
+     * Get access token from cache, falling back to env config.
      */
     private function getAccessToken(): array
     {
-        // TODO: Implement token storage/retrieval
-        // Options:
-        // 1. Store in database per consultant
-        // 2. Store in cache
-        // 3. Use service account (recommended for backend)
+        // Check cache first (populated after token refresh)
+        $cached = Cache::get('google_calendar_token');
+        if (is_array($cached) && !empty($cached)) {
+            return $cached;
+        }
 
-        // For now, return from config (you'll need to generate this first)
+        // Fall back to env/config
         $token = config('services.google.access_token');
 
         if (!$token) {
             throw new RuntimeException('Google access token not configured. Run: php artisan google:auth');
         }
 
-        return is_array($token) ? $token : json_decode($token, true);
+        $decoded = is_array($token) ? $token : json_decode($token, true);
+
+        // Seed the cache so subsequent calls use it
+        Cache::put('google_calendar_token', $decoded, 3500);
+
+        return $decoded;
     }
 
     /**
-     * Save access token (placeholder)
+     * Persist access token to cache (survives token refresh within the hour).
      */
     private function saveAccessToken(array $token): void
     {
-        // TODO: Implement token persistence
-        // For development, you can store in .env or database
-        Log::info('New Google access token received', ['token' => $token]);
+        Cache::put('google_calendar_token', $token, 3500); // just under 1hr
+        Log::info('Google access token refreshed and cached.');
     }
 
     /**

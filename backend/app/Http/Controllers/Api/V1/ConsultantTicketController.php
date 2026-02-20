@@ -347,82 +347,88 @@ class ConsultantTicketController extends Controller
         $selectedSlot = $preferredSlots[$slotIndex];
         $duration = $validated['duration_minutes'] ?? 60;
 
+        // Parse the selected time slot
+        $slotDate = $selectedSlot['date'] ?? null;
+        $slotTime = $selectedSlot['time'] ?? null;
+
+        if (!$slotDate || !$slotTime) {
+            return response()->json([
+                'message' => 'Selected slot is missing date or time information.',
+            ], 422);
+        }
+
+        // Combine date and time into a Carbon instance
+        $startTime = \Carbon\Carbon::parse("{$slotDate} {$slotTime}");
+
+        // Attempt Google Calendar meeting creation with graceful fallback
+        $meetingData = null;
+        $calendarWarning = null;
+
         try {
-            // Parse the selected time slot
-            $slotDate = $selectedSlot['date'] ?? null;
-            $slotTime = $selectedSlot['time'] ?? null;
-
-            if (!$slotDate || !$slotTime) {
-                return response()->json([
-                    'message' => 'Selected slot is missing date or time information.',
-                ], 422);
-            }
-
-            // Combine date and time into a Carbon instance
-            $startTime = \Carbon\Carbon::parse("{$slotDate} {$slotTime}");
-
-            // Create Google Meet meeting
             $meetingData = $this->googleCalendarService->createConsultationMeeting(
                 $ticket,
                 $startTime,
                 $duration
             );
-
-            // Update ticket with meeting details
-            $ticket->update([
-                'scheduled_at' => $startTime,
-                'meeting_url' => $meetingData['meet_link'],
-                'meeting_duration_minutes' => $duration,
-                'status' => 'scheduled',
-            ]);
-
-            // Send notification to customer
-            $this->createNotification(
-                (int) $ticket->customer_id,
-                'ticket.meeting.scheduled',
-                'Meeting scheduled',
-                "Your consultation for ticket {$ticket->ticket_number} has been scheduled for {$startTime->format('M d, Y \a\t g:i A')}.",
-                [
-                    'ticket_id' => $ticket->id,
-                    'ticket_number' => $ticket->ticket_number,
-                    'scheduled_at' => $startTime->toISOString(),
-                    'meet_link' => $meetingData['meet_link'],
-                    'calendar_link' => $meetingData['calendar_link'],
-                ]
-            );
-
-            // Send meeting confirmation email to customer
-            if ($ticket->customer_id) {
-                $customer = User::query()->find($ticket->customer_id);
-                if ($customer && $customer->email) {
-                    $this->transactionalEmailService->sendMeetingScheduled(
-                        $customer,
-                        $ticket,
-                        $meetingData['meet_link'],
-                        $startTime,
-                        $duration,
-                    );
-                }
-            }
-
-            $ticket->load(['customer:id,name,email', 'consultant:id,name,email', 'property:id,property_name', 'service:id,name']);
-
-            return response()->json([
-                'data' => $ticket,
-                'meeting' => $meetingData,
-            ]);
-
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to create consultation meeting', [
+            \Illuminate\Support\Facades\Log::warning('Google Calendar unavailable; scheduling without meet link.', [
                 'ticket_id' => $ticket->id,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
             ]);
-
-            return response()->json([
-                'message' => 'Failed to create meeting: ' . $e->getMessage(),
-            ], 500);
+            $calendarWarning = 'Google Calendar is unavailable. The slot has been confirmed but no Meet link was generated. Please create a meeting link manually and update the ticket.';
         }
+
+        $meetLink = $meetingData['meet_link'] ?? null;
+
+        // Update ticket with meeting details (proceeds even without a meet link)
+        $ticket->update([
+            'scheduled_at' => $startTime,
+            'meeting_url' => $meetLink,
+            'meeting_duration_minutes' => $duration,
+            'status' => 'scheduled',
+        ]);
+
+        // Send notification to customer
+        $this->createNotification(
+            (int) $ticket->customer_id,
+            'ticket.meeting.scheduled',
+            'Meeting scheduled',
+            "Your consultation for ticket {$ticket->ticket_number} has been scheduled for {$startTime->format('M d, Y \a\t g:i A')}.",
+            array_filter([
+                'ticket_id' => $ticket->id,
+                'ticket_number' => $ticket->ticket_number,
+                'scheduled_at' => $startTime->toISOString(),
+                'meet_link' => $meetLink,
+                'calendar_link' => $meetingData['calendar_link'] ?? null,
+            ])
+        );
+
+        // Send meeting confirmation email to customer (only if we have a meet link)
+        if ($meetLink && $ticket->customer_id) {
+            $customer = User::query()->find($ticket->customer_id);
+            if ($customer && $customer->email) {
+                $this->transactionalEmailService->sendMeetingScheduled(
+                    $customer,
+                    $ticket,
+                    $meetLink,
+                    $startTime,
+                    $duration,
+                );
+            }
+        }
+
+        $ticket->load(['customer:id,name,email', 'consultant:id,name,email', 'property:id,property_name', 'service:id,name']);
+
+        $response = [
+            'data' => $ticket,
+            'meeting' => $meetingData,
+        ];
+
+        if ($calendarWarning) {
+            $response['warning'] = $calendarWarning;
+        }
+
+        return response()->json($response);
     }
 
     /**
