@@ -79,8 +79,7 @@ function PortalHeader() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
 
-  const isConsultantRole =
-    user?.role === 'consultant' || user?.role === 'admin' || user?.role === 'super_admin';
+  const isConsultantOnly = user?.role === 'consultant';
   const isAdminRole =
     user?.role === 'admin' || user?.role === 'super_admin';
 
@@ -100,38 +99,54 @@ function PortalHeader() {
   return (
     <header className="bg-wisebox-background-card border-b border-wisebox-border px-6 py-4">
       <div className="flex items-center justify-between max-w-7xl mx-auto gap-4">
-        <Link href="/dashboard">
+        <Link href={isConsultantOnly ? '/consultant' : '/dashboard'}>
           <WiseboxLogo variant="light" className="hover:opacity-90 transition-opacity" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm">
-          <Link href="/properties" className="text-wisebox-text-secondary hover:text-white transition-colors">
-            Assets
-          </Link>
-          <Link href="/learning" className="text-wisebox-text-secondary hover:text-white transition-colors">
-            Learning
-          </Link>
-          <Link href="/assessment/start" className="text-wisebox-text-secondary hover:text-white transition-colors">
-            Assessment
-          </Link>
-          <Link href="/workspace/services" className="text-wisebox-text-secondary hover:text-white transition-colors">
-            Services
-          </Link>
-          <Link href="/tickets" className="text-wisebox-text-secondary hover:text-white transition-colors">
-            Tickets
-          </Link>
-          <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
-            Settings
-          </Link>
-          {isConsultantRole && (
-            <Link href="/consultant" className="text-wisebox-text-secondary hover:text-white transition-colors">
-              Consultant
-            </Link>
-          )}
-          {isAdminRole && (
-            <Link href="/admin/dashboard" className="text-amber-400 hover:text-amber-300 transition-colors">
-              Admin
-            </Link>
+          {isConsultantOnly ? (
+            <>
+              <Link href="/consultant" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                My Cases
+              </Link>
+              <Link href="/consultant/tickets" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                All Tickets
+              </Link>
+              <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                Settings
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/properties" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                Assets
+              </Link>
+              <Link href="/learning" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                Learning
+              </Link>
+              <Link href="/assessment/start" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                Assessment
+              </Link>
+              <Link href="/workspace/services" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                Services
+              </Link>
+              <Link href="/tickets" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                Tickets
+              </Link>
+              <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                Settings
+              </Link>
+              {isAdminRole && (
+                <>
+                  <Link href="/consultant" className="text-wisebox-text-secondary hover:text-white transition-colors">
+                    Consultant
+                  </Link>
+                  <Link href="/admin/dashboard" className="text-amber-400 hover:text-amber-300 transition-colors">
+                    Admin
+                  </Link>
+                </>
+              )}
+            </>
           )}
         </nav>
 

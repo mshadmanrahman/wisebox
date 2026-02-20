@@ -41,9 +41,17 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Auth routes: redirect to dashboard if already logged in
+  // Auth routes: redirect to appropriate landing if already logged in
   const isAuthRoute = authPaths.some((path) => pathname === path || pathname.startsWith(path + '/'));
   if (isAuthRoute && token) {
+    // Consultant login redirects to consultant portal
+    if (pathname.startsWith('/login/consultant')) {
+      return NextResponse.redirect(new URL('/consultant', request.url));
+    }
+    // Admin login redirects to admin dashboard
+    if (pathname.startsWith('/login/admin')) {
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    }
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
