@@ -36,11 +36,11 @@ interface Consultant {
 }
 
 const statusColors: Record<string, string> = {
-  open: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  assigned: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  scheduled: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  completed: 'bg-green-500/20 text-green-400 border-green-500/30',
-  cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
+  open: 'bg-amber-50 text-amber-700 border-amber-200',
+  assigned: 'bg-blue-50 text-blue-700 border-blue-200',
+  scheduled: 'bg-purple-50 text-purple-700 border-purple-200',
+  completed: 'bg-green-50 text-green-700 border-green-200',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
 };
 
 export default function AdminConsultationDetailPage() {
@@ -106,8 +106,8 @@ export default function AdminConsultationDetailPage() {
     return (
       <div className="px-6 py-8">
         <div className="animate-pulse space-y-6">
-          <div className="h-5 w-48 rounded bg-wisebox-background-lighter" />
-          <div className="h-64 w-full rounded-xl bg-wisebox-background-lighter" />
+          <div className="h-5 w-48 rounded bg-slate-200" />
+          <div className="h-64 w-full rounded-xl bg-slate-200" />
         </div>
       </div>
     );
@@ -116,7 +116,7 @@ export default function AdminConsultationDetailPage() {
   if (!consultation) {
     return (
       <div className="px-6 py-8">
-        <p className="text-wisebox-text-secondary">Consultation not found.</p>
+        <p className="text-slate-500">Consultation not found.</p>
       </div>
     );
   }
@@ -126,7 +126,7 @@ export default function AdminConsultationDetailPage() {
   return (
     <div className="px-6 py-8 space-y-6 max-w-4xl">
       {/* Back */}
-      <Button variant="ghost" asChild className="text-wisebox-text-secondary hover:text-white">
+      <Button variant="ghost" asChild className="text-slate-600 hover:text-slate-900 hover:bg-slate-100">
         <Link href="/admin/consultations">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Consultations
@@ -137,34 +137,34 @@ export default function AdminConsultationDetailPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Badge variant="outline" className="text-xs text-wisebox-text-secondary border-wisebox-border">
+            <Badge variant="outline" className="text-xs text-slate-500 border-slate-300 bg-white">
               {consultation.ticket_number}
             </Badge>
             <Badge variant="outline" className={cn('text-xs', statusColors[consultation.status] || '')}>
               {consultation.status === 'open' ? 'Pending Review' : consultation.status}
             </Badge>
           </div>
-          <h1 className="text-2xl font-bold text-white">{consultation.title}</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{consultation.title}</h1>
         </div>
       </div>
 
       {/* Customer & Property Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="bg-wisebox-background-card border-wisebox-border">
+        <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-white flex items-center gap-2">
-              <User className="h-4 w-4" />
+            <CardTitle className="text-sm text-slate-900 flex items-center gap-2">
+              <User className="h-4 w-4 text-slate-500" />
               Customer
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <p className="text-white font-medium">{consultation.customer?.name}</p>
-            <p className="text-wisebox-text-secondary">{consultation.customer?.email}</p>
+            <p className="text-slate-900 font-medium">{consultation.customer?.name}</p>
+            <p className="text-slate-500">{consultation.customer?.email}</p>
             {consultation.customer?.phone && (
-              <p className="text-wisebox-text-secondary">{consultation.customer.phone}</p>
+              <p className="text-slate-500">{consultation.customer.phone}</p>
             )}
             {consultation.customer?.country_of_residence && (
-              <p className="text-wisebox-text-muted flex items-center gap-1">
+              <p className="text-slate-400 flex items-center gap-1">
                 <MapPin className="h-3 w-3" />
                 {consultation.customer.country_of_residence}
               </p>
@@ -172,23 +172,23 @@ export default function AdminConsultationDetailPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-wisebox-background-card border-wisebox-border">
+        <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-white flex items-center gap-2">
-              <FileText className="h-4 w-4" />
+            <CardTitle className="text-sm text-slate-900 flex items-center gap-2">
+              <FileText className="h-4 w-4 text-slate-500" />
               Property
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <p className="text-white font-medium">{consultation.property?.property_name}</p>
+            <p className="text-slate-900 font-medium">{consultation.property?.property_name}</p>
             {consultation.property?.property_type && (
-              <p className="text-wisebox-text-secondary">Type: {consultation.property.property_type.name}</p>
+              <p className="text-slate-500">Type: {consultation.property.property_type.name}</p>
             )}
             {consultation.property?.ownership_status && (
-              <p className="text-wisebox-text-secondary">Status: {consultation.property.ownership_status.name}</p>
+              <p className="text-slate-500">Status: {consultation.property.ownership_status.name}</p>
             )}
             {consultation.property?.documents && (
-              <p className="text-wisebox-text-muted">
+              <p className="text-slate-400">
                 {consultation.property.documents.length} document(s) uploaded
               </p>
             )}
@@ -198,12 +198,12 @@ export default function AdminConsultationDetailPage() {
 
       {/* Description */}
       {consultation.description && (
-        <Card className="bg-wisebox-background-card border-wisebox-border">
+        <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-white">Consultation Request Details</CardTitle>
+            <CardTitle className="text-sm text-slate-900">Consultation Request Details</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-wisebox-text-secondary text-sm leading-relaxed whitespace-pre-wrap">
+            <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
               {consultation.description}
             </p>
           </CardContent>
@@ -212,18 +212,18 @@ export default function AdminConsultationDetailPage() {
 
       {/* Preferred Time Slots */}
       {consultation.preferred_time_slots && consultation.preferred_time_slots.length > 0 && (
-        <Card className="bg-wisebox-background-card border-wisebox-border">
+        <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-white flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
+            <CardTitle className="text-sm text-slate-900 flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-slate-500" />
               Preferred Time Slots
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {consultation.preferred_time_slots.map((slot: { date: string; time: string }, i: number) => (
-                <Badge key={i} variant="outline" className="border-wisebox-border text-white py-1.5 px-3">
-                  <Clock className="h-3 w-3 mr-1.5" />
+                <Badge key={i} variant="outline" className="border-slate-200 text-slate-700 bg-slate-50 py-1.5 px-3">
+                  <Clock className="h-3 w-3 mr-1.5 text-slate-400" />
                   {new Date(slot.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} at {slot.time}
                 </Badge>
               ))}
@@ -234,10 +234,10 @@ export default function AdminConsultationDetailPage() {
 
       {/* Action Section (only for pending) */}
       {isPending && (
-        <Card className="bg-wisebox-background-card border-amber-500/30">
+        <Card className="bg-white border-amber-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-white">Take Action</CardTitle>
-            <CardDescription className="text-wisebox-text-secondary">
+            <CardTitle className="text-slate-900">Take Action</CardTitle>
+            <CardDescription className="text-slate-500">
               Approve and assign a consultant, or reject the request
             </CardDescription>
           </CardHeader>
@@ -246,21 +246,21 @@ export default function AdminConsultationDetailPage() {
             {!showRejectForm && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-white text-sm">Assign Consultant</Label>
+                  <Label className="text-slate-700 text-sm">Assign Consultant</Label>
                   <Select value={selectedConsultant} onValueChange={setSelectedConsultant}>
-                    <SelectTrigger className="bg-wisebox-background-lighter border-wisebox-border text-white">
+                    <SelectTrigger className="bg-white border-slate-300 text-slate-900">
                       <SelectValue placeholder="Select a consultant..." />
                     </SelectTrigger>
-                    <SelectContent className="bg-wisebox-background-card border-wisebox-border">
+                    <SelectContent className="bg-white border-slate-200">
                       {consultants.map((c) => (
                         <SelectItem
                           key={c.id}
                           value={String(c.id)}
-                          className="text-white hover:bg-wisebox-background-lighter"
+                          className="text-slate-900 hover:bg-slate-50"
                         >
                           <div className="flex items-center justify-between w-full gap-4">
                             <span>{c.name}</span>
-                            <span className="text-xs text-wisebox-text-muted">
+                            <span className="text-xs text-slate-400">
                               {c.active_tickets_count}/{c.max_concurrent} cases
                             </span>
                           </div>
@@ -271,12 +271,12 @@ export default function AdminConsultationDetailPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-white text-sm">Admin Notes (optional)</Label>
+                  <Label className="text-slate-700 text-sm">Admin Notes (optional)</Label>
                   <Textarea
                     value={adminNotes}
                     onChange={(e) => setAdminNotes(e.target.value)}
                     placeholder="Any notes for the consultant..."
-                    className="bg-wisebox-background-lighter border-wisebox-border text-white placeholder:text-wisebox-text-muted"
+                    className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
                   />
                 </div>
 
@@ -295,7 +295,7 @@ export default function AdminConsultationDetailPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                    className="border-red-200 text-red-600 hover:bg-red-50"
                     onClick={() => setShowRejectForm(true)}
                   >
                     <XCircle className="h-4 w-4 mr-2" />
@@ -304,7 +304,7 @@ export default function AdminConsultationDetailPage() {
                 </div>
 
                 {approveMutation.isError && (
-                  <p className="text-sm text-red-400 flex items-center gap-1">
+                  <p className="text-sm text-red-600 flex items-center gap-1">
                     <AlertTriangle className="h-3.5 w-3.5" />
                     Failed to approve. Please try again.
                   </p>
@@ -316,12 +316,12 @@ export default function AdminConsultationDetailPage() {
             {showRejectForm && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-white text-sm">Reason for Rejection</Label>
+                  <Label className="text-slate-700 text-sm">Reason for Rejection</Label>
                   <Textarea
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
                     placeholder="Provide a reason for rejection..."
-                    className="bg-wisebox-background-lighter border-wisebox-border text-white placeholder:text-wisebox-text-muted"
+                    className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
                     rows={3}
                   />
                 </div>
@@ -340,7 +340,7 @@ export default function AdminConsultationDetailPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-wisebox-border text-white hover:bg-wisebox-background-lighter"
+                    className="border-slate-200 text-slate-700 hover:bg-slate-50"
                     onClick={() => setShowRejectForm(false)}
                   >
                     Cancel
@@ -354,13 +354,13 @@ export default function AdminConsultationDetailPage() {
 
       {/* Assigned Consultant Info (for non-pending) */}
       {consultation.consultant && (
-        <Card className="bg-wisebox-background-card border-wisebox-border">
+        <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-white">Assigned Consultant</CardTitle>
+            <CardTitle className="text-sm text-slate-900">Assigned Consultant</CardTitle>
           </CardHeader>
           <CardContent className="text-sm space-y-1">
-            <p className="text-white font-medium">{consultation.consultant.name}</p>
-            <p className="text-wisebox-text-secondary">{consultation.consultant.email}</p>
+            <p className="text-slate-900 font-medium">{consultation.consultant.name}</p>
+            <p className="text-slate-500">{consultation.consultant.email}</p>
           </CardContent>
         </Card>
       )}

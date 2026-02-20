@@ -25,11 +25,11 @@ interface ConsultationRequest {
 }
 
 const statusColors: Record<string, string> = {
-  open: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  assigned: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  scheduled: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  completed: 'bg-green-500/20 text-green-400 border-green-500/30',
-  cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
+  open: 'bg-amber-50 text-amber-700 border-amber-200',
+  assigned: 'bg-blue-50 text-blue-700 border-blue-200',
+  scheduled: 'bg-purple-50 text-purple-700 border-purple-200',
+  completed: 'bg-green-50 text-green-700 border-green-200',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
 };
 
 const statusLabels: Record<string, string> = {
@@ -75,8 +75,8 @@ export default function AdminConsultationsPage() {
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">Consultation Requests</h1>
-        <p className="text-wisebox-text-secondary mt-1">
+        <h1 className="text-2xl font-bold text-slate-900">Consultation Requests</h1>
+        <p className="text-slate-600 mt-1">
           Review, approve, and assign consultation requests to consultants
         </p>
       </div>
@@ -91,7 +91,7 @@ export default function AdminConsultationsPage() {
             className={cn(
               statusFilter === btn.value
                 ? 'bg-amber-500 text-white hover:bg-amber-600'
-                : 'border-wisebox-border text-wisebox-text-secondary hover:bg-wisebox-background-lighter hover:text-white'
+                : 'border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 bg-white'
             )}
             onClick={() => setStatusFilter(btn.value)}
           >
@@ -102,69 +102,69 @@ export default function AdminConsultationsPage() {
       </div>
 
       {/* Consultations List */}
-      <Card className="bg-wisebox-background-card border-wisebox-border">
+      <Card className="bg-white border-slate-200 shadow-sm">
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-6 text-sm text-wisebox-text-secondary">Loading...</div>
+            <div className="p-6 text-sm text-slate-500">Loading...</div>
           ) : consultations.length === 0 ? (
             <div className="text-center py-16">
-              <Filter className="h-16 w-16 text-wisebox-text-muted mx-auto mb-4" />
-              <p className="text-wisebox-text-secondary">
+              <Filter className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500">
                 {statusFilter ? `No ${statusLabels[statusFilter]?.toLowerCase()} consultations` : 'No consultations yet'}
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-wisebox-border">
+            <div className="divide-y divide-slate-100">
               {consultations.map((consultation) => (
                 <Link
                   key={consultation.id}
                   href={`/admin/consultations/${consultation.id}`}
-                  className="block hover:bg-wisebox-background-lighter transition-colors"
+                  className="block hover:bg-slate-50 transition-colors"
                 >
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline" className="text-xs text-wisebox-text-secondary border-wisebox-border">
+                          <Badge variant="outline" className="text-xs text-slate-500 border-slate-300 bg-slate-50">
                             {consultation.ticket_number}
                           </Badge>
                           <Badge variant="outline" className={cn('text-xs', statusColors[consultation.status] || '')}>
                             {statusLabels[consultation.status] || consultation.status}
                           </Badge>
                           {consultation.property?.completion_status && (
-                            <span className="flex items-center gap-1 text-xs text-wisebox-text-muted">
+                            <span className="flex items-center gap-1 text-xs text-slate-400">
                               <span className={cn('w-2 h-2 rounded-full', completionColors[consultation.property.completion_status])} />
                               {consultation.property.completion_percentage}% complete
                             </span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-white">{consultation.title}</h3>
+                        <h3 className="font-semibold text-slate-900">{consultation.title}</h3>
                         {consultation.description && (
-                          <p className="text-sm text-wisebox-text-secondary mt-1 line-clamp-1">
+                          <p className="text-sm text-slate-600 mt-1 line-clamp-1">
                             {consultation.description}
                           </p>
                         )}
                       </div>
-                      <ArrowRight className="h-5 w-5 text-wisebox-text-muted shrink-0 mt-1" />
+                      <ArrowRight className="h-5 w-5 text-slate-400 shrink-0 mt-1" />
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
                       <div>
-                        <p className="text-wisebox-text-muted text-xs">Customer</p>
-                        <p className="text-white font-medium">{consultation.customer?.name || 'N/A'}</p>
-                        <p className="text-wisebox-text-muted text-xs">{consultation.customer?.email}</p>
+                        <p className="text-slate-400 text-xs">Customer</p>
+                        <p className="text-slate-900 font-medium">{consultation.customer?.name || 'N/A'}</p>
+                        <p className="text-slate-400 text-xs">{consultation.customer?.email}</p>
                       </div>
                       <div>
-                        <p className="text-wisebox-text-muted text-xs">Property</p>
-                        <p className="text-white font-medium truncate">{consultation.property?.property_name || 'N/A'}</p>
+                        <p className="text-slate-400 text-xs">Property</p>
+                        <p className="text-slate-900 font-medium truncate">{consultation.property?.property_name || 'N/A'}</p>
                       </div>
                       <div>
-                        <p className="text-wisebox-text-muted text-xs">Consultant</p>
-                        <p className="text-white font-medium">{consultation.consultant?.name || 'Unassigned'}</p>
+                        <p className="text-slate-400 text-xs">Consultant</p>
+                        <p className="text-slate-900 font-medium">{consultation.consultant?.name || 'Unassigned'}</p>
                       </div>
                       <div>
-                        <p className="text-wisebox-text-muted text-xs">Requested</p>
-                        <p className="text-white font-medium">
+                        <p className="text-slate-400 text-xs">Requested</p>
+                        <p className="text-slate-900 font-medium">
                           {new Date(consultation.created_at).toLocaleDateString('en-GB', {
                             day: 'numeric', month: 'short', year: 'numeric',
                           })}
@@ -173,9 +173,9 @@ export default function AdminConsultationsPage() {
                     </div>
 
                     {consultation.status === 'open' && consultation.preferred_time_slots && (
-                      <div className="mt-3 pt-3 border-t border-wisebox-border flex items-center gap-2">
-                        <Calendar className="h-3.5 w-3.5 text-yellow-400" />
-                        <span className="text-xs text-yellow-400">
+                      <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2">
+                        <Calendar className="h-3.5 w-3.5 text-amber-500" />
+                        <span className="text-xs text-amber-600 font-medium">
                           {consultation.preferred_time_slots.length} preferred time slot(s) submitted
                         </span>
                       </div>
