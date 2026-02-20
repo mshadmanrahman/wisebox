@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -9,7 +10,7 @@ interface Testimonial {
   name: string;
   title: string;
   location: string;
-  gradient: string;
+  image: string;
 }
 
 const testimonials: Testimonial[] = [
@@ -19,7 +20,7 @@ const testimonials: Testimonial[] = [
     name: 'Ahmed Hassan',
     title: 'Software Engineer',
     location: 'Toronto, Canada',
-    gradient: 'from-cyan-600 via-blue-700 to-indigo-800',
+    image: '/images/auth/father-son-laptop.jpg',
   },
   {
     quote:
@@ -27,7 +28,7 @@ const testimonials: Testimonial[] = [
     name: 'Enayet Chowdhury',
     title: 'Retd. Physician',
     location: 'Sydney, Australia',
-    gradient: 'from-emerald-600 via-teal-700 to-cyan-800',
+    image: '/images/auth/grandfather-grandson-park.jpg',
   },
   {
     quote:
@@ -35,7 +36,7 @@ const testimonials: Testimonial[] = [
     name: 'Fatima Rahman',
     title: 'University Lecturer',
     location: 'London, UK',
-    gradient: 'from-violet-600 via-purple-700 to-indigo-800',
+    image: '/images/auth/woman-armchair-phone.jpg',
   },
   {
     quote:
@@ -43,7 +44,7 @@ const testimonials: Testimonial[] = [
     name: 'Rafiq Uddin',
     title: 'IT Consultant',
     location: 'Stockholm, Sweden',
-    gradient: 'from-amber-600 via-orange-700 to-red-800',
+    image: '/images/auth/woman-cafe-laptop.jpg',
   },
 ];
 
@@ -66,24 +67,28 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
         className,
       )}
     >
-      {/* Animated gradient background per slide */}
+      {/* Full-bleed photo backgrounds */}
       {testimonials.map((slide, i) => (
         <div
           key={i}
           className={cn(
-            'absolute inset-0 bg-gradient-to-br transition-opacity duration-700',
-            slide.gradient,
+            'absolute inset-0 transition-opacity duration-700',
             i === active ? 'opacity-100' : 'opacity-0',
           )}
-        />
+        >
+          <Image
+            src={slide.image}
+            alt={slide.name}
+            fill
+            className="object-cover"
+            sizes="50vw"
+            priority={i === 0}
+          />
+        </div>
       ))}
 
-      {/* Decorative pattern overlay */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-12 right-12 w-64 h-64 border border-white/30 rounded-full" />
-        <div className="absolute top-24 right-24 w-40 h-40 border border-white/20 rounded-full" />
-        <div className="absolute bottom-32 left-12 w-48 h-48 border border-white/20 rounded-full" />
-      </div>
+      {/* Gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
 
       <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full">
         {/* Location badge */}
