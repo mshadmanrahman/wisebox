@@ -106,13 +106,16 @@ function PortalHeader() {
 
         <nav className="hidden md:flex items-center gap-6 text-sm">
           <Link href="/properties" className="text-wisebox-text-secondary hover:text-white transition-colors">
-            Asset
+            Assets
           </Link>
           <Link href="/assessment/start" className="text-wisebox-text-secondary hover:text-white transition-colors">
-            Learning
+            Assessment
           </Link>
           <Link href="/workspace/services" className="text-wisebox-text-secondary hover:text-white transition-colors">
             Services
+          </Link>
+          <Link href="/tickets" className="text-wisebox-text-secondary hover:text-white transition-colors">
+            Tickets
           </Link>
           <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
             Settings

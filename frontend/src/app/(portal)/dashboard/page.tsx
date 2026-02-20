@@ -166,7 +166,7 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <Link href="/tickets" className="block group">
+          <Link href="/workspace/services" className="block group">
             <div className="bg-wisebox-background-card border border-wisebox-border rounded-xl p-6 hover:border-wisebox-border-light transition-all hover:shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="bg-wisebox-background-lighter rounded-lg p-3 group-hover:bg-wisebox-primary/20 transition-colors">
@@ -175,7 +175,7 @@ export default function DashboardPage() {
                 <div className="flex-1">
                   <h3 className="font-semibold text-white mb-2 text-base">Talk to an Expert</h3>
                   <p className="text-sm text-wisebox-text-secondary leading-relaxed">
-                    Available today in 5 hours
+                    Book a free 30-min consultation
                   </p>
                 </div>
               </div>

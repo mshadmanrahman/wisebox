@@ -189,7 +189,7 @@ export function AssessmentResultCard({
             <Link href="/register">Create account to protect your property</Link>
           </Button>
           <Button asChild variant="outline" className="flex-1">
-            <Link href="/services">Talk to an expert</Link>
+            <Link href="/workspace/services">Talk to an expert</Link>
           </Button>
         </div>
       </CardContent>

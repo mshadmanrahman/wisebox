@@ -74,8 +74,8 @@ export default function RegisterPage() {
         country_of_residence: data.country_of_residence,
         terms_accepted: data.terms_accepted,
       });
-      // Redirect to OTP verification
-      router.push('/verify?email=' + encodeURIComponent(data.email));
+      // Go straight to dashboard (lazy verification: verify email later when needed)
+      router.push('/dashboard');
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } };
       const serverErrors = error.response?.data?.errors;
