@@ -113,6 +113,24 @@ class TransactionalEmailService
         $this->sendViaResend($customer->email, "Meeting scheduled for {$ticketNumber}", $html, 'meeting_scheduled', ['ticket_id' => $ticket->id]);
     }
 
+    // ── Booking link email ─────────────────────────────────────────
+
+    public function sendBookingLink(User $customer, Ticket $ticket, string $bookingUrl): void
+    {
+        $ticketNumber = (string) $ticket->ticket_number;
+        $propertyName = (string) ($ticket->property?->property_name ?? 'Your Property');
+        $consultantName = (string) ($ticket->consultant?->name ?? 'Wisebox Consultant');
+
+        $html = "<h2>Schedule Your Consultation</h2>"
+            . "<p>Hello {$customer->name},</p>"
+            . "<p>Your consultant <strong>{$consultantName}</strong> is ready to meet with you regarding <strong>{$propertyName}</strong> (ticket {$ticketNumber}).</p>"
+            . "<p>Please pick a time that works for you:</p>"
+            . $this->ctaButton('Book a Time', $bookingUrl)
+            . "<p style=\"color:#666;font-size:13px;\">This is a one-time link. Once you book, you'll receive a confirmation with meeting details.</p>";
+
+        $this->sendViaResend($customer->email, "Schedule your consultation for {$ticketNumber}", $html, 'booking_link', ['ticket_id' => $ticket->id]);
+    }
+
     // ── Form emails ───────────────────────────────────────────────
 
     public function sendFormInvitation(

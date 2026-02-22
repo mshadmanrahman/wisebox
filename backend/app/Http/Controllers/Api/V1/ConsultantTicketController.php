@@ -21,10 +21,8 @@ class ConsultantTicketController extends Controller
 {
     public function __construct(
         private TransactionalEmailService $transactionalEmailService,
-        private ?\App\Services\GoogleCalendarService $googleCalendarService = null
-    ) {
-        $this->googleCalendarService = $googleCalendarService ?? app(\App\Services\GoogleCalendarService::class);
-    }
+        private \App\Services\CalendlyService $calendlyService,
+    ) {}
 
     /**
      * Get consultant dashboard stats (simplified for main dashboard)
@@ -317,7 +315,8 @@ class ConsultantTicketController extends Controller
     }
 
     /**
-     * Confirm a time slot and create Google Meet link
+     * Confirm a time slot manually (without Calendly).
+     * Use send-booking-link for the Calendly-driven flow.
      */
     public function confirmSlot(Request $request, Ticket $ticket): JsonResponse
     {
@@ -327,9 +326,9 @@ class ConsultantTicketController extends Controller
         $validated = $request->validate([
             'slot_index' => ['required', 'integer', 'min:0'],
             'duration_minutes' => ['nullable', 'integer', 'min:15', 'max:480'],
+            'meeting_url' => ['nullable', 'url', 'max:500'],
         ]);
 
-        // Get preferred time slots
         $preferredSlots = $ticket->preferred_time_slots;
         if (empty($preferredSlots) || !is_array($preferredSlots)) {
             return response()->json([
@@ -339,15 +338,11 @@ class ConsultantTicketController extends Controller
 
         $slotIndex = $validated['slot_index'];
         if (!isset($preferredSlots[$slotIndex])) {
-            return response()->json([
-                'message' => 'Invalid slot index.',
-            ], 422);
+            return response()->json(['message' => 'Invalid slot index.'], 422);
         }
 
         $selectedSlot = $preferredSlots[$slotIndex];
         $duration = $validated['duration_minutes'] ?? 60;
-
-        // Parse the selected time slot
         $slotDate = $selectedSlot['date'] ?? null;
         $slotTime = $selectedSlot['time'] ?? null;
 
@@ -357,38 +352,16 @@ class ConsultantTicketController extends Controller
             ], 422);
         }
 
-        // Combine date and time into a Carbon instance
         $startTime = \Carbon\Carbon::parse("{$slotDate} {$slotTime}");
+        $meetingUrl = $validated['meeting_url'] ?? null;
 
-        // Attempt Google Calendar meeting creation with graceful fallback
-        $meetingData = null;
-        $calendarWarning = null;
-
-        try {
-            $meetingData = $this->googleCalendarService->createConsultationMeeting(
-                $ticket,
-                $startTime,
-                $duration
-            );
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Google Calendar unavailable; scheduling without meet link.', [
-                'ticket_id' => $ticket->id,
-                'error' => $e->getMessage(),
-            ]);
-            $calendarWarning = 'Google Calendar is unavailable. The slot has been confirmed but no Meet link was generated. Please create a meeting link manually and update the ticket.';
-        }
-
-        $meetLink = $meetingData['meet_link'] ?? null;
-
-        // Update ticket with meeting details (proceeds even without a meet link)
         $ticket->update([
             'scheduled_at' => $startTime,
-            'meeting_url' => $meetLink,
+            'meeting_url' => $meetingUrl,
             'meeting_duration_minutes' => $duration,
             'status' => 'scheduled',
         ]);
 
-        // Send notification to customer
         $this->createNotification(
             (int) $ticket->customer_id,
             'ticket.meeting.scheduled',
@@ -398,19 +371,17 @@ class ConsultantTicketController extends Controller
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
                 'scheduled_at' => $startTime->toISOString(),
-                'meet_link' => $meetLink,
-                'calendar_link' => $meetingData['calendar_link'] ?? null,
+                'meeting_url' => $meetingUrl,
             ])
         );
 
-        // Send meeting confirmation email to customer
         if ($ticket->customer_id) {
             $customer = User::query()->find($ticket->customer_id);
             if ($customer && $customer->email) {
                 $this->transactionalEmailService->sendMeetingScheduled(
                     $customer,
                     $ticket,
-                    $meetLink ?? '',
+                    $meetingUrl ?? '',
                     $startTime,
                     $duration,
                 );
@@ -419,16 +390,74 @@ class ConsultantTicketController extends Controller
 
         $ticket->load(['customer:id,name,email', 'consultant:id,name,email', 'property:id,property_name', 'service:id,name']);
 
-        $response = [
-            'data' => $ticket,
-            'meeting' => $meetingData,
-        ];
+        return response()->json(['data' => $ticket]);
+    }
 
-        if ($calendarWarning) {
-            $response['warning'] = $calendarWarning;
+    /**
+     * Generate a Calendly booking link and email it to the customer.
+     * Calendly handles time selection, scheduling, and meeting creation.
+     * When the customer books, the Calendly webhook updates the ticket automatically.
+     */
+    public function sendBookingLink(Request $request, Ticket $ticket): JsonResponse
+    {
+        $user = $request->user();
+        $this->ensureCanAccessTicket($user, $ticket);
+
+        if (!$ticket->customer_id) {
+            return response()->json(['message' => 'This ticket has no customer.'], 422);
         }
 
-        return response()->json($response);
+        $ticket->loadMissing([
+            'customer:id,name,email',
+            'consultant:id,name,email',
+            'consultant.consultantProfile:id,user_id,calendly_url',
+            'property:id,property_name',
+        ]);
+
+        if (!$ticket->customer?->email) {
+            return response()->json(['message' => 'Customer has no email address.'], 422);
+        }
+
+        try {
+            $scheduling = $this->calendlyService->createSchedulingLink($ticket);
+        } catch (\RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $bookingUrl = $scheduling['booking_url'];
+
+        // Update ticket status to awaiting_customer
+        if (!in_array($ticket->status, ['completed', 'cancelled', 'scheduled'], true)) {
+            $ticket->update(['status' => 'awaiting_customer']);
+        }
+
+        // Email the booking link to the customer
+        $this->transactionalEmailService->sendBookingLink(
+            $ticket->customer,
+            $ticket,
+            $bookingUrl,
+        );
+
+        // In-app notification
+        $this->createNotification(
+            (int) $ticket->customer_id,
+            'ticket.booking.link_sent',
+            'Book your consultation',
+            "Your consultant has sent you a link to schedule your meeting for ticket {$ticket->ticket_number}. Check your email.",
+            [
+                'ticket_id' => $ticket->id,
+                'ticket_number' => $ticket->ticket_number,
+                'booking_url' => $bookingUrl,
+            ]
+        );
+
+        return response()->json([
+            'data' => [
+                'booking_url' => $bookingUrl,
+                'mode' => $scheduling['mode'],
+                'ticket_status' => $ticket->fresh()->status,
+            ],
+        ]);
     }
 
     /**

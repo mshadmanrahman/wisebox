@@ -141,6 +141,7 @@ Route::prefix('v1')->group(function () {
             Route::put('tickets/{ticket}', [ConsultantTicketController::class, 'update']);
             Route::post('tickets/{ticket}/comments', [ConsultantTicketController::class, 'addComment']);
             Route::post('tickets/{ticket}/confirm-slot', [ConsultantTicketController::class, 'confirmSlot']);
+            Route::post('tickets/{ticket}/send-booking-link', [ConsultantTicketController::class, 'sendBookingLink']);
             Route::post('tickets/{ticket}/send-form', [ConsultantTicketController::class, 'sendForm']);
             Route::get('tickets/{ticket}/form-invitations', [ConsultantTicketController::class, 'formInvitations']);
         });
