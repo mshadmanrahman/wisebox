@@ -244,6 +244,19 @@ Route::prefix('v1')->group(function () {
     // Public: Translations (for frontend i18n)
     Route::get('/translations', [TranslationController::class, 'index']);
 
+    // ONE-TIME: Seed translations (remove after first call)
+    Route::get('/seed-translations', function () {
+        $count = \App\Models\Translation::count();
+        if ($count > 0) {
+            return response()->json(['status' => 'already_seeded', 'count' => $count]);
+        }
+        \Illuminate\Support\Facades\Artisan::call('db:seed', [
+            '--class' => 'Database\\Seeders\\TranslationSeeder',
+            '--force' => true,
+        ]);
+        return response()->json(['status' => 'seeded', 'count' => \App\Models\Translation::count()]);
+    });
+
     // Public: Services
     Route::get('/services', [ServiceCatalogController::class, 'index']);
 
