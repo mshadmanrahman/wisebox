@@ -3,6 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -83,12 +84,9 @@ export function DashboardHeroBanner({
     }
   }, [activeSlide, slides.length])
 
+  const { t } = useTranslation(['dashboard', 'common'])
   const currentSlide = slides[activeSlide] ?? null
   const heroCtaHref = resolveHeroCtaHref(currentSlide?.cta_url, '/properties/new')
-
-  // Default content when no slides available
-  const defaultTitle = "Protect your property portfolio from anywhere"
-  const defaultCtaText = "Add New Property"
 
   return (
     <Card className={cn("border-wisebox-primary-100 overflow-hidden", className)}>
@@ -105,10 +103,10 @@ export function DashboardHeroBanner({
             {/* Left: text content */}
             <div className="flex-1 space-y-3">
               <p className="text-white/80 text-sm uppercase tracking-[0.08em]">
-                Wisebox Dashboard
+                {t('dashboard:heroBanner.label')}
               </p>
               <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
-                {currentSlide?.title ?? defaultTitle}
+                {currentSlide?.title ?? t('dashboard:heroBanner.defaultTitle')}
               </h1>
               {currentSlide?.subtitle && (
                 <p className="text-white/90 text-sm sm:text-base">
@@ -118,7 +116,7 @@ export function DashboardHeroBanner({
               <div className="pt-5 flex flex-wrap items-center gap-3">
                 <Button asChild className="bg-white text-wisebox-primary-700 hover:bg-white/90">
                   <Link href={heroCtaHref}>
-                    {currentSlide?.cta_text || defaultCtaText}
+                    {currentSlide?.cta_text || t('dashboard:addNewProperty')}
                   </Link>
                 </Button>
                 <Button
@@ -126,7 +124,7 @@ export function DashboardHeroBanner({
                   variant="outline"
                   className="border-white/50 bg-transparent text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Link href="/assessment/start">Get Free Assessment</Link>
+                  <Link href="/assessment/start">{t('dashboard:getFreeAssessment')}</Link>
                 </Button>
               </div>
             </div>

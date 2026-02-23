@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,7 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation(['auth', 'common']);
 
   const {
     register,
@@ -38,7 +40,7 @@ export default function ForgotPasswordPage() {
       setSent(true);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Failed to send reset link. Please try again.');
+      setError(error.response?.data?.message || t('auth:forgotPassword.failedToSend'));
     } finally {
       setIsLoading(false);
     }
@@ -63,9 +65,9 @@ export default function ForgotPasswordPage() {
                 <Mail className="w-8 h-8 text-wisebox-primary" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Check your email</h1>
+                <h1 className="text-3xl font-bold text-white mb-2">{t('auth:forgotPassword.checkEmail')}</h1>
                 <p className="text-wisebox-text-secondary">
-                  We sent a password reset link to your email address. Click the link to reset your password.
+                  {t('auth:forgotPassword.checkEmailDescription')}
                 </p>
               </div>
               <Link href="/login">
@@ -74,7 +76,7 @@ export default function ForgotPasswordPage() {
                   className="w-full border-wisebox-border text-white hover:bg-wisebox-background-lighter h-12"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to sign in
+                  {t('auth:forgotPassword.backToSignIn')}
                 </Button>
               </Link>
             </div>
@@ -82,9 +84,9 @@ export default function ForgotPasswordPage() {
             <>
               {/* Header */}
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Reset password</h1>
+                <h1 className="text-3xl font-bold text-white mb-2">{t('auth:forgotPassword.title')}</h1>
                 <p className="text-wisebox-text-secondary">
-                  Enter your email and we&apos;ll send you a reset link
+                  {t('auth:forgotPassword.subtitle')}
                 </p>
               </div>
 
@@ -99,12 +101,12 @@ export default function ForgotPasswordPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-white text-sm font-medium">
-                    Email
+                    {t('auth:forgotPassword.emailLabel')}
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder={t('auth:forgotPassword.emailPlaceholder')}
                     autoComplete="email"
                     className="bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted h-12"
                     {...register('email')}
@@ -122,10 +124,10 @@ export default function ForgotPasswordPage() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
+                      {t('auth:forgotPassword.submitting')}
                     </>
                   ) : (
-                    'Send reset link'
+                    t('auth:forgotPassword.submit')
                   )}
                 </Button>
               </form>
@@ -133,7 +135,7 @@ export default function ForgotPasswordPage() {
               <p className="text-center text-sm text-wisebox-text-secondary">
                 <Link href="/login" className="text-white font-medium hover:underline inline-flex items-center">
                   <ArrowLeft className="mr-1 h-3 w-3" />
-                  Back to sign in
+                  {t('auth:forgotPassword.backToSignIn')}
                 </Link>
               </p>
             </>
@@ -142,7 +144,7 @@ export default function ForgotPasswordPage() {
           {/* Footer */}
           <div className="pt-8 border-t border-wisebox-border">
             <p className="text-xs text-wisebox-text-muted text-center">
-              © 2025 WiseBox. All rights reserved.
+              {t('common:copyright')}
             </p>
           </div>
         </div>
@@ -152,28 +154,28 @@ export default function ForgotPasswordPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-teal-600 to-teal-800 p-12 items-center justify-center">
         <div className="max-w-md text-white space-y-8">
           <KeyRound className="w-16 h-16 text-white/80" />
-          <h2 className="text-3xl font-bold">Secure Access</h2>
+          <h2 className="text-3xl font-bold">{t('auth:forgotPassword.secureAccess')}</h2>
           <p className="text-teal-100 text-lg">
-            Your property data is protected with secure authentication. Reset your password to regain access to your workspace.
+            {t('auth:forgotPassword.secureDescription')}
           </p>
           <div className="space-y-4 text-teal-200">
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">1</span>
               </div>
-              <p>Enter your registered email address</p>
+              <p>{t('auth:forgotPassword.step1')}</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">2</span>
               </div>
-              <p>Check your inbox for the reset link</p>
+              <p>{t('auth:forgotPassword.step2')}</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">3</span>
               </div>
-              <p>Create a new password and sign back in</p>
+              <p>{t('auth:forgotPassword.step3')}</p>
             </div>
           </div>
         </div>

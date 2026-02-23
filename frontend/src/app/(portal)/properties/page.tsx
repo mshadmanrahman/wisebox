@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { Plus, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useProperties } from '@/hooks/use-properties';
 import { PropertyCard } from '@/components/property/property-card';
@@ -15,6 +16,7 @@ type FilterTab = 'all' | PropertyStatus;
 export default function PropertiesPage() {
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [page, setPage] = useState(1);
+  const { t } = useTranslation(['properties', 'common']);
 
   const statusParam = activeTab === 'all' ? undefined : activeTab;
   const { data, isLoading } = useProperties({ page, status: statusParam });
@@ -32,12 +34,12 @@ export default function PropertiesPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-wisebox-text-primary">
-          My Properties
+          {t('properties:title')}
         </h1>
         <Button asChild className="bg-wisebox-primary hover:bg-wisebox-primary-hover">
           <Link href="/properties/new">
             <Plus className="h-4 w-4 mr-1.5" />
-            Add Property
+            {t('properties:addProperty')}
           </Link>
         </Button>
       </div>
@@ -45,11 +47,11 @@ export default function PropertiesPage() {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList>
           <TabsTrigger value="all">
-            All{meta ? ` (${meta.total})` : ''}
+            {t('properties:tabs.all')}{meta ? ` (${meta.total})` : ''}
           </TabsTrigger>
-          <TabsTrigger value="draft">Draft</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="verified">Verified</TabsTrigger>
+          <TabsTrigger value="draft">{t('properties:tabs.draft')}</TabsTrigger>
+          <TabsTrigger value="active">{t('properties:tabs.active')}</TabsTrigger>
+          <TabsTrigger value="verified">{t('properties:tabs.verified')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeTab} className="mt-6">
@@ -74,10 +76,10 @@ export default function PropertiesPage() {
                     disabled={page <= 1}
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    Previous
+                    {t('common:previous')}
                   </Button>
                   <span className="text-sm text-muted-foreground px-3">
-                    Page {page} of {totalPages}
+                    {t('common:page', { current: page, total: totalPages })}
                   </span>
                   <Button
                     variant="outline"
@@ -85,7 +87,7 @@ export default function PropertiesPage() {
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page >= totalPages}
                   >
-                    Next
+                    {t('common:next')}
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -123,21 +125,23 @@ function SkeletonGrid() {
 }
 
 function EmptyState() {
+  const { t } = useTranslation('properties');
+
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="rounded-full bg-wisebox-primary-50 p-4 mb-4">
         <Building2 className="h-8 w-8 text-wisebox-primary-600" />
       </div>
       <h2 className="text-lg font-semibold text-wisebox-text-primary mb-1">
-        No properties yet
+        {t('empty.title')}
       </h2>
       <p className="text-sm text-muted-foreground max-w-sm mb-6">
-        Add your first property to get started with document management
+        {t('empty.description')}
       </p>
       <Button asChild className="bg-wisebox-primary hover:bg-wisebox-primary-hover">
         <Link href="/properties/new">
           <Plus className="h-4 w-4 mr-1.5" />
-          Add Property
+          {t('addProperty')}
         </Link>
       </Button>
     </div>

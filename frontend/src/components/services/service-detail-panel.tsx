@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import { ArrowRight, Calendar, Loader2, MapPin, MessageSquare } from 'lucide-react';
 import api from '@/lib/api';
@@ -38,13 +39,16 @@ interface TimeSlot {
   display: string;
 }
 
-function formatPrice(service: Service): string {
-  if (service.pricing_type === 'free') return 'FREE';
-  if (service.pricing_type === 'physical') return 'Request Quote';
-  if (!service.price || Number(service.price) === 0) return 'FREE';
-  const amount = Number(service.price);
-  const currency = service.currency || 'USD';
-  return `${currency} ${amount}`;
+function useFormatPrice() {
+  const { t } = useTranslation('common');
+  return (service: Service): string => {
+    if (service.pricing_type === 'free') return t('services.free');
+    if (service.pricing_type === 'physical') return t('services.requestQuote');
+    if (!service.price || Number(service.price) === 0) return t('services.free');
+    const amount = Number(service.price);
+    const currency = service.currency || 'USD';
+    return `${currency} ${amount}`;
+  };
 }
 
 function buildLocation(property: Property): string | null {
@@ -61,6 +65,8 @@ export function ServiceDetailPanel({
   properties,
 }: ServiceDetailPanelProps) {
   const router = useRouter();
+  const { t } = useTranslation('common');
+  const formatPrice = useFormatPrice();
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
   const [description, setDescription] = useState('');
   const [preferredSlots, setPreferredSlots] = useState<TimeSlot[]>([]);
@@ -72,10 +78,10 @@ export function ServiceDetailPanel({
   const createOrderMutation = useMutation({
     mutationFn: async () => {
       if (!selectedPropertyId || !service) {
-        throw new Error('Please select a property first.');
+        throw new Error(t('services.detail.selectPropertyFirst'));
       }
       if (needsScheduling && preferredSlots.length < 2) {
-        throw new Error('Please select at least 2 preferred time slots.');
+        throw new Error(t('services.detail.selectAtLeast2SlotsError'));
       }
 
       const payload: Record<string, unknown> = {
@@ -107,7 +113,7 @@ export function ServiceDetailPanel({
       router.push(`/orders/${order.id}`);
     },
     onError: (err: unknown) => {
-      const message = err instanceof Error ? err.message : 'Could not create order.';
+      const message = err instanceof Error ? err.message : t('services.detail.couldNotCreate');
       setError(message);
     },
   });
@@ -125,10 +131,10 @@ export function ServiceDetailPanel({
     : 'from-slate-600 via-slate-700 to-slate-800';
 
   const ctaLabel = isFree
-    ? 'Book Now'
+    ? t('services.detail.bookNow')
     : needsScheduling
-    ? 'Book & Pay'
-    : 'Buy Now';
+    ? t('services.detail.bookAndPay')
+    : t('services.detail.buyNow');
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -157,7 +163,7 @@ export function ServiceDetailPanel({
           {service.estimated_duration_minutes && (
             <p className="text-xs text-wisebox-text-muted flex items-center gap-1 mt-1">
               <Calendar className="h-3 w-3" />
-              Estimated duration: {service.estimated_duration_minutes} minutes
+              {t('services.detail.estimatedDuration', { minutes: service.estimated_duration_minutes })}
             </p>
           )}
         </SheetHeader>
@@ -166,10 +172,10 @@ export function ServiceDetailPanel({
           {/* Description */}
           <div className="space-y-2">
             <h3 className="text-sm font-medium text-wisebox-text-secondary uppercase tracking-wider">
-              About this service
+              {t('services.detail.aboutService')}
             </h3>
             <p className="text-sm text-white leading-relaxed">
-              {service.description || service.short_description || 'No description available.'}
+              {service.description || service.short_description || t('services.detail.noDescription')}
             </p>
           </div>
 
@@ -177,7 +183,7 @@ export function ServiceDetailPanel({
           {service.category && (
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-wisebox-text-secondary uppercase tracking-wider">
-                Category
+                {t('services.detail.category')}
               </h3>
               <Badge variant="outline" className="border-wisebox-border text-white">
                 {service.category.name}
@@ -191,11 +197,11 @@ export function ServiceDetailPanel({
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-white flex items-center gap-2">
                 <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">1</span>
-                Select a property
+                {t('services.detail.selectProperty')}
               </h3>
               <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
                 <SelectTrigger className="bg-wisebox-background-input border-wisebox-border text-white">
-                  <SelectValue placeholder="Choose a property" />
+                  <SelectValue placeholder={t('services.detail.chooseProperty')} />
                 </SelectTrigger>
                 <SelectContent className="bg-wisebox-background-card border-wisebox-border">
                   {properties.map((property) => (
@@ -212,14 +218,14 @@ export function ServiceDetailPanel({
               <div className="space-y-3">
                 <h3 className="text-sm font-medium text-white flex items-center gap-2">
                   <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">2</span>
-                  Describe what you need
+                  {t('services.detail.describeNeeds')}
                 </h3>
                 <div className="relative">
                   <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-wisebox-text-muted" />
                   <Textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Briefly describe what you need help with. For example: 'I need verification of land purchase documents for a plot in Dhaka division...'"
+                    placeholder={t('services.detail.descriptionPlaceholder')}
                     className="pl-10 min-h-[100px] bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted resize-none"
                     maxLength={1000}
                   />
@@ -235,10 +241,10 @@ export function ServiceDetailPanel({
               <div className="space-y-3">
                 <h3 className="text-sm font-medium text-white flex items-center gap-2">
                   <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">3</span>
-                  Choose preferred time slots
+                  {t('services.detail.chooseTimeSlots')}
                 </h3>
                 <p className="text-xs text-wisebox-text-secondary">
-                  Select 2-5 time slots when you are available. Our consultant will confirm one of these times after your purchase.
+                  {t('services.detail.timeSlotsHelp')}
                 </p>
                 <TimeSlotPicker
                   onSlotsChange={setPreferredSlots}
@@ -271,7 +277,7 @@ export function ServiceDetailPanel({
               {createOrderMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Processing...
+                  {t('services.detail.processing')}
                 </>
               ) : (
                 <>
@@ -283,7 +289,7 @@ export function ServiceDetailPanel({
 
             {needsScheduling && !hasEnoughSlots && selectedPropertyId && (
               <p className="text-xs text-center text-wisebox-text-muted">
-                Select at least 2 time slots to enable booking
+                {t('services.detail.selectAtLeast2Slots')}
               </p>
             )}
           </div>
@@ -292,7 +298,7 @@ export function ServiceDetailPanel({
           {properties.length > 0 && (
             <div className="space-y-3 border-t border-wisebox-border pt-6">
               <h3 className="text-sm font-medium text-wisebox-text-secondary uppercase tracking-wider">
-                Your Properties
+                {t('services.detail.yourProperties')}
               </h3>
               <div className="space-y-2">
                 {properties.slice(0, 4).map((property) => {

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +57,7 @@ function statusBadgeClass(status: Ticket['status']): string {
 }
 
 export default function ConsultantTicketsPage() {
+  const { t } = useTranslation(['consultant', 'common']);
   const { user } = useAuthStore();
   const [statusFilter, setStatusFilter] = useState<'all' | TicketStatus>('all');
 
@@ -97,10 +99,10 @@ export default function ConsultantTicketsPage() {
   const summaryCards = useMemo(() => {
     if (!dashboardData) {
       return [
-        { label: 'Open', value: 0 },
-        { label: 'Awaiting Customer', value: 0 },
-        { label: 'Upcoming Meetings', value: 0 },
-        { label: 'Avg Resolution (hrs)', value: '-' },
+        { label: t('consultant:tickets.stats.open'), value: 0 },
+        { label: t('consultant:tickets.stats.awaitingCustomer'), value: 0 },
+        { label: t('consultant:tickets.stats.upcomingMeetings'), value: 0 },
+        { label: t('consultant:tickets.stats.avgResolution'), value: '-' },
       ];
     }
 
@@ -108,11 +110,11 @@ export default function ConsultantTicketsPage() {
     const utilization = metricsData?.kpis.capacity?.utilization_percentage;
 
     return [
-      { label: 'Open', value: dashboardData.stats.open_count },
-      { label: 'Awaiting Customer', value: dashboardData.stats.awaiting_customer_count },
-      { label: 'Upcoming Meetings', value: dashboardData.stats.upcoming_meetings_count },
-      { label: 'Avg Resolution (hrs)', value: avgResolution !== null && avgResolution !== undefined ? avgResolution : '-' },
-      ...(utilization !== undefined ? [{ label: 'Utilization (%)', value: utilization }] : []),
+      { label: t('consultant:tickets.stats.open'), value: dashboardData.stats.open_count },
+      { label: t('consultant:tickets.stats.awaitingCustomer'), value: dashboardData.stats.awaiting_customer_count },
+      { label: t('consultant:tickets.stats.upcomingMeetings'), value: dashboardData.stats.upcoming_meetings_count },
+      { label: t('consultant:tickets.stats.avgResolution'), value: avgResolution !== null && avgResolution !== undefined ? avgResolution : '-' },
+      ...(utilization !== undefined ? [{ label: t('consultant:tickets.stats.utilization'), value: utilization }] : []),
     ];
   }, [dashboardData, metricsData]);
 
@@ -121,12 +123,12 @@ export default function ConsultantTicketsPage() {
       <div className="px-6 py-8">
         <Card>
           <CardContent className="p-6 space-y-3">
-            <h2 className="font-semibold text-wisebox-text-primary">Consultant access required</h2>
+            <h2 className="font-semibold text-wisebox-text-primary">{t('consultant:tickets.accessRequired')}</h2>
             <p className="text-sm text-wisebox-text-secondary">
-              This section is available only to consultants and admins.
+              {t('consultant:tickets.accessDescription')}
             </p>
             <Button asChild variant="outline">
-              <Link href="/tickets">Back to Tickets</Link>
+              <Link href="/tickets">{t('consultant:tickets.backToTickets')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -137,9 +139,9 @@ export default function ConsultantTicketsPage() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-wisebox-text-primary">Consultant Workspace</h1>
+        <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('consultant:tickets.title')}</h1>
         <p className="mt-1 text-wisebox-text-secondary">
-          Manage assigned tickets, update statuses, and coordinate meetings.
+          {t('consultant:tickets.subtitle')}
         </p>
       </div>
 
@@ -158,14 +160,14 @@ export default function ConsultantTicketsPage() {
         <CardContent className="pt-6">
           <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as 'all' | TicketStatus)}>
             <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-8">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="open">Open</TabsTrigger>
-              <TabsTrigger value="assigned">Assigned</TabsTrigger>
-              <TabsTrigger value="in_progress">In Progress</TabsTrigger>
-              <TabsTrigger value="awaiting_customer">Awaiting Customer</TabsTrigger>
-              <TabsTrigger value="awaiting_consultant">Awaiting Consultant</TabsTrigger>
-              <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
+              <TabsTrigger value="all">{t('consultant:tickets.tabs.all')}</TabsTrigger>
+              <TabsTrigger value="open">{t('consultant:tickets.tabs.open')}</TabsTrigger>
+              <TabsTrigger value="assigned">{t('consultant:tickets.tabs.assigned')}</TabsTrigger>
+              <TabsTrigger value="in_progress">{t('consultant:tickets.tabs.in_progress')}</TabsTrigger>
+              <TabsTrigger value="awaiting_customer">{t('consultant:tickets.tabs.awaiting_customer')}</TabsTrigger>
+              <TabsTrigger value="awaiting_consultant">{t('consultant:tickets.tabs.awaiting_consultant')}</TabsTrigger>
+              <TabsTrigger value="scheduled">{t('consultant:tickets.tabs.scheduled')}</TabsTrigger>
+              <TabsTrigger value="completed">{t('consultant:tickets.tabs.completed')}</TabsTrigger>
             </TabsList>
           </Tabs>
         </CardContent>
@@ -173,14 +175,14 @@ export default function ConsultantTicketsPage() {
 
       {isLoading && (
         <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading tickets...</CardContent>
+          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('consultant:tickets.loading')}</CardContent>
         </Card>
       )}
 
       {!isLoading && tickets.length === 0 && (
         <Card>
           <CardContent className="p-6 text-sm text-wisebox-text-secondary">
-            No tickets found for the selected filter.
+            {t('consultant:tickets.noTickets')}
           </CardContent>
         </Card>
       )}
@@ -199,26 +201,26 @@ export default function ConsultantTicketsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-wisebox-text-secondary">
                 <p>
-                  Priority: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
+                  {t('consultant:tickets.fields.priority')}: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
                 </p>
                 <p>
-                  Customer: <span className="font-medium text-wisebox-text-primary">{ticket.customer?.name ?? '-'}</span>
+                  {t('consultant:tickets.fields.customer')}: <span className="font-medium text-wisebox-text-primary">{ticket.customer?.name ?? '-'}</span>
                 </p>
                 <p>
-                  Property: <span className="font-medium text-wisebox-text-primary">{ticket.property?.property_name ?? '-'}</span>
+                  {t('consultant:tickets.fields.property')}: <span className="font-medium text-wisebox-text-primary">{ticket.property?.property_name ?? '-'}</span>
                 </p>
                 <p>
-                  Service: <span className="font-medium text-wisebox-text-primary">{ticket.service?.name ?? '-'}</span>
+                  {t('consultant:tickets.fields.service')}: <span className="font-medium text-wisebox-text-primary">{ticket.service?.name ?? '-'}</span>
                 </p>
                 {ticket.scheduled_at && (
                   <p>
-                    Meeting: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.scheduled_at).toLocaleString()}</span>
+                    {t('consultant:tickets.fields.meeting')}: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.scheduled_at).toLocaleString()}</span>
                   </p>
                 )}
               </div>
 
               <Button asChild variant="outline" className="w-full sm:w-auto">
-                <Link href={`/consultant/tickets/${ticket.id}`}>Open workspace</Link>
+                <Link href={`/consultant/tickets/${ticket.id}`}>{t('consultant:tickets.openWorkspace')}</Link>
               </Button>
             </CardContent>
           </Card>

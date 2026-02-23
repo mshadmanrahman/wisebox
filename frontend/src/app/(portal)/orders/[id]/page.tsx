@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import api from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +22,7 @@ export default function OrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { t } = useTranslation(['orders', 'common']);
   const orderId = Number(params.id);
 
   const { data: order, isLoading } = useQuery({
@@ -62,7 +64,7 @@ export default function OrderDetailPage() {
     return (
       <div className="px-6 py-8">
         <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading order...</CardContent>
+          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('orders:detail.loading')}</CardContent>
         </Card>
       </div>
     );
@@ -73,9 +75,9 @@ export default function OrderDetailPage() {
       <div className="px-6 py-8">
         <Card>
           <CardContent className="p-6 space-y-3">
-            <p className="font-medium text-wisebox-text-primary">Order not found.</p>
+            <p className="font-medium text-wisebox-text-primary">{t('orders:detail.notFound')}</p>
             <Button asChild variant="outline">
-              <Link href="/orders">Back to orders</Link>
+              <Link href="/orders">{t('orders:detail.backToOrders')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -88,7 +90,7 @@ export default function OrderDetailPage() {
       <Button asChild variant="ghost" className="-ml-2">
         <Link href="/orders">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to orders
+          {t('orders:detail.backToOrders')}
         </Link>
       </Button>
 
@@ -102,18 +104,18 @@ export default function OrderDetailPage() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
             <p className="text-wisebox-text-secondary">
-              Status: <span className="font-medium text-wisebox-text-primary">{order.status}</span>
+              {t('orders:detail.status')}: <span className="font-medium text-wisebox-text-primary">{order.status}</span>
             </p>
             <p className="text-wisebox-text-secondary">
-              Total: <span className="font-medium text-wisebox-text-primary">{order.currency} {Number(order.total).toFixed(2)}</span>
+              {t('orders:detail.total')}: <span className="font-medium text-wisebox-text-primary">{order.currency} {Number(order.total).toFixed(2)}</span>
             </p>
             <p className="text-wisebox-text-secondary">
-              Created: <span className="font-medium text-wisebox-text-primary">{new Date(order.created_at).toLocaleString()}</span>
+              {t('orders:detail.created')}: <span className="font-medium text-wisebox-text-primary">{new Date(order.created_at).toLocaleString()}</span>
             </p>
           </div>
 
           <div className="space-y-2">
-            <p className="font-medium text-wisebox-text-primary">Items</p>
+            <p className="font-medium text-wisebox-text-primary">{t('orders:detail.items')}</p>
             <div className="rounded-lg border divide-y">
               {(order.items ?? []).map((item) => (
                 <div key={item.id} className="px-4 py-3 flex items-center justify-between text-sm">
@@ -134,10 +136,10 @@ export default function OrderDetailPage() {
                 {checkoutMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Redirecting...
+                    {t('orders:detail.redirecting')}
                   </>
                 ) : (
-                  'Pay with Stripe'
+                  t('orders:detail.payWithStripe')
                 )}
               </Button>
 
@@ -146,14 +148,14 @@ export default function OrderDetailPage() {
                 onClick={() => cancelMutation.mutate()}
                 disabled={cancelMutation.isPending}
               >
-                {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Order'}
+                {cancelMutation.isPending ? t('orders:detail.cancelling') : t('orders:detail.cancelOrder')}
               </Button>
             </div>
           )}
 
           {order.payment_status === 'paid' && (
             <Button asChild variant="outline">
-              <Link href={`/orders/${order.id}/confirmation`}>View confirmation</Link>
+              <Link href={`/orders/${order.id}/confirmation`}>{t('orders:detail.viewConfirmation')}</Link>
             </Button>
           )}
         </CardContent>

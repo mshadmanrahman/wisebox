@@ -31,15 +31,17 @@ class FormInvitationNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        $locale = $notifiable->profile?->preferred_language ?? 'en';
+
         return (new MailMessage)
-            ->subject("Please complete: {$this->templateName} for {$this->ticketNumber}")
-            ->greeting("Hello,")
-            ->line("Your consultant **{$this->consultantName}** has requested you to fill out a form for your property consultation.")
-            ->line("**Form:** {$this->templateName}")
-            ->line("**Ticket:** {$this->ticketNumber}")
-            ->line("**Property:** {$this->propertyName}")
-            ->line('Please complete this form at your earliest convenience to help us assist you better.')
-            ->action('Fill Out Form', $this->formUrl)
-            ->line('This link will expire in 7 days. No login is required to complete the form.');
+            ->subject(__('notifications.form_invitation.subject', ['template_name' => $this->templateName, 'ticket_number' => $this->ticketNumber], $locale))
+            ->greeting(__('notifications.form_invitation.greeting', [], $locale))
+            ->line(__('notifications.form_invitation.request', ['consultant_name' => $this->consultantName], $locale))
+            ->line('**'.__('notifications.form_invitation.form_label', ['template_name' => $this->templateName], $locale).'**')
+            ->line('**'.__('notifications.form_invitation.ticket_label', ['ticket_number' => $this->ticketNumber], $locale).'**')
+            ->line('**'.__('notifications.form_invitation.property_label', ['property_name' => $this->propertyName], $locale).'**')
+            ->line(__('notifications.form_invitation.please_complete', [], $locale))
+            ->action(__('notifications.form_invitation.fill_form', [], $locale), $this->formUrl)
+            ->line(__('notifications.form_invitation.expiry_note', [], $locale));
     }
 }

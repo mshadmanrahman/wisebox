@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,6 +30,7 @@ interface CoOwnerFieldsProps {
 }
 
 export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFieldsProps) {
+  const { t } = useTranslation('properties');
   const totalCoOwnerPercentage = coOwners.reduce((sum, co) => sum + (co.ownership_percentage || 0), 0);
   const exceeds100 = totalCoOwnerPercentage > 100;
 
@@ -55,12 +57,12 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
     <div className="space-y-4">
       <div className="flex items-center justify-between rounded-lg bg-wisebox-primary-50 px-4 py-3">
         <span className="text-sm font-medium text-wisebox-primary-800">
-          Your ownership: {ownerPercentage}%
+          {t('coOwnerFields.yourOwnership', { percent: ownerPercentage })}
         </span>
         {exceeds100 && (
           <span className="flex items-center gap-1.5 text-sm font-medium text-amber-700">
             <AlertTriangle className="h-4 w-4" />
-            Total exceeds 100%
+            {t('coOwnerFields.totalExceeds')}
           </span>
         )}
       </div>
@@ -72,7 +74,7 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
         >
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-wisebox-text-secondary">
-              Co-Owner {index + 1}
+              {t('coOwnerFields.coOwnerIndex', { index: index + 1 })}
             </span>
             <Button
               type="button"
@@ -87,27 +89,27 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Name *</Label>
+              <Label className="text-xs">{t('coOwnerFields.nameRequired')}</Label>
               <Input
-                placeholder="Full name"
+                placeholder={t('coOwnerFields.fullName')}
                 value={coOwner.name}
                 onChange={(e) => updateCoOwner(index, 'name', e.target.value)}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs">Relationship *</Label>
+              <Label className="text-xs">{t('coOwnerFields.relationshipRequired')}</Label>
               <Select
                 value={coOwner.relationship}
                 onValueChange={(val) => updateCoOwner(index, 'relationship', val)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select relationship" />
+                  <SelectValue placeholder={t('coOwnerFields.selectRelationship')} />
                 </SelectTrigger>
                 <SelectContent>
                   {RELATIONSHIPS.map((rel) => (
                     <SelectItem key={rel} value={rel}>
-                      {rel}
+                      {t(`coOwnerFields.relationships.${rel}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -115,12 +117,12 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs">Ownership % *</Label>
+              <Label className="text-xs">{t('coOwnerFields.ownershipRequired')}</Label>
               <Input
                 type="number"
                 min={1}
                 max={100}
-                placeholder="e.g. 25"
+                placeholder={t('coOwnerFields.ownershipPlaceholder')}
                 value={coOwner.ownership_percentage || ''}
                 onChange={(e) =>
                   updateCoOwner(index, 'ownership_percentage', Number(e.target.value))
@@ -129,7 +131,7 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs">Phone</Label>
+              <Label className="text-xs">{t('coOwnerFields.phone')}</Label>
               <Input
                 type="tel"
                 placeholder="+880..."
@@ -139,7 +141,7 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
             </div>
 
             <div className="sm:col-span-2 space-y-1.5">
-              <Label className="text-xs">Email</Label>
+              <Label className="text-xs">{t('coOwnerFields.email')}</Label>
               <Input
                 type="email"
                 placeholder="email@example.com"
@@ -159,7 +161,7 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
         onClick={addCoOwner}
       >
         <Plus className="h-4 w-4 mr-1.5" />
-        Add Co-Owner
+        {t('coOwnerFields.addCoOwner')}
       </Button>
     </div>
   );

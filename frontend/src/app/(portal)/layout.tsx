@@ -3,7 +3,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Bell, LogOut, Settings, Sparkles } from 'lucide-react';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { useI18nStore } from '@/stores/i18n';
 import { Providers } from '@/components/providers';
 import { WiseboxLogo } from '@/components/ui/wisebox-logo';
 import { Button } from '@/components/ui/button';
@@ -41,6 +44,7 @@ export default function PortalLayout({
   children: React.ReactNode;
 }) {
   const [hasHydrated, setHasHydrated] = useState(false);
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     // persist API only available client-side; check if already hydrated
@@ -59,7 +63,7 @@ export default function PortalLayout({
     return (
       <Providers>
         <div className="min-h-screen bg-wisebox-background flex items-center justify-center">
-          <div className="text-wisebox-text-secondary text-sm">Loading...</div>
+          <div className="text-wisebox-text-secondary text-sm">{t('loading')}</div>
         </div>
       </Providers>
     );
@@ -78,6 +82,15 @@ export default function PortalLayout({
 function PortalHeader() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const syncFromProfile = useI18nStore((s) => s.syncFromProfile);
+  const { t } = useTranslation('common');
+
+  // Sync language from user profile on hydration
+  useEffect(() => {
+    if (user?.profile?.preferred_language) {
+      syncFromProfile(user.profile.preferred_language);
+    }
+  }, [user?.profile?.preferred_language, syncFromProfile]);
 
   const isConsultantOnly = user?.role === 'consultant';
   const isAdminRole =
@@ -107,38 +120,38 @@ function PortalHeader() {
           {isConsultantOnly ? (
             <>
               <Link href="/consultant" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                My Cases
+                {t('nav.myCases')}
               </Link>
               <Link href="/consultant/tickets" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                All Tickets
+                {t('nav.allTickets')}
               </Link>
               <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                Settings
+                {t('nav.settings')}
               </Link>
             </>
           ) : (
             <>
               <Link href="/properties" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                Assets
+                {t('nav.assets')}
               </Link>
               <Link href="/learning" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                Learning
+                {t('nav.learning')}
               </Link>
               <Link href="/assessment/start" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                Assessment
+                {t('nav.assessment')}
               </Link>
               <Link href="/workspace/services" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                Services
+                {t('nav.services')}
               </Link>
               <Link href="/tickets" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                Tickets
+                {t('nav.tickets')}
               </Link>
               <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
-                Settings
+                {t('nav.settings')}
               </Link>
               {isAdminRole && (
                 <Link href="/admin/dashboard" className="text-amber-400 hover:text-amber-300 transition-colors">
-                  Admin Panel
+                  {t('nav.adminPanel')}
                 </Link>
               )}
             </>
@@ -146,6 +159,8 @@ function PortalHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <LanguageSwitcher />
+
           <Button variant="ghost" size="icon" className="relative text-white hover:bg-wisebox-background-lighter">
             <Sparkles className="h-5 w-5" />
           </Button>
@@ -163,7 +178,7 @@ function PortalHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[340px] bg-wisebox-background-card border-wisebox-border">
               <DropdownMenuLabel className="flex items-center justify-between text-white">
-                <span>Notifications</span>
+                <span>{t('header.notifications')}</span>
                 <Button
                   type="button"
                   variant="ghost"
@@ -172,12 +187,12 @@ function PortalHeader() {
                   onClick={() => markAllMutation.mutate()}
                   disabled={unreadCount === 0 || markAllMutation.isPending}
                 >
-                  Mark all read
+                  {t('header.markAllRead')}
                 </Button>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-wisebox-border" />
               {notifications.length === 0 ? (
-                <div className="px-2 py-4 text-sm text-wisebox-text-secondary">No notifications yet.</div>
+                <div className="px-2 py-4 text-sm text-wisebox-text-secondary">{t('header.noNotificationsYet')}</div>
               ) : (
                 notifications.slice(0, 5).map((notification: Notification) => (
                   <DropdownMenuItem
@@ -209,7 +224,7 @@ function PortalHeader() {
               <DropdownMenuSeparator className="bg-wisebox-border" />
               <DropdownMenuItem asChild className="hover:bg-wisebox-background-lighter">
                 <Link href="/notifications" className="cursor-pointer text-white">
-                  Open notification center
+                  {t('header.openNotificationCenter')}
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -233,12 +248,12 @@ function PortalHeader() {
               <DropdownMenuItem asChild className="hover:bg-wisebox-background-lighter">
                 <Link href="/settings" className="cursor-pointer text-white">
                   <Settings className="h-4 w-4 mr-2" />
-                  Settings
+                  {t('nav.settings')}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:bg-wisebox-background-lighter">
                 <LogOut className="h-4 w-4 mr-2" />
-                Logout
+                {t('header.logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

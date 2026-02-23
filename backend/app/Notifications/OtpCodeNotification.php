@@ -22,12 +22,14 @@ class OtpCodeNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
+        $locale = $notifiable->profile?->preferred_language ?? 'en';
+
         return (new MailMessage)
-            ->subject('Your Wisebox verification code')
-            ->greeting('Hello '.$notifiable->name.',')
-            ->line('Use this verification code to continue:')
+            ->subject(__('notifications.otp.subject', [], $locale))
+            ->greeting(__('notifications.otp.greeting', ['name' => $notifiable->name], $locale))
+            ->line(__('notifications.otp.line1', [], $locale))
             ->line('**'.$this->code.'**')
-            ->line("This code will expire in {$this->ttlMinutes} minutes.")
-            ->line('If you did not request this code, you can safely ignore this message.');
+            ->line(__('notifications.otp.expires', ['minutes' => $this->ttlMinutes], $locale))
+            ->line(__('notifications.otp.ignore', [], $locale));
     }
 }

@@ -68,7 +68,7 @@ class NotificationController extends Controller
             ->first();
 
         if (!$notification) {
-            return response()->json(['message' => 'Notification not found.'], 404);
+            return response()->json(['message' => __('messages.notification_not_found')], 404);
         }
 
         if ($notification->read_at === null) {
@@ -78,7 +78,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'data' => $notification->fresh(),
-            'message' => 'Notification marked as read.',
+            'message' => __('messages.notification_marked_read'),
         ]);
     }
 
@@ -99,7 +99,7 @@ class NotificationController extends Controller
             'data' => [
                 'marked_count' => $markedCount,
             ],
-            'message' => 'All notifications marked as read.',
+            'message' => __('messages.all_notifications_read'),
         ]);
     }
 

@@ -228,8 +228,8 @@ class ConsultantTicketController extends Controller
             $this->createNotification(
                 (int) $ticket->customer_id,
                 'ticket.status.updated',
-                'Ticket status updated',
-                "Ticket {$ticket->ticket_number} is now {$ticket->status}.",
+                __('messages.notif_ticket_status_updated_title'),
+                __('messages.notif_ticket_status_updated_body', ['ticket_number' => $ticket->ticket_number, 'status' => $ticket->status]),
                 [
                     'ticket_id' => $ticket->id,
                     'ticket_number' => $ticket->ticket_number,
@@ -267,7 +267,7 @@ class ConsultantTicketController extends Controller
 
         if ($bodyText === '' && empty(is_array($incomingAttachments) ? $incomingAttachments : [$incomingAttachments])) {
             return response()->json([
-                'message' => 'A comment body or at least one attachment is required.',
+                'message' => __('messages.comment_or_attachment_required'),
             ], 422);
         }
 
@@ -292,8 +292,8 @@ class ConsultantTicketController extends Controller
             $this->createNotification(
                 (int) $ticket->customer_id,
                 'ticket.comment.added',
-                'Ticket updated by consultant',
-                "A new update was posted on ticket {$ticket->ticket_number}.",
+                __('messages.notif_consultant_comment_title'),
+                __('messages.notif_consultant_comment_body', ['ticket_number' => $ticket->ticket_number]),
                 [
                     'ticket_id' => $ticket->id,
                     'ticket_number' => $ticket->ticket_number,
@@ -332,13 +332,13 @@ class ConsultantTicketController extends Controller
         $preferredSlots = $ticket->preferred_time_slots;
         if (empty($preferredSlots) || !is_array($preferredSlots)) {
             return response()->json([
-                'message' => 'This ticket does not have preferred time slots.',
+                'message' => __('messages.no_preferred_slots'),
             ], 422);
         }
 
         $slotIndex = $validated['slot_index'];
         if (!isset($preferredSlots[$slotIndex])) {
-            return response()->json(['message' => 'Invalid slot index.'], 422);
+            return response()->json(['message' => __('messages.invalid_slot_index')], 422);
         }
 
         $selectedSlot = $preferredSlots[$slotIndex];
@@ -348,7 +348,7 @@ class ConsultantTicketController extends Controller
 
         if (!$slotDate || !$slotTime) {
             return response()->json([
-                'message' => 'Selected slot is missing date or time information.',
+                'message' => __('messages.slot_missing_datetime'),
             ], 422);
         }
 
@@ -365,8 +365,8 @@ class ConsultantTicketController extends Controller
         $this->createNotification(
             (int) $ticket->customer_id,
             'ticket.meeting.scheduled',
-            'Meeting scheduled',
-            "Your consultation for ticket {$ticket->ticket_number} has been scheduled for {$startTime->format('M d, Y \a\t g:i A')}.",
+            __('messages.notif_meeting_scheduled_title'),
+            __('messages.notif_meeting_scheduled_body', ['ticket_number' => $ticket->ticket_number, 'datetime' => $startTime->format('M d, Y \a\t g:i A')]),
             array_filter([
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -404,7 +404,7 @@ class ConsultantTicketController extends Controller
         $this->ensureCanAccessTicket($user, $ticket);
 
         if (!$ticket->customer_id) {
-            return response()->json(['message' => 'This ticket has no customer.'], 422);
+            return response()->json(['message' => __('messages.no_customer_on_ticket')], 422);
         }
 
         $ticket->loadMissing([
@@ -415,7 +415,7 @@ class ConsultantTicketController extends Controller
         ]);
 
         if (!$ticket->customer?->email) {
-            return response()->json(['message' => 'Customer has no email address.'], 422);
+            return response()->json(['message' => __('messages.customer_no_email')], 422);
         }
 
         try {
@@ -442,8 +442,8 @@ class ConsultantTicketController extends Controller
         $this->createNotification(
             (int) $ticket->customer_id,
             'ticket.booking.link_sent',
-            'Book your consultation',
-            "Your consultant has sent you a link to schedule your meeting for ticket {$ticket->ticket_number}. Check your email.",
+            __('messages.notif_booking_link_title'),
+            __('messages.notif_booking_link_body', ['ticket_number' => $ticket->ticket_number]),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -478,7 +478,7 @@ class ConsultantTicketController extends Controller
         $customer = $ticket->customer;
         if (!$customer || !$customer->email) {
             return response()->json([
-                'message' => 'This ticket does not have a customer with a valid email.',
+                'message' => __('messages.customer_no_valid_email'),
             ], 422);
         }
 
@@ -506,8 +506,8 @@ class ConsultantTicketController extends Controller
         $this->createNotification(
             (int) $ticket->customer_id,
             'ticket.form.sent',
-            'Consultation form requested',
-            "Your consultant has sent you a form to complete for ticket {$ticket->ticket_number}. Check your email.",
+            __('messages.notif_form_sent_title'),
+            __('messages.notif_form_sent_body', ['ticket_number' => $ticket->ticket_number]),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -546,14 +546,14 @@ class ConsultantTicketController extends Controller
 
     private function ensureConsultantScope(User $user): void
     {
-        abort_unless($user->isConsultant() || $user->isAdmin(), 403, 'Forbidden');
+        abort_unless($user->isConsultant() || $user->isAdmin(), 403, __('messages.forbidden'));
     }
 
     private function ensureCanAccessTicket(User $user, Ticket $ticket): void
     {
         $canAccess = $user->isAdmin() || ($user->isConsultant() && $ticket->consultant_id === $user->id);
 
-        abort_unless($canAccess, 403, 'Forbidden');
+        abort_unless($canAccess, 403, __('messages.forbidden'));
     }
 
     /**

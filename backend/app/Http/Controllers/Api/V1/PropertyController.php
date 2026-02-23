@@ -98,7 +98,7 @@ class PropertyController extends Controller
     public function show(Request $request, Property $property): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $property->load([
@@ -122,7 +122,7 @@ class PropertyController extends Controller
     public function update(Request $request, Property $property): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $validated = $request->validate([
@@ -179,12 +179,12 @@ class PropertyController extends Controller
     public function destroy(Request $request, Property $property): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $property->delete();
 
-        return response()->json(['message' => 'Property deleted.']);
+        return response()->json(['message' => __('messages.property_deleted')]);
     }
 
     /**
@@ -193,7 +193,7 @@ class PropertyController extends Controller
     public function saveDraft(Request $request, Property $property): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $request->validate([
@@ -216,7 +216,7 @@ class PropertyController extends Controller
     public function consultations(Request $request, Property $property): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $tickets = $property->tickets()
@@ -257,8 +257,8 @@ class PropertyController extends Controller
             $formattedTotal = rtrim(rtrim(number_format($total, 2, '.', ''), '0'), '.');
 
             return response()->json([
-                'message' => 'Co-owner percentages cannot exceed 100%.',
-                'errors' => ['co_owners' => ["Total is {$formattedTotal}% and must be 100% or less."]],
+                'message' => __('messages.co_owner_percentage_exceeded'),
+                'errors' => ['co_owners' => [__('messages.co_owner_total_error', ['total' => $formattedTotal])]],
             ], 422);
         }
 

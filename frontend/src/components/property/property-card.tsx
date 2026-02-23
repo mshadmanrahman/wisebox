@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useI18nStore } from '@/stores/i18n';
 import type { Property } from '@/types';
 
 interface PropertyCardProps {
@@ -18,15 +20,22 @@ const gradients = [
   'from-amber-900/80 via-orange-900/60 to-slate-900',
 ];
 
-function buildLocation(property: Property): string | null {
+function buildLocation(property: Property, lang: string): string | null {
   const parts: string[] = [];
-  if (property.division?.name) parts.push(property.division.name);
-  if (property.district?.name) parts.push(property.district.name);
+  const useBn = lang === 'bn';
+  if (property.division) {
+    parts.push((useBn && property.division.bn_name) || property.division.name);
+  }
+  if (property.district) {
+    parts.push((useBn && property.district.bn_name) || property.district.name);
+  }
   return parts.length > 0 ? parts.join(', ') : null;
 }
 
 export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
-  const location = buildLocation(property);
+  const { t } = useTranslation('properties');
+  const language = useI18nStore((s) => s.language);
+  const location = buildLocation(property, language);
   const gradient = gradients[index % gradients.length];
 
   return (
@@ -78,7 +87,9 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
                 )}
               </div>
               <span className="text-xs text-white/60">
-                {property.co_owners.length} co-owner{property.co_owners.length !== 1 ? 's' : ''}
+                {property.co_owners.length === 1
+                  ? t('card.coOwner', { count: 1 })
+                  : t('card.coOwners', { count: property.co_owners.length })}
               </span>
             </div>
           )}

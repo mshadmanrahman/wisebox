@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Label } from '@/components/ui/label';
@@ -28,6 +29,9 @@ interface LocationCascadeProps {
 }
 
 export function LocationCascade({ value, onChange }: LocationCascadeProps) {
+  const { t, i18n } = useTranslation('properties');
+  const isBn = i18n.language === 'bn';
+
   const { data: divisions, isLoading: divisionsLoading } = useQuery({
     queryKey: ['locations', 'divisions'],
     queryFn: async () => {
@@ -110,20 +114,20 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label>Division</Label>
+        <Label>{t('locationCascade.division')}</Label>
         <Select
           value={value.division_id?.toString() ?? ''}
           onValueChange={handleDivisionChange}
           disabled={divisionsLoading}
         >
           <SelectTrigger>
-            <SelectValue placeholder={divisionsLoading ? 'Loading...' : 'Select division'} />
+            <SelectValue placeholder={divisionsLoading ? t('locationCascade.loading') : t('locationCascade.selectDivision')} />
           </SelectTrigger>
           <SelectContent>
             {divisions?.map((div) => (
               <SelectItem key={div.id} value={div.id.toString()}>
-                {div.name}
-                {div.bn_name ? ` (${div.bn_name})` : ''}
+                {isBn && div.bn_name ? div.bn_name : div.name}
+                {isBn && div.bn_name ? ` (${div.name})` : div.bn_name ? ` (${div.bn_name})` : ''}
               </SelectItem>
             ))}
           </SelectContent>
@@ -131,7 +135,7 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>District</Label>
+        <Label>{t('locationCascade.district')}</Label>
         <Select
           value={value.district_id?.toString() ?? ''}
           onValueChange={handleDistrictChange}
@@ -141,18 +145,18 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
             <SelectValue
               placeholder={
                 !value.division_id
-                  ? 'Select division first'
+                  ? t('locationCascade.selectDivisionFirst')
                   : districtsLoading
-                    ? 'Loading...'
-                    : 'Select district'
+                    ? t('locationCascade.loading')
+                    : t('locationCascade.selectDistrict')
               }
             />
           </SelectTrigger>
           <SelectContent>
             {districts?.map((dist) => (
               <SelectItem key={dist.id} value={dist.id.toString()}>
-                {dist.name}
-                {dist.bn_name ? ` (${dist.bn_name})` : ''}
+                {isBn && dist.bn_name ? dist.bn_name : dist.name}
+                {isBn && dist.bn_name ? ` (${dist.name})` : dist.bn_name ? ` (${dist.bn_name})` : ''}
               </SelectItem>
             ))}
           </SelectContent>
@@ -160,7 +164,7 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>Upazila</Label>
+        <Label>{t('locationCascade.upazila')}</Label>
         <Select
           value={value.upazila_id?.toString() ?? ''}
           onValueChange={handleUpazilaChange}
@@ -170,18 +174,18 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
             <SelectValue
               placeholder={
                 !value.district_id
-                  ? 'Select district first'
+                  ? t('locationCascade.selectDistrictFirst')
                   : upazilasLoading
-                    ? 'Loading...'
-                    : 'Select upazila'
+                    ? t('locationCascade.loading')
+                    : t('locationCascade.selectUpazila')
               }
             />
           </SelectTrigger>
           <SelectContent>
             {upazilas?.map((upz) => (
               <SelectItem key={upz.id} value={upz.id.toString()}>
-                {upz.name}
-                {upz.bn_name ? ` (${upz.bn_name})` : ''}
+                {isBn && upz.bn_name ? upz.bn_name : upz.name}
+                {isBn && upz.bn_name ? ` (${upz.name})` : upz.bn_name ? ` (${upz.bn_name})` : ''}
               </SelectItem>
             ))}
           </SelectContent>
@@ -189,7 +193,7 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>Mouza</Label>
+        <Label>{t('locationCascade.mouza')}</Label>
         <Select
           value={value.mouza_id?.toString() ?? ''}
           onValueChange={handleMouzaChange}
@@ -199,25 +203,25 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
             <SelectValue
               placeholder={
                 !value.upazila_id
-                  ? 'Select upazila first'
+                  ? t('locationCascade.selectUpazilaFirst')
                   : mouzasLoading
-                    ? 'Loading...'
+                    ? t('locationCascade.loading')
                     : hasMouzaOptions
-                      ? 'Select mouza'
-                      : 'No mouza available'
+                      ? t('locationCascade.selectMouza')
+                      : t('locationCascade.noMouzaAvailable')
               }
             />
           </SelectTrigger>
           <SelectContent>
             {!mouzasLoading && value.upazila_id && !hasMouzaOptions && (
               <SelectItem value="__none" disabled>
-                No mouza available for selected upazila
+                {t('locationCascade.noMouzaForUpazila')}
               </SelectItem>
             )}
             {mouzas?.map((mz) => (
               <SelectItem key={mz.id} value={mz.id.toString()}>
-                {mz.name}
-                {mz.bn_name ? ` (${mz.bn_name})` : ''}
+                {isBn && mz.bn_name ? mz.bn_name : mz.name}
+                {isBn && mz.bn_name ? ` (${mz.name})` : mz.bn_name ? ` (${mz.bn_name})` : ''}
                 {mz.jl_number ? ` - JL ${mz.jl_number}` : ''}
               </SelectItem>
             ))}

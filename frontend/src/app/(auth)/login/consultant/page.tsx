@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +23,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function ConsultantLoginPage() {
+  const { t } = useTranslation('consultant');
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export default function ConsultantLoginPage() {
       const error = err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } };
       const msg = error.response?.data?.errors?.email?.[0]
         || error.response?.data?.message
-        || 'Invalid credentials or insufficient permissions.';
+        || t('login.invalidCredentials');
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -69,14 +71,14 @@ export default function ConsultantLoginPage() {
             <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
               <Briefcase className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-semibold text-white">Wisebox Consultant</span>
+            <span className="text-xl font-semibold text-white">{t('login.brand')}</span>
           </div>
 
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Consultant Portal</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">{t('login.title')}</h1>
             <p className="text-emerald-300/70">
-              Sign in to manage your assigned consultations and help property owners
+              {t('login.subtitle')}
             </p>
           </div>
 
@@ -91,12 +93,12 @@ export default function ConsultantLoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-white text-sm font-medium">
-                Consultant Email
+                {t('login.emailLabel')}
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="consultant@wisebox.co"
+                placeholder={t('login.emailPlaceholder')}
                 autoComplete="email"
                 className="bg-emerald-900/50 border-emerald-800 text-white placeholder:text-emerald-600 h-12"
                 {...register('email')}
@@ -106,13 +108,13 @@ export default function ConsultantLoginPage() {
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-white text-sm font-medium">
-                Password
+                {t('login.passwordLabel')}
               </Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
+                  placeholder={t('login.passwordPlaceholder')}
                   autoComplete="current-password"
                   className="bg-emerald-900/50 border-emerald-800 text-white placeholder:text-emerald-600 h-12"
                   {...register('password')}
@@ -138,21 +140,21 @@ export default function ConsultantLoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  {t('login.submitting')}
                 </>
               ) : (
-                'Sign in to Consultant Portal'
+                t('login.submit')
               )}
             </Button>
 
             <p className="text-center text-sm text-emerald-500/70">
-              Not a consultant?{' '}
+              {t('login.notConsultant')}{' '}
               <Link href="/login" className="text-emerald-300 font-medium hover:underline">
-                User login
+                {t('login.userLogin')}
               </Link>
               {' | '}
               <Link href="/login/admin" className="text-emerald-300 font-medium hover:underline">
-                Admin login
+                {t('login.adminLogin')}
               </Link>
             </p>
           </form>
@@ -160,7 +162,7 @@ export default function ConsultantLoginPage() {
           {/* Footer */}
           <div className="pt-8 border-t border-emerald-900">
             <p className="text-xs text-emerald-800 text-center">
-              Wisebox Consultant Portal. For authorized consultants only.
+              {t('login.footer')}
             </p>
           </div>
         </div>
@@ -170,25 +172,25 @@ export default function ConsultantLoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-600 to-teal-700 p-12 items-center justify-center">
         <div className="max-w-md text-white space-y-8">
           <Briefcase className="w-16 h-16 text-white/80" />
-          <h2 className="text-3xl font-bold">Consultation Hub</h2>
+          <h2 className="text-3xl font-bold">{t('login.sideTitle')}</h2>
           <div className="space-y-4 text-emerald-100">
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">1</span>
               </div>
-              <p>Accept consultation requests and select meeting times</p>
+              <p>{t('login.sideStep1')}</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">2</span>
               </div>
-              <p>Review property documents during consultations</p>
+              <p>{t('login.sideStep2')}</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">3</span>
               </div>
-              <p>Schedule Google Meet sessions with automatic calendar invites</p>
+              <p>{t('login.sideStep3')}</p>
             </div>
           </div>
         </div>

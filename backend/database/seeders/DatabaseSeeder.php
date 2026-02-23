@@ -33,6 +33,9 @@ class DatabaseSeeder extends Seeder
 
             // E2E test users (customer, consultant, admin with test passwords)
             TestUserSeeder::class,
+
+            // i18n: Frontend translation strings (EN + BN)
+            TranslationSeeder::class,
         ]);
     }
 }

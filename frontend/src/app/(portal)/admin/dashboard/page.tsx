@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Shield, Users, Clock, CheckCircle, XCircle, ArrowRight, Calendar } from 'lucide-react';
 import api from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,6 +39,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminDashboard() {
+  const { t } = useTranslation('admin');
   const { data: consultationsData, isLoading } = useQuery({
     queryKey: ['admin', 'consultations'],
     queryFn: async () => {
@@ -58,10 +60,10 @@ export default function AdminDashboard() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Shield className="h-6 w-6 text-amber-500" />
-            <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
+            <h1 className="text-3xl font-bold text-slate-900">{t('dashboard.title')}</h1>
           </div>
           <p className="text-slate-600">
-            Manage consultation requests and platform operations
+            {t('dashboard.subtitle')}
           </p>
         </div>
       </div>
@@ -72,7 +74,7 @@ export default function AdminDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Pending</p>
+                <p className="text-sm text-slate-500">{t('dashboard.stats.pending')}</p>
                 <p className="text-3xl font-bold text-amber-600 mt-1">{stats.pending}</p>
               </div>
               <div className="rounded-xl bg-amber-50 p-3">
@@ -86,7 +88,7 @@ export default function AdminDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Assigned</p>
+                <p className="text-sm text-slate-500">{t('dashboard.stats.assigned')}</p>
                 <p className="text-3xl font-bold text-blue-600 mt-1">{stats.assigned}</p>
               </div>
               <div className="rounded-xl bg-blue-50 p-3">
@@ -100,7 +102,7 @@ export default function AdminDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Scheduled</p>
+                <p className="text-sm text-slate-500">{t('dashboard.stats.scheduled')}</p>
                 <p className="text-3xl font-bold text-purple-600 mt-1">{stats.scheduled}</p>
               </div>
               <div className="rounded-xl bg-purple-50 p-3">
@@ -114,7 +116,7 @@ export default function AdminDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Completed</p>
+                <p className="text-sm text-slate-500">{t('dashboard.stats.completed')}</p>
                 <p className="text-3xl font-bold text-green-600 mt-1">{stats.completed}</p>
               </div>
               <div className="rounded-xl bg-green-50 p-3">
@@ -128,7 +130,7 @@ export default function AdminDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Rejected</p>
+                <p className="text-sm text-slate-500">{t('dashboard.stats.rejected')}</p>
                 <p className="text-3xl font-bold text-red-600 mt-1">{stats.rejected}</p>
               </div>
               <div className="rounded-xl bg-red-50 p-3">
@@ -143,25 +145,25 @@ export default function AdminDashboard() {
       <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-slate-900">Consultation Requests</CardTitle>
+            <CardTitle className="text-slate-900">{t('dashboard.consultations.title')}</CardTitle>
             <CardDescription className="text-slate-500">
-              Review and manage incoming consultation requests
+              {t('dashboard.consultations.description')}
             </CardDescription>
           </div>
           <Button asChild variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50">
             <Link href="/admin/consultations">
-              View All
+              {t('dashboard.consultations.viewAll')}
               <ArrowRight className="h-4 w-4 ml-2" />
             </Link>
           </Button>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-sm text-slate-500">Loading consultations...</p>
+            <p className="text-sm text-slate-500">{t('dashboard.consultations.loading')}</p>
           ) : consultations.length === 0 ? (
             <div className="text-center py-12">
               <Clock className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500">No consultation requests yet</p>
+              <p className="text-slate-500">{t('dashboard.consultations.noRequests')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -179,7 +181,7 @@ export default function AdminDashboard() {
                             {consultation.ticket_number}
                           </Badge>
                           <Badge variant="outline" className={cn('text-xs', statusColors[consultation.status] || '')}>
-                            {consultation.status === 'open' ? 'Pending Review' : consultation.status}
+                            {consultation.status === 'open' ? t('dashboard.consultations.pendingReview') : consultation.status}
                           </Badge>
                         </div>
                         <h3 className="font-semibold text-slate-900 text-base">{consultation.title}</h3>
@@ -194,15 +196,15 @@ export default function AdminDashboard() {
 
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
                       <div>
-                        <p className="text-slate-400 text-xs">Customer</p>
-                        <p className="text-slate-900 font-medium">{consultation.customer?.name || 'N/A'}</p>
+                        <p className="text-slate-400 text-xs">{t('dashboard.fields.customer')}</p>
+                        <p className="text-slate-900 font-medium">{consultation.customer?.name || t('dashboard.na')}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-xs">Property</p>
-                        <p className="text-slate-900 font-medium truncate">{consultation.property?.property_name || 'N/A'}</p>
+                        <p className="text-slate-400 text-xs">{t('dashboard.fields.property')}</p>
+                        <p className="text-slate-900 font-medium truncate">{consultation.property?.property_name || t('dashboard.na')}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-xs">Requested</p>
+                        <p className="text-slate-400 text-xs">{t('dashboard.fields.requested')}</p>
                         <p className="text-slate-900 font-medium">
                           {new Date(consultation.created_at).toLocaleDateString('en-GB', {
                             day: 'numeric', month: 'short', year: 'numeric',

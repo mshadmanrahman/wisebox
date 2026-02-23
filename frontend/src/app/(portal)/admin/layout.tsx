@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, MessageSquare, BookOpen } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, BookOpen, Languages } from 'lucide-react';
 import { WiseboxLogo } from '@/components/ui/wisebox-logo';
 import { cn } from '@/lib/utils';
 
@@ -10,6 +10,7 @@ const adminNavItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/consultations', label: 'Consultations', icon: MessageSquare },
   { href: '/admin/learning', label: 'Learning', icon: BookOpen },
+  { href: '/admin/translations', label: 'Translations', icon: Languages },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -11,13 +11,27 @@ export const api = axios.create({
   // Removed withCredentials - we're using tokens, not cookies
 });
 
-// Request interceptor: attach Bearer token from localStorage
+// Request interceptor: attach Bearer token and Accept-Language from localStorage
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('wisebox_token');
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      // Read language from persisted Zustand store (avoid circular import)
+      try {
+        const raw = localStorage.getItem('wisebox-i18n');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const lang = parsed?.state?.language;
+          if (lang && config.headers) {
+            config.headers['Accept-Language'] = lang;
+          }
+        }
+      } catch {
+        // Ignore parse errors; default language will be used
       }
     }
     return config;

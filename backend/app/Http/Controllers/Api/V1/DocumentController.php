@@ -24,7 +24,7 @@ class DocumentController extends Controller
     public function index(Request $request, Property $property): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $documents = $property->documents()
@@ -52,7 +52,7 @@ class DocumentController extends Controller
     public function store(Request $request, Property $property): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $request->validate([
@@ -109,7 +109,7 @@ class DocumentController extends Controller
     public function markMissing(Request $request, Property $property, int $documentTypeId): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $docType = DocumentType::findOrFail($documentTypeId);
@@ -132,7 +132,7 @@ class DocumentController extends Controller
         );
 
         return response()->json([
-            'message' => 'Document marked as missing.',
+            'message' => __('messages.document_marked_missing'),
             'guidance' => $docType->missing_guidance,
         ]);
     }
@@ -148,17 +148,17 @@ class DocumentController extends Controller
         $isOwner = $document->user_id === $user->id;
 
         if (!$isStaff && !$isOwner) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         if (!$document->has_document || !$document->file_path) {
-            return response()->json(['message' => 'No file available for this document.'], 404);
+            return response()->json(['message' => __('messages.no_file_available')], 404);
         }
 
         $disk = config('app.env') === 'production' ? 'documents' : 'local';
 
         if (!Storage::disk($disk)->exists($document->file_path)) {
-            return response()->json(['message' => 'File not found on storage.'], 404);
+            return response()->json(['message' => __('messages.file_not_found')], 404);
         }
 
         return Storage::disk($disk)->download(
@@ -174,11 +174,11 @@ class DocumentController extends Controller
     public function destroy(Request $request, Property $property, PropertyDocument $document): JsonResponse
     {
         if ($property->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         if ($document->property_id !== $property->id) {
-            return response()->json(['message' => 'Document does not belong to this property.'], 404);
+            return response()->json(['message' => __('messages.document_not_belongs')], 404);
         }
 
         // Delete file from storage
@@ -193,7 +193,7 @@ class DocumentController extends Controller
         $completion = $this->completionService->calculate($property);
 
         return response()->json([
-            'message' => 'Document deleted.',
+            'message' => __('messages.document_deleted'),
             'completion' => $completion,
         ]);
     }

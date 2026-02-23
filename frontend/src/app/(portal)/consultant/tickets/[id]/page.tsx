@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FormEvent, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Loader2, Send, FileText, X, Download, Eye, Mail } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
@@ -58,6 +59,7 @@ function toLocalDateTimeValue(dateString: string | null | undefined): string {
 }
 
 export default function ConsultantTicketDetailPage() {
+  const { t } = useTranslation('consultant');
   const params = useParams();
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
@@ -277,7 +279,7 @@ export default function ConsultantTicketDetailPage() {
       <div className="px-6 py-8">
         <Card>
           <CardContent className="p-6 text-sm text-wisebox-text-secondary">
-            Consultant access required.
+            {t('detail.accessRequired')}
           </CardContent>
         </Card>
       </div>
@@ -288,7 +290,7 @@ export default function ConsultantTicketDetailPage() {
     return (
       <div className="px-6 py-8">
         <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading consultant ticket...</CardContent>
+          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('detail.loading')}</CardContent>
         </Card>
       </div>
     );
@@ -301,7 +303,7 @@ export default function ConsultantTicketDetailPage() {
       <Button asChild variant="ghost" className="-ml-2">
         <Link href="/consultant/tickets">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to consultant tickets
+          {t('detail.backToTickets')}
         </Link>
       </Button>
 
@@ -332,28 +334,28 @@ export default function ConsultantTicketDetailPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-wisebox-text-secondary">
             <p>
-              Customer: <span className="font-medium text-wisebox-text-primary">{ticket.customer?.name ?? '-'}</span>
+              {t('detail.fields.customer')}: <span className="font-medium text-wisebox-text-primary">{ticket.customer?.name ?? '-'}</span>
             </p>
             <p>
-              Customer Email: <span className="font-medium text-wisebox-text-primary">{ticket.customer?.email ?? '-'}</span>
+              {t('detail.fields.customerEmail')}: <span className="font-medium text-wisebox-text-primary">{ticket.customer?.email ?? '-'}</span>
             </p>
             <p>
-              Property: <span className="font-medium text-wisebox-text-primary">{ticket.property?.property_name ?? '-'}</span>
+              {t('detail.fields.property')}: <span className="font-medium text-wisebox-text-primary">{ticket.property?.property_name ?? '-'}</span>
             </p>
             <p>
-              Service: <span className="font-medium text-wisebox-text-primary">{ticket.service?.name ?? '-'}</span>
+              {t('detail.fields.service')}: <span className="font-medium text-wisebox-text-primary">{ticket.service?.name ?? '-'}</span>
             </p>
             <p>
-              Priority: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
+              {t('detail.fields.priority')}: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
             </p>
             <p>
-              Scheduled: <span className="font-medium text-wisebox-text-primary">{ticket.scheduled_at ? new Date(ticket.scheduled_at).toLocaleString() : '-'}</span>
+              {t('detail.fields.scheduled')}: <span className="font-medium text-wisebox-text-primary">{ticket.scheduled_at ? new Date(ticket.scheduled_at).toLocaleString() : '-'}</span>
             </p>
           </div>
 
           {ticket.meeting_url && (
             <Button asChild variant="outline">
-              <a href={ticket.meeting_url} target="_blank" rel="noreferrer">Join Meeting Link</a>
+              <a href={ticket.meeting_url} target="_blank" rel="noreferrer">{t('detail.joinMeeting')}</a>
             </Button>
           )}
         </CardContent>
@@ -362,11 +364,11 @@ export default function ConsultantTicketDetailPage() {
       {ticket.preferred_time_slots && Array.isArray(ticket.preferred_time_slots) && ticket.preferred_time_slots.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Preferred Time Slots</CardTitle>
+            <CardTitle>{t('detail.timeSlots.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-wisebox-text-secondary">
-              Customer has provided {ticket.preferred_time_slots.length} preferred time slots. Select one to create a Google Meet consultation.
+              {t('detail.timeSlots.description', { count: ticket.preferred_time_slots.length })}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {ticket.preferred_time_slots.map((slot: { date: string; time: string; display: string }, index: number) => (
@@ -383,7 +385,7 @@ export default function ConsultantTicketDetailPage() {
                     {slot.display || `${new Date(slot.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} at ${slot.time}`}
                   </div>
                   {selectedSlotIndex === index && (
-                    <div className="mt-2 text-xs text-wisebox-primary-400 font-medium">✓ Selected</div>
+                    <div className="mt-2 text-xs text-wisebox-primary-400 font-medium">✓ {t('detail.timeSlots.selected')}</div>
                   )}
                 </button>
               ))}
@@ -398,10 +400,10 @@ export default function ConsultantTicketDetailPage() {
                   {confirmSlotMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Creating Google Meet...
+                      {t('detail.timeSlots.creatingMeet')}
                     </>
                   ) : (
-                    'Confirm & Create Google Meet'
+                    t('detail.timeSlots.confirmAndCreate')
                   )}
                 </Button>
               </div>
@@ -412,12 +414,12 @@ export default function ConsultantTicketDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Update Ticket</CardTitle>
+          <CardTitle>{t('detail.updateTicket')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{t('detail.statusLabel')}</Label>
               <Select value={effectiveStatus} onValueChange={(value) => setStatusValue(value as TicketStatus)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -433,7 +435,7 @@ export default function ConsultantTicketDetailPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Scheduled At</Label>
+              <Label>{t('detail.scheduledAt')}</Label>
               <Input
                 type="datetime-local"
                 value={scheduledAtValue || toLocalDateTimeValue(ticket.scheduled_at)}
@@ -442,7 +444,7 @@ export default function ConsultantTicketDetailPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Meeting URL</Label>
+              <Label>{t('detail.meetingUrl')}</Label>
               <Input
                 placeholder="https://meet.google.com/..."
                 value={meetingUrlValue || ticket.meeting_url || ''}
@@ -451,7 +453,7 @@ export default function ConsultantTicketDetailPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Duration (minutes)</Label>
+              <Label>{t('detail.duration')}</Label>
               <Input
                 type="number"
                 min={1}
@@ -463,25 +465,25 @@ export default function ConsultantTicketDetailPage() {
           </div>
 
           <div className="space-y-2">
-            <Label>Resolution Notes</Label>
+            <Label>{t('detail.resolutionNotes')}</Label>
             <Textarea
               rows={3}
               value={resolutionNotesValue || ticket.resolution_notes || ''}
               onChange={(e) => setResolutionNotesValue(e.target.value)}
-              placeholder="Add completion notes or summary..."
+              placeholder={t('detail.resolutionNotesPlaceholder')}
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Consultation Notes</Label>
+            <Label>{t('detail.consultationNotes')}</Label>
             <Textarea
               rows={5}
               value={consultationNotesValue || ticket.consultation_notes || ''}
               onChange={(e) => setConsultationNotesValue(e.target.value)}
-              placeholder="Add consultation notes, recommendations, findings, and action items..."
+              placeholder={t('detail.consultationNotesPlaceholder')}
             />
             <p className="text-xs text-wisebox-text-secondary">
-              These notes will be saved to the property record and visible in the consultation history.
+              {t('detail.consultationNotesHint')}
             </p>
           </div>
 
@@ -493,10 +495,10 @@ export default function ConsultantTicketDetailPage() {
             {updateMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Saving...
+                {t('detail.saving')}
               </>
             ) : (
-              'Save Updates'
+              t('detail.saveUpdates')
             )}
           </Button>
 
@@ -510,21 +512,21 @@ export default function ConsultantTicketDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Property Documents</CardTitle>
+          <CardTitle>{t('detail.documents.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           {documents.length === 0 ? (
-            <p className="text-sm text-wisebox-text-secondary">No documents uploaded for this property yet.</p>
+            <p className="text-sm text-wisebox-text-secondary">{t('detail.documents.noDocuments')}</p>
           ) : (
             <div className="space-y-2">
               {documents.map((doc: PropertyDocument) => (
                 <div key={doc.id} className="rounded-md border p-3 text-sm flex items-center justify-between">
                   <div>
                     <p className="font-medium text-wisebox-text-primary">
-                      {doc.document_type?.name ?? doc.file_name ?? 'Document'}
+                      {doc.document_type?.name ?? doc.file_name ?? t('detail.documents.title')}
                     </p>
                     <p className="text-wisebox-text-secondary">
-                      {doc.has_document ? doc.file_name : 'Marked as missing'}
+                      {doc.has_document ? doc.file_name : t('detail.documents.markedMissing')}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -554,12 +556,12 @@ export default function ConsultantTicketDetailPage() {
                                   window.URL.revokeObjectURL(url);
                                 }
                               })
-                              .catch(() => setActionError('Failed to download document.'));
+                              .catch(() => setActionError(t('detail.documents.downloadFailed')));
                           }}
                         >
                           {doc.mime_type === 'application/pdf' || doc.mime_type?.startsWith('image/')
-                            ? <><Eye className="h-4 w-4 mr-1" />View</>
-                            : <><Download className="h-4 w-4 mr-1" />Download</>
+                            ? <><Eye className="h-4 w-4 mr-1" />{t('detail.documents.view')}</>
+                            : <><Download className="h-4 w-4 mr-1" />{t('detail.documents.download')}</>
                           }
                         </a>
                       </Button>
@@ -578,7 +580,7 @@ export default function ConsultantTicketDetailPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Consultation Forms</CardTitle>
+            <CardTitle>{t('detail.forms.title')}</CardTitle>
             <div className="flex items-center gap-2">
               <Button
                 onClick={() => setShowSendFormModal(true)}
@@ -586,7 +588,7 @@ export default function ConsultantTicketDetailPage() {
                 size="sm"
               >
                 <Mail className="h-4 w-4 mr-2" />
-                Send to Customer
+                {t('detail.forms.sendToCustomer')}
               </Button>
               <Button
                 onClick={() => setShowFormModal(true)}
@@ -594,7 +596,7 @@ export default function ConsultantTicketDetailPage() {
                 size="sm"
               >
                 <FileText className="h-4 w-4 mr-2" />
-                Fill Form
+                {t('detail.forms.fillForm')}
               </Button>
             </div>
           </div>
@@ -603,13 +605,13 @@ export default function ConsultantTicketDetailPage() {
           {/* Sent Invitations */}
           {invitations && invitations.length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-wisebox-text-secondary uppercase tracking-wider">Sent to Customer</p>
+              <p className="text-xs font-medium text-wisebox-text-secondary uppercase tracking-wider">{t('detail.forms.sentToCustomer')}</p>
               {invitations.map((inv) => (
                 <div key={inv.id} className="rounded-md border p-3 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-wisebox-text-primary">{inv.template.name}</p>
                     <p className="text-xs text-wisebox-text-secondary">
-                      Sent {new Date(inv.sent_at).toLocaleString()} to {inv.customer_email}
+                      {t('detail.forms.sentAt', { date: new Date(inv.sent_at).toLocaleString(), email: inv.customer_email })}
                     </p>
                   </div>
                   <Badge className={
@@ -620,10 +622,10 @@ export default function ConsultantTicketDetailPage() {
                         : 'bg-amber-500/20 text-amber-400'
                   }>
                     {inv.status === 'completed'
-                      ? 'Completed'
+                      ? t('detail.forms.statusCompleted')
                       : new Date(inv.expires_at) < new Date()
-                        ? 'Expired'
-                        : 'Pending'}
+                        ? t('detail.forms.statusExpired')
+                        : t('detail.forms.statusPending')}
                   </Badge>
                 </div>
               ))}
@@ -633,11 +635,11 @@ export default function ConsultantTicketDetailPage() {
           {/* Completed Responses */}
           {!responses || responses.length === 0 ? (
             <p className="text-sm text-wisebox-text-secondary">
-              No consultation forms completed yet. Click &quot;Fill Form&quot; to complete an assessment, or &quot;Send to Customer&quot; to request the customer fills one out.
+              {t('detail.forms.noForms')}
             </p>
           ) : (
             <div className="space-y-3">
-              <p className="text-xs font-medium text-wisebox-text-secondary uppercase tracking-wider">Completed Responses</p>
+              <p className="text-xs font-medium text-wisebox-text-secondary uppercase tracking-wider">{t('detail.forms.completedResponses')}</p>
               {responses.map((response) => (
                 <div key={response.id} className="rounded-md border p-3 bg-wisebox-background-lighter">
                   <div className="flex items-center justify-between gap-3 mb-2">
@@ -665,7 +667,7 @@ export default function ConsultantTicketDetailPage() {
             {!selectedTemplate ? (
               <>
                 <div className="p-6 border-b flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Select Consultation Form</h3>
+                  <h3 className="text-lg font-semibold">{t('detail.forms.selectForm')}</h3>
                   <button
                     onClick={() => setShowFormModal(false)}
                     className="text-wisebox-text-muted hover:text-wisebox-text-secondary"
@@ -683,7 +685,7 @@ export default function ConsultantTicketDetailPage() {
                       <h4 className="font-semibold text-wisebox-text-primary mb-1">{template.name}</h4>
                       <p className="text-sm text-wisebox-text-secondary">{template.description}</p>
                       <p className="text-xs text-wisebox-text-muted mt-2">
-                        {template.fields.length} fields
+                        {t('detail.forms.fieldsCount', { count: template.fields.length })}
                       </p>
                     </button>
                   ))}
@@ -725,7 +727,7 @@ export default function ConsultantTicketDetailPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-wisebox-background-card rounded-lg max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col">
             <div className="p-6 border-b flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Send Form to Customer</h3>
+              <h3 className="text-lg font-semibold">{t('detail.forms.sendFormTitle')}</h3>
               <button
                 onClick={() => setShowSendFormModal(false)}
                 className="text-wisebox-text-muted hover:text-wisebox-text-secondary"
@@ -735,7 +737,7 @@ export default function ConsultantTicketDetailPage() {
             </div>
             <div className="p-6 space-y-2 overflow-y-auto">
               <p className="text-sm text-wisebox-text-secondary mb-4">
-                Select a form to send to <span className="font-medium text-wisebox-text-primary">{ticket.customer?.email ?? 'the customer'}</span>. They will receive an email with a link to fill it out (no login required).
+                {t('detail.forms.sendFormDescription', { email: ticket.customer?.email ?? '' })}
               </p>
               {customerTemplates?.map((template) => (
                 <button
@@ -747,14 +749,14 @@ export default function ConsultantTicketDetailPage() {
                   <h4 className="font-semibold text-wisebox-text-primary mb-1">{template.name}</h4>
                   <p className="text-sm text-wisebox-text-secondary">{template.description}</p>
                   <p className="text-xs text-wisebox-text-muted mt-2">
-                    {template.fields.length} fields
+                    {t('detail.forms.fieldsCount', { count: template.fields.length })}
                   </p>
                 </button>
               ))}
               {sendFormMutation.isPending && (
                 <div className="flex items-center gap-2 text-sm text-wisebox-text-secondary pt-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Sending form invitation...
+                  {t('detail.forms.sendingForm')}
                 </div>
               )}
             </div>
@@ -764,19 +766,19 @@ export default function ConsultantTicketDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Conversation</CardTitle>
+          <CardTitle>{t('detail.conversation.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {(ticket.comments ?? []).length === 0 ? (
-            <p className="text-sm text-wisebox-text-secondary">No comments yet.</p>
+            <p className="text-sm text-wisebox-text-secondary">{t('detail.conversation.noComments')}</p>
           ) : (
             <div className="space-y-3">
               {(ticket.comments ?? []).map((comment) => (
                 <div key={comment.id} className="rounded-md border p-3 bg-wisebox-background-card">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? 'User'}</p>
+                    <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? t('detail.conversation.user')}</p>
                     <div className="flex items-center gap-2">
-                      {comment.is_internal && <Badge className="bg-purple-500/20 text-purple-400">Internal</Badge>}
+                      {comment.is_internal && <Badge className="bg-purple-500/20 text-purple-400">{t('detail.conversation.internalBadge')}</Badge>}
                       <span className="text-xs text-wisebox-text-secondary">{new Date(comment.created_at).toLocaleString()}</span>
                     </div>
                   </div>
@@ -803,7 +805,7 @@ export default function ConsultantTicketDetailPage() {
               rows={4}
               value={commentBody}
               onChange={(e) => setCommentBody(e.target.value)}
-              placeholder="Write an update..."
+              placeholder={t('detail.conversation.writePlaceholder')}
             />
             <div className="space-y-2">
               <input
@@ -828,7 +830,7 @@ export default function ConsultantTicketDetailPage() {
             </div>
             <label className="flex items-center gap-2 text-sm text-wisebox-text-secondary">
               <input type="checkbox" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} />
-              Internal note (not visible to customer)
+              {t('detail.conversation.internalNote')}
             </label>
             <Button
               type="submit"
@@ -838,12 +840,12 @@ export default function ConsultantTicketDetailPage() {
               {commentMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Sending...
+                  {t('detail.conversation.sending')}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />
-                  Add Comment
+                  {t('detail.conversation.addComment')}
                 </>
               )}
             </Button>

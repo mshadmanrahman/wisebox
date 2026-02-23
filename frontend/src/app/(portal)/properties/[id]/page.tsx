@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { ChevronRight, ArrowLeft, History, ClipboardList, ChevronRight as ArrowRight, Trash2 } from 'lucide-react';
 import api from '@/lib/api';
@@ -28,6 +29,7 @@ import type { ApiResponse, PaginatedResponse, Property, PropertyAssessment } fro
 export default function PropertyDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation(['properties', 'common']);
   const id = params.id as string;
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -80,12 +82,12 @@ export default function PropertyDetailPage() {
       <div className="px-6 py-8">
         <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center space-y-4">
           <p className="text-sm text-red-700">
-            Property not found or could not be loaded.
+            {t('properties:detail.notFound')}
           </p>
           <Button variant="outline" size="sm" asChild>
             <Link href="/properties">
               <ArrowLeft className="h-4 w-4" />
-              Back to Properties
+              {t('properties:detail.backToProperties')}
             </Link>
           </Button>
         </div>
@@ -101,7 +103,7 @@ export default function PropertyDetailPage() {
           href="/properties"
           className="hover:text-white transition-colors"
         >
-          Properties
+          {t('properties:breadcrumb.properties')}
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         {property.property_type && (
@@ -137,7 +139,7 @@ export default function PropertyDetailPage() {
           {/* Consultation Resources */}
           <Card className="bg-wisebox-background-card border-wisebox-border">
             <CardHeader>
-              <CardTitle className="text-lg text-white">Consultation Resources</CardTitle>
+              <CardTitle className="text-lg text-white">{t('properties:detail.consultationResources')}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Link href={`/properties/${property.id}/journal`}>
@@ -146,10 +148,10 @@ export default function PropertyDetailPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <History className="h-5 w-5 text-wisebox-primary" />
-                        <h3 className="font-semibold text-white">Consultation History</h3>
+                        <h3 className="font-semibold text-white">{t('properties:detail.consultationHistory')}</h3>
                       </div>
                       <p className="text-sm text-wisebox-text-secondary">
-                        View all completed consultations and expert assessments for this property
+                        {t('properties:detail.consultationHistoryDesc')}
                       </p>
                     </div>
                     <ArrowRight className="h-5 w-5 text-wisebox-text-muted group-hover:text-wisebox-primary transition-colors flex-shrink-0" />
@@ -163,10 +165,10 @@ export default function PropertyDetailPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <ClipboardList className="h-5 w-5 text-wisebox-primary" />
-                        <h3 className="font-semibold text-white">Recommendations</h3>
+                        <h3 className="font-semibold text-white">{t('properties:detail.recommendations')}</h3>
                       </div>
                       <p className="text-sm text-wisebox-text-secondary">
-                        See action items and expert recommendations from your consultations
+                        {t('properties:detail.recommendationsDesc')}
                       </p>
                     </div>
                     <ArrowRight className="h-5 w-5 text-wisebox-text-muted group-hover:text-wisebox-primary transition-colors flex-shrink-0" />
@@ -178,26 +180,25 @@ export default function PropertyDetailPage() {
 
           {/* Danger Zone */}
           <div className="rounded-xl border border-red-500/20 p-6 space-y-3">
-            <h3 className="text-sm font-medium text-red-400">Danger Zone</h3>
+            <h3 className="text-sm font-medium text-red-400">{t('properties:detail.dangerZone')}</h3>
             <Separator className="bg-red-500/20" />
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-wisebox-text-primary">Delete this property</p>
-                <p className="text-xs text-wisebox-text-secondary">Permanently remove this property and all associated documents.</p>
+                <p className="text-sm text-wisebox-text-primary">{t('properties:detail.deleteProperty')}</p>
+                <p className="text-xs text-wisebox-text-secondary">{t('properties:detail.deleteDescription')}</p>
               </div>
               <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300">
                     <Trash2 className="h-4 w-4" />
-                    Delete Property
+                    {t('properties:detail.deleteProperty')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-wisebox-background-card border-wisebox-border">
                   <DialogHeader>
-                    <DialogTitle className="text-white">Are you sure?</DialogTitle>
+                    <DialogTitle className="text-white">{t('properties:detail.deleteConfirmTitle')}</DialogTitle>
                     <DialogDescription className="text-wisebox-text-secondary">
-                      This will permanently delete &quot;{property.property_name}&quot;
-                      and all associated documents. This action cannot be undone.
+                      {t('properties:detail.deleteConfirmDescription', { name: property.property_name })}
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
@@ -206,19 +207,19 @@ export default function PropertyDetailPage() {
                       onClick={() => setDeleteOpen(false)}
                       disabled={deleteMutation.isPending}
                     >
-                      Cancel
+                      {t('common:cancel')}
                     </Button>
                     <Button
                       variant="destructive"
                       onClick={() => deleteMutation.mutate()}
                       disabled={deleteMutation.isPending}
                     >
-                      {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                      {deleteMutation.isPending ? t('properties:detail.deleting') : t('common:delete')}
                     </Button>
                   </DialogFooter>
                   {deleteMutation.isError && (
                     <p className="text-sm text-red-400">
-                      Failed to delete property. Please try again.
+                      {t('properties:detail.deleteFailed')}
                     </p>
                   )}
                 </DialogContent>

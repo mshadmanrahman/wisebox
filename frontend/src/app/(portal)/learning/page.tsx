@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   BookOpen,
@@ -41,6 +42,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 const ALL_CATEGORIES = Object.keys(CATEGORY_META) as LearningCategory[];
 
 export default function LearningPage() {
+  const { t } = useTranslation('common');
   const [activeCategory, setActiveCategory] = useState<LearningCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -62,9 +64,9 @@ export default function LearningPage() {
             <BookOpen className="h-6 w-6 text-wisebox-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white">Learning Center</h1>
+            <h1 className="text-3xl font-bold text-white">{t('learning.title')}</h1>
             <p className="text-wisebox-text-secondary text-sm mt-1">
-              Everything you need to know about property ownership in Bangladesh
+              {t('learning.subtitle')}
             </p>
           </div>
         </div>
@@ -75,7 +77,7 @@ export default function LearningPage() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-wisebox-text-muted" />
         <input
           type="text"
-          placeholder="Search articles..."
+          placeholder={t('learning.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-wisebox-background-card border border-wisebox-border text-white text-sm placeholder:text-wisebox-text-muted focus:outline-none focus:border-wisebox-primary/50 transition-colors"
@@ -92,7 +94,7 @@ export default function LearningPage() {
               : 'bg-wisebox-background-card border border-wisebox-border text-wisebox-text-secondary hover:text-white hover:border-wisebox-border-light'
           }`}
         >
-          All ({LEARNING_ARTICLES.length})
+          {t('learning.all')} ({LEARNING_ARTICLES.length})
         </button>
         {ALL_CATEGORIES.map((cat) => {
           const meta = CATEGORY_META[cat];
@@ -118,7 +120,7 @@ export default function LearningPage() {
         <Card className="bg-wisebox-background-card border-wisebox-border">
           <CardContent className="p-8 text-center">
             <p className="text-wisebox-text-secondary">
-              No articles found{searchQuery ? ` for "${searchQuery}"` : ''}.
+              {searchQuery ? t('learning.noArticlesFor', { query: searchQuery }) : t('learning.noArticles')}
             </p>
           </CardContent>
         </Card>
@@ -155,10 +157,10 @@ export default function LearningPage() {
                     <div className="flex items-center justify-between pt-1">
                       <span className="flex items-center gap-1.5 text-xs text-wisebox-text-muted">
                         <Clock className="h-3.5 w-3.5" />
-                        {article.readTime} min read
+                        {t('learning.minRead', { minutes: article.readTime })}
                       </span>
                       <span className="flex items-center gap-1 text-xs text-wisebox-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                        Read article
+                        {t('learning.readArticle')}
                         <ArrowRight className="h-3 w-3" />
                       </span>
                     </div>
@@ -175,18 +177,18 @@ export default function LearningPage() {
         <CardContent className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <h3 className="font-semibold text-white">
-              Not sure where to start?
+              {t('learning.notSureWhereToStart')}
             </h3>
             <p className="text-sm text-wisebox-text-secondary">
-              Take our free property assessment to see exactly what you need.
+              {t('learning.takeAssessment')}
             </p>
           </div>
           <div className="flex gap-3">
             <Button asChild className="bg-white hover:bg-gray-100 text-wisebox-background font-semibold">
-              <Link href="/assessment/start">Take Free Assessment</Link>
+              <Link href="/assessment/start">{t('learning.takeFreeAssessment')}</Link>
             </Button>
             <Button asChild variant="outline" className="border-wisebox-border text-white hover:bg-wisebox-background-lighter">
-              <Link href="/workspace/services">Browse Services</Link>
+              <Link href="/workspace/services">{t('learning.browseServices')}</Link>
             </Button>
           </div>
         </CardContent>

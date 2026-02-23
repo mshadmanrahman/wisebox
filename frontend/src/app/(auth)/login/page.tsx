@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +29,7 @@ export default function LoginPage() {
   const { googleButtonRef, error: googleError } = useGoogleAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation(['auth', 'common']);
 
   const {
     register,
@@ -52,7 +54,7 @@ export default function LoginPage() {
       }
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Invalid credentials. Please try again.');
+      setError(error.response?.data?.message || t('auth:login.invalidCredentials'));
     }
   };
 
@@ -66,9 +68,9 @@ export default function LoginPage() {
 
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">{t('auth:login.title')}</h1>
             <p className="text-wisebox-text-secondary">
-              Sign in to your account to manage your properties
+              {t('auth:login.subtitle')}
             </p>
           </div>
 
@@ -83,12 +85,12 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-white text-sm font-medium">
-                Email
+                {t('auth:login.emailLabel')}
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('auth:login.emailPlaceholder')}
                 autoComplete="email"
                 className="bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted h-12"
                 {...register('email')}
@@ -99,20 +101,20 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="text-white text-sm font-medium">
-                  Password
+                  {t('auth:login.passwordLabel')}
                 </Label>
                 <Link
                   href="/forgot-password"
                   className="text-sm text-wisebox-primary hover:underline"
                 >
-                  Forgot password?
+                  {t('auth:login.forgotPassword')}
                 </Link>
               </div>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
+                  placeholder={t('auth:login.passwordPlaceholder')}
                   autoComplete="current-password"
                   className="bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted h-12"
                   {...register('password')}
@@ -138,10 +140,10 @@ export default function LoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  {t('auth:login.submitting')}
                 </>
               ) : (
-                'Sign in'
+                t('auth:login.submit')
               )}
             </Button>
 
@@ -150,7 +152,7 @@ export default function LoginPage() {
                 <span className="w-full border-t border-wisebox-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-wisebox-background px-2 text-wisebox-text-muted">Or continue with</span>
+                <span className="bg-wisebox-background px-2 text-wisebox-text-muted">{t('auth:login.orContinueWith')}</span>
               </div>
             </div>
 
@@ -160,9 +162,9 @@ export default function LoginPage() {
             )}
 
             <p className="text-center text-sm text-wisebox-text-secondary">
-              Don&apos;t have an account?{' '}
+              {t('auth:login.noAccount')}{' '}
               <Link href="/register" className="text-white font-medium hover:underline">
-                Create account
+                {t('auth:login.createAccount')}
               </Link>
             </p>
           </form>
@@ -170,17 +172,17 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="pt-8 border-t border-wisebox-border">
             <p className="text-xs text-wisebox-text-muted text-center">
-              © 2025 WiseBox. All rights reserved.
+              {t('common:copyright')}
             </p>
             <div className="flex justify-center gap-6 mt-2">
               <Link href="/privacy" className="text-xs text-wisebox-text-muted hover:text-white">
-                Privacy Policy
+                {t('common:privacyPolicy')}
               </Link>
               <Link href="/terms" className="text-xs text-wisebox-text-muted hover:text-white">
-                Terms of Service
+                {t('common:termsOfService')}
               </Link>
               <Link href="/help" className="text-xs text-wisebox-text-muted hover:text-white">
-                Help Center
+                {t('common:helpCenter')}
               </Link>
             </div>
           </div>

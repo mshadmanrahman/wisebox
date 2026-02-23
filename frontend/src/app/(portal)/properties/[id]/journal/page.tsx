@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar, ChevronDown, ChevronUp, FileText, User } from 'lucide-react';
 import api from '@/lib/api';
@@ -40,6 +41,7 @@ interface PropertyJournalData {
 
 export default function PropertyJournalPage() {
   const params = useParams();
+  const { t, i18n } = useTranslation('properties');
   const propertyId = Number(params.id);
   const [expandedConsultations, setExpandedConsultations] = useState<Set<number>>(new Set());
 
@@ -69,7 +71,7 @@ export default function PropertyJournalPage() {
       <div className="px-6 py-8">
         <Card>
           <CardContent className="p-6 text-sm text-wisebox-text-secondary">
-            Loading consultation history...
+            {t('journal.loading')}
           </CardContent>
         </Card>
       </div>
@@ -82,7 +84,7 @@ export default function PropertyJournalPage() {
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-wisebox-text-primary">Consultation History</h1>
+        <h1 className="text-3xl font-bold text-wisebox-text-primary">{t('journal.title')}</h1>
         <p className="text-wisebox-text-secondary mt-2">
           {property.property_name} • {property.property_type}
         </p>
@@ -93,7 +95,7 @@ export default function PropertyJournalPage() {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-wisebox-text-secondary">Total Consultations</p>
+              <p className="text-sm text-wisebox-text-secondary">{t('journal.totalConsultations')}</p>
               <p className="text-4xl font-bold text-wisebox-primary-700 mt-1">{total_consultations}</p>
             </div>
             <FileText className="h-16 w-16 text-wisebox-primary-300" />
@@ -106,7 +108,7 @@ export default function PropertyJournalPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <FileText className="h-16 w-16 text-wisebox-text-muted mx-auto mb-4" />
-            <p className="text-wisebox-text-secondary">No consultations completed yet.</p>
+            <p className="text-wisebox-text-secondary">{t('journal.noConsultations')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -136,7 +138,7 @@ export default function PropertyJournalPage() {
                           <div>
                             <CardTitle className="text-lg">{consultation.service_name}</CardTitle>
                             <p className="text-sm text-wisebox-text-secondary mt-1">
-                              {new Date(consultation.completed_at).toLocaleDateString('en-US', {
+                              {new Date(consultation.completed_at).toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : 'en-US', {
                                 weekday: 'long',
                                 year: 'numeric',
                                 month: 'long',
@@ -145,7 +147,7 @@ export default function PropertyJournalPage() {
                             </p>
                           </div>
                           <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
-                            Completed
+                            {t('journal.completed')}
                           </Badge>
                         </div>
 
@@ -156,7 +158,7 @@ export default function PropertyJournalPage() {
                           </div>
                           <div className="flex items-center gap-1">
                             <FileText className="h-4 w-4" />
-                            <span>{consultation.forms_completed.length} form(s) completed</span>
+                            <span>{t('journal.formsCompleted', { count: consultation.forms_completed.length })}</span>
                           </div>
                         </div>
                       </div>
@@ -183,7 +185,7 @@ export default function PropertyJournalPage() {
                       {/* Consultation Notes */}
                       {consultation.consultation_notes && (
                         <div className="space-y-2">
-                          <h4 className="font-semibold text-wisebox-text-primary">Consultation Notes</h4>
+                          <h4 className="font-semibold text-wisebox-text-primary">{t('journal.consultationNotes')}</h4>
                           <div className="bg-wisebox-background-lighter rounded-lg p-4 text-sm whitespace-pre-wrap">
                             {consultation.consultation_notes}
                           </div>
@@ -193,7 +195,7 @@ export default function PropertyJournalPage() {
                       {/* Resolution Notes */}
                       {consultation.resolution_notes && (
                         <div className="space-y-2">
-                          <h4 className="font-semibold text-wisebox-text-primary">Summary</h4>
+                          <h4 className="font-semibold text-wisebox-text-primary">{t('journal.summary')}</h4>
                           <div className="bg-wisebox-background-lighter rounded-lg p-4 text-sm whitespace-pre-wrap">
                             {consultation.resolution_notes}
                           </div>
@@ -203,7 +205,7 @@ export default function PropertyJournalPage() {
                       {/* Completed Forms */}
                       {consultation.forms_completed.length > 0 && (
                         <div className="space-y-3">
-                          <h4 className="font-semibold text-wisebox-text-primary">Forms Completed</h4>
+                          <h4 className="font-semibold text-wisebox-text-primary">{t('journal.formsCompletedTitle')}</h4>
                           {consultation.forms_completed.map((form, formIndex) => (
                             <div
                               key={formIndex}
@@ -212,7 +214,7 @@ export default function PropertyJournalPage() {
                               <div className="flex items-center justify-between">
                                 <h5 className="font-medium text-wisebox-text-primary">{form.template_name}</h5>
                                 <span className="text-xs text-wisebox-text-secondary">
-                                  {new Date(form.completed_at).toLocaleTimeString('en-US', {
+                                  {new Date(form.completed_at).toLocaleTimeString(i18n.language === 'bn' ? 'bn-BD' : 'en-US', {
                                     hour: '2-digit',
                                     minute: '2-digit',
                                   })}

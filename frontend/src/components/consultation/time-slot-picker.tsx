@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -70,6 +71,7 @@ function formatTime(time: string): string {
 }
 
 export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: TimeSlotPickerProps) {
+  const { t } = useTranslation('consultant');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedSlots, setSelectedSlots] = useState<TimeSlot[]>([]);
 
@@ -139,11 +141,10 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
         <CardHeader className="pb-3">
           <CardTitle className="text-base text-white flex items-center gap-2">
             <Calendar className="h-4 w-4 text-wisebox-primary" />
-            Select Your Preferred Time Slots
+            {t('timeSlot.title')}
           </CardTitle>
           <CardDescription className="text-wisebox-text-secondary">
-            Choose {minSlots}-{maxSlots} time slots when you&apos;re available for a consultation.
-            Our consultant will confirm one of these times.
+            {t('timeSlot.description', { min: minSlots, max: maxSlots })}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -151,7 +152,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
             <div className="flex items-start gap-2 p-3 bg-wisebox-status-warning/10 border border-wisebox-status-warning/30 rounded-lg">
               <AlertCircle className="h-4 w-4 text-wisebox-status-warning shrink-0 mt-0.5" />
               <p className="text-sm text-wisebox-status-warning">
-                Please select at least {minSlots} time slots ({minSlots - selectedSlots.length} more needed)
+                {t('timeSlot.selectAtLeast', { min: minSlots, remaining: minSlots - selectedSlots.length })}
               </p>
             </div>
           )}
@@ -159,8 +160,8 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
             <div className="flex items-start gap-2 p-3 bg-wisebox-status-success/10 border border-wisebox-status-success/30 rounded-lg">
               <CheckCircle2 className="h-4 w-4 text-wisebox-status-success shrink-0 mt-0.5" />
               <p className="text-sm text-wisebox-status-success">
-                Great! You&apos;ve selected {selectedSlots.length} time slots.
-                {selectedSlots.length < maxSlots && ` You can select up to ${maxSlots - selectedSlots.length} more.`}
+                {t('timeSlot.selectedCount', { count: selectedSlots.length })}
+                {selectedSlots.length < maxSlots && ` ${t('timeSlot.canSelectMore', { remaining: maxSlots - selectedSlots.length })}`}
               </p>
             </div>
           )}
@@ -170,7 +171,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
       {/* Date Selector */}
       <Card className="bg-wisebox-background-card border-wisebox-border">
         <CardHeader>
-          <CardTitle className="text-base text-white">Step 1: Choose a Date</CardTitle>
+          <CardTitle className="text-base text-white">{t('timeSlot.chooseDate')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
@@ -217,10 +218,10 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
           <CardHeader>
             <CardTitle className="text-base text-white flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Step 2: Choose Time Slots for {formatDate(selectedDate)}
+              {t('timeSlot.chooseTimeSlots', { date: formatDate(selectedDate) })}
             </CardTitle>
             <CardDescription className="text-wisebox-text-secondary">
-              All times shown in Bangladesh Standard Time (BST)
+              {t('timeSlot.timezoneNote')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -257,9 +258,9 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
       {selectedSlots.length > 0 && (
         <Card className="bg-wisebox-background-card border-wisebox-border">
           <CardHeader>
-            <CardTitle className="text-base text-white">Your Selected Time Slots</CardTitle>
+            <CardTitle className="text-base text-white">{t('timeSlot.selectedSlots')}</CardTitle>
             <CardDescription className="text-wisebox-text-secondary">
-              The consultant will confirm one of these times with you
+              {t('timeSlot.confirmNote')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -279,7 +280,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
                     onClick={() => removeSlot(index)}
                     className="text-xs text-wisebox-text-secondary hover:text-red-400 transition-colors"
                   >
-                    Remove
+                    {t('timeSlot.remove')}
                   </button>
                 </div>
               ))}

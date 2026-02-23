@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslation } from 'react-i18next'
 import { Check, X, Clock, FileText } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -18,6 +19,7 @@ export function DocumentChecklistItem({
   uploadedDocument,
   compact = true
 }: DocumentChecklistItemProps) {
+  const { t } = useTranslation('properties')
   const status: DocStatus = uploadedDocument?.has_document === false
     ? 'missing'
     : uploadedDocument
@@ -30,21 +32,21 @@ export function DocumentChecklistItem({
       bgColor: 'bg-wisebox-status-success/10',
       textColor: 'text-wisebox-status-success',
       borderColor: 'border-wisebox-status-success/20',
-      label: 'Uploaded',
+      labelKey: 'documents.uploaded',
     },
     missing: {
       icon: X,
       bgColor: 'bg-wisebox-status-danger/10',
       textColor: 'text-wisebox-status-danger',
       borderColor: 'border-wisebox-status-danger/20',
-      label: 'Missing',
+      labelKey: 'documents.missing',
     },
     pending: {
       icon: Clock,
       bgColor: 'bg-wisebox-background-card',
       textColor: 'text-wisebox-text-muted',
       borderColor: 'border-wisebox-border',
-      label: 'Pending',
+      labelKey: 'documents.pending',
     },
   }
 
@@ -73,7 +75,7 @@ export function DocumentChecklistItem({
                 variant="outline"
                 className="h-4 px-1 text-[10px] leading-none bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200"
               >
-                Primary
+                {t('documents.primary')}
               </Badge>
             )}
           </div>
@@ -95,7 +97,7 @@ export function DocumentChecklistItem({
             status === 'pending' && 'bg-wisebox-background-lighter text-wisebox-text-muted border-wisebox-border'
           )}
         >
-          {config.label}
+          {t(config.labelKey)}
         </Badge>
       </div>
     )
@@ -124,11 +126,11 @@ export function DocumentChecklistItem({
                 : 'bg-wisebox-background-lighter text-wisebox-text-secondary border-wisebox-border hover:bg-wisebox-background-lighter'
             }
           >
-            {documentType.category === 'primary' ? 'Primary' : 'Secondary'}
+            {documentType.category === 'primary' ? t('documents.primary') : t('documents.secondary')}
           </Badge>
           {documentType.is_required && (
             <Badge variant="outline" className="text-wisebox-status-danger border-wisebox-status-danger/20">
-              Required
+              {t('documents.required')}
             </Badge>
           )}
         </div>
@@ -152,7 +154,7 @@ export function DocumentChecklistItem({
           status === 'pending' && 'bg-wisebox-background-lighter text-wisebox-text-muted border-wisebox-border'
         )}
       >
-        {config.label}
+        {t(config.labelKey)}
       </Badge>
     </div>
   )
@@ -169,6 +171,7 @@ export function DocumentChecklist({
   uploadedDocuments,
   columns = 2
 }: DocumentChecklistProps) {
+  const { t } = useTranslation('properties')
   const getDocForType = (docTypeId: number): PropertyDocument | null => {
     return uploadedDocuments.find((pd) => pd.document_type_id === docTypeId) ?? null
   }
@@ -199,7 +202,7 @@ export function DocumentChecklist({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-wisebox-text-primary">Document Checklist</h3>
+        <h3 className="text-lg font-semibold text-wisebox-text-primary">{t('documents.documentChecklist')}</h3>
         <div className="flex items-center gap-2">
           <span className={cn('text-sm font-semibold', progressColor)}>
             {uploadedCount}/{totalCount}
@@ -215,7 +218,7 @@ export function DocumentChecklist({
 
       {primaryDocs.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-wisebox-text-secondary">Primary Documents</h4>
+          <h4 className="text-sm font-medium text-wisebox-text-secondary">{t('documents.primaryDocuments')}</h4>
           <div className={cn('grid gap-2', gridCols)}>
             {primaryDocs.map((dt) => (
               <DocumentChecklistItem
@@ -230,7 +233,7 @@ export function DocumentChecklist({
 
       {secondaryDocs.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-wisebox-text-secondary">Secondary Documents</h4>
+          <h4 className="text-sm font-medium text-wisebox-text-secondary">{t('documents.secondaryDocuments')}</h4>
           <div className={cn('grid gap-2', gridCols)}>
             {secondaryDocs.map((dt) => (
               <DocumentChecklistItem

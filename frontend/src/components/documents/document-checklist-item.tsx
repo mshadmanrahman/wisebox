@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 import { Check, X } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
@@ -24,6 +25,8 @@ export function DocumentChecklistItem({
   onChange,
   disabled = false,
 }: DocumentChecklistItemProps) {
+  const { t } = useTranslation('properties');
+
   return (
     <div className="rounded-lg border border-wisebox-border bg-wisebox-background-card p-3 space-y-2">
       <div className="flex items-start justify-between gap-2">
@@ -72,7 +75,7 @@ export function DocumentChecklistItem({
           )}
         >
           <Check className={cn("h-4 w-4", value === "have" && "text-wisebox-primary-600")} />
-          <span>Have</span>
+          <span>{t('documents.have')}</span>
         </button>
 
         <button
@@ -89,7 +92,7 @@ export function DocumentChecklistItem({
           )}
         >
           <X className={cn("h-4 w-4", value === "dont-have" && "text-wisebox-text-secondary")} />
-          <span>Don&apos;t have</span>
+          <span>{t('documents.dontHave')}</span>
         </button>
       </div>
     </div>

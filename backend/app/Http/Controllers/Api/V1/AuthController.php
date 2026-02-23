@@ -73,13 +73,13 @@ class AuthController extends Controller
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Invalid credentials.'],
+                'email' => [__('messages.invalid_credentials')],
             ]);
         }
 
         if ($user->status !== 'active') {
             throw ValidationException::withMessages([
-                'email' => ['Your account has been suspended.'],
+                'email' => [__('messages.account_suspended')],
             ]);
         }
 
@@ -87,12 +87,12 @@ class AuthController extends Controller
         $portal = $request->input('portal');
         if ($portal === 'admin' && !$user->isAdmin()) {
             throw ValidationException::withMessages([
-                'email' => ['This account does not have admin access.'],
+                'email' => [__('messages.no_admin_access')],
             ]);
         }
         if ($portal === 'consultant' && !$user->isConsultant() && !$user->isAdmin()) {
             throw ValidationException::withMessages([
-                'email' => ['This account does not have consultant access.'],
+                'email' => [__('messages.no_consultant_access')],
             ]);
         }
 
@@ -115,7 +115,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Logged out successfully.',
+            'message' => __('messages.logged_out'),
         ]);
     }
 
@@ -136,7 +136,7 @@ class AuthController extends Controller
 
         if (!$googleUser) {
             throw ValidationException::withMessages([
-                'id_token' => ['Invalid or expired Google token.'],
+                'id_token' => [__('messages.invalid_google_token')],
             ]);
         }
 
@@ -147,7 +147,7 @@ class AuthController extends Controller
 
         if (!$email || !$googleId) {
             throw ValidationException::withMessages([
-                'id_token' => ['Could not retrieve email from Google account.'],
+                'id_token' => [__('messages.google_email_missing')],
             ]);
         }
 
@@ -188,7 +188,7 @@ class AuthController extends Controller
 
         if ($user->status !== 'active') {
             throw ValidationException::withMessages([
-                'email' => ['Your account has been suspended.'],
+                'email' => [__('messages.account_suspended')],
             ]);
         }
 
@@ -252,7 +252,7 @@ class AuthController extends Controller
 
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json([
-                'message' => 'Password reset link sent to your email.',
+                'message' => __('messages.password_reset_link_sent'),
             ]);
         }
 
@@ -281,7 +281,7 @@ class AuthController extends Controller
 
         if ($status === Password::PASSWORD_RESET) {
             return response()->json([
-                'message' => 'Password has been reset.',
+                'message' => __('messages.password_reset_done'),
             ]);
         }
 
@@ -303,7 +303,7 @@ class AuthController extends Controller
         $channel = $this->otpService->verify($user, $request->string('code')->toString());
         if ($channel === null) {
             throw ValidationException::withMessages([
-                'code' => ['Invalid or expired OTP code.'],
+                'code' => [__('messages.otp_invalid')],
             ]);
         }
 
@@ -314,7 +314,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'message' => 'OTP verified successfully.',
+            'message' => __('messages.otp_verified'),
             'data' => ['user' => $user->fresh()],
         ]);
     }
@@ -338,7 +338,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'message' => 'OTP code sent successfully.',
+            'message' => __('messages.otp_sent'),
         ]);
     }
 
@@ -415,7 +415,7 @@ class AuthController extends Controller
 
         if (!Hash::check($validated['current_password'], $user->password)) {
             throw ValidationException::withMessages([
-                'current_password' => ['The current password is incorrect.'],
+                'current_password' => [__('messages.current_password_incorrect')],
             ]);
         }
 
@@ -424,7 +424,7 @@ class AuthController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Password updated successfully.',
+            'message' => __('messages.password_updated'),
         ]);
     }
 }
