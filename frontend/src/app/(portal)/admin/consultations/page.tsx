@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ArrowRight, Calendar, Filter } from 'lucide-react';
 import api from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,12 +33,12 @@ const statusColors: Record<string, string> = {
   cancelled: 'bg-red-50 text-red-700 border-red-200',
 };
 
-const statusLabels: Record<string, string> = {
-  open: 'Pending Review',
-  assigned: 'Assigned',
-  scheduled: 'Scheduled',
-  completed: 'Completed',
-  cancelled: 'Rejected',
+const STATUS_LABEL_KEYS: Record<string, string> = {
+  open: 'consultations.statusLabels.open',
+  assigned: 'consultations.statusLabels.assigned',
+  scheduled: 'consultations.statusLabels.scheduled',
+  completed: 'consultations.statusLabels.completed',
+  cancelled: 'consultations.statusLabels.cancelled',
 };
 
 const completionColors: Record<string, string> = {
@@ -47,6 +48,7 @@ const completionColors: Record<string, string> = {
 };
 
 export default function AdminConsultationsPage() {
+  const { t } = useTranslation('admin');
   const [statusFilter, setStatusFilter] = useState<string>('');
 
   const { data: consultationsData, isLoading } = useQuery({
@@ -63,21 +65,21 @@ export default function AdminConsultationsPage() {
   const stats = consultationsData?.stats || { pending: 0, assigned: 0, scheduled: 0, completed: 0, rejected: 0 };
 
   const filterButtons = [
-    { value: '', label: 'All', count: stats.pending + stats.assigned + stats.scheduled + stats.completed + stats.rejected },
-    { value: 'open', label: 'Pending', count: stats.pending },
-    { value: 'assigned', label: 'Assigned', count: stats.assigned },
-    { value: 'scheduled', label: 'Scheduled', count: stats.scheduled },
-    { value: 'completed', label: 'Completed', count: stats.completed },
-    { value: 'cancelled', label: 'Rejected', count: stats.rejected },
+    { value: '', label: t('consultations.filters.all'), count: stats.pending + stats.assigned + stats.scheduled + stats.completed + stats.rejected },
+    { value: 'open', label: t('consultations.filters.pending'), count: stats.pending },
+    { value: 'assigned', label: t('consultations.filters.assigned'), count: stats.assigned },
+    { value: 'scheduled', label: t('consultations.filters.scheduled'), count: stats.scheduled },
+    { value: 'completed', label: t('consultations.filters.completed'), count: stats.completed },
+    { value: 'cancelled', label: t('consultations.filters.rejected'), count: stats.rejected },
   ];
 
   return (
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Consultation Requests</h1>
+        <h1 className="text-2xl font-bold text-slate-900">{t('consultations.title')}</h1>
         <p className="text-slate-600 mt-1">
-          Review, approve, and assign consultation requests to consultants
+          {t('consultations.subtitle')}
         </p>
       </div>
 
@@ -105,12 +107,12 @@ export default function AdminConsultationsPage() {
       <Card className="bg-white border-slate-200 shadow-sm">
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-6 text-sm text-slate-500">Loading...</div>
+            <div className="p-6 text-sm text-slate-500">{t('consultations.loading')}</div>
           ) : consultations.length === 0 ? (
             <div className="text-center py-16">
               <Filter className="h-16 w-16 text-slate-300 mx-auto mb-4" />
               <p className="text-slate-500">
-                {statusFilter ? `No ${statusLabels[statusFilter]?.toLowerCase()} consultations` : 'No consultations yet'}
+                {statusFilter ? t('consultations.noFilteredConsultations', { status: t(`consultations.statusLabels.${statusFilter}`) }) : t('consultations.noConsultations')}
               </p>
             </div>
           ) : (
@@ -129,12 +131,12 @@ export default function AdminConsultationsPage() {
                             {consultation.ticket_number}
                           </Badge>
                           <Badge variant="outline" className={cn('text-xs', statusColors[consultation.status] || '')}>
-                            {statusLabels[consultation.status] || consultation.status}
+                            {STATUS_LABEL_KEYS[consultation.status] ? t(STATUS_LABEL_KEYS[consultation.status]) : consultation.status}
                           </Badge>
                           {consultation.property?.completion_status && (
                             <span className="flex items-center gap-1 text-xs text-slate-400">
                               <span className={cn('w-2 h-2 rounded-full', completionColors[consultation.property.completion_status])} />
-                              {consultation.property.completion_percentage}% complete
+                              {t('consultations.percentComplete', { percent: consultation.property.completion_percentage })}
                             </span>
                           )}
                         </div>
@@ -150,20 +152,20 @@ export default function AdminConsultationsPage() {
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
                       <div>
-                        <p className="text-slate-400 text-xs">Customer</p>
+                        <p className="text-slate-400 text-xs">{t('consultations.fields.customer')}</p>
                         <p className="text-slate-900 font-medium">{consultation.customer?.name || 'N/A'}</p>
                         <p className="text-slate-400 text-xs">{consultation.customer?.email}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-xs">Property</p>
+                        <p className="text-slate-400 text-xs">{t('consultations.fields.property')}</p>
                         <p className="text-slate-900 font-medium truncate">{consultation.property?.property_name || 'N/A'}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-xs">Consultant</p>
-                        <p className="text-slate-900 font-medium">{consultation.consultant?.name || 'Unassigned'}</p>
+                        <p className="text-slate-400 text-xs">{t('consultations.fields.consultant')}</p>
+                        <p className="text-slate-900 font-medium">{consultation.consultant?.name || t('consultations.fields.unassigned')}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-xs">Requested</p>
+                        <p className="text-slate-400 text-xs">{t('consultations.fields.requested')}</p>
                         <p className="text-slate-900 font-medium">
                           {new Date(consultation.created_at).toLocaleDateString('en-GB', {
                             day: 'numeric', month: 'short', year: 'numeric',
@@ -176,7 +178,7 @@ export default function AdminConsultationsPage() {
                       <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2">
                         <Calendar className="h-3.5 w-3.5 text-amber-500" />
                         <span className="text-xs text-amber-600 font-medium">
-                          {consultation.preferred_time_slots.length} preferred time slot(s) submitted
+                          {t('consultations.preferredSlots', { count: consultation.preferred_time_slots.length })}
                         </span>
                       </div>
                     )}

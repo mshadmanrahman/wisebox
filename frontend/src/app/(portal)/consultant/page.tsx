@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Calendar, Clock, CheckCircle, AlertCircle, FileText, ArrowRight } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
@@ -70,6 +71,7 @@ function formatDate(dateString: string): string {
 }
 
 export default function ConsultantDashboard() {
+  const { t } = useTranslation('consultant');
   const { user } = useAuthStore();
 
   const { data: statsData } = useQuery({
@@ -98,10 +100,10 @@ export default function ConsultantDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-white">
-          Welcome back, {user?.name?.split(' ')[0]}!
+          {t('dashboard.welcomeBack', { name: user?.name?.split(' ')[0] ?? '' })}
         </h1>
         <p className="text-wisebox-text-secondary mt-2">
-          Manage your consultation cases and help customers with their property needs
+          {t('dashboard.subtitle')}
         </p>
       </div>
 
@@ -111,7 +113,7 @@ export default function ConsultantDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-wisebox-text-secondary">Pending Action</p>
+                <p className="text-sm text-wisebox-text-secondary">{t('dashboard.stats.pendingAction')}</p>
                 <p className="text-3xl font-bold text-yellow-400 mt-2">{stats.pending_action}</p>
               </div>
               <AlertCircle className="h-10 w-10 text-yellow-400" />
@@ -123,7 +125,7 @@ export default function ConsultantDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-wisebox-text-secondary">Scheduled</p>
+                <p className="text-sm text-wisebox-text-secondary">{t('dashboard.stats.scheduled')}</p>
                 <p className="text-3xl font-bold text-blue-400 mt-2">{stats.scheduled}</p>
               </div>
               <Calendar className="h-10 w-10 text-blue-400" />
@@ -135,7 +137,7 @@ export default function ConsultantDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-wisebox-text-secondary">Completed This Month</p>
+                <p className="text-sm text-wisebox-text-secondary">{t('dashboard.stats.completedThisMonth')}</p>
                 <p className="text-3xl font-bold text-green-400 mt-2">{stats.completed_this_month}</p>
               </div>
               <CheckCircle className="h-10 w-10 text-green-400" />
@@ -147,7 +149,7 @@ export default function ConsultantDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-wisebox-text-secondary">Total Assigned</p>
+                <p className="text-sm text-wisebox-text-secondary">{t('dashboard.stats.totalAssigned')}</p>
                 <p className="text-3xl font-bold text-white mt-2">{stats.assigned}</p>
               </div>
               <FileText className="h-10 w-10 text-wisebox-text-secondary" />
@@ -159,18 +161,18 @@ export default function ConsultantDashboard() {
       {/* Active Cases */}
       <Card className="bg-wisebox-background-card border-wisebox-border">
         <CardHeader>
-          <CardTitle className="text-white">Your Cases</CardTitle>
+          <CardTitle className="text-white">{t('dashboard.cases.title')}</CardTitle>
           <CardDescription className="text-wisebox-text-secondary">
-            Consultation tickets assigned to you
+            {t('dashboard.cases.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-sm text-wisebox-text-secondary">Loading cases...</p>
+            <p className="text-sm text-wisebox-text-secondary">{t('dashboard.cases.loading')}</p>
           ) : tickets.length === 0 ? (
             <div className="text-center py-12">
               <FileText className="h-16 w-16 text-wisebox-text-muted mx-auto mb-4" />
-              <p className="text-wisebox-text-secondary">No cases assigned yet</p>
+              <p className="text-wisebox-text-secondary">{t('dashboard.cases.noCases')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -210,19 +212,19 @@ export default function ConsultantDashboard() {
 
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
                         <div>
-                          <p className="text-wisebox-text-muted text-xs">Customer</p>
+                          <p className="text-wisebox-text-muted text-xs">{t('dashboard.fields.customer')}</p>
                           <p className="text-white font-medium">{ticket.customer_name}</p>
                         </div>
                         <div>
-                          <p className="text-wisebox-text-muted text-xs">Property</p>
+                          <p className="text-wisebox-text-muted text-xs">{t('dashboard.fields.property')}</p>
                           <p className="text-white font-medium truncate">{ticket.property_name}</p>
                         </div>
                         <div>
-                          <p className="text-wisebox-text-muted text-xs">Service</p>
+                          <p className="text-wisebox-text-muted text-xs">{t('dashboard.fields.service')}</p>
                           <p className="text-white font-medium truncate">{ticket.service_name}</p>
                         </div>
                         <div>
-                          <p className="text-wisebox-text-muted text-xs">Created</p>
+                          <p className="text-wisebox-text-muted text-xs">{t('dashboard.fields.created')}</p>
                           <p className="text-white font-medium">{formatDate(ticket.created_at)}</p>
                         </div>
                       </div>
@@ -231,7 +233,7 @@ export default function ConsultantDashboard() {
                         <div className="mt-3 pt-3 border-t border-wisebox-border">
                           <p className="text-xs text-yellow-400 flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            Action Required: Select meeting time from {ticket.preferred_time_slots.length} preferred slots
+                            {t('dashboard.actionRequired', { count: ticket.preferred_time_slots.length })}
                           </p>
                         </div>
                       )}
@@ -240,7 +242,7 @@ export default function ConsultantDashboard() {
                         <div className="mt-3 pt-3 border-t border-wisebox-border">
                           <p className="text-xs text-blue-400 flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            Meeting: {new Date(ticket.scheduled_at).toLocaleString('en-GB', {
+                            {t('dashboard.meeting')}: {new Date(ticket.scheduled_at).toLocaleString('en-GB', {
                               day: 'numeric',
                               month: 'short',
                               hour: '2-digit',

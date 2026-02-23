@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FormEvent, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, CalendarDays, ExternalLink, Loader2, Send } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
@@ -31,13 +32,7 @@ const STATUS_OPTIONS: TicketStatus[] = [
   'cancelled',
 ];
 
-const STATUS_TIMELINE: Array<{ id: string; label: string }> = [
-  { id: 'open', label: 'Opened' },
-  { id: 'assigned', label: 'Assigned' },
-  { id: 'in_progress', label: 'In Progress' },
-  { id: 'scheduled', label: 'Scheduled' },
-  { id: 'completed', label: 'Completed' },
-];
+const STATUS_TIMELINE_IDS = ['open', 'assigned', 'in_progress', 'scheduled', 'completed'] as const;
 
 function timelineStepIndex(status: TicketStatus): number {
   if (status === 'open') return 0;
@@ -70,6 +65,7 @@ export default function TicketDetailPage() {
   const params = useParams();
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
+  const { t } = useTranslation(['tickets', 'common']);
   const ticketId = Number(params.id);
 
   const [commentBody, setCommentBody] = useState('');
@@ -143,7 +139,7 @@ export default function TicketDetailPage() {
     },
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
-      setActionError(axiosErr.response?.data?.message || 'Could not send comment.');
+      setActionError(axiosErr.response?.data?.message || t('tickets:detail.couldNotSendComment'));
     },
   });
 
@@ -162,7 +158,7 @@ export default function TicketDetailPage() {
     },
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
-      setActionError(axiosErr.response?.data?.message || 'Could not update status.');
+      setActionError(axiosErr.response?.data?.message || t('tickets:detail.couldNotUpdateStatus'));
     },
   });
 
@@ -181,7 +177,7 @@ export default function TicketDetailPage() {
     },
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
-      setActionError(axiosErr.response?.data?.message || 'Could not assign consultant.');
+      setActionError(axiosErr.response?.data?.message || t('tickets:detail.couldNotAssignConsultant'));
     },
   });
 
@@ -199,7 +195,7 @@ export default function TicketDetailPage() {
     },
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
-      setActionError(axiosErr.response?.data?.message || 'Could not generate scheduling link.');
+      setActionError(axiosErr.response?.data?.message || t('tickets:detail.couldNotGenerateLink'));
     },
   });
 
@@ -213,7 +209,7 @@ export default function TicketDetailPage() {
     return (
       <div className="px-6 py-8">
         <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading ticket...</CardContent>
+          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('tickets:detail.loading')}</CardContent>
         </Card>
       </div>
     );
@@ -224,9 +220,9 @@ export default function TicketDetailPage() {
       <div className="px-6 py-8">
         <Card>
           <CardContent className="p-6 space-y-3">
-            <p className="font-medium text-wisebox-text-primary">Ticket not found.</p>
+            <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.notFound')}</p>
             <Button asChild variant="outline">
-              <Link href="/tickets">Back to tickets</Link>
+              <Link href="/tickets">{t('tickets:detail.backToTickets')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -239,7 +235,7 @@ export default function TicketDetailPage() {
       <Button asChild variant="ghost" className="-ml-2">
         <Link href="/tickets">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to tickets
+          {t('tickets:detail.backToTickets')}
         </Link>
       </Button>
 
@@ -255,80 +251,80 @@ export default function TicketDetailPage() {
           {ticket.description && <p className="text-wisebox-text-secondary">{ticket.description}</p>}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-wisebox-text-secondary">
             <p>
-              Priority: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
+              {t('tickets:detail.priority')}: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
             </p>
             <p>
-              Created: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.created_at).toLocaleString()}</span>
+              {t('tickets:detail.created')}: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.created_at).toLocaleString()}</span>
             </p>
             {ticket.customer?.name && (
               <p>
-                Customer: <span className="font-medium text-wisebox-text-primary">{ticket.customer.name}</span>
+                {t('tickets:detail.customer')}: <span className="font-medium text-wisebox-text-primary">{ticket.customer.name}</span>
               </p>
             )}
             {ticket.consultant?.name && (
               <p>
-                Consultant: <span className="font-medium text-wisebox-text-primary">{ticket.consultant.name}</span>
+                {t('tickets:detail.consultant')}: <span className="font-medium text-wisebox-text-primary">{ticket.consultant.name}</span>
               </p>
             )}
             {ticket.property?.property_name && (
               <p>
-                Property: <span className="font-medium text-wisebox-text-primary">{ticket.property.property_name}</span>
+                {t('tickets:detail.property')}: <span className="font-medium text-wisebox-text-primary">{ticket.property.property_name}</span>
               </p>
             )}
             {ticket.service?.name && (
               <p>
-                Service: <span className="font-medium text-wisebox-text-primary">{ticket.service.name}</span>
+                {t('tickets:detail.service')}: <span className="font-medium text-wisebox-text-primary">{ticket.service.name}</span>
               </p>
             )}
           </div>
 
           <div className="space-y-3 pt-2 border-t">
-            <p className="font-medium text-wisebox-text-primary">Status Timeline</p>
+            <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.statusTimeline')}</p>
             <div className="flex flex-wrap gap-2">
-              {STATUS_TIMELINE.map((step, index) => {
+              {STATUS_TIMELINE_IDS.map((stepId, index) => {
                 const currentIndex = timelineStepIndex(ticket.status);
                 const isActive = index <= currentIndex;
                 return (
                   <span
-                    key={step.id}
+                    key={stepId}
                     className={`px-2.5 py-1 rounded-full text-xs border ${
                       isActive
                         ? 'bg-wisebox-primary-500/15 text-wisebox-primary-400 border-wisebox-primary-500/30'
                         : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
                     }`}
                   >
-                    {step.label}
+                    {t(`tickets:detail.timeline.${stepId}`)}
                   </span>
                 );
               })}
             </div>
             {(ticket.status === 'awaiting_customer' || ticket.status === 'awaiting_consultant') && (
               <p className="text-xs text-wisebox-text-secondary">
-                Conversation is required before moving forward to scheduling.
+                {t('tickets:detail.conversationRequired')}
               </p>
             )}
             {ticket.status === 'cancelled' && (
-              <p className="text-xs text-red-400">This ticket has been cancelled.</p>
+              <p className="text-xs text-red-400">{t('tickets:detail.ticketCancelled')}</p>
             )}
           </div>
 
           <div className="space-y-3 pt-2 border-t">
             <div className="flex items-center gap-2">
               <CalendarDays className="h-4 w-4 text-wisebox-primary-400" />
-              <p className="font-medium text-wisebox-text-primary">Meeting</p>
+              <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.meeting')}</p>
             </div>
 
             {ticket.scheduled_at ? (
               <p className="text-sm text-wisebox-text-secondary">
-                Scheduled for{' '}
+                {t('tickets:detail.scheduledFor')}{' '}
                 <span className="font-medium text-wisebox-text-primary">
                   {new Date(ticket.scheduled_at).toLocaleString()}
                 </span>
-                {ticket.meeting_duration_minutes ? ` (${ticket.meeting_duration_minutes} mins)` : ''}
+                {ticket.meeting_duration_minutes ? ` (${ticket.meeting_duration_minutes} ${t('tickets:detail.mins')})` : ''}
               </p>
             ) : (
               <p className="text-sm text-wisebox-text-secondary">
-                No meeting scheduled yet.
+                {t('tickets:detail.noMeetingScheduled')}
               </p>
             )}
 
@@ -337,7 +333,7 @@ export default function TicketDetailPage() {
                 <Button asChild variant="outline">
                   <a href={ticket.meeting_url} target="_blank" rel="noreferrer">
                     <ExternalLink className="h-4 w-4 mr-2" />
-                    Join meeting link
+                    {t('tickets:detail.joinMeeting')}
                   </a>
                 </Button>
               )}
@@ -349,14 +345,14 @@ export default function TicketDetailPage() {
                   onClick={() => schedulingLinkMutation.mutate()}
                   disabled={schedulingLinkMutation.isPending}
                 >
-                  {schedulingLinkMutation.isPending ? 'Generating link...' : 'Get scheduling link'}
+                  {schedulingLinkMutation.isPending ? t('tickets:detail.generatingLink') : t('tickets:detail.getSchedulingLink')}
                 </Button>
               )}
             </div>
 
             {schedulingUrl && (
               <p className="text-xs text-wisebox-text-secondary break-all">
-                Latest link:{' '}
+                {t('tickets:detail.latestLink')}:{' '}
                 <a
                   href={schedulingUrl}
                   target="_blank"
@@ -373,14 +369,14 @@ export default function TicketDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t">
               {canManageStatus && (
                 <div className="space-y-2">
-                  <p className="font-medium text-wisebox-text-primary">Update Status</p>
+                  <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.updateStatus')}</p>
                   <div className="flex gap-2">
                     <Select
                       value={effectiveStatusValue}
                       onValueChange={(value) => setStatusValue(value as TicketStatus)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue placeholder={t('tickets:detail.selectStatus')} />
                       </SelectTrigger>
                       <SelectContent>
                         {STATUS_OPTIONS.map((status) => (
@@ -400,7 +396,7 @@ export default function TicketDetailPage() {
                       }
                       onClick={() => updateStatusMutation.mutate(effectiveStatusValue as TicketStatus)}
                     >
-                      {updateStatusMutation.isPending ? 'Saving...' : 'Save'}
+                      {updateStatusMutation.isPending ? t('common:saving') : t('common:save')}
                     </Button>
                   </div>
                 </div>
@@ -408,14 +404,14 @@ export default function TicketDetailPage() {
 
               {isAdmin && (
                 <div className="space-y-2">
-                  <p className="font-medium text-wisebox-text-primary">Assign Consultant</p>
+                  <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.assignConsultant')}</p>
                   <div className="flex gap-2">
                     <Select
                       value={effectiveConsultantValue}
                       onValueChange={(value) => setConsultantIdValue(value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select consultant" />
+                        <SelectValue placeholder={t('tickets:detail.selectConsultant')} />
                       </SelectTrigger>
                       <SelectContent>
                         {(consultants ?? []).map((consultant) => (
@@ -435,7 +431,7 @@ export default function TicketDetailPage() {
                       }
                       onClick={() => assignConsultantMutation.mutate(Number(effectiveConsultantValue))}
                     >
-                      {assignConsultantMutation.isPending ? 'Assigning...' : 'Assign'}
+                      {assignConsultantMutation.isPending ? t('tickets:detail.assigning') : t('tickets:detail.assign')}
                     </Button>
                   </div>
                 </div>
@@ -453,20 +449,20 @@ export default function TicketDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Conversation</CardTitle>
+          <CardTitle>{t('tickets:detail.conversation')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {(ticket.comments ?? []).length === 0 ? (
-            <p className="text-sm text-wisebox-text-secondary">No comments yet.</p>
+            <p className="text-sm text-wisebox-text-secondary">{t('tickets:detail.noComments')}</p>
           ) : (
             <div className="space-y-3">
               {(ticket.comments ?? []).map((comment) => (
                 <div key={comment.id} className="rounded-md border p-3 bg-wisebox-background-card">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? 'User'}</p>
+                    <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? t('tickets:detail.user')}</p>
                     <div className="flex items-center gap-2">
                       {comment.is_internal && (
-                        <Badge className="bg-purple-500/20 text-purple-400">Internal</Badge>
+                        <Badge className="bg-purple-500/20 text-purple-400">{t('tickets:detail.internal')}</Badge>
                       )}
                       <span className="text-xs text-wisebox-text-secondary">
                         {new Date(comment.created_at).toLocaleString()}
@@ -495,7 +491,7 @@ export default function TicketDetailPage() {
             <Textarea
               value={commentBody}
               onChange={(e) => setCommentBody(e.target.value)}
-              placeholder="Write a message..."
+              placeholder={t('tickets:detail.writeMessage')}
               rows={4}
             />
             <div className="space-y-2">
@@ -526,7 +522,7 @@ export default function TicketDetailPage() {
                   checked={isInternal}
                   onChange={(e) => setIsInternal(e.target.checked)}
                 />
-                Mark as internal note
+                {t('tickets:detail.markAsInternal')}
               </label>
             )}
             <Button
@@ -537,12 +533,12 @@ export default function TicketDetailPage() {
               {addCommentMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Sending...
+                  {t('tickets:detail.sending')}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />
-                  Send message
+                  {t('tickets:detail.sendMessage')}
                 </>
               )}
             </Button>

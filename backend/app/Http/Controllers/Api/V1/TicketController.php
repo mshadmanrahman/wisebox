@@ -68,7 +68,7 @@ class TicketController extends Controller
         $property = Property::findOrFail($validated['property_id']);
 
         if (!$user->isAdmin() && !$user->isConsultant() && $property->user_id !== $user->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $ticket = Ticket::create([
@@ -99,7 +99,7 @@ class TicketController extends Controller
         $user = $request->user();
 
         if (!$this->canViewTicket($user, $ticket)) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $ticket->load([
@@ -120,7 +120,7 @@ class TicketController extends Controller
         $user = $request->user();
 
         if (!($user->isAdmin() || ($user->isConsultant() && $ticket->consultant_id === $user->id))) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $validated = $request->validate([
@@ -150,8 +150,8 @@ class TicketController extends Controller
             $this->createNotification(
                 (int) $ticket->customer_id,
                 'ticket.status.updated',
-                'Ticket status updated',
-                "Ticket {$ticket->ticket_number} is now {$ticket->status}.",
+                __('messages.notif_ticket_status_updated_title'),
+                __('messages.notif_ticket_status_updated_body', ['ticket_number' => $ticket->ticket_number, 'status' => $ticket->status]),
                 [
                     'ticket_id' => $ticket->id,
                     'ticket_number' => $ticket->ticket_number,
@@ -174,8 +174,8 @@ class TicketController extends Controller
                     $this->createNotification(
                         (int) $admin->id,
                         'ticket.completed',
-                        'Ticket completed',
-                        "Ticket {$ticket->ticket_number} has been marked as completed.",
+                        __('messages.notif_ticket_completed_title'),
+                        __('messages.notif_ticket_completed_body', ['ticket_number' => $ticket->ticket_number]),
                         [
                             'ticket_id' => $ticket->id,
                             'ticket_number' => $ticket->ticket_number,
@@ -193,7 +193,7 @@ class TicketController extends Controller
         $user = $request->user();
 
         if (!$user->isAdmin()) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $validated = $request->validate([
@@ -219,8 +219,8 @@ class TicketController extends Controller
             $this->createNotification(
                 (int) $ticket->consultant_id,
                 'ticket.assigned',
-                'New ticket assigned',
-                "You have been assigned to ticket {$ticket->ticket_number}.",
+                __('messages.notif_ticket_assigned_title'),
+                __('messages.notif_ticket_assigned_body', ['ticket_number' => $ticket->ticket_number]),
                 [
                     'ticket_id' => $ticket->id,
                     'ticket_number' => $ticket->ticket_number,
@@ -235,8 +235,8 @@ class TicketController extends Controller
         $this->createNotification(
             (int) $ticket->customer_id,
             'ticket.consultant.assigned',
-            'Consultant assigned',
-            "A consultant has been assigned to ticket {$ticket->ticket_number}.",
+            __('messages.notif_consultant_assigned_title'),
+            __('messages.notif_consultant_assigned_body', ['ticket_number' => $ticket->ticket_number]),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -250,14 +250,14 @@ class TicketController extends Controller
 
         return response()->json([
             'data' => $ticket,
-            'message' => 'Consultant assigned successfully.',
+            'message' => __('messages.consultant_assigned'),
         ]);
     }
 
     public function comments(Request $request, Ticket $ticket): JsonResponse
     {
         if (!$this->canViewTicket($request->user(), $ticket)) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $comments = $this->commentQueryFor($request->user(), $ticket)
@@ -272,7 +272,7 @@ class TicketController extends Controller
         $user = $request->user();
 
         if (!$this->canViewTicket($user, $ticket)) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $validated = $request->validate([
@@ -288,13 +288,13 @@ class TicketController extends Controller
 
         if ($bodyText === '' && empty(is_array($incomingAttachments) ? $incomingAttachments : [$incomingAttachments])) {
             return response()->json([
-                'message' => 'A comment body or at least one attachment is required.',
+                'message' => __('messages.comment_or_attachment_required'),
             ], 422);
         }
 
         if ($isInternal && !($user->isAdmin() || $user->isConsultant())) {
             return response()->json([
-                'message' => 'Only consultants and admins can create internal comments.',
+                'message' => __('messages.internal_comment_restricted'),
             ], 403);
         }
 
@@ -324,8 +324,8 @@ class TicketController extends Controller
                 $this->createNotification(
                     (int) $ticket->consultant_id,
                     'ticket.comment.added',
-                    'Customer comment added',
-                    "A new customer comment was added to ticket {$ticket->ticket_number}.",
+                    __('messages.notif_customer_comment_title'),
+                    __('messages.notif_customer_comment_body', ['ticket_number' => $ticket->ticket_number]),
                     [
                         'ticket_id' => $ticket->id,
                         'ticket_number' => $ticket->ticket_number,
@@ -345,8 +345,8 @@ class TicketController extends Controller
                 $this->createNotification(
                     (int) $ticket->customer_id,
                     'ticket.comment.added',
-                    'Ticket updated by consultant',
-                    "A new update was posted on ticket {$ticket->ticket_number}.",
+                    __('messages.notif_consultant_comment_title'),
+                    __('messages.notif_consultant_comment_body', ['ticket_number' => $ticket->ticket_number]),
                     [
                         'ticket_id' => $ticket->id,
                         'ticket_number' => $ticket->ticket_number,
@@ -369,7 +369,7 @@ class TicketController extends Controller
     public function consultants(Request $request): JsonResponse
     {
         if (!$request->user()->isAdmin()) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $consultants = User::query()
@@ -388,7 +388,7 @@ class TicketController extends Controller
     public function consultantWorkload(Request $request): JsonResponse
     {
         if (!$request->user()->isAdmin()) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $consultants = User::query()
@@ -445,12 +445,12 @@ class TicketController extends Controller
         $user = $request->user();
 
         if (!$this->canViewTicket($user, $ticket)) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         if (!$ticket->consultant_id) {
             return response()->json([
-                'message' => 'This ticket has no assigned consultant yet.',
+                'message' => __('messages.no_consultant_assigned'),
             ], 422);
         }
 

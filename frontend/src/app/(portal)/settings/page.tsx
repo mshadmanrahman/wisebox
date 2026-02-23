@@ -1,7 +1,9 @@
 'use client';
 
 import { type ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/auth';
+import { useI18nStore } from '@/stores/i18n';
 import api from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -25,6 +27,8 @@ interface ProfileFormState {
 export default function SettingsPage() {
   const { user, refreshUser } = useAuthStore();
   const { toast } = useToast();
+  const { t } = useTranslation('settings');
+  const setLanguage = useI18nStore((s) => s.setLanguage);
 
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
@@ -81,14 +85,17 @@ export default function SettingsPage() {
         },
       });
 
+      // Sync i18n store with the selected language
+      setLanguage(profileForm.preferred_language);
+
       await refreshUser();
       toast({
-        title: 'Settings saved',
-        description: 'Profile and notification preferences updated.',
+        title: t('profile.savedTitle'),
+        description: t('profile.savedDescription'),
       });
     } catch {
       toast({
-        title: 'Failed to update settings',
+        title: t('profile.failedTitle'),
         variant: 'destructive',
       });
     } finally {
@@ -99,8 +106,8 @@ export default function SettingsPage() {
   const changePassword = async () => {
     if (!passwordForm.current_password || !passwordForm.password || !passwordForm.password_confirmation) {
       toast({
-        title: 'Missing fields',
-        description: 'Fill all password fields before saving.',
+        title: t('password.missingFieldsTitle'),
+        description: t('password.missingFieldsDescription'),
         variant: 'destructive',
       });
       return;
@@ -116,12 +123,12 @@ export default function SettingsPage() {
         password_confirmation: '',
       });
       toast({
-        title: 'Password updated',
+        title: t('password.updatedTitle'),
       });
     } catch {
       toast({
-        title: 'Password update failed',
-        description: 'Check your current password and try again.',
+        title: t('password.failedTitle'),
+        description: t('password.failedDescription'),
         variant: 'destructive',
       });
     } finally {
@@ -132,38 +139,38 @@ export default function SettingsPage() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-wisebox-text-primary">Account Settings</h1>
-        <p className="text-wisebox-text-secondary mt-1">Manage your profile, security, and notification preferences.</p>
+        <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('title')}</h1>
+        <p className="text-wisebox-text-secondary mt-1">{t('subtitle')}</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-4">
         <TabsList className="grid w-full max-w-xl grid-cols-3">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
-          <TabsTrigger value="danger">Danger Zone</TabsTrigger>
+          <TabsTrigger value="profile">{t('tabs.profile')}</TabsTrigger>
+          <TabsTrigger value="password">{t('tabs.password')}</TabsTrigger>
+          <TabsTrigger value="danger">{t('tabs.danger')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
           <Card>
             <CardHeader>
-              <CardTitle>Profile & Preferences</CardTitle>
-              <CardDescription>Update account details and notification preferences.</CardDescription>
+              <CardTitle>{t('profile.title')}</CardTitle>
+              <CardDescription>{t('profile.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Full name">
+                <Field label={t('profile.fullName')}>
                   <Input
                     value={profileForm.name}
                     onChange={(event) => setProfileForm((prev) => ({ ...prev, name: event.target.value }))}
                   />
                 </Field>
-                <Field label="Phone">
+                <Field label={t('profile.phone')}>
                   <Input
                     value={profileForm.phone}
                     onChange={(event) => setProfileForm((prev) => ({ ...prev, phone: event.target.value }))}
                   />
                 </Field>
-                <Field label="Country (ISO 3)">
+                <Field label={t('profile.countryIso')}>
                   <Input
                     value={profileForm.country_of_residence}
                     onChange={(event) =>
@@ -172,7 +179,7 @@ export default function SettingsPage() {
                     maxLength={3}
                   />
                 </Field>
-                <Field label="Timezone">
+                <Field label={t('profile.timezone')}>
                   <Input
                     value={profileForm.timezone}
                     onChange={(event) => setProfileForm((prev) => ({ ...prev, timezone: event.target.value }))}
@@ -180,51 +187,51 @@ export default function SettingsPage() {
                 </Field>
               </div>
 
-              <Field label="Preferred language">
+              <Field label={t('profile.preferredLanguage')}>
                 <div className="flex items-center gap-2">
                   <Button
                     type="button"
                     variant={profileForm.preferred_language === 'en' ? 'default' : 'outline'}
                     onClick={() => setProfileForm((prev) => ({ ...prev, preferred_language: 'en' }))}
                   >
-                    English
+                    {t('profile.english')}
                   </Button>
                   <Button
                     type="button"
                     variant={profileForm.preferred_language === 'bn' ? 'default' : 'outline'}
                     onClick={() => setProfileForm((prev) => ({ ...prev, preferred_language: 'bn' }))}
                   >
-                    Bangla
+                    {t('profile.bangla')}
                   </Button>
                 </div>
               </Field>
 
               <div className="space-y-3">
-                <p className="text-sm font-medium text-wisebox-text-primary">Email notification preferences</p>
+                <p className="text-sm font-medium text-wisebox-text-primary">{t('profile.emailPreferences')}</p>
                 <PreferenceRow
-                  label="Order updates"
+                  label={t('profile.orderUpdates')}
                   checked={profileForm.order_updates}
                   onToggle={() => setProfileForm((prev) => ({ ...prev, order_updates: !prev.order_updates }))}
                 />
                 <PreferenceRow
-                  label="Ticket updates"
+                  label={t('profile.ticketUpdates')}
                   checked={profileForm.ticket_updates}
                   onToggle={() => setProfileForm((prev) => ({ ...prev, ticket_updates: !prev.ticket_updates }))}
                 />
                 <PreferenceRow
-                  label="Consultant updates"
+                  label={t('profile.consultantUpdates')}
                   checked={profileForm.consultant_updates}
                   onToggle={() => setProfileForm((prev) => ({ ...prev, consultant_updates: !prev.consultant_updates }))}
                 />
                 <PreferenceRow
-                  label="Marketing updates"
+                  label={t('profile.marketingUpdates')}
                   checked={profileForm.marketing_updates}
                   onToggle={() => setProfileForm((prev) => ({ ...prev, marketing_updates: !prev.marketing_updates }))}
                 />
               </div>
 
               <Button onClick={saveProfile} disabled={isSavingProfile}>
-                {isSavingProfile ? 'Saving...' : 'Save changes'}
+                {isSavingProfile ? t('profile.saving') : t('profile.saveChanges')}
               </Button>
             </CardContent>
           </Card>
@@ -233,11 +240,11 @@ export default function SettingsPage() {
         <TabsContent value="password">
           <Card>
             <CardHeader>
-              <CardTitle>Password</CardTitle>
-              <CardDescription>Change your password securely.</CardDescription>
+              <CardTitle>{t('password.title')}</CardTitle>
+              <CardDescription>{t('password.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 max-w-lg">
-              <Field label="Current password">
+              <Field label={t('password.currentPassword')}>
                 <Input
                   type="password"
                   value={passwordForm.current_password}
@@ -246,14 +253,14 @@ export default function SettingsPage() {
                   }
                 />
               </Field>
-              <Field label="New password">
+              <Field label={t('password.newPassword')}>
                 <Input
                   type="password"
                   value={passwordForm.password}
                   onChange={(event) => setPasswordForm((prev) => ({ ...prev, password: event.target.value }))}
                 />
               </Field>
-              <Field label="Confirm new password">
+              <Field label={t('password.confirmPassword')}>
                 <Input
                   type="password"
                   value={passwordForm.password_confirmation}
@@ -263,7 +270,7 @@ export default function SettingsPage() {
                 />
               </Field>
               <Button onClick={changePassword} disabled={isSavingPassword}>
-                {isSavingPassword ? 'Updating...' : 'Update password'}
+                {isSavingPassword ? t('password.updating') : t('password.updatePassword')}
               </Button>
             </CardContent>
           </Card>
@@ -272,15 +279,15 @@ export default function SettingsPage() {
         <TabsContent value="danger">
           <Card className="border-red-200">
             <CardHeader>
-              <CardTitle className="text-red-700">Danger zone</CardTitle>
-              <CardDescription>Destructive actions for your account.</CardDescription>
+              <CardTitle className="text-red-700">{t('danger.title')}</CardTitle>
+              <CardDescription>{t('danger.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-wisebox-text-secondary">
-                Account deletion is not enabled in this build yet. Contact support for immediate account closure requests.
+                {t('danger.deleteInfo')}
               </p>
               <Button variant="destructive" disabled>
-                Delete account (coming soon)
+                {t('danger.deleteButton')}
               </Button>
             </CardContent>
           </Card>

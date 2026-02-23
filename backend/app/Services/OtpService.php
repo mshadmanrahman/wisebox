@@ -20,11 +20,11 @@ class OtpService
     public function send(User $user, string $channel = 'email'): void
     {
         if ($this->isRateLimited($user->id)) {
-            throw new \RuntimeException('Please wait at least 60 seconds before requesting a new OTP.');
+            throw new \RuntimeException(__('notifications.otp_rate_limited'));
         }
 
         if ($channel === 'sms' && empty($user->phone)) {
-            throw new \InvalidArgumentException('A phone number is required for SMS OTP delivery.');
+            throw new \InvalidArgumentException(__('notifications.otp_phone_required'));
         }
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -98,9 +98,10 @@ class OtpService
         }
 
         $client = new Client($sid, $token);
+        $locale = $user->profile?->preferred_language ?? 'en';
         $client->messages->create($user->phone, [
             'from' => $from,
-            'body' => "Your Wisebox verification code is {$code}. It expires in ".self::OTP_TTL_MINUTES.' minutes.',
+            'body' => __('notifications.otp.sms', ['code' => $code, 'minutes' => self::OTP_TTL_MINUTES], $locale),
         ]);
     }
 

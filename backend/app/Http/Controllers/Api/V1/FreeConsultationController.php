@@ -36,7 +36,7 @@ class FreeConsultationController extends Controller
         $property = $user->properties()->find($validated['property_id']);
         if (!$property) {
             return response()->json([
-                'message' => 'Property not found or does not belong to you.',
+                'message' => __('messages.property_not_found_or_not_owned'),
             ], 404);
         }
 
@@ -49,7 +49,7 @@ class FreeConsultationController extends Controller
 
         if ($existingActive) {
             return response()->json([
-                'message' => 'You already have an active consultation request for this property.',
+                'message' => __('messages.active_consultation_exists'),
             ], 422);
         }
 
@@ -73,8 +73,8 @@ class FreeConsultationController extends Controller
             $this->createNotification(
                 $admin->id,
                 'consultation.new_request',
-                'New Free Consultation Request',
-                "{$user->name} has requested a free consultation for property: {$property->property_name}.",
+                __('messages.notif_new_consultation_title'),
+                __('messages.notif_new_consultation_body', ['customer_name' => $user->name, 'property_name' => $property->property_name]),
                 [
                     'ticket_id' => $ticket->id,
                     'ticket_number' => $ticket->ticket_number,
@@ -93,7 +93,7 @@ class FreeConsultationController extends Controller
 
         return response()->json([
             'data' => $ticket,
-            'message' => 'Your free consultation request has been submitted. You will receive a confirmation once a consultant is assigned.',
+            'message' => __('messages.free_consultation_submitted'),
         ], 201);
     }
 
@@ -121,7 +121,7 @@ class FreeConsultationController extends Controller
         $user = $request->user();
 
         if ($ticket->customer_id !== $user->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $ticket->load([

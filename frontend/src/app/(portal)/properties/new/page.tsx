@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -102,6 +103,7 @@ function getPropertyTypeIcon(slug: string): React.ReactNode {
 
 export default function AddPropertyPage() {
   const router = useRouter();
+  const { t } = useTranslation(['properties', 'common']);
   const [activeStep, setActiveStep] = useState<string>('step-1');
   const [createdProperty, setCreatedProperty] = useState<Property | null>(null);
   const [step1Error, setStep1Error] = useState<string | null>(null);
@@ -258,7 +260,7 @@ export default function AddPropertyPage() {
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
       setStep1Error(
-        axiosErr.response?.data?.message || 'Failed to create property. Please try again.'
+        axiosErr.response?.data?.message || t('properties:new.createFailed')
       );
     },
   });
@@ -266,7 +268,7 @@ export default function AddPropertyPage() {
   const onStep1Submit = (data: Step1FormData) => {
     if (coOwnerTotal > 100) {
       setStep1Error(
-        `Co-owner percentages cannot exceed 100% (current total: ${coOwnerTotal}%).`
+        t('properties:new.coOwnerExceedsError', { total: coOwnerTotal })
       );
       return;
     }
@@ -296,16 +298,16 @@ export default function AddPropertyPage() {
           onClick={() => router.push('/properties')}
           className="hover:text-wisebox-primary transition-colors"
         >
-          Properties
+          {t('properties:breadcrumb.properties')}
         </button>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-white font-medium">Add New</span>
+        <span className="text-white font-medium">{t('properties:breadcrumb.addNew')}</span>
       </nav>
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-white">Add New Property</h1>
+        <h1 className="text-2xl font-bold text-white">{t('properties:new.title')}</h1>
         <div className="flex items-center gap-3 text-sm text-wisebox-text-muted">
-          <span>{overallPct}% complete</span>
+          <span>{t('properties:new.percentComplete', { percent: overallPct })}</span>
           <Progress value={overallPct} className="w-32 h-2" />
         </div>
       </div>
@@ -330,7 +332,7 @@ export default function AddPropertyPage() {
                     1
                   </span>
                 )}
-                Property &amp; Ownership
+                {t('properties:new.step1Title')}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pt-2 pb-6">
@@ -342,10 +344,10 @@ export default function AddPropertyPage() {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="property_name">Property Name *</Label>
+                  <Label htmlFor="property_name">{t('properties:new.propertyNameRequired')}</Label>
                   <Input
                     id="property_name"
-                    placeholder="e.g. Family Home in Dhaka"
+                    placeholder={t('properties:new.propertyNamePlaceholder')}
                     {...register('property_name')}
                   />
                   {errors.property_name && (
@@ -354,7 +356,7 @@ export default function AddPropertyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Property Type *</Label>
+                  <Label>{t('properties:new.propertyTypeRequired')}</Label>
                   <Controller
                     name="property_type_id"
                     control={control}
@@ -383,8 +385,8 @@ export default function AddPropertyPage() {
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Ownership Status *</Label>
-                    <p className="text-sm text-wisebox-text-secondary">How did you acquire this property?</p>
+                    <Label>{t('properties:new.ownershipStatusRequired')}</Label>
+                    <p className="text-sm text-wisebox-text-secondary">{t('properties:new.ownershipStatusDesc')}</p>
                     <Controller
                       name="ownership_status_id"
                       control={control}
@@ -410,8 +412,8 @@ export default function AddPropertyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Ownership Type *</Label>
-                    <p className="text-sm text-wisebox-text-secondary">Who owns this property?</p>
+                    <Label>{t('properties:new.ownershipTypeRequired')}</Label>
+                    <p className="text-sm text-wisebox-text-secondary">{t('properties:new.ownershipTypeDesc')}</p>
                     <Controller
                       name="ownership_type_id"
                       control={control}
@@ -438,7 +440,7 @@ export default function AddPropertyPage() {
 
                 {requiresCoOwners && (
                   <div className="space-y-2">
-                    <Label>Co-Owners</Label>
+                    <Label>{t('properties:new.coOwners')}</Label>
                     <Controller
                       name="co_owners"
                       control={control}
@@ -452,7 +454,7 @@ export default function AddPropertyPage() {
                     />
                     {errors.co_owners && (
                       <p className="text-sm text-red-500">
-                        Please fix co-owner details above.
+                        {t('properties:new.fixCoOwnerDetails')}
                       </p>
                     )}
                   </div>
@@ -461,8 +463,8 @@ export default function AddPropertyPage() {
                 <Separator />
 
                 <div className="space-y-2">
-                  <Label className="text-base font-medium">Location</Label>
-                  <p className="text-sm text-wisebox-text-muted">Country: Bangladesh</p>
+                  <Label className="text-base font-medium">{t('properties:new.locationTitle')}</Label>
+                  <p className="text-sm text-wisebox-text-muted">{t('properties:new.country')}</p>
                   <Controller
                     name="division_id"
                     control={control}
@@ -486,10 +488,10 @@ export default function AddPropertyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
+                  <Label htmlFor="address">{t('properties:new.address')}</Label>
                   <Textarea
                     id="address"
-                    placeholder="Street address, house number, etc."
+                    placeholder={t('properties:new.addressPlaceholder')}
                     rows={2}
                     {...register('address')}
                   />
@@ -497,12 +499,12 @@ export default function AddPropertyPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="size_value">Size</Label>
+                    <Label htmlFor="size_value">{t('properties:new.size')}</Label>
                     <Input
                       id="size_value"
                       type="number"
                       step="any"
-                      placeholder="e.g. 1200"
+                      placeholder={t('properties:new.sizePlaceholder')}
                       {...register('size_value', {
                         setValueAs: (value) =>
                           value === '' || value === null || value === undefined
@@ -515,7 +517,7 @@ export default function AddPropertyPage() {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label>Unit</Label>
+                    <Label>{t('properties:new.unitLabel')}</Label>
                     <Controller
                       name="size_unit"
                       control={control}
@@ -525,7 +527,7 @@ export default function AddPropertyPage() {
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select unit" />
+                            <SelectValue placeholder={t('properties:new.selectUnit')} />
                           </SelectTrigger>
                           <SelectContent>
                             {SIZE_UNITS.map((u) => (
@@ -541,10 +543,10 @@ export default function AddPropertyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description (optional)</Label>
+                  <Label htmlFor="description">{t('properties:new.descriptionOptional')}</Label>
                   <Textarea
                     id="description"
-                    placeholder="Any additional details about this property..."
+                    placeholder={t('properties:new.descriptionPlaceholder')}
                     rows={3}
                     {...register('description')}
                   />
@@ -559,10 +561,10 @@ export default function AddPropertyPage() {
                     {createPropertyMutation.isPending ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        Creating...
+                        {t('properties:new.creating')}
                       </>
                     ) : (
-                      'Save & Continue'
+                      t('properties:new.saveAndContinue')
                     )}
                   </Button>
                 </div>
@@ -586,7 +588,7 @@ export default function AddPropertyPage() {
                 >
                   2
                 </span>
-                Upload Documents
+                {t('properties:new.step2Title')}
                 {createdProperty && totalApplicableDocs > 0 && (
                   <span className="ml-2 text-sm font-normal text-wisebox-text-muted">
                     ({uploadedOrHandledCount}/{totalApplicableDocs})
@@ -599,16 +601,16 @@ export default function AddPropertyPage() {
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-wisebox-text-muted">
-                      Document completion: {docCompletionPct}%
+                      {t('properties:new.docCompletion', { percent: docCompletionPct })}
                     </span>
                     <Progress value={docCompletionPct} className="flex-1 h-2" />
                   </div>
 
                   {primaryDocs.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold text-white">Primary Documents</h3>
+                      <h3 className="text-lg font-semibold text-white">{t('properties:new.primaryDocuments')}</h3>
                       <p className="text-sm text-wisebox-text-muted">
-                        Essential documents for property verification.
+                        {t('properties:new.primaryDocsDesc')}
                       </p>
                       <div className="space-y-3">
                         {primaryDocs.map((dt) => (
@@ -627,9 +629,9 @@ export default function AddPropertyPage() {
                   {secondaryDocs.length > 0 && (
                     <div className="space-y-3">
                       <Separator />
-                      <h3 className="text-lg font-semibold text-white">Secondary Documents</h3>
+                      <h3 className="text-lg font-semibold text-white">{t('properties:new.secondaryDocuments')}</h3>
                       <p className="text-sm text-wisebox-text-muted">
-                        Supporting documents that improve your property score.
+                        {t('properties:new.secondaryDocsDesc')}
                       </p>
                       <div className="space-y-3">
                         {secondaryDocs.map((dt) => (
@@ -647,7 +649,7 @@ export default function AddPropertyPage() {
 
                   {applicableDocTypes.length === 0 && (
                     <p className="text-sm text-wisebox-text-muted py-4">
-                      No document types available for this property configuration.
+                      {t('properties:new.noDocTypes')}
                     </p>
                   )}
 
@@ -657,7 +659,7 @@ export default function AddPropertyPage() {
                       className="w-full sm:w-auto bg-wisebox-primary hover:bg-wisebox-primary-hover"
                       onClick={handleFinish}
                     >
-                      Finish
+                      {t('properties:new.finish')}
                     </Button>
                   </div>
                 </div>

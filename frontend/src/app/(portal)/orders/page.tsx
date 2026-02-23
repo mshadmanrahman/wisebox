@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
 import api from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ function paymentBadgeClass(status: Order['payment_status']): string {
 }
 
 export default function OrdersPage() {
+  const { t } = useTranslation(['orders', 'common']);
   const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: ['orders'],
     queryFn: async () => {
@@ -31,22 +33,22 @@ export default function OrdersPage() {
   const errorMessage =
     (error as { response?: { data?: { message?: string } }; message?: string } | null)?.response?.data?.message ||
     (error as { message?: string } | null)?.message ||
-    'Please try again in a moment.';
+    t('common:tryAgain');
 
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-wisebox-text-primary">My Orders</h1>
+          <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('orders:title')}</h1>
           <p className="text-wisebox-text-secondary mt-1">
-            Track checkout status and service fulfillment.
+            {t('orders:subtitle')}
           </p>
           {isFetching && hasData && (
-            <p className="text-xs text-wisebox-text-secondary mt-1">Refreshing orders...</p>
+            <p className="text-xs text-wisebox-text-secondary mt-1">{t('orders:refreshing')}</p>
           )}
         </div>
         <Button asChild className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600">
-          <Link href="/workspace/services">Add Services</Link>
+          <Link href="/workspace/services">{t('orders:addServices')}</Link>
         </Button>
       </div>
 
@@ -55,11 +57,11 @@ export default function OrdersPage() {
           <CardContent className="p-6 space-y-3">
             <div className="flex items-center gap-2 text-red-700 font-medium">
               <AlertTriangle className="h-4 w-4" />
-              Could not load orders.
+              {t('orders:couldNotLoad')}
             </div>
             <p className="text-sm text-red-700/90">{errorMessage}</p>
             <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-              {isFetching ? 'Retrying...' : 'Retry'}
+              {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
         </Card>
@@ -69,10 +71,10 @@ export default function OrdersPage() {
         <Card className="border-amber-200 bg-amber-50/70">
           <CardContent className="p-4 flex items-center justify-between gap-3">
             <p className="text-sm text-amber-800">
-              Showing previously loaded orders. {errorMessage}
+              {t('common:showingStaleData')} {errorMessage}
             </p>
             <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
-              {isFetching ? 'Retrying...' : 'Retry'}
+              {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
         </Card>
@@ -80,19 +82,19 @@ export default function OrdersPage() {
 
       {isLoading && !hasData && (
         <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading orders...</CardContent>
+          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('orders:loadingOrders')}</CardContent>
         </Card>
       )}
 
       {!isLoading && !isError && orders.length === 0 && (
         <Card>
           <CardContent className="p-6 space-y-3">
-            <h2 className="font-semibold text-wisebox-text-primary">No orders yet</h2>
+            <h2 className="font-semibold text-wisebox-text-primary">{t('orders:empty.title')}</h2>
             <p className="text-sm text-wisebox-text-secondary">
-              Start by selecting services for one of your properties.
+              {t('orders:empty.description')}
             </p>
             <Button asChild variant="outline">
-              <Link href="/workspace/services">Browse Services</Link>
+              <Link href="/workspace/services">{t('orders:browseServices')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -109,13 +111,13 @@ export default function OrdersPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-wisebox-text-secondary">
-                <p>Total: <span className="font-medium text-wisebox-text-primary">{order.currency} {Number(order.total).toFixed(2)}</span></p>
-                <p>Status: <span className="font-medium text-wisebox-text-primary">{order.status}</span></p>
-                <p>Date: <span className="font-medium text-wisebox-text-primary">{new Date(order.created_at).toLocaleDateString()}</span></p>
+                <p>{t('orders:fields.total')}: <span className="font-medium text-wisebox-text-primary">{order.currency} {Number(order.total).toFixed(2)}</span></p>
+                <p>{t('orders:fields.status')}: <span className="font-medium text-wisebox-text-primary">{order.status}</span></p>
+                <p>{t('orders:fields.date')}: <span className="font-medium text-wisebox-text-primary">{new Date(order.created_at).toLocaleDateString()}</span></p>
               </div>
 
               <Button asChild variant="outline" className="w-full sm:w-auto">
-                <Link href={`/orders/${order.id}`}>View order</Link>
+                <Link href={`/orders/${order.id}`}>{t('orders:viewOrder')}</Link>
               </Button>
             </CardContent>
           </Card>

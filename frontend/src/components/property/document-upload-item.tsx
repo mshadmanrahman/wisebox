@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDropzone } from 'react-dropzone';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -66,6 +67,7 @@ export function DocumentUploadItem({
     return [];
   })();
 
+  const { t } = useTranslation('properties');
   const [infoOpen, setInfoOpen] = useState(false);
   const [state, setState] = useState<ItemState>(
     uploadedDocument?.has_document === false
@@ -108,7 +110,7 @@ export function DocumentUploadItem({
     },
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
-      setError(axiosErr.response?.data?.message || 'Upload failed. Please try again.');
+      setError(axiosErr.response?.data?.message || t('documents.uploadFailed'));
       setUploadProgress(0);
     },
   });
@@ -127,7 +129,7 @@ export function DocumentUploadItem({
     },
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
-      setError(axiosErr.response?.data?.message || 'Could not mark as missing.');
+      setError(axiosErr.response?.data?.message || t('documents.couldNotMarkMissing'));
     },
   });
 
@@ -166,11 +168,11 @@ export function DocumentUploadItem({
     onDropRejected: (rejections) => {
       const rejection = rejections[0];
       if (rejection?.errors[0]?.code === 'file-too-large') {
-        setError(`File exceeds ${documentType.max_file_size_mb}MB limit.`);
+        setError(t('documents.fileExceedsLimit', { size: documentType.max_file_size_mb }));
       } else if (rejection?.errors[0]?.code === 'file-invalid-type') {
-        setError(`Accepted formats: ${acceptedFormats.join(', ') || 'pdf, jpg, png, doc, docx'}`);
+        setError(t('documents.acceptedFormats', { formats: acceptedFormats.join(', ') || 'pdf, jpg, png, doc, docx' }));
       } else {
-        setError('File rejected. Check format and size.');
+        setError(t('documents.fileRejected'));
       }
     },
   });
@@ -210,11 +212,11 @@ export function DocumentUploadItem({
                   : 'bg-wisebox-background-lighter text-wisebox-text-secondary border-wisebox-border hover:bg-wisebox-background-lighter'
               }
             >
-              {documentType.category === 'primary' ? 'Primary' : 'Secondary'}
+              {documentType.category === 'primary' ? t('documents.primary') : t('documents.secondary')}
             </Badge>
             {documentType.is_required && (
               <Badge variant="outline" className="text-red-400 border-red-500/30">
-                Required
+                {t('documents.required')}
               </Badge>
             )}
           </div>
@@ -222,8 +224,11 @@ export function DocumentUploadItem({
             <p className="text-xs text-wisebox-text-secondary mt-1">{documentType.description}</p>
           )}
           <p className="text-xs text-wisebox-text-secondary mt-0.5">
-            Score weight: {documentType.score_weight} | Max: {documentType.max_file_size_mb}MB |
-            Formats: {acceptedFormats.join(', ') || 'Not specified'}
+            {t('documents.scoreWeight', {
+              weight: documentType.score_weight,
+              size: documentType.max_file_size_mb,
+              formats: acceptedFormats.join(', ') || t('documents.notSpecified'),
+            })}
           </p>
         </div>
 
@@ -253,7 +258,7 @@ export function DocumentUploadItem({
             onClick={handleHaveThis}
           >
             <Check className="h-3.5 w-3.5 mr-1" />
-            I have this
+            {t('documents.iHaveThis')}
           </Button>
           <Button
             type="button"
@@ -264,7 +269,7 @@ export function DocumentUploadItem({
             disabled={markMissingMutation.isPending}
           >
             <X className="h-3.5 w-3.5 mr-1" />
-            I don&apos;t have this
+            {t('documents.iDontHaveThis')}
           </Button>
         </div>
       )}
@@ -282,14 +287,17 @@ export function DocumentUploadItem({
             <input {...getInputProps()} />
             <Upload className="h-8 w-8 text-wisebox-text-muted mb-2" />
             {isDragActive ? (
-              <p className="text-sm text-teal-600 font-medium">Drop file here</p>
+              <p className="text-sm text-teal-600 font-medium">{t('documents.dropHere')}</p>
             ) : (
               <p className="text-sm text-wisebox-text-muted">
-                Drop file here or <span className="text-teal-600 font-medium">click to browse</span>
+                {t('documents.dropFileOrBrowse', { defaultValue: 'Drop file here or click to browse' })}
               </p>
             )}
             <p className="text-xs text-wisebox-text-muted mt-1">
-              {(acceptedFormats.join(', ').toUpperCase() || 'PDF, JPG, PNG, DOC, DOCX')} up to {documentType.max_file_size_mb}MB
+              {t('documents.fileFormats', {
+                formats: acceptedFormats.join(', ').toUpperCase() || 'PDF, JPG, PNG, DOC, DOCX',
+                size: documentType.max_file_size_mb,
+              })}
             </p>
           </div>
 
@@ -310,7 +318,7 @@ export function DocumentUploadItem({
                 onClick={handleDontHaveThis}
                 disabled={markMissingMutation.isPending}
               >
-                Actually, I don&apos;t have this
+                {t('documents.actuallyDontHave')}
               </Button>
             </div>
           )}
@@ -322,7 +330,7 @@ export function DocumentUploadItem({
           <div className="flex items-center gap-2 min-w-0">
             <FileText className="h-4 w-4 text-green-600 shrink-0" />
             <span className="text-sm text-green-400 truncate">
-              {uploadedDocument?.file_name || 'Document uploaded'}
+              {uploadedDocument?.file_name || t('documents.documentUploaded')}
             </span>
             <Check className="h-4 w-4 text-green-600 shrink-0" />
           </div>
@@ -335,7 +343,7 @@ export function DocumentUploadItem({
               onClick={handleReplace}
             >
               <RefreshCw className="h-3 w-3 mr-1" />
-              Replace
+              {t('documents.replace')}
             </Button>
           </div>
         </div>
@@ -346,7 +354,7 @@ export function DocumentUploadItem({
           <div className="flex items-start gap-2 rounded-md bg-amber-500/10 border border-amber-500/20 px-3 py-2">
             <AlertCircle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
             <div className="min-w-0">
-              <p className="text-sm font-medium text-amber-300">Marked as missing</p>
+              <p className="text-sm font-medium text-amber-300">{t('documents.markedAsMissing')}</p>
               {documentType.missing_guidance && (
                 <p className="text-xs text-amber-400 mt-0.5">{documentType.missing_guidance}</p>
               )}
@@ -359,7 +367,7 @@ export function DocumentUploadItem({
             className="border-wisebox-primary-600/40 text-wisebox-primary-300 hover:bg-wisebox-primary-900/20"
             onClick={handleFoundIt}
           >
-            I found it
+            {t('documents.iFoundIt')}
           </Button>
         </div>
       )}

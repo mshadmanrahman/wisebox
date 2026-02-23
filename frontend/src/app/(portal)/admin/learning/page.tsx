@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, BookOpen, Clock, ExternalLink, Plus, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,6 +15,7 @@ import {
 
 export default function AdminLearningPage() {
   const { user } = useAuthStore();
+  const { t } = useTranslation(['admin', 'common']);
   const [filterCategory, setFilterCategory] = useState<LearningCategory | 'all'>('all');
 
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
@@ -23,12 +25,12 @@ export default function AdminLearningPage() {
       <div className="px-6 py-8">
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-8 text-center space-y-2">
-            <p className="text-slate-900 font-medium">Access Denied</p>
+            <p className="text-slate-900 font-medium">{t('admin:learning.accessDenied')}</p>
             <p className="text-sm text-slate-500">
-              Only admins can manage learning content.
+              {t('admin:learning.adminOnly')}
             </p>
             <Button asChild variant="outline" className="mt-3 border-slate-200 text-slate-700 hover:bg-slate-50">
-              <Link href="/dashboard">Back to Dashboard</Link>
+              <Link href="/dashboard">{t('admin:learning.backToDashboard')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -57,14 +59,14 @@ export default function AdminLearningPage() {
             className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Admin Dashboard
+            {t('admin:learning.adminDashboard')}
           </Link>
           <div className="flex items-center gap-3">
             <div className="bg-amber-50 rounded-lg p-2.5">
               <Settings className="h-5 w-5 text-amber-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Manage Learning Content</h1>
+              <h1 className="text-2xl font-bold text-slate-900">{t('admin:learning.manageContent')}</h1>
               <p className="text-slate-500 text-sm">
                 {LEARNING_ARTICLES.length} articles across {Object.keys(CATEGORY_META).length} categories
               </p>
@@ -73,7 +75,7 @@ export default function AdminLearningPage() {
         </div>
         <Button disabled className="bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200">
           <Plus className="h-4 w-4 mr-2" />
-          Add Article (Coming Soon)
+          {t('admin:learning.addArticle')}
         </Button>
       </div>
 
@@ -104,10 +106,10 @@ export default function AdminLearningPage() {
           <BookOpen className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
           <div className="space-y-1">
             <p className="text-sm text-blue-800 font-medium">
-              Static Content Mode
+              {t('admin:learning.staticContentMode')}
             </p>
             <p className="text-xs text-blue-600">
-              Articles are currently stored in the frontend codebase. To add new articles dynamically, a backend API endpoint needs to be created at <code className="bg-blue-100 px-1 rounded text-blue-800">POST /api/v1/admin/learning-articles</code>. Once available, this page will support full CRUD operations with a rich editor.
+              {t('admin:learning.staticContentDescription')}
             </p>
           </div>
         </CardContent>
@@ -118,11 +120,11 @@ export default function AdminLearningPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="px-4 py-3 text-left font-medium text-slate-700">Title</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-700">Category</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-700">Read Time</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-700">Content Blocks</th>
-              <th className="px-4 py-3 text-right font-medium text-slate-700">Actions</th>
+              <th className="px-4 py-3 text-left font-medium text-slate-700">{t('admin:learning.colTitle')}</th>
+              <th className="px-4 py-3 text-left font-medium text-slate-700">{t('admin:learning.colCategory')}</th>
+              <th className="px-4 py-3 text-left font-medium text-slate-700">{t('admin:learning.colReadTime')}</th>
+              <th className="px-4 py-3 text-left font-medium text-slate-700">{t('admin:learning.colContentBlocks')}</th>
+              <th className="px-4 py-3 text-right font-medium text-slate-700">{t('admin:learning.colActions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -142,18 +144,18 @@ export default function AdminLearningPage() {
                   <td className="px-4 py-3">
                     <span className="flex items-center gap-1 text-slate-500">
                       <Clock className="h-3.5 w-3.5" />
-                      {article.readTime} min
+                      {article.readTime} {t('admin:learning.min')}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-slate-500">
-                    {article.content.length} blocks
+                    {article.content.length} {t('admin:learning.blocks')}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/learning/${article.slug}`}
                       className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
                     >
-                      View
+                      {t('admin:learning.view')}
                       <ExternalLink className="h-3 w-3" />
                     </Link>
                   </td>

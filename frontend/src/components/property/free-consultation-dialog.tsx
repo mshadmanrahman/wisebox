@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, Loader2, CheckCircle } from 'lucide-react';
 import api from '@/lib/api';
@@ -30,6 +31,7 @@ interface SelectedSlot {
 }
 
 export function FreeConsultationDialog({ propertyId, propertyName, trigger }: FreeConsultationDialogProps) {
+  const { t } = useTranslation('properties');
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState('');
   const [selectedSlots, setSelectedSlots] = useState<SelectedSlot[]>([]);
@@ -65,7 +67,7 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
         {trigger || (
           <Button variant="outline" className="w-full border-2 border-wisebox-primary-500 text-wisebox-primary-400 hover:bg-wisebox-primary-900/20 hover:text-wisebox-primary-300 h-14 text-lg font-semibold">
             <Calendar className="h-5 w-5 mr-2" />
-            Take a Free Consultation
+            {t('freeConsultation.triggerButton')}
           </Button>
         )}
       </DialogTrigger>
@@ -73,19 +75,19 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
         {success ? (
           <div className="py-8 text-center space-y-4">
             <CheckCircle className="h-16 w-16 text-green-400 mx-auto" />
-            <h3 className="text-xl font-bold text-white">Request Submitted!</h3>
+            <h3 className="text-xl font-bold text-white">{t('freeConsultation.successTitle')}</h3>
             <p className="text-wisebox-text-secondary">
-              Your free consultation request has been sent. A Wisebox consultant will be assigned shortly. You will receive a confirmation once the meeting is scheduled.
+              {t('freeConsultation.successDescription')}
             </p>
           </div>
         ) : (
           <>
             <DialogHeader>
               <DialogTitle className="text-white text-xl">
-                Request Free Consultation
+                {t('freeConsultation.dialogTitle')}
               </DialogTitle>
               <DialogDescription className="text-wisebox-text-secondary">
-                Get expert guidance on your property: <span className="text-white font-medium">{propertyName}</span>
+                {t('freeConsultation.dialogDescription', { name: propertyName, defaultValue: `Get expert guidance on your property: ${propertyName}` })}
               </DialogDescription>
             </DialogHeader>
 
@@ -93,16 +95,16 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
               {/* Description */}
               <div className="space-y-2">
                 <Label className="text-white text-sm font-medium">
-                  What do you need help with?
+                  {t('freeConsultation.whatHelpNeeded')}
                 </Label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe your property concerns, missing documents, legal questions, or anything you need guidance on..."
+                  placeholder={t('freeConsultation.descriptionPlaceholder')}
                   className="bg-wisebox-background-lighter border-wisebox-border text-white placeholder:text-wisebox-text-muted min-h-[100px]"
                   maxLength={2000}
                 />
-                <p className="text-xs text-wisebox-text-muted">{description.length}/2000</p>
+                <p className="text-xs text-wisebox-text-muted">{t('freeConsultation.charCount', { current: description.length, max: 2000 })}</p>
               </div>
 
               {/* Time Slot Picker */}
@@ -110,9 +112,9 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
 
               {/* Info */}
               <div className="bg-wisebox-background/50 rounded-lg p-3 text-xs text-wisebox-text-muted space-y-1">
-                <p>This is a completely free consultation. No payment required.</p>
-                <p>A Wisebox consultant will review your request and confirm a meeting time.</p>
-                <p>You will receive a Google Calendar invitation once confirmed.</p>
+                <p>{t('freeConsultation.infoFree')}</p>
+                <p>{t('freeConsultation.infoReview')}</p>
+                <p>{t('freeConsultation.infoCalendar')}</p>
               </div>
 
               {/* Submit */}
@@ -124,19 +126,19 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
                 {mutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Submitting...
+                    {t('freeConsultation.submitting')}
                   </>
                 ) : (
                   <>
                     <Calendar className="h-4 w-4 mr-2" />
-                    Submit Consultation Request
+                    {t('freeConsultation.submitButton')}
                   </>
                 )}
               </Button>
 
               {mutation.isError && (
                 <p className="text-sm text-red-400 text-center">
-                  {(mutation.error as Error)?.message || 'Failed to submit. Please try again.'}
+                  {(mutation.error as Error)?.message || t('freeConsultation.submitFailed')}
                 </p>
               )}
             </div>

@@ -80,7 +80,7 @@ class AdminConsultationController extends Controller
 
         if ($ticket->status !== 'open') {
             return response()->json([
-                'message' => 'Only pending consultation requests can be approved.',
+                'message' => __('messages.only_pending_approve'),
             ], 422);
         }
 
@@ -97,7 +97,7 @@ class AdminConsultationController extends Controller
 
         if (!$consultant) {
             return response()->json([
-                'message' => 'Selected consultant not found or is not active.',
+                'message' => __('messages.consultant_not_found'),
             ], 422);
         }
 
@@ -111,8 +111,8 @@ class AdminConsultationController extends Controller
         $this->createNotification(
             $consultant->id,
             'consultation.assigned',
-            'New Consultation Assigned',
-            "You have been assigned a free consultation request from {$ticket->customer->name} for property: {$ticket->property->property_name}.",
+            __('messages.notif_consultation_assigned_title'),
+            __('messages.notif_consultation_assigned_body', ['customer_name' => $ticket->customer->name, 'property_name' => $ticket->property->property_name]),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -125,8 +125,8 @@ class AdminConsultationController extends Controller
         $this->createNotification(
             $ticket->customer_id,
             'consultation.approved',
-            'Consultation Request Approved',
-            "Your free consultation request for {$ticket->property->property_name} has been approved. A consultant will contact you shortly to confirm the meeting time.",
+            __('messages.notif_consultation_approved_title'),
+            __('messages.notif_consultation_approved_body', ['property_name' => $ticket->property->property_name]),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -148,7 +148,7 @@ class AdminConsultationController extends Controller
 
         return response()->json([
             'data' => $ticket,
-            'message' => 'Consultation approved and consultant assigned.',
+            'message' => __('messages.consultation_approved'),
         ]);
     }
 
@@ -161,7 +161,7 @@ class AdminConsultationController extends Controller
 
         if ($ticket->status !== 'open') {
             return response()->json([
-                'message' => 'Only pending consultation requests can be rejected.',
+                'message' => __('messages.only_pending_reject'),
             ], 422);
         }
 
@@ -178,8 +178,8 @@ class AdminConsultationController extends Controller
         $this->createNotification(
             $ticket->customer_id,
             'consultation.rejected',
-            'Consultation Request Update',
-            "Your free consultation request for {$ticket->property->property_name} could not be processed. Reason: {$validated['reason']}",
+            __('messages.notif_consultation_rejected_title'),
+            __('messages.notif_consultation_rejected_body', ['property_name' => $ticket->property->property_name, 'reason' => $validated['reason']]),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -191,7 +191,7 @@ class AdminConsultationController extends Controller
 
         return response()->json([
             'data' => $ticket,
-            'message' => 'Consultation request rejected.',
+            'message' => __('messages.consultation_rejected'),
         ]);
     }
 
@@ -228,7 +228,7 @@ class AdminConsultationController extends Controller
 
     private function ensureAdmin(User $user): void
     {
-        abort_unless($user->isAdmin(), 403, 'Forbidden: Admin access required.');
+        abort_unless($user->isAdmin(), 403, __('messages.admin_required'));
     }
 
     private function createNotification(

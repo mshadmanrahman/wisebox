@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle, Bell, CheckCheck, Search } from 'lucide-react';
 import {
   useMarkAllNotificationsRead,
@@ -29,6 +30,7 @@ function formatDate(value: string): string {
 }
 
 export default function NotificationsPage() {
+  const { t } = useTranslation(['notifications', 'common']);
   const [statusFilter, setStatusFilter] = useState<'all' | 'unread' | 'read'>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [query, setQuery] = useState('');
@@ -60,16 +62,16 @@ export default function NotificationsPage() {
   const errorMessage =
     (error as { response?: { data?: { message?: string } }; message?: string } | null)?.response?.data?.message ||
     (error as { message?: string } | null)?.message ||
-    'Please try again in a moment.';
+    t('common:tryAgain');
 
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-wisebox-text-primary">Notification Center</h1>
-          <p className="text-wisebox-text-secondary mt-1">Track assignments, ticket updates, and order events.</p>
+          <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('notifications:title')}</h1>
+          <p className="text-wisebox-text-secondary mt-1">{t('notifications:subtitle')}</p>
           {isFetching && hasData && (
-            <p className="text-xs text-wisebox-text-secondary mt-1">Refreshing notifications...</p>
+            <p className="text-xs text-wisebox-text-secondary mt-1">{t('notifications:refreshing')}</p>
           )}
         </div>
         <Button
@@ -78,7 +80,7 @@ export default function NotificationsPage() {
           disabled={unreadCount === 0 || markAllMutation.isPending}
         >
           <CheckCheck className="h-4 w-4 mr-1.5" />
-          Mark all as read
+          {t('notifications:markAllAsRead')}
         </Button>
       </div>
 
@@ -86,21 +88,21 @@ export default function NotificationsPage() {
         <CardContent className="pt-6 grid gap-3 md:grid-cols-3">
           <Select value={statusFilter} onValueChange={(value: 'all' | 'read' | 'unread') => setStatusFilter(value)}>
             <SelectTrigger>
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t('notifications:filters.status')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="unread">Unread only</SelectItem>
-              <SelectItem value="read">Read only</SelectItem>
+              <SelectItem value="all">{t('notifications:filters.allStatuses')}</SelectItem>
+              <SelectItem value="unread">{t('notifications:filters.unreadOnly')}</SelectItem>
+              <SelectItem value="read">{t('notifications:filters.readOnly')}</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger>
-              <SelectValue placeholder="Filter by type" />
+              <SelectValue placeholder={t('notifications:filters.type')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All types</SelectItem>
+              <SelectItem value="all">{t('notifications:filters.allTypes')}</SelectItem>
               {TYPE_OPTIONS.map((option) => (
                 <SelectItem key={option} value={option}>
                   {option}
@@ -114,7 +116,7 @@ export default function NotificationsPage() {
             <Input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search title or body"
+              placeholder={t('notifications:filters.searchPlaceholder')}
               className="pl-9"
             />
           </div>
@@ -126,26 +128,26 @@ export default function NotificationsPage() {
           <CardContent className="p-6 space-y-3">
             <div className="flex items-center gap-2 text-red-700 font-medium">
               <AlertTriangle className="h-4 w-4" />
-              Could not load notifications.
+              {t('notifications:couldNotLoad')}
             </div>
             <p className="text-sm text-red-700/90">{errorMessage}</p>
             <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-              {isFetching ? 'Retrying...' : 'Retry'}
+              {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
         </Card>
       ) : isLoading && !hasData ? (
         <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading notifications...</CardContent>
+          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('notifications:loadingNotifications')}</CardContent>
         </Card>
       ) : isError && hasData ? (
         <Card className="border-amber-200 bg-amber-50/70">
           <CardContent className="p-4 flex items-center justify-between gap-3">
             <p className="text-sm text-amber-800">
-              Showing previously loaded notifications. {errorMessage}
+              {t('common:showingStaleData')} {errorMessage}
             </p>
             <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
-              {isFetching ? 'Retrying...' : 'Retry'}
+              {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
         </Card>
@@ -155,17 +157,17 @@ export default function NotificationsPage() {
             <div className="mx-auto h-12 w-12 rounded-full bg-wisebox-primary-50 text-wisebox-primary-600 flex items-center justify-center">
               <Bell className="h-6 w-6" />
             </div>
-            <h2 className="text-lg font-semibold text-wisebox-text-primary">No matching notifications</h2>
-            <p className="text-sm text-wisebox-text-secondary">Try changing your filters or search query.</p>
+            <h2 className="text-lg font-semibold text-wisebox-text-primary">{t('notifications:empty.title')}</h2>
+            <p className="text-sm text-wisebox-text-secondary">{t('notifications:empty.description')}</p>
           </CardContent>
         </Card>
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>All notifications</CardTitle>
+            <CardTitle>{t('notifications:allNotifications')}</CardTitle>
             <CardDescription>
-              {unreadCount} unread in total
-              {meta ? ` • ${meta.total} result(s)` : ''}
+              {t('notifications:unreadCount', { count: unreadCount })}
+              {meta ? ` • ${t('notifications:resultCount', { count: meta.total })}` : ''}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -182,7 +184,7 @@ export default function NotificationsPage() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-wisebox-text-primary">{notification.title}</p>
-                      {!notification.read_at && <Badge className="bg-wisebox-primary-500 text-white">Unread</Badge>}
+                      {!notification.read_at && <Badge className="bg-wisebox-primary-500 text-white">{t('notifications:badge.unread')}</Badge>}
                     </div>
                     <p className="text-xs text-wisebox-text-secondary uppercase tracking-wide">{notification.type}</p>
                     {notification.body && <p className="text-sm text-wisebox-text-secondary">{notification.body}</p>}
@@ -196,7 +198,7 @@ export default function NotificationsPage() {
                       onClick={() => markReadMutation.mutate(notification.id)}
                       disabled={markReadMutation.isPending}
                     >
-                      Mark read
+                      {t('notifications:markRead')}
                     </Button>
                   )}
                 </div>
@@ -206,7 +208,7 @@ export default function NotificationsPage() {
             {meta && meta.last_page > 1 && (
               <div className="flex items-center justify-between pt-2">
                 <p className="text-xs text-wisebox-text-secondary">
-                  Page {meta.current_page} of {meta.last_page}
+                  {t('common:page', { current: meta.current_page, total: meta.last_page })}
                 </p>
                 <div className="flex items-center gap-2">
                   <Button
@@ -215,7 +217,7 @@ export default function NotificationsPage() {
                     onClick={() => setPage((current) => Math.max(1, current - 1))}
                     disabled={meta.current_page <= 1}
                   >
-                    Previous
+                    {t('common:previous')}
                   </Button>
                   <Button
                     size="sm"
@@ -223,7 +225,7 @@ export default function NotificationsPage() {
                     onClick={() => setPage((current) => Math.min(meta.last_page, current + 1))}
                     disabled={meta.current_page >= meta.last_page}
                   >
-                    Next
+                    {t('common:next')}
                   </Button>
                 </div>
               </div>

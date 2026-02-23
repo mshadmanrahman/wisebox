@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +23,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
+  const { t } = useTranslation('admin');
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export default function AdminLoginPage() {
       const error = err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } };
       const msg = error.response?.data?.errors?.email?.[0]
         || error.response?.data?.message
-        || 'Invalid credentials or insufficient permissions.';
+        || t('login.invalidCredentials');
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -69,14 +71,14 @@ export default function AdminLoginPage() {
             <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-semibold text-white">Wisebox Admin</span>
+            <span className="text-xl font-semibold text-white">{t('login.brand')}</span>
           </div>
 
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">{t('login.title')}</h1>
             <p className="text-slate-400">
-              Sign in to manage consultations, users, and platform operations
+              {t('login.subtitle')}
             </p>
           </div>
 
@@ -91,12 +93,12 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-white text-sm font-medium">
-                Admin Email
+                {t('login.emailLabel')}
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@wisebox.co"
+                placeholder={t('login.emailPlaceholder')}
                 autoComplete="email"
                 className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 h-12"
                 {...register('email')}
@@ -106,13 +108,13 @@ export default function AdminLoginPage() {
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-white text-sm font-medium">
-                Password
+                {t('login.passwordLabel')}
               </Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
+                  placeholder={t('login.passwordPlaceholder')}
                   autoComplete="current-password"
                   className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 h-12"
                   {...register('password')}
@@ -138,21 +140,21 @@ export default function AdminLoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  {t('login.submitting')}
                 </>
               ) : (
-                'Sign in to Admin'
+                t('login.submit')
               )}
             </Button>
 
             <p className="text-center text-sm text-slate-500">
-              Not an admin?{' '}
+              {t('login.notAdmin')}{' '}
               <Link href="/login" className="text-amber-400 font-medium hover:underline">
-                User login
+                {t('login.userLogin')}
               </Link>
               {' | '}
               <Link href="/login/consultant" className="text-amber-400 font-medium hover:underline">
-                Consultant login
+                {t('login.consultantLogin')}
               </Link>
             </p>
           </form>
@@ -160,7 +162,7 @@ export default function AdminLoginPage() {
           {/* Footer */}
           <div className="pt-8 border-t border-slate-800">
             <p className="text-xs text-slate-600 text-center">
-              Wisebox Admin Portal. Authorized access only.
+              {t('login.footer')}
             </p>
           </div>
         </div>
@@ -170,25 +172,25 @@ export default function AdminLoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-amber-600 to-orange-700 p-12 items-center justify-center">
         <div className="max-w-md text-white space-y-8">
           <Shield className="w-16 h-16 text-white/80" />
-          <h2 className="text-3xl font-bold">Administration Center</h2>
+          <h2 className="text-3xl font-bold">{t('login.sideTitle')}</h2>
           <div className="space-y-4 text-amber-100">
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">1</span>
               </div>
-              <p>Review and approve free consultation requests</p>
+              <p>{t('login.sideStep1')}</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">2</span>
               </div>
-              <p>Assign consultants to customer properties</p>
+              <p>{t('login.sideStep2')}</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">3</span>
               </div>
-              <p>Monitor platform health and user activity</p>
+              <p>{t('login.sideStep3')}</p>
             </div>
           </div>
         </div>

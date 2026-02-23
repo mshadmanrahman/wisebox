@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, CheckCircle2, ClipboardList, User, Calendar } from 'lucide-react';
 import api from '@/lib/api';
@@ -15,6 +16,7 @@ interface Recommendation {
 
 export default function PropertyRecommendationsPage() {
   const params = useParams();
+  const { t, i18n } = useTranslation('properties');
   const propertyId = Number(params.id);
 
   const { data: recommendations, isLoading } = useQuery({
@@ -31,7 +33,7 @@ export default function PropertyRecommendationsPage() {
       <div className="px-6 py-8">
         <Card>
           <CardContent className="p-6 text-sm text-wisebox-text-secondary">
-            Loading recommendations...
+            {t('recommendations.loading')}
           </CardContent>
         </Card>
       </div>
@@ -77,9 +79,9 @@ export default function PropertyRecommendationsPage() {
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-wisebox-text-primary">Recommendations & Action Items</h1>
+        <h1 className="text-3xl font-bold text-wisebox-text-primary">{t('recommendations.title')}</h1>
         <p className="text-wisebox-text-secondary mt-2">
-          Expert recommendations from your consultations
+          {t('recommendations.subtitle')}
         </p>
       </div>
 
@@ -93,7 +95,7 @@ export default function PropertyRecommendationsPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-wisebox-primary-700">{recommendations.length}</p>
-                <p className="text-sm text-wisebox-text-secondary">Total Recommendations</p>
+                <p className="text-sm text-wisebox-text-secondary">{t('recommendations.totalRecommendations')}</p>
               </div>
             </div>
 
@@ -105,7 +107,7 @@ export default function PropertyRecommendationsPage() {
                 <p className="text-2xl font-bold text-blue-400">
                   {Object.keys(groupedRecommendations).length}
                 </p>
-                <p className="text-sm text-wisebox-text-secondary">Categories</p>
+                <p className="text-sm text-wisebox-text-secondary">{t('recommendations.categories')}</p>
               </div>
             </div>
 
@@ -117,7 +119,7 @@ export default function PropertyRecommendationsPage() {
                 <p className="text-2xl font-bold text-green-400">
                   {new Set(recommendations.map((r) => r.consultant_name)).size}
                 </p>
-                <p className="text-sm text-wisebox-text-secondary">Consultants</p>
+                <p className="text-sm text-wisebox-text-secondary">{t('recommendations.consultants')}</p>
               </div>
             </div>
           </div>
@@ -130,7 +132,7 @@ export default function PropertyRecommendationsPage() {
           <CardContent className="p-12 text-center">
             <ClipboardList className="h-16 w-16 text-wisebox-text-muted mx-auto mb-4" />
             <p className="text-wisebox-text-secondary">
-              No recommendations yet. Complete a consultation to receive expert recommendations.
+              {t('recommendations.noRecommendations')}
             </p>
           </CardContent>
         </Card>
@@ -152,7 +154,9 @@ export default function PropertyRecommendationsPage() {
                     <div className="flex-1">
                       <CardTitle className="text-lg">{category}</CardTitle>
                       <p className="text-sm text-wisebox-text-secondary">
-                        {categoryRecs.length} recommendation{categoryRecs.length !== 1 ? 's' : ''}
+                        {categoryRecs.length !== 1
+                          ? t('recommendations.recommendationCountPlural', { count: categoryRecs.length })
+                          : t('recommendations.recommendationCount', { count: categoryRecs.length })}
                       </p>
                     </div>
                   </div>
@@ -175,7 +179,7 @@ export default function PropertyRecommendationsPage() {
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           <span>
-                            {new Date(rec.date).toLocaleDateString('en-US', {
+                            {new Date(rec.date).toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : 'en-US', {
                               month: 'short',
                               day: 'numeric',
                               year: 'numeric',
@@ -199,11 +203,9 @@ export default function PropertyRecommendationsPage() {
             <div className="flex gap-3">
               <AlertCircle className="h-5 w-5 text-wisebox-primary-700 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-wisebox-primary-700 mb-1">Important</p>
+                <p className="font-medium text-wisebox-primary-700 mb-1">{t('recommendations.important')}</p>
                 <p className="text-sm text-wisebox-text-secondary">
-                  These recommendations are provided by certified consultants based on their assessment of
-                  your property. Please review them carefully and take action where necessary. Contact your
-                  consultant if you have questions about any recommendation.
+                  {t('recommendations.importantDescription')}
                 </p>
               </div>
             </div>

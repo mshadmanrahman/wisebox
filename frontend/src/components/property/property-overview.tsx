@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import {
   MapPin,
   Calendar,
@@ -23,30 +24,12 @@ interface PropertyOverviewProps {
   property: Property;
 }
 
-const statusConfig: Record<
-  Property['status'],
-  { label: string; className: string }
-> = {
-  draft: {
-    label: 'Draft',
-    className: 'bg-wisebox-background-lighter text-white border-wisebox-border',
-  },
-  active: {
-    label: 'Active',
-    className: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  },
-  under_review: {
-    label: 'Under Review',
-    className: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  },
-  verified: {
-    label: 'Verified',
-    className: 'bg-green-500/20 text-green-400 border-green-500/30',
-  },
-  archived: {
-    label: 'Archived',
-    className: 'bg-wisebox-background-lighter text-wisebox-text-muted border-wisebox-border',
-  },
+const statusClassNames: Record<Property['status'], string> = {
+  draft: 'bg-wisebox-background-lighter text-white border-wisebox-border',
+  active: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  under_review: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  verified: 'bg-green-500/20 text-green-400 border-green-500/30',
+  archived: 'bg-wisebox-background-lighter text-wisebox-text-muted border-wisebox-border',
 };
 
 function formatLocation(property: Property): string | null {
@@ -67,7 +50,8 @@ function formatDate(dateString: string): string {
 }
 
 export function PropertyOverview({ property }: PropertyOverviewProps) {
-  const status = statusConfig[property.status];
+  const { t } = useTranslation('properties');
+  const statusClassName = statusClassNames[property.status];
   const location = formatLocation(property);
 
   return (
@@ -85,9 +69,9 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
           </div>
           <Badge
             variant="outline"
-            className={cn('shrink-0 text-xs', status.className)}
+            className={cn('shrink-0 text-xs', statusClassName)}
           >
-            {status.label}
+            {t(`status.${property.status}`)}
           </Badge>
         </div>
       </CardHeader>
@@ -98,18 +82,18 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4 text-white" />
-              Ownership
+              {t('overview.ownership')}
             </h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               {property.ownership_status && (
                 <div>
-                  <span className="text-wisebox-text-secondary">Status: </span>
+                  <span className="text-wisebox-text-secondary">{t('overview.ownershipStatus')}: </span>
                   <span>{property.ownership_status.display_label}</span>
                 </div>
               )}
               {property.ownership_type && (
                 <div>
-                  <span className="text-wisebox-text-secondary">Type: </span>
+                  <span className="text-wisebox-text-secondary">{t('overview.ownershipType')}: </span>
                   <span>{property.ownership_type.name}</span>
                 </div>
               )}
@@ -122,7 +106,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
               <MapPin className="h-4 w-4 text-white" />
-              Location
+              {t('overview.location')}
             </h3>
             <p className="text-sm">{location}</p>
           </div>
@@ -133,7 +117,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
               <Tag className="h-4 w-4 text-white" />
-              Address
+              {t('overview.address')}
             </h3>
             <p className="text-sm">{property.address}</p>
           </div>
@@ -144,7 +128,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
               <Ruler className="h-4 w-4 text-white" />
-              Size
+              {t('overview.size')}
             </h3>
             <p className="text-sm">
               {property.size_value} {property.size_unit}
@@ -157,7 +141,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
               <FileText className="h-4 w-4 text-white" />
-              Description
+              {t('overview.description')}
             </h3>
             <p className="text-sm text-wisebox-text-secondary">
               {property.description}
@@ -168,7 +152,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
         {/* Created date */}
         <div className="flex items-center gap-1.5 text-xs text-white">
           <Calendar className="h-3.5 w-3.5" />
-          <span>Created {formatDate(property.created_at)}</span>
+          <span>{t('overview.created', { date: formatDate(property.created_at) })}</span>
         </div>
 
         {/* Co-owners */}
@@ -178,7 +162,9 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
             <div className="space-y-3">
               <h3 className="text-sm font-medium flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-white" />
-                Co-owned by {property.co_owners.length} {property.co_owners.length === 1 ? 'party' : 'parties'}
+                {property.co_owners.length === 1
+                  ? t('overview.coOwnedBy', { count: property.co_owners.length })
+                  : t('overview.coOwnedByPlural', { count: property.co_owners.length })}
               </h3>
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-2">
@@ -199,7 +185,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
                 </div>
                 <div className="text-sm text-wisebox-text-secondary">
                   {property.co_owners.slice(0, 3).map(o => o.name).join(', ')}
-                  {property.co_owners.length > 3 && ` +${property.co_owners.length - 3} more`}
+                  {property.co_owners.length > 3 && ` ${t('overview.more', { count: property.co_owners.length - 3 })}`}
                 </div>
               </div>
             </div>
@@ -213,7 +199,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
           <Button asChild>
             <Link href={`/properties/${property.id}/edit`}>
               <Pencil className="h-4 w-4" />
-              Edit Property
+              {t('overview.editProperty')}
             </Link>
           </Button>
         </div>

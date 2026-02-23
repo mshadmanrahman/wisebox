@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ export function DocumentInfoModal({
   open,
   onOpenChange,
 }: DocumentInfoModalProps) {
+  const { t } = useTranslation('properties');
   const info = getDocumentInfo(slug);
 
   if (!info) {
@@ -32,7 +34,7 @@ export function DocumentInfoModal({
           <DialogHeader>
             <DialogTitle className="text-white">{documentTypeName}</DialogTitle>
             <DialogDescription className="text-wisebox-text-secondary">
-              No additional guidance available for this document type.
+              {t('documents.noAdditionalGuidance')}
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -58,19 +60,19 @@ export function DocumentInfoModal({
               value="what"
               className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
             >
-              What is this?
+              {t('documents.whatIsThis')}
             </TabsTrigger>
             <TabsTrigger
               value="where"
               className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
             >
-              Where to get it
+              {t('documents.whereToGetIt')}
             </TabsTrigger>
             <TabsTrigger
               value="missing"
               className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
             >
-              If missing
+              {t('documents.ifMissing')}
             </TabsTrigger>
           </TabsList>
 
@@ -81,7 +83,7 @@ export function DocumentInfoModal({
             {info.requiredFor.length > 0 && (
               <div>
                 <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1.5">
-                  Required for
+                  {t('documents.requiredFor')}
                 </h4>
                 <div className="flex flex-wrap gap-1.5">
                   {info.requiredFor.map((type) => (
@@ -104,13 +106,13 @@ export function DocumentInfoModal({
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-md bg-wisebox-background-lighter border border-wisebox-border p-3">
                 <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1">
-                  Estimated cost
+                  {t('documents.estimatedCost')}
                 </h4>
                 <p className="text-sm text-white">{info.estimatedCost}</p>
               </div>
               <div className="rounded-md bg-wisebox-background-lighter border border-wisebox-border p-3">
                 <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1">
-                  Estimated time
+                  {t('documents.estimatedTime')}
                 </h4>
                 <p className="text-sm text-white">{info.estimatedTime}</p>
               </div>
@@ -126,7 +128,7 @@ export function DocumentInfoModal({
             {info.tips.length > 0 && (
               <div>
                 <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1.5">
-                  Tips
+                  {t('documents.tips')}
                 </h4>
                 <ul className="space-y-1.5">
                   {info.tips.map((tip, i) => (

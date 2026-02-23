@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -73,26 +74,18 @@ function normalizeDocumentsResponse(payload: unknown): DocumentsResponse {
   return { document_types: [], uploaded: [] };
 }
 
-const docStatusConfig: Record<
-  PropertyDocument['status'],
-  { label: string; className: string }
-> = {
-  uploaded: {
-    label: 'Uploaded',
-    className: 'bg-blue-500/20 text-blue-400',
-  },
-  under_review: {
-    label: 'Under Review',
-    className: 'bg-amber-500/20 text-amber-400',
-  },
-  verified: {
-    label: 'Verified',
-    className: 'bg-green-500/20 text-green-400',
-  },
-  rejected: {
-    label: 'Rejected',
-    className: 'bg-red-500/20 text-red-400',
-  },
+const docStatusLabelKeys: Record<PropertyDocument['status'], string> = {
+  uploaded: 'documents.uploaded',
+  under_review: 'documents.underReview',
+  verified: 'documents.verified',
+  rejected: 'documents.rejected',
+};
+
+const docStatusClassNames: Record<PropertyDocument['status'], string> = {
+  uploaded: 'bg-blue-500/20 text-blue-400',
+  under_review: 'bg-amber-500/20 text-amber-400',
+  verified: 'bg-green-500/20 text-green-400',
+  rejected: 'bg-red-500/20 text-red-400',
 };
 
 function completionBarColor(status: 'red' | 'yellow' | 'green'): string {
@@ -127,6 +120,7 @@ export function DocumentStatusList({
   completionPercentage,
   completionStatus,
 }: DocumentStatusListProps) {
+  const { t } = useTranslation('properties');
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -162,7 +156,7 @@ export function DocumentStatusList({
       <Card>
         <CardContent className="p-6">
           <p className="text-sm text-red-600">
-            Failed to load documents. Please refresh the page.
+            {t('documents.failedToLoad')}
           </p>
         </CardContent>
       </Card>
@@ -193,13 +187,13 @@ export function DocumentStatusList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Documents</CardTitle>
+        <CardTitle className="text-lg">{t('documents.title')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Completion bar */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Document Completion</span>
+            <span className="text-muted-foreground">{t('documents.completion')}</span>
             <span
               className={cn('font-semibold', completionTextColor(completionStatus))}
             >
@@ -220,7 +214,7 @@ export function DocumentStatusList({
         {/* Primary Documents */}
         {primaryTypes.length > 0 && (
           <DocumentSection
-            title="Primary Documents"
+            title={t('documents.primaryDocuments')}
             types={primaryTypes}
             uploadedByType={uploadedByType}
             propertyId={propertyId}
@@ -233,7 +227,7 @@ export function DocumentStatusList({
           <>
             <Separator />
             <DocumentSection
-              title="Secondary Documents"
+              title={t('documents.secondaryDocuments')}
               types={secondaryTypes}
               uploadedByType={uploadedByType}
               propertyId={propertyId}
@@ -295,6 +289,7 @@ function DocumentRow({
   propertyId,
   queryClient,
 }: DocumentRowProps) {
+  const { t } = useTranslation('properties');
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const uploadMutation = useMutation({
@@ -316,7 +311,7 @@ function DocumentRow({
       });
     },
     onError: () => {
-      setUploadError('Upload failed. Please try again.');
+      setUploadError(t('documents.uploadFailed'));
     },
   });
 
@@ -372,7 +367,8 @@ function DocumentRow({
     disabled: uploadMutation.isPending,
   });
 
-  const statusBadge = uploaded ? docStatusConfig[uploaded.status] : null;
+  const statusBadgeClassName = uploaded ? docStatusClassNames[uploaded.status] : null;
+  const statusBadgeLabelKey = uploaded ? docStatusLabelKeys[uploaded.status] : null;
 
   return (
     <div className="rounded-md border p-3 space-y-2">
@@ -393,7 +389,7 @@ function DocumentRow({
           </div>
         </div>
         <span className="text-xs text-muted-foreground shrink-0">
-          {docType.score_weight} pts
+          {t('documents.pts', { weight: docType.score_weight })}
         </span>
       </div>
 
@@ -411,12 +407,12 @@ function DocumentRow({
             </span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {statusBadge && (
+            {statusBadgeClassName && statusBadgeLabelKey && (
               <Badge
                 variant="secondary"
-                className={cn('text-[10px]', statusBadge.className)}
+                className={cn('text-[10px]', statusBadgeClassName)}
               >
-                {statusBadge.label}
+                {t(statusBadgeLabelKey)}
               </Badge>
             )}
             <Button
@@ -447,18 +443,18 @@ function DocumentRow({
             {uploadMutation.isPending ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-wisebox-primary" />
-                <span className="text-muted-foreground">Uploading...</span>
+                <span className="text-muted-foreground">{t('documents.uploading')}</span>
               </>
             ) : isDragActive ? (
               <>
                 <FileUp className="h-3.5 w-3.5 text-wisebox-primary" />
-                <span className="text-wisebox-primary">Drop file here</span>
+                <span className="text-wisebox-primary">{t('documents.dropFileHere')}</span>
               </>
             ) : (
               <>
                 <Upload className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="text-muted-foreground">
-                  Click or drag to upload (max {docType.max_file_size_mb}MB)
+                  {t('documents.clickOrDragUpload', { size: docType.max_file_size_mb })}
                 </span>
               </>
             )}

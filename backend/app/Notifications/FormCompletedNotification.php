@@ -30,13 +30,15 @@ class FormCompletedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        $locale = $notifiable->profile?->preferred_language ?? 'en';
+
         return (new MailMessage)
-            ->subject("Form completed: {$this->templateName} for {$this->ticketNumber}")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("The customer (**{$this->customerEmail}**) has completed the consultation form you sent.")
-            ->line("**Form:** {$this->templateName}")
-            ->line("**Ticket:** {$this->ticketNumber}")
-            ->action('View Responses', $this->ticketUrl)
-            ->line('You can review the responses from the ticket detail page.');
+            ->subject(__('notifications.form_completed.subject', ['template_name' => $this->templateName, 'ticket_number' => $this->ticketNumber], $locale))
+            ->greeting(__('notifications.form_completed.greeting', ['name' => $notifiable->name], $locale))
+            ->line(__('notifications.form_completed.completed', ['customer_email' => $this->customerEmail], $locale))
+            ->line('**'.__('notifications.form_completed.form_label', ['template_name' => $this->templateName], $locale).'**')
+            ->line('**'.__('notifications.form_completed.ticket_label', ['ticket_number' => $this->ticketNumber], $locale).'**')
+            ->action(__('notifications.form_completed.view_responses', [], $locale), $this->ticketUrl)
+            ->line(__('notifications.form_completed.review_note', [], $locale));
     }
 }

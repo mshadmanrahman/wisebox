@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Calendar, CheckCircle, Loader2, Sparkles } from 'lucide-react';
 import api from '@/lib/api';
@@ -61,12 +62,7 @@ function normalizeServiceCatalogPayload(
   };
 }
 
-const categoryTabs = [
-  { label: 'All', slug: 'all' },
-  { label: 'Consultation', slug: 'consultation' },
-  { label: 'Legal', slug: 'legal' },
-  { label: 'Administrative', slug: 'administrative' },
-];
+const categoryTabSlugs = ['all', 'consultation', 'legal', 'administrative'] as const;
 
 const categoryGradients: Record<string, string> = {
   consultation: 'from-cyan-600 via-blue-700 to-indigo-800',
@@ -80,16 +76,21 @@ function getServiceGradient(service: Service): string {
   return categoryGradients[slug] || categoryGradients.default;
 }
 
-function formatPrice(service: Service): string {
-  if (service.pricing_type === 'free') return 'FREE';
-  if (service.pricing_type === 'physical') return 'REQUEST QUOTE';
-  if (!service.price || Number(service.price) === 0) return 'FREE';
-  const amount = Number(service.price);
-  const currency = service.currency || 'USD';
-  return `${currency} ${amount}`;
+function useFormatPrice() {
+  const { t } = useTranslation('common');
+  return (service: Service): string => {
+    if (service.pricing_type === 'free') return t('services.free');
+    if (service.pricing_type === 'physical') return t('services.requestQuote');
+    if (!service.price || Number(service.price) === 0) return t('services.free');
+    const amount = Number(service.price);
+    const currency = service.currency || 'USD';
+    return `${currency} ${amount}`;
+  };
 }
 
 export default function ServicesPage() {
+  const { t } = useTranslation('common');
+  const formatPrice = useFormatPrice();
   const perPage = 8;
   const [activeTab, setActiveTab] = useState('all');
   const [page, setPage] = useState(1);
@@ -165,9 +166,9 @@ export default function ServicesPage() {
     <div className="px-6 py-8 space-y-8">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">Wisebox Services</h1>
+        <h1 className="text-3xl font-bold text-white">{t('services.title')}</h1>
         <p className="text-wisebox-text-secondary mt-1">
-          Browse our catalog of property services
+          {t('services.subtitle')}
         </p>
       </div>
 
@@ -186,24 +187,23 @@ export default function ServicesPage() {
                     <Sparkles className="h-5 w-5 text-white" />
                   </div>
                   <Badge className="bg-green-500/20 text-green-300 border-green-400/30 text-xs font-semibold">
-                    FREE
+                    {t('services.freeConsultation.badge')}
                   </Badge>
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
-                  Get a Free 30-Minute<br className="hidden sm:block" /> Expert Consultation
+                  {t('services.freeConsultation.title')}
                 </h2>
                 <p className="text-white/80 text-sm sm:text-base leading-relaxed">
-                  Not sure where to start? Our property experts will review your documents,
-                  assess your situation, and give you a clear action plan. No strings attached.
+                  {t('services.freeConsultation.description')}
                 </p>
                 <div className="flex items-center gap-4 text-white/60 text-xs">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="h-3.5 w-3.5" />
-                    30 minutes
+                    {t('services.freeConsultation.duration')}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <CheckCircle className="h-3.5 w-3.5" />
-                    No payment required
+                    {t('services.freeConsultation.noPayment')}
                   </span>
                 </div>
               </div>
@@ -211,16 +211,16 @@ export default function ServicesPage() {
               {/* Right: Property selector + CTA */}
               <div className="flex flex-col gap-3 lg:min-w-[320px]">
                 <label className="text-white/80 text-sm font-medium">
-                  Select a property for your consultation
+                  {t('services.freeConsultation.selectProperty')}
                 </label>
                 {(properties ?? []).length === 0 ? (
                   <p className="text-white/60 text-sm">
-                    Add a property first to book a consultation.
+                    {t('services.freeConsultation.addPropertyFirst')}
                   </p>
                 ) : (
                   <Select value={consultPropertyId} onValueChange={setConsultPropertyId}>
                     <SelectTrigger className="bg-white/10 border-white/20 text-white hover:bg-white/15 transition-colors backdrop-blur-sm h-12">
-                      <SelectValue placeholder="Choose your property..." />
+                      <SelectValue placeholder={t('services.freeConsultation.chooseProperty')} />
                     </SelectTrigger>
                     <SelectContent className="bg-wisebox-background-card border-wisebox-border">
                       {(properties ?? []).map((property) => (
@@ -239,7 +239,7 @@ export default function ServicesPage() {
                     trigger={
                       <Button className="w-full bg-white hover:bg-gray-100 text-blue-800 font-semibold h-12 text-base shadow-lg">
                         <Calendar className="h-5 w-5 mr-2" />
-                        Book Free Consultation
+                        {t('services.freeConsultation.bookFree')}
                       </Button>
                     }
                   />
@@ -250,8 +250,8 @@ export default function ServicesPage() {
                   >
                     <Calendar className="h-5 w-5 mr-2" />
                     {(properties ?? []).length === 0
-                      ? 'Add a Property First'
-                      : 'Select a Property Above'}
+                      ? t('services.freeConsultation.addPropertyBtn')
+                      : t('services.freeConsultation.selectPropertyAbove')}
                   </Button>
                 )}
               </div>
@@ -262,19 +262,19 @@ export default function ServicesPage() {
 
       {/* Tab Filters */}
       <div className="flex items-center gap-2">
-        {categoryTabs.map((tab) => (
+        {categoryTabSlugs.map((slug) => (
           <button
-            key={tab.slug}
+            key={slug}
             type="button"
-            onClick={() => setActiveTab(tab.slug)}
+            onClick={() => setActiveTab(slug)}
             className={cn(
               'px-5 py-2.5 rounded-lg text-sm font-medium transition-all',
-              activeTab === tab.slug
+              activeTab === slug
                 ? 'bg-white text-wisebox-background shadow-md'
                 : 'bg-wisebox-background-card text-wisebox-text-secondary border border-wisebox-border hover:border-wisebox-border-light hover:text-white'
             )}
           >
-            {tab.label}
+            {t(`services.${slug}`)}
           </button>
         ))}
       </div>
@@ -283,14 +283,14 @@ export default function ServicesPage() {
       {loadingServices && services.length === 0 && (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-wisebox-text-secondary" />
-          <span className="ml-2 text-sm text-wisebox-text-secondary">Loading services...</span>
+          <span className="ml-2 text-sm text-wisebox-text-secondary">{t('services.loadingServices')}</span>
         </div>
       )}
 
       {/* Empty State */}
       {!loadingServices && services.length === 0 && (
         <div className="rounded-2xl border border-wisebox-border bg-wisebox-background-card p-8 text-center">
-          <p className="text-wisebox-text-secondary">No services found in this category.</p>
+          <p className="text-wisebox-text-secondary">{t('services.noServicesInCategory')}</p>
         </div>
       )}
 
@@ -299,7 +299,7 @@ export default function ServicesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((service) => {
             const gradient = getServiceGradient(service);
-            const price = formatPrice(service);
+            const price = formatPrice(service as Service);
 
             return (
               <button
@@ -335,7 +335,7 @@ export default function ServicesPage() {
                       {price}
                     </Badge>
                     <span className="text-xs text-wisebox-primary group-hover:text-wisebox-primary-light transition-colors">
-                      View details →
+                      {t('services.viewDetails')} →
                     </span>
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export default function ServicesPage() {
       {serviceMeta && serviceMeta.last_page > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-xs text-wisebox-text-secondary">
-            Page {serviceMeta.current_page} of {serviceMeta.last_page}
+            {t('page', { current: serviceMeta.current_page, total: serviceMeta.last_page })}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -359,7 +359,7 @@ export default function ServicesPage() {
               disabled={serviceMeta.current_page <= 1 || loadingServices}
               className="border-wisebox-border text-white hover:bg-wisebox-background-lighter"
             >
-              Previous
+              {t('previous')}
             </Button>
             <Button
               size="sm"
@@ -368,7 +368,7 @@ export default function ServicesPage() {
               disabled={serviceMeta.current_page >= serviceMeta.last_page || loadingServices}
               className="border-wisebox-border text-white hover:bg-wisebox-background-lighter"
             >
-              Next
+              {t('next')}
             </Button>
           </div>
         </div>

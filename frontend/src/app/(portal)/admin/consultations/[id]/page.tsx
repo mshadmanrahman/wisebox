@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Calendar, CheckCircle, XCircle, User, MapPin,
   FileText, Clock, Loader2, AlertTriangle,
@@ -44,6 +45,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminConsultationDetailPage() {
+  const { t } = useTranslation(['admin', 'common']);
   const params = useParams();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -116,7 +118,7 @@ export default function AdminConsultationDetailPage() {
   if (!consultation) {
     return (
       <div className="px-6 py-8">
-        <p className="text-slate-500">Consultation not found.</p>
+        <p className="text-slate-500">{t('admin:detail.notFound')}</p>
       </div>
     );
   }
@@ -129,7 +131,7 @@ export default function AdminConsultationDetailPage() {
       <Button variant="ghost" asChild className="text-slate-600 hover:text-slate-900 hover:bg-slate-100">
         <Link href="/admin/consultations">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Consultations
+          {t('admin:detail.backToConsultations')}
         </Link>
       </Button>
 
@@ -141,7 +143,7 @@ export default function AdminConsultationDetailPage() {
               {consultation.ticket_number}
             </Badge>
             <Badge variant="outline" className={cn('text-xs', statusColors[consultation.status] || '')}>
-              {consultation.status === 'open' ? 'Pending Review' : consultation.status}
+              {consultation.status === 'open' ? t('admin:detail.pendingReview') : consultation.status}
             </Badge>
           </div>
           <h1 className="text-2xl font-bold text-slate-900">{consultation.title}</h1>
@@ -154,7 +156,7 @@ export default function AdminConsultationDetailPage() {
           <CardHeader>
             <CardTitle className="text-sm text-slate-900 flex items-center gap-2">
               <User className="h-4 w-4 text-slate-500" />
-              Customer
+              {t('admin:detail.customer')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
@@ -176,20 +178,20 @@ export default function AdminConsultationDetailPage() {
           <CardHeader>
             <CardTitle className="text-sm text-slate-900 flex items-center gap-2">
               <FileText className="h-4 w-4 text-slate-500" />
-              Property
+              {t('admin:detail.property')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p className="text-slate-900 font-medium">{consultation.property?.property_name}</p>
             {consultation.property?.property_type && (
-              <p className="text-slate-500">Type: {consultation.property.property_type.name}</p>
+              <p className="text-slate-500">{t('admin:detail.type')}: {consultation.property.property_type.name}</p>
             )}
             {consultation.property?.ownership_status && (
-              <p className="text-slate-500">Status: {consultation.property.ownership_status.name}</p>
+              <p className="text-slate-500">{t('admin:detail.status')}: {consultation.property.ownership_status.name}</p>
             )}
             {consultation.property?.documents && (
               <p className="text-slate-400">
-                {consultation.property.documents.length} document(s) uploaded
+                {t('admin:detail.documentsCount', { count: consultation.property.documents.length })}
               </p>
             )}
           </CardContent>
@@ -200,7 +202,7 @@ export default function AdminConsultationDetailPage() {
       {consultation.description && (
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-900">Consultation Request Details</CardTitle>
+            <CardTitle className="text-sm text-slate-900">{t('admin:detail.requestDetails')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
@@ -216,7 +218,7 @@ export default function AdminConsultationDetailPage() {
           <CardHeader>
             <CardTitle className="text-sm text-slate-900 flex items-center gap-2">
               <Calendar className="h-4 w-4 text-slate-500" />
-              Preferred Time Slots
+              {t('admin:detail.preferredTimeSlots')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -236,9 +238,9 @@ export default function AdminConsultationDetailPage() {
       {isPending && (
         <Card className="bg-white border-amber-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-slate-900">Take Action</CardTitle>
+            <CardTitle className="text-slate-900">{t('admin:detail.takeAction')}</CardTitle>
             <CardDescription className="text-slate-500">
-              Approve and assign a consultant, or reject the request
+              {t('admin:detail.takeActionDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -246,10 +248,10 @@ export default function AdminConsultationDetailPage() {
             {!showRejectForm && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-slate-700 text-sm">Assign Consultant</Label>
+                  <Label className="text-slate-700 text-sm">{t('admin:detail.assignConsultant')}</Label>
                   <Select value={selectedConsultant} onValueChange={setSelectedConsultant}>
                     <SelectTrigger className="bg-white border-slate-300 text-slate-900">
-                      <SelectValue placeholder="Select a consultant..." />
+                      <SelectValue placeholder={t('admin:detail.selectConsultant')} />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-slate-200">
                       {consultants.map((c) => (
@@ -271,11 +273,11 @@ export default function AdminConsultationDetailPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-slate-700 text-sm">Admin Notes (optional)</Label>
+                  <Label className="text-slate-700 text-sm">{t('admin:detail.adminNotes')}</Label>
                   <Textarea
                     value={adminNotes}
                     onChange={(e) => setAdminNotes(e.target.value)}
-                    placeholder="Any notes for the consultant..."
+                    placeholder={t('admin:detail.adminNotesPlaceholder')}
                     className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
                   />
                 </div>
@@ -291,7 +293,7 @@ export default function AdminConsultationDetailPage() {
                     ) : (
                       <CheckCircle className="h-4 w-4 mr-2" />
                     )}
-                    Approve & Assign
+                    {t('admin:detail.approveAndAssign')}
                   </Button>
                   <Button
                     variant="outline"
@@ -299,14 +301,14 @@ export default function AdminConsultationDetailPage() {
                     onClick={() => setShowRejectForm(true)}
                   >
                     <XCircle className="h-4 w-4 mr-2" />
-                    Reject
+                    {t('admin:detail.reject')}
                   </Button>
                 </div>
 
                 {approveMutation.isError && (
                   <p className="text-sm text-red-600 flex items-center gap-1">
                     <AlertTriangle className="h-3.5 w-3.5" />
-                    Failed to approve. Please try again.
+                    {t('admin:detail.failedToApprove')}
                   </p>
                 )}
               </div>
@@ -316,11 +318,11 @@ export default function AdminConsultationDetailPage() {
             {showRejectForm && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-slate-700 text-sm">Reason for Rejection</Label>
+                  <Label className="text-slate-700 text-sm">{t('admin:detail.rejectReason')}</Label>
                   <Textarea
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
-                    placeholder="Provide a reason for rejection..."
+                    placeholder={t('admin:detail.rejectReasonPlaceholder')}
                     className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
                     rows={3}
                   />
@@ -336,14 +338,14 @@ export default function AdminConsultationDetailPage() {
                     ) : (
                       <XCircle className="h-4 w-4 mr-2" />
                     )}
-                    Confirm Rejection
+                    {t('admin:detail.confirmRejection')}
                   </Button>
                   <Button
                     variant="outline"
                     className="border-slate-200 text-slate-700 hover:bg-slate-50"
                     onClick={() => setShowRejectForm(false)}
                   >
-                    Cancel
+                    {t('common:cancel')}
                   </Button>
                 </div>
               </div>
@@ -356,7 +358,7 @@ export default function AdminConsultationDetailPage() {
       {consultation.consultant && (
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-900">Assigned Consultant</CardTitle>
+            <CardTitle className="text-sm text-slate-900">{t('admin:detail.assignedConsultant')}</CardTitle>
           </CardHeader>
           <CardContent className="text-sm space-y-1">
             <p className="text-slate-900 font-medium">{consultation.consultant.name}</p>

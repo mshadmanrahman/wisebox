@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, BookOpen, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,6 +13,7 @@ import {
 } from '@/data/learning-content';
 
 export default function LearningArticlePage() {
+  const { t } = useTranslation('common');
   const { slug } = useParams<{ slug: string }>();
 
   const article = LEARNING_ARTICLES.find((a) => a.slug === slug);
@@ -24,17 +26,17 @@ export default function LearningArticlePage() {
           className="inline-flex items-center gap-1.5 text-sm text-wisebox-text-secondary hover:text-white transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Learning Center
+          {t('learning.backToLearning')}
         </Link>
         <Card className="bg-wisebox-background-card border-wisebox-border">
           <CardContent className="p-8 text-center space-y-3">
             <BookOpen className="h-10 w-10 text-wisebox-text-muted mx-auto" />
-            <p className="text-white font-medium">Article not found</p>
+            <p className="text-white font-medium">{t('learning.articleNotFound')}</p>
             <p className="text-sm text-wisebox-text-secondary">
-              This article may have been moved or removed.
+              {t('learning.articleNotFoundDescription')}
             </p>
             <Button asChild variant="outline" className="border-wisebox-border text-white hover:bg-wisebox-background-lighter mt-2">
-              <Link href="/learning">Browse All Articles</Link>
+              <Link href="/learning">{t('learning.browseAllArticles')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -57,7 +59,7 @@ export default function LearningArticlePage() {
         className="inline-flex items-center gap-1.5 text-sm text-wisebox-text-secondary hover:text-white transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Learning Center
+        {t('learning.backToLearning')}
       </Link>
 
       {/* Article Header */}
@@ -73,7 +75,7 @@ export default function LearningArticlePage() {
         </p>
         <div className="flex items-center gap-1.5 text-white/60 text-xs">
           <Clock className="h-3.5 w-3.5" />
-          {article.readTime} min read
+          {t('learning.minRead', { minutes: article.readTime })}
         </div>
       </div>
 
@@ -88,7 +90,7 @@ export default function LearningArticlePage() {
       {relatedArticles.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-white">
-            More in {catMeta.label}
+            {t('learning.moreIn', { category: catMeta.label })}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {relatedArticles.map((related) => (
@@ -104,7 +106,7 @@ export default function LearningArticlePage() {
                     </h3>
                     <span className="flex items-center gap-1 text-xs text-wisebox-text-muted">
                       <Clock className="h-3 w-3" />
-                      {related.readTime} min
+                      {t('learning.min', { count: related.readTime })}
                     </span>
                   </CardContent>
                 </Card>
@@ -118,13 +120,13 @@ export default function LearningArticlePage() {
       <Card className="bg-gradient-to-r from-wisebox-primary/20 via-blue-900/20 to-cyan-900/20 border-wisebox-primary/30">
         <CardContent className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <h3 className="font-semibold text-white">Need help with your property?</h3>
+            <h3 className="font-semibold text-white">{t('learning.needHelp')}</h3>
             <p className="text-sm text-wisebox-text-secondary">
-              Book a free 30-minute consultation with a Wisebox expert.
+              {t('learning.needHelpDescription')}
             </p>
           </div>
           <Button asChild className="bg-white hover:bg-gray-100 text-wisebox-background font-semibold shrink-0">
-            <Link href="/workspace/services">Book Free Consultation</Link>
+            <Link href="/workspace/services">{t('learning.bookFreeConsultation')}</Link>
           </Button>
         </CardContent>
       </Card>

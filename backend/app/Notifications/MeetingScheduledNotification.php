@@ -36,22 +36,23 @@ class MeetingScheduledNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        $locale = $notifiable->profile?->preferred_language ?? 'en';
         $scheduledDate = \Carbon\Carbon::parse($this->scheduledAt);
         $formattedDate = $scheduledDate->format('l, M d, Y');
         $formattedTime = $scheduledDate->format('g:i A');
 
         return (new MailMessage)
-            ->subject("Consultation Scheduled: {$this->propertyName}")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("Your free consultation for **{$this->propertyName}** has been scheduled!")
-            ->line("**Date:** {$formattedDate}")
-            ->line("**Time:** {$formattedTime} (Bangladesh Standard Time)")
-            ->line("**Duration:** {$this->durationMinutes} minutes")
-            ->line("**Consultant:** {$this->consultantName}")
-            ->line("**Ticket:** {$this->ticketNumber}")
-            ->action('Join Google Meet', $this->meetLink)
-            ->line('You can also access the meeting link from your ticket page.')
-            ->line('Please join the meeting on time. If you need to reschedule, contact us through your ticket.')
+            ->subject(__('notifications.meeting_scheduled.subject', ['property_name' => $this->propertyName], $locale))
+            ->greeting(__('notifications.meeting_scheduled.greeting', ['name' => $notifiable->name], $locale))
+            ->line(__('notifications.meeting_scheduled.scheduled', ['property_name' => $this->propertyName], $locale))
+            ->line('**'.__('notifications.meeting_scheduled.date_label', ['date' => $formattedDate], $locale).'**')
+            ->line('**'.__('notifications.meeting_scheduled.time_label', ['time' => $formattedTime], $locale).'**')
+            ->line('**'.__('notifications.meeting_scheduled.duration_label', ['minutes' => $this->durationMinutes], $locale).'**')
+            ->line('**'.__('notifications.meeting_scheduled.consultant_label', ['consultant_name' => $this->consultantName], $locale).'**')
+            ->line('**'.__('notifications.meeting_scheduled.ticket_label', ['ticket_number' => $this->ticketNumber], $locale).'**')
+            ->action(__('notifications.meeting_scheduled.join_meeting', [], $locale), $this->meetLink)
+            ->line(__('notifications.meeting_scheduled.access_note', [], $locale))
+            ->line(__('notifications.meeting_scheduled.punctuality', [], $locale))
             ->attachData(
                 $this->generateIcs($notifiable),
                 'consultation.ics',
@@ -61,6 +62,7 @@ class MeetingScheduledNotification extends Notification implements ShouldQueue
 
     private function generateIcs(object $notifiable): string
     {
+        $locale = $notifiable->profile?->preferred_language ?? 'en';
         $start = \Carbon\Carbon::parse($this->scheduledAt)->utc();
         $end = $start->copy()->addMinutes($this->durationMinutes);
 
@@ -99,12 +101,12 @@ class MeetingScheduledNotification extends Notification implements ShouldQueue
             'BEGIN:VALARM',
             'TRIGGER:-PT30M',
             'ACTION:DISPLAY',
-            'DESCRIPTION:Consultation in 30 minutes',
+            'DESCRIPTION:'.__('notifications.meeting_scheduled.alarm_30', [], $locale),
             'END:VALARM',
             'BEGIN:VALARM',
             'TRIGGER:-PT15M',
             'ACTION:DISPLAY',
-            'DESCRIPTION:Consultation in 15 minutes',
+            'DESCRIPTION:'.__('notifications.meeting_scheduled.alarm_15', [], $locale),
             'END:VALARM',
             'END:VEVENT',
             'END:VCALENDAR',

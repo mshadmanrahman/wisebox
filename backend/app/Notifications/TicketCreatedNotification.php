@@ -31,19 +31,21 @@ class TicketCreatedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        $locale = $notifiable->profile?->preferred_language ?? 'en';
+
         $message = (new MailMessage)
-            ->subject("Consultation Request Submitted: {$this->propertyName}")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("Your request for a free consultation for **{$this->propertyName}** has been submitted.")
-            ->line("**Ticket:** {$this->ticketNumber}");
+            ->subject(__('notifications.ticket_created.subject', ['property_name' => $this->propertyName], $locale))
+            ->greeting(__('notifications.ticket_created.greeting', ['name' => $notifiable->name], $locale))
+            ->line(__('notifications.ticket_created.submitted', ['property_name' => $this->propertyName], $locale))
+            ->line('**'.__('notifications.ticket_created.ticket_label', ['ticket_number' => $this->ticketNumber], $locale).'**');
 
         if ($this->serviceName) {
-            $message->line("**Service:** {$this->serviceName}");
+            $message->line('**'.__('notifications.ticket_created.service_label', ['service_name' => $this->serviceName], $locale).'**');
         }
 
         return $message
-            ->line('**What happens next?** Our team will review your request and assign a qualified consultant. You will receive an email once a consultant has been assigned.')
-            ->action('View Ticket', "{$this->frontendUrl}/tickets/{$this->ticketId}")
-            ->line('Thank you for choosing Wisebox.');
+            ->line('**'.__('notifications.ticket_created.next_steps', [], $locale).'**')
+            ->action(__('notifications.ticket_created.view_ticket', [], $locale), "{$this->frontendUrl}/tickets/{$this->ticketId}")
+            ->line(__('notifications.ticket_created.thank_you', [], $locale));
     }
 }

@@ -65,7 +65,7 @@ class OrderController extends Controller
 
         if ($services->count() !== $serviceIds->count()) {
             return response()->json([
-                'message' => 'One or more selected services are unavailable.',
+                'message' => __('messages.services_unavailable'),
             ], 422);
         }
 
@@ -145,7 +145,7 @@ class OrderController extends Controller
     public function show(Request $request, Order $order): JsonResponse
     {
         if ($order->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         $order->load(['items.service', 'property', 'tickets']);
@@ -156,12 +156,12 @@ class OrderController extends Controller
     public function checkout(Request $request, Order $order): JsonResponse
     {
         if ($order->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         if ($order->payment_status === 'paid') {
             return response()->json([
-                'message' => 'Order is already paid.',
+                'message' => __('messages.order_already_paid'),
                 'data' => [
                     'confirmation_url' => "/orders/{$order->id}/confirmation",
                 ],
@@ -170,7 +170,7 @@ class OrderController extends Controller
 
         if ($order->payment_status !== 'pending' || $order->status === 'cancelled') {
             return response()->json([
-                'message' => 'Only pending orders can be checked out.',
+                'message' => __('messages.only_pending_checkout'),
             ], 422);
         }
 
@@ -218,12 +218,12 @@ class OrderController extends Controller
     public function cancel(Request $request, Order $order): JsonResponse
     {
         if ($order->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => __('messages.forbidden')], 403);
         }
 
         if ($order->payment_status !== 'pending' || $order->status !== 'pending') {
             return response()->json([
-                'message' => 'Only pending orders can be cancelled.',
+                'message' => __('messages.only_pending_cancel'),
             ], 422);
         }
 
@@ -236,7 +236,7 @@ class OrderController extends Controller
 
         return response()->json([
             'data' => $order,
-            'message' => 'Order cancelled.',
+            'message' => __('messages.order_cancelled'),
         ]);
     }
 

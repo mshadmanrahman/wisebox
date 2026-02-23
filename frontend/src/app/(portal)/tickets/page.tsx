@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
@@ -22,6 +23,7 @@ function statusBadgeClass(status: Ticket['status']): string {
 
 export default function TicketsPage() {
   const { user } = useAuthStore();
+  const { t } = useTranslation(['tickets', 'common']);
   const [statusFilter, setStatusFilter] = useState<'all' | TicketStatus>('all');
   const [assignedFilter, setAssignedFilter] = useState<'all' | 'assigned' | 'unassigned'>('all');
 
@@ -48,24 +50,24 @@ export default function TicketsPage() {
   const errorMessage =
     (error as { response?: { data?: { message?: string } }; message?: string } | null)?.response?.data?.message ||
     (error as { message?: string } | null)?.message ||
-    'Please try again in a moment.';
+    t('common:tryAgain');
 
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-wisebox-text-primary">Tickets</h1>
+          <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('tickets:title')}</h1>
           <p className="mt-1 text-wisebox-text-secondary">
             {isConsultant
-              ? 'Manage your assigned tickets and keep customers updated.'
-              : 'Follow consultant progress for your service requests.'}
+              ? t('tickets:subtitleConsultant')
+              : t('tickets:subtitleCustomer')}
           </p>
           {isFetching && hasData && (
-            <p className="text-xs text-wisebox-text-secondary mt-1">Refreshing tickets...</p>
+            <p className="text-xs text-wisebox-text-secondary mt-1">{t('tickets:refreshing')}</p>
           )}
         </div>
         <Button asChild variant="outline">
-          <Link href="/orders">View Orders</Link>
+          <Link href="/orders">{t('tickets:viewOrders')}</Link>
         </Button>
       </div>
 
@@ -76,13 +78,13 @@ export default function TicketsPage() {
             onValueChange={(value) => setStatusFilter(value as 'all' | TicketStatus)}
           >
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 lg:grid-cols-7">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="open">Open</TabsTrigger>
-              <TabsTrigger value="assigned">Assigned</TabsTrigger>
-              <TabsTrigger value="in_progress">In Progress</TabsTrigger>
-              <TabsTrigger value="awaiting_customer">Awaiting Customer</TabsTrigger>
-              <TabsTrigger value="awaiting_consultant">Awaiting Consultant</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
+              <TabsTrigger value="all">{t('tickets:tabs.all')}</TabsTrigger>
+              <TabsTrigger value="open">{t('tickets:tabs.open')}</TabsTrigger>
+              <TabsTrigger value="assigned">{t('tickets:tabs.assigned')}</TabsTrigger>
+              <TabsTrigger value="in_progress">{t('tickets:tabs.in_progress')}</TabsTrigger>
+              <TabsTrigger value="awaiting_customer">{t('tickets:tabs.awaiting_customer')}</TabsTrigger>
+              <TabsTrigger value="awaiting_consultant">{t('tickets:tabs.awaiting_consultant')}</TabsTrigger>
+              <TabsTrigger value="completed">{t('tickets:tabs.completed')}</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -97,7 +99,7 @@ export default function TicketsPage() {
                 }`}
                 onClick={() => setAssignedFilter('all')}
               >
-                All Assignments
+                {t('tickets:filters.allAssignments')}
               </button>
               <button
                 type="button"
@@ -108,7 +110,7 @@ export default function TicketsPage() {
                 }`}
                 onClick={() => setAssignedFilter('assigned')}
               >
-                Assigned
+                {t('tickets:filters.assigned')}
               </button>
               <button
                 type="button"
@@ -119,7 +121,7 @@ export default function TicketsPage() {
                 }`}
                 onClick={() => setAssignedFilter('unassigned')}
               >
-                Unassigned
+                {t('tickets:filters.unassigned')}
               </button>
             </div>
           )}
@@ -131,11 +133,11 @@ export default function TicketsPage() {
           <CardContent className="p-6 space-y-3">
             <div className="flex items-center gap-2 text-red-700 font-medium">
               <AlertTriangle className="h-4 w-4" />
-              Could not load tickets.
+              {t('tickets:couldNotLoad')}
             </div>
             <p className="text-sm text-red-700/90">{errorMessage}</p>
             <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-              {isFetching ? 'Retrying...' : 'Retry'}
+              {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
         </Card>
@@ -145,10 +147,10 @@ export default function TicketsPage() {
         <Card className="border-amber-200 bg-amber-50/70">
           <CardContent className="p-4 flex items-center justify-between gap-3">
             <p className="text-sm text-amber-800">
-              Showing previously loaded tickets. {errorMessage}
+              {t('common:showingStaleData')} {errorMessage}
             </p>
             <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
-              {isFetching ? 'Retrying...' : 'Retry'}
+              {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
         </Card>
@@ -156,19 +158,19 @@ export default function TicketsPage() {
 
       {isLoading && !hasData && (
         <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">Loading tickets...</CardContent>
+          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('tickets:loadingTickets')}</CardContent>
         </Card>
       )}
 
       {!isLoading && !isError && tickets.length === 0 && (
         <Card>
           <CardContent className="p-6 space-y-3">
-            <h2 className="font-semibold text-wisebox-text-primary">No tickets found</h2>
+            <h2 className="font-semibold text-wisebox-text-primary">{t('tickets:empty.title')}</h2>
             <p className="text-sm text-wisebox-text-secondary">
-              Try changing filters or create new service orders to generate tickets.
+              {t('tickets:empty.description')}
             </p>
             <Button asChild variant="outline">
-              <Link href="/workspace/services">Book Services</Link>
+              <Link href="/workspace/services">{t('tickets:empty.bookServices')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -191,35 +193,35 @@ export default function TicketsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-wisebox-text-secondary">
                 <p>
-                  Priority: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
+                  {t('tickets:fields.priority')}: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
                 </p>
                 <p>
-                  Updated: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.updated_at).toLocaleString()}</span>
+                  {t('tickets:fields.updated')}: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.updated_at).toLocaleString()}</span>
                 </p>
                 {ticket.property?.property_name && (
                   <p>
-                    Property: <span className="font-medium text-wisebox-text-primary">{ticket.property.property_name}</span>
+                    {t('tickets:fields.property')}: <span className="font-medium text-wisebox-text-primary">{ticket.property.property_name}</span>
                   </p>
                 )}
                 {ticket.service?.name && (
                   <p>
-                    Service: <span className="font-medium text-wisebox-text-primary">{ticket.service.name}</span>
+                    {t('tickets:fields.service')}: <span className="font-medium text-wisebox-text-primary">{ticket.service.name}</span>
                   </p>
                 )}
                 {ticket.customer?.name && (
                   <p>
-                    Customer: <span className="font-medium text-wisebox-text-primary">{ticket.customer.name}</span>
+                    {t('tickets:fields.customer')}: <span className="font-medium text-wisebox-text-primary">{ticket.customer.name}</span>
                   </p>
                 )}
                 {ticket.consultant?.name && (
                   <p>
-                    Consultant: <span className="font-medium text-wisebox-text-primary">{ticket.consultant.name}</span>
+                    {t('tickets:fields.consultant')}: <span className="font-medium text-wisebox-text-primary">{ticket.consultant.name}</span>
                   </p>
                 )}
               </div>
 
               <Button asChild variant="outline" className="w-full sm:w-auto">
-                <Link href={`/tickets/${ticket.id}`}>Open ticket</Link>
+                <Link href={`/tickets/${ticket.id}`}>{t('tickets:openTicket')}</Link>
               </Button>
             </CardContent>
           </Card>

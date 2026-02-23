@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Security headers for all API responses
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
+        // Set application locale from user profile or Accept-Language header
+        $middleware->append(\App\Http\Middleware\SetLocale::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

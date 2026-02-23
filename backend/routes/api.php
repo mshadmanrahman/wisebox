@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\ServiceCatalogController;
 use App\Http\Controllers\Api\V1\StripeWebhookController;
 use App\Http\Controllers\Api\V1\TicketController;
+use App\Http\Controllers\Api\V1\TranslationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -159,6 +160,13 @@ Route::prefix('v1')->group(function () {
         Route::post('free-consultations', [FreeConsultationController::class, 'store']);
         Route::get('free-consultations/{ticket}', [FreeConsultationController::class, 'show']);
 
+        // Admin: Translation Management
+        Route::prefix('admin/translations')->group(function () {
+            Route::get('/', [TranslationController::class, 'adminIndex']);
+            Route::put('{id}', [TranslationController::class, 'update']);
+            Route::post('/', [TranslationController::class, 'store']);
+        });
+
         // Admin: Consultation Management
         Route::prefix('admin/consultations')->group(function () {
             Route::get('/', [AdminConsultationController::class, 'index']);
@@ -232,6 +240,9 @@ Route::prefix('v1')->group(function () {
             return response()->json(['data' => $query->get()]);
         });
     });
+
+    // Public: Translations (for frontend i18n)
+    Route::get('/translations', [TranslationController::class, 'index']);
 
     // Public: Services
     Route::get('/services', [ServiceCatalogController::class, 'index']);
