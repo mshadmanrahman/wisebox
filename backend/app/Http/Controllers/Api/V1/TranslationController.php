@@ -4,22 +4,14 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Translation;
+use App\Models\User;
 use App\Services\TranslationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TranslationController extends Controller
 {
-    public function __construct(private TranslationService $service)
-    {
-        $this->middleware(function ($request, $next) {
-            $user = $request->user();
-            if (!$user || !in_array($user->role, ['admin', 'super_admin'])) {
-                abort(403, __('messages.forbidden'));
-            }
-            return $next($request);
-        })->only(['adminIndex', 'update', 'store']);
-    }
+    public function __construct(private TranslationService $service) {}
 
     /**
      * Public: GET /api/v1/translations?locale=bn&ns=common
@@ -46,6 +38,8 @@ class TranslationController extends Controller
      */
     public function adminIndex(Request $request): JsonResponse
     {
+        $this->ensureAdmin($request->user());
+
         $query = Translation::where('locale', 'en');
 
         if ($ns = $request->input('ns')) {
@@ -96,6 +90,8 @@ class TranslationController extends Controller
      */
     public function update(Request $request, int $id): JsonResponse
     {
+        $this->ensureAdmin($request->user());
+
         $validated = $request->validate([
             'value' => ['required', 'string'],
         ]);
@@ -114,6 +110,8 @@ class TranslationController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $this->ensureAdmin($request->user());
+
         $validated = $request->validate([
             'locale' => ['required', 'in:en,bn'],
             'namespace' => ['required', 'in:common,auth,dashboard,properties,tickets,orders,settings,notifications,consultant,admin,forms'],
@@ -127,5 +125,10 @@ class TranslationController extends Controller
         );
 
         return response()->json(['data' => $translation], 201);
+    }
+
+    private function ensureAdmin(User $user): void
+    {
+        abort_unless($user->isAdmin(), 403, __('messages.forbidden'));
     }
 }

@@ -43,11 +43,17 @@ class TranslationApiTest extends TestCase
             ]);
     }
 
-    public function test_public_endpoint_returns_empty_for_missing_namespace(): void
+    public function test_public_endpoint_rejects_invalid_namespace(): void
+    {
+        $this->getJson('/api/v1/translations?locale=en&ns=nonexistent')
+            ->assertUnprocessable();
+    }
+
+    public function test_public_endpoint_returns_empty_for_namespace_with_no_data(): void
     {
         Translation::create(['locale' => 'en', 'namespace' => 'common', 'key' => 'nav.home', 'value' => 'Home']);
 
-        $response = $this->getJson('/api/v1/translations?locale=en&ns=nonexistent');
+        $response = $this->getJson('/api/v1/translations?locale=en&ns=auth');
 
         $response->assertOk()
             ->assertJsonCount(0);
