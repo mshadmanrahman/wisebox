@@ -74,7 +74,7 @@ class TransactionalEmailService
         $propertyName = (string) ($ticket->property?->property_name ?? __('notifications.email.default_property', [], $locale));
         $serviceName = $ticket->service?->name ? (string) $ticket->service->name : __('notifications.email.default_service', [], $locale);
         $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
-        $ticketUrl = "{$frontendUrl}/dashboard/tickets/{$ticket->id}";
+        $ticketUrl = "{$frontendUrl}/tickets/{$ticket->id}";
 
         $html = "<h2>".__('notifications.email.ticket_created_heading', [], $locale)."</h2>"
             . "<p>".__('notifications.email.hello', ['name' => $customer->name], $locale)."</p>"
@@ -224,7 +224,7 @@ class TransactionalEmailService
         $locale = $this->userLocale($user);
         $ticketNumber = (string) $ticket->ticket_number;
         $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
-        $ticketUrl = "{$frontendUrl}/dashboard/tickets/{$ticket->id}";
+        $ticketUrl = "{$frontendUrl}/tickets/{$ticket->id}";
 
         $html = "<h2>".__('notifications.email.ticket_update_heading', ['ticket_number' => $ticketNumber], $locale)."</h2>"
             . "<p>".__('notifications.email.hello', ['name' => $user->name], $locale)."</p>"
