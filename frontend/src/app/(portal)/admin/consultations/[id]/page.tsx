@@ -297,7 +297,7 @@ export default function AdminConsultationDetailPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-red-200 text-red-600 hover:bg-red-50"
+                    className="bg-white border-red-200 text-red-600 hover:bg-red-50"
                     onClick={() => setShowRejectForm(true)}
                   >
                     <XCircle className="h-4 w-4 mr-2" />
@@ -342,7 +342,7 @@ export default function AdminConsultationDetailPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-slate-200 text-slate-700 hover:bg-slate-50"
+                    className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
                     onClick={() => setShowRejectForm(false)}
                   >
                     {t('common:cancel')}

@@ -1012,6 +1012,8 @@ class TranslationSeeder extends Seeder
             'detail.adminNotes' => ['en' => 'Admin Notes', 'bn' => 'অ্যাডমিন নোট'],
             'detail.adminNotesPlaceholder' => ['en' => 'Internal notes for this consultation...', 'bn' => 'এই পরামর্শের জন্য অভ্যন্তরীণ নোট...'],
             'detail.failedToApprove' => ['en' => 'Failed to approve consultation', 'bn' => 'পরামর্শ অনুমোদন করতে ব্যর্থ হয়েছে'],
+            'detail.documentsCount' => ['en' => '{{count}} documents', 'bn' => '{{count}} টি দলিল'],
+            'detail.assignConsultant' => ['en' => 'Assign Consultant', 'bn' => 'পরামর্শদাতা নিযুক্ত করুন'],
 
             // Learning management
             'learning.adminDashboard' => ['en' => 'Admin Dashboard', 'bn' => 'অ্যাডমিন ড্যাশবোর্ড'],

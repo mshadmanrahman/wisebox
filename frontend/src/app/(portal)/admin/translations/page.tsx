@@ -406,7 +406,7 @@ export default function AdminTranslationsPage() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
               {t('translations.prev', 'Previous')}
@@ -416,7 +416,7 @@ export default function AdminTranslationsPage() {
               size="sm"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
             >
               {t('translations.next', 'Next')}
               <ChevronRight className="h-4 w-4 ml-1" />
