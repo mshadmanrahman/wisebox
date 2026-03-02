@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Bell, LogOut, Settings, Sparkles } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/language-switcher';
@@ -44,6 +44,8 @@ export default function PortalLayout({
   children: React.ReactNode;
 }) {
   const [hasHydrated, setHasHydrated] = useState(false);
+  const pathname = usePathname();
+  const isAdmin = pathname.startsWith('/admin');
   const { t } = useTranslation('common');
 
   useEffect(() => {
@@ -72,8 +74,8 @@ export default function PortalLayout({
   return (
     <Providers>
       <div className="min-h-screen bg-wisebox-background">
-        <PortalHeader />
-        <main className="max-w-7xl mx-auto">{children}</main>
+        {!isAdmin && <PortalHeader />}
+        <main className={isAdmin ? '' : 'max-w-7xl mx-auto'}>{children}</main>
       </div>
     </Providers>
   );

@@ -17,10 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   return (
-    <div
-      className="theme-light min-h-[calc(100vh-73px)] bg-slate-50"
-      style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)' }}
-    >
+    <div className="theme-light min-h-screen bg-slate-50">
       {/* Admin sub-header */}
       <div className="bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
