@@ -56,7 +56,6 @@ export default function AdminConsultationDetailPage() {
   const [rejectReason, setRejectReason] = useState('');
   const [showRejectForm, setShowRejectForm] = useState(false);
 
-  // Fetch consultation details
   const { data: consultation, isLoading } = useQuery({
     queryKey: ['admin', 'consultation', id],
     queryFn: async () => {
@@ -66,7 +65,6 @@ export default function AdminConsultationDetailPage() {
     enabled: !!id,
   });
 
-  // Fetch available consultants
   const { data: consultantsData } = useQuery({
     queryKey: ['admin', 'consultants'],
     queryFn: async () => {
@@ -77,7 +75,6 @@ export default function AdminConsultationDetailPage() {
 
   const consultants = consultantsData || [];
 
-  // Approve mutation
   const approveMutation = useMutation({
     mutationFn: async () => {
       return api.patch(`/admin/consultations/${id}/approve`, {
@@ -91,7 +88,6 @@ export default function AdminConsultationDetailPage() {
     },
   });
 
-  // Reject mutation
   const rejectMutation = useMutation({
     mutationFn: async () => {
       return api.patch(`/admin/consultations/${id}/reject`, {
@@ -127,7 +123,6 @@ export default function AdminConsultationDetailPage() {
 
   return (
     <div className="px-6 py-8 space-y-6 max-w-4xl">
-      {/* Back */}
       <Button variant="ghost" asChild className="text-slate-600 hover:text-slate-900 hover:bg-slate-100">
         <Link href="/admin/consultations">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -198,7 +193,6 @@ export default function AdminConsultationDetailPage() {
         </Card>
       </div>
 
-      {/* Description */}
       {consultation.description && (
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
@@ -354,7 +348,6 @@ export default function AdminConsultationDetailPage() {
         </Card>
       )}
 
-      {/* Assigned Consultant Info (for non-pending) */}
       {consultation.consultant && (
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader>
