@@ -989,6 +989,9 @@ class TranslationSeeder extends Seeder
             'consultations.statusLabels.scheduled' => ['en' => 'Scheduled', 'bn' => 'নির্ধারিত'],
             'consultations.statusLabels.completed' => ['en' => 'Completed', 'bn' => 'সম্পন্ন'],
             'consultations.statusLabels.rejected' => ['en' => 'Rejected', 'bn' => 'প্রত্যাখ্যাত'],
+            'consultations.statusLabels.open' => ['en' => 'Open', 'bn' => 'উন্মুক্ত'],
+            'consultations.percentComplete' => ['en' => '{{percent}}% complete', 'bn' => '{{percent}}% সম্পন্ন'],
+            'consultations.preferredSlots' => ['en' => '{{count}} preferred time slots', 'bn' => '{{count}} টি পছন্দের সময়সূচি'],
 
             // Consultation detail page
             'detail.backToConsultations' => ['en' => 'Back to Consultations', 'bn' => 'পরামর্শে ফিরুন'],
