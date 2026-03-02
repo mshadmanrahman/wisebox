@@ -150,7 +150,7 @@ export default function AdminDashboard() {
               {t('dashboard.consultations.description')}
             </CardDescription>
           </div>
-          <Button asChild variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50">
+          <Button asChild variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50">
             <Link href="/admin/consultations">
               {t('dashboard.consultations.viewAll')}
               <ArrowRight className="h-4 w-4 ml-2" />

@@ -29,7 +29,7 @@ export default function AdminLearningPage() {
             <p className="text-sm text-slate-500">
               {t('admin:learning.adminOnly')}
             </p>
-            <Button asChild variant="outline" className="mt-3 bg-white border-slate-200 text-slate-700 hover:bg-slate-50">
+            <Button asChild variant="outline" className="mt-3 border-slate-200 text-slate-700 hover:bg-slate-50">
               <Link href="/dashboard">{t('admin:learning.backToDashboard')}</Link>
             </Button>
           </CardContent>

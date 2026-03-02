@@ -18,7 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div
-      className="min-h-[calc(100vh-73px)] bg-slate-50"
+      className="theme-light min-h-[calc(100vh-73px)] bg-slate-50"
       style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)' }}
     >
       {/* Admin sub-header */}
