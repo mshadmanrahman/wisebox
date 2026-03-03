@@ -7,7 +7,7 @@ return [
     'allowed_origins' => array_values(array_unique(array_filter(array_map(
         'trim',
         array_merge(
-            explode(',', env('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://wisebox-mvp.vercel.app,https://wisebox-v2.vercel.app,https://wisebox-fork.vercel.app')),
+            explode(',', env('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://wisebox-mvp.vercel.app,https://wisebox-v2.vercel.app,https://wisebox-fork.vercel.app,https://wisebox-v4-fork.vercel.app')),
             ['http://localhost', 'http://127.0.0.1']
         )
     )))),
