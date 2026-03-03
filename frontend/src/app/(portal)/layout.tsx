@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, redirect } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Bell, LogOut, Settings, Sparkles } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/language-switcher';
@@ -59,6 +59,14 @@ export default function PortalLayout({
       return unsub;
     }
   }, []);
+
+  const user = useAuthStore((s) => s.user);
+  const isAdminRole = user?.role === 'admin' || user?.role === 'super_admin';
+
+  // Redirect admin users away from portal pages to admin dashboard
+  if (hasHydrated && isAdminRole && !isAdmin) {
+    redirect('/admin/dashboard');
+  }
 
   // Prevent rendering with stale default state before Zustand hydration
   if (!hasHydrated) {
