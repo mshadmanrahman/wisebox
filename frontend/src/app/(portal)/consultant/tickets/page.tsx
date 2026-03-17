@@ -49,11 +49,11 @@ interface ConsultantMetricsResponse {
 }
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-500/20 text-green-400';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
-  if (status === 'scheduled') return 'bg-purple-100 text-purple-700';
-  if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
-  return 'bg-amber-500/20 text-amber-400';
+  if (status === 'completed') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-wisebox-status-info/20 text-wisebox-status-info';
+  if (status === 'scheduled') return 'bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled';
+  if (status === 'cancelled') return 'bg-muted text-muted-foreground';
+  return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
 }
 
 export default function ConsultantTicketsPage() {
@@ -121,10 +121,10 @@ export default function ConsultantTicketsPage() {
   if (!isConsultantRole) {
     return (
       <div className="px-6 py-8">
-        <Card>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
           <CardContent className="p-6 space-y-3">
-            <h2 className="font-semibold text-wisebox-text-primary">{t('consultant:tickets.accessRequired')}</h2>
-            <p className="text-sm text-wisebox-text-secondary">
+            <h2 className="font-semibold text-foreground">{t('consultant:tickets.accessRequired')}</h2>
+            <p className="text-sm text-muted-foreground">
               {t('consultant:tickets.accessDescription')}
             </p>
             <Button asChild variant="outline">
@@ -139,24 +139,24 @@ export default function ConsultantTicketsPage() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('consultant:tickets.title')}</h1>
-        <p className="mt-1 text-wisebox-text-secondary">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t('consultant:tickets.title')}</h1>
+        <p className="mt-1 text-muted-foreground">
           {t('consultant:tickets.subtitle')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {summaryCards.map((card) => (
-          <Card key={card.label}>
+          <Card key={card.label} className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
             <CardContent className="pt-6">
-              <p className="text-sm text-wisebox-text-secondary">{card.label}</p>
-              <p className="text-2xl font-bold text-wisebox-primary-700 mt-1">{card.value}</p>
+              <p className="text-sm text-muted-foreground">{card.label}</p>
+              <p className="text-2xl font-semibold text-primary mt-1">{card.value}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card>
+      <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
         <CardContent className="pt-6">
           <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as 'all' | TicketStatus)}>
             <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-8">
@@ -174,14 +174,14 @@ export default function ConsultantTicketsPage() {
       </Card>
 
       {isLoading && (
-        <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('consultant:tickets.loading')}</CardContent>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
+          <CardContent className="p-6 text-sm text-muted-foreground">{t('consultant:tickets.loading')}</CardContent>
         </Card>
       )}
 
       {!isLoading && tickets.length === 0 && (
-        <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
+          <CardContent className="p-6 text-sm text-muted-foreground">
             {t('consultant:tickets.noTickets')}
           </CardContent>
         </Card>
@@ -189,7 +189,7 @@ export default function ConsultantTicketsPage() {
 
       <div className="grid gap-4">
         {tickets.map((ticket) => (
-          <Card key={ticket.id}>
+          <Card key={ticket.id} className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between gap-3">
                 <CardTitle className="text-base">{ticket.ticket_number}</CardTitle>
@@ -197,29 +197,29 @@ export default function ConsultantTicketsPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="font-medium text-wisebox-text-primary">{ticket.title}</p>
+              <p className="font-medium text-foreground">{ticket.title}</p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-wisebox-text-secondary">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
                 <p>
-                  {t('consultant:tickets.fields.priority')}: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
+                  {t('consultant:tickets.fields.priority')}: <span className="font-medium text-foreground">{ticket.priority}</span>
                 </p>
                 <p>
-                  {t('consultant:tickets.fields.customer')}: <span className="font-medium text-wisebox-text-primary">{ticket.customer?.name ?? '-'}</span>
+                  {t('consultant:tickets.fields.customer')}: <span className="font-medium text-foreground">{ticket.customer?.name ?? '-'}</span>
                 </p>
                 <p>
-                  {t('consultant:tickets.fields.property')}: <span className="font-medium text-wisebox-text-primary">{ticket.property?.property_name ?? '-'}</span>
+                  {t('consultant:tickets.fields.property')}: <span className="font-medium text-foreground">{ticket.property?.property_name ?? '-'}</span>
                 </p>
                 <p>
-                  {t('consultant:tickets.fields.service')}: <span className="font-medium text-wisebox-text-primary">{ticket.service?.name ?? '-'}</span>
+                  {t('consultant:tickets.fields.service')}: <span className="font-medium text-foreground">{ticket.service?.name ?? '-'}</span>
                 </p>
                 {ticket.scheduled_at && (
                   <p>
-                    {t('consultant:tickets.fields.meeting')}: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.scheduled_at).toLocaleString()}</span>
+                    {t('consultant:tickets.fields.meeting')}: <span className="font-medium text-foreground">{new Date(ticket.scheduled_at).toLocaleString()}</span>
                   </p>
                 )}
               </div>
 
-              <Button asChild variant="outline" className="w-full sm:w-auto">
+              <Button asChild variant="outline" className="w-full sm:w-auto transition-all duration-200">
                 <Link href={`/consultant/tickets/${ticket.id}`}>{t('consultant:tickets.openWorkspace')}</Link>
               </Button>
             </CardContent>

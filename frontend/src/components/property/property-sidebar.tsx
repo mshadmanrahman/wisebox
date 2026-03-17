@@ -23,11 +23,11 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
   return (
     <div className="space-y-6">
       {/* Map Placeholder */}
-      <Card className="bg-wisebox-background-card border-wisebox-border overflow-hidden">
-        <div className="h-48 bg-slate-800 relative flex items-center justify-center">
+      <Card className="bg-card border border-border overflow-hidden">
+        <div className="h-48 bg-muted relative flex items-center justify-center">
           <div className="text-center space-y-2">
-            <MapPin className="h-8 w-8 text-wisebox-primary mx-auto" />
-            <p className="text-sm text-wisebox-text-secondary">{t('sidebar.yourProperty')}</p>
+            <MapPin className="h-8 w-8 text-primary mx-auto" strokeWidth={1.5} />
+            <p className="text-sm text-muted-foreground">{t('sidebar.yourProperty')}</p>
           </div>
           {/* Subtle grid overlay for map effect */}
           <div className="absolute inset-0 opacity-10" style={{
@@ -42,82 +42,82 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
         <Link href={`/properties/${property.id}/journal`}>
           <Button
             variant="outline"
-            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-white hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
+            className="w-full h-auto flex-col gap-2 py-4 border-border text-foreground hover:bg-muted hover:border-border transition-all duration-200"
           >
-            <BookOpen className="h-5 w-5 text-wisebox-primary" />
+            <BookOpen className="h-5 w-5 text-primary" strokeWidth={1.5} />
             <span className="text-xs">{t('sidebar.journal')}</span>
           </Button>
         </Link>
         <Link href={`/properties/${property.id}/recommendations`}>
           <Button
             variant="outline"
-            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-white hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
+            className="w-full h-auto flex-col gap-2 py-4 border-border text-foreground hover:bg-muted hover:border-border transition-all duration-200"
           >
-            <BarChart3 className="h-5 w-5 text-wisebox-primary" />
+            <BarChart3 className="h-5 w-5 text-primary" strokeWidth={1.5} />
             <span className="text-xs">{t('sidebar.analytics')}</span>
           </Button>
         </Link>
         <Link href="/tickets">
           <Button
             variant="outline"
-            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-white hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
+            className="w-full h-auto flex-col gap-2 py-4 border-border text-foreground hover:bg-muted hover:border-border transition-all duration-200"
           >
-            <MessageSquare className="h-5 w-5 text-wisebox-primary" />
+            <MessageSquare className="h-5 w-5 text-primary" strokeWidth={1.5} />
             <span className="text-xs">{t('sidebar.consult')}</span>
           </Button>
         </Link>
       </div>
 
       {/* Marketing Banner */}
-      <Card className="bg-gradient-to-br from-wisebox-primary-700 via-wisebox-primary-600 to-wisebox-primary-500 border-0 overflow-hidden">
+      <Card className="bg-primary border-0 overflow-hidden">
         <CardContent className="p-5 space-y-3">
-          <p className="text-white/80 text-xs uppercase tracking-wider">{t('sidebar.needHelp')}</p>
-          <h3 className="text-lg font-bold text-white leading-tight">
+          <p className="text-primary-foreground/80 text-xs uppercase tracking-wider">{t('sidebar.needHelp')}</p>
+          <h3 className="text-base font-medium text-primary-foreground leading-tight">
             {t('sidebar.dontHavePapers')}
           </h3>
-          <p className="text-sm text-white/80">
+          <p className="text-sm text-primary-foreground/80 leading-relaxed">
             {t('sidebar.dontHavePapersDesc')}
           </p>
-          <Button asChild size="sm" className="bg-white text-wisebox-primary-700 hover:bg-white/90 font-semibold">
+          <Button asChild size="sm" className="bg-white text-primary hover:bg-white/90 font-medium">
             <Link href="/workspace/services">{t('sidebar.exploreServices')}</Link>
           </Button>
         </CardContent>
       </Card>
 
       {/* FAQ Accordion */}
-      <Card className="bg-wisebox-background-card border-wisebox-border">
+      <Card className="bg-card border border-border">
         <CardContent className="p-5">
-          <h3 className="text-sm font-semibold text-white mb-4">{t('sidebar.faq')}</h3>
+          <h3 className="text-sm font-medium text-foreground mb-4">{t('sidebar.faq')}</h3>
           <Accordion type="single" collapsible className="space-y-2">
-            <AccordionItem value="q1" className="border-wisebox-border">
-              <AccordionTrigger className="text-sm text-white hover:text-wisebox-primary py-3 hover:no-underline">
+            <AccordionItem value="q1" className="border-border">
+              <AccordionTrigger className="text-sm text-foreground hover:text-primary py-3 hover:no-underline transition-colors duration-200">
                 {t('sidebar.faqQ1')}
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-wisebox-text-secondary pb-3">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-3">
                 {t('sidebar.faqA1')}
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="q2" className="border-wisebox-border">
-              <AccordionTrigger className="text-sm text-white hover:text-wisebox-primary py-3 hover:no-underline">
+            <AccordionItem value="q2" className="border-border">
+              <AccordionTrigger className="text-sm text-foreground hover:text-primary py-3 hover:no-underline transition-colors duration-200">
                 {t('sidebar.faqQ2')}
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-wisebox-text-secondary pb-3">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-3">
                 {t('sidebar.faqA2')}
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="q3" className="border-wisebox-border">
-              <AccordionTrigger className="text-sm text-white hover:text-wisebox-primary py-3 hover:no-underline">
+            <AccordionItem value="q3" className="border-border">
+              <AccordionTrigger className="text-sm text-foreground hover:text-primary py-3 hover:no-underline transition-colors duration-200">
                 {t('sidebar.faqQ3')}
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-wisebox-text-secondary pb-3">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-3">
                 {t('sidebar.faqA3')}
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="q4" className="border-wisebox-border border-b-0">
-              <AccordionTrigger className="text-sm text-white hover:text-wisebox-primary py-3 hover:no-underline">
+            <AccordionItem value="q4" className="border-border border-b-0">
+              <AccordionTrigger className="text-sm text-foreground hover:text-primary py-3 hover:no-underline transition-colors duration-200">
                 {t('sidebar.faqQ4')}
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-wisebox-text-secondary pb-3">
+              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-3">
                 {t('sidebar.faqA4')}
               </AccordionContent>
             </AccordionItem>

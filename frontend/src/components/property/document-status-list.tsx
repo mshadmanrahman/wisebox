@@ -82,10 +82,10 @@ const docStatusLabelKeys: Record<PropertyDocument['status'], string> = {
 };
 
 const docStatusClassNames: Record<PropertyDocument['status'], string> = {
-  uploaded: 'bg-blue-500/20 text-blue-400',
-  under_review: 'bg-amber-500/20 text-amber-400',
-  verified: 'bg-green-500/20 text-green-400',
-  rejected: 'bg-red-500/20 text-red-400',
+  uploaded: 'bg-primary/20 text-primary',
+  under_review: 'bg-wisebox-status-warning/20 text-wisebox-status-warning',
+  verified: 'bg-wisebox-status-success/20 text-wisebox-status-success',
+  rejected: 'bg-wisebox-status-danger/20 text-wisebox-status-danger',
 };
 
 function completionBarColor(status: 'red' | 'yellow' | 'green'): string {
@@ -138,11 +138,11 @@ export function DocumentStatusList({
       <Card>
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-4 w-1/3 rounded bg-wisebox-background-lighter" />
-            <div className="h-2 w-full rounded bg-wisebox-background-lighter" />
+            <div className="h-4 w-1/3 rounded bg-muted" />
+            <div className="h-2 w-full rounded bg-muted" />
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 w-full rounded bg-wisebox-background-lighter" />
+                <div key={i} className="h-12 w-full rounded bg-muted" />
               ))}
             </div>
           </div>
@@ -155,7 +155,7 @@ export function DocumentStatusList({
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-sm text-red-600">
+          <p className="text-sm text-wisebox-status-danger">
             {t('documents.failedToLoad')}
           </p>
         </CardContent>
@@ -187,7 +187,7 @@ export function DocumentStatusList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{t('documents.title')}</CardTitle>
+        <CardTitle className="text-base font-medium">{t('documents.title')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Completion bar */}
@@ -195,15 +195,15 @@ export function DocumentStatusList({
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">{t('documents.completion')}</span>
             <span
-              className={cn('font-semibold', completionTextColor(completionStatus))}
+              className={cn('font-medium', completionTextColor(completionStatus))}
             >
               {completionPercentage}%
             </span>
           </div>
-          <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-wisebox-background-lighter">
+          <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">
             <div
               className={cn(
-                'h-full rounded-full transition-all',
+                'h-full rounded-full transition-all duration-200',
                 completionBarColor(completionStatus)
               )}
               style={{ width: `${completionPercentage}%` }}
@@ -375,14 +375,14 @@ function DocumentRow({
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2 min-w-0">
           {uploaded ? (
-            <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0 text-wisebox-status-success" />
+            <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0 text-wisebox-status-success" strokeWidth={1.5} />
           ) : (
-            <Minus className="h-4 w-4 mt-0.5 shrink-0 text-wisebox-text-muted" />
+            <Minus className="h-4 w-4 mt-0.5 shrink-0 text-muted-foreground" strokeWidth={1.5} />
           )}
           <div className="min-w-0">
             <p className="text-sm font-medium">{docType.name}</p>
             {docType.guidance_text && (
-              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 leading-relaxed">
                 {docType.guidance_text}
               </p>
             )}
@@ -418,11 +418,11 @@ function DocumentRow({
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-muted-foreground hover:text-red-600"
+              className="h-6 w-6 text-muted-foreground hover:text-wisebox-status-danger transition-all duration-200"
               onClick={() => deleteMutation.mutate(uploaded.id)}
               disabled={deleteMutation.isPending}
             >
-              <Trash2 className="h-3 w-3" />
+              <Trash2 className="h-3 w-3" strokeWidth={1.5} />
             </Button>
           </div>
         </div>
@@ -433,26 +433,26 @@ function DocumentRow({
           <div
             {...getRootProps()}
             className={cn(
-              'flex items-center gap-2 rounded-md border border-dashed p-2 text-xs cursor-pointer transition-colors',
+              'flex items-center gap-2 rounded-md border border-dashed p-2 text-xs cursor-pointer transition-colors duration-200',
               isDragActive
-                ? 'border-wisebox-primary bg-wisebox-primary-50'
-                : 'border-wisebox-border hover:border-wisebox-primary hover:bg-wisebox-background-lighter'
+                ? 'border-primary bg-primary/10'
+                : 'border-border hover:border-primary hover:bg-muted'
             )}
           >
             <input {...getInputProps()} />
             {uploadMutation.isPending ? (
               <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-wisebox-primary" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" strokeWidth={1.5} />
                 <span className="text-muted-foreground">{t('documents.uploading')}</span>
               </>
             ) : isDragActive ? (
               <>
-                <FileUp className="h-3.5 w-3.5 text-wisebox-primary" />
-                <span className="text-wisebox-primary">{t('documents.dropFileHere')}</span>
+                <FileUp className="h-3.5 w-3.5 text-primary" strokeWidth={1.5} />
+                <span className="text-primary">{t('documents.dropFileHere')}</span>
               </>
             ) : (
               <>
-                <Upload className="h-3.5 w-3.5 text-muted-foreground" />
+                <Upload className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.5} />
                 <span className="text-muted-foreground">
                   {t('documents.clickOrDragUpload', { size: docType.max_file_size_mb })}
                 </span>
@@ -460,7 +460,7 @@ function DocumentRow({
             )}
           </div>
           {uploadError && (
-            <p className="text-xs text-red-600 mt-1">{uploadError}</p>
+            <p className="text-xs text-wisebox-status-danger mt-1">{uploadError}</p>
           )}
         </div>
       )}

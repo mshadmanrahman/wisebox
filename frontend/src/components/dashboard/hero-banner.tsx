@@ -1,11 +1,8 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useTranslation } from "react-i18next"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 export interface HeroSlide {
@@ -60,108 +57,48 @@ function resolveHeroCtaHref(
 
 export function DashboardHeroBanner({
   slides,
-  autoRotate = true,
-  rotationInterval = 30000,
   className,
 }: DashboardHeroBannerProps) {
-  const [activeSlide, setActiveSlide] = React.useState(0)
-
-  React.useEffect(() => {
-    if (!autoRotate || slides.length < 2) {
-      return
-    }
-
-    const interval = window.setInterval(() => {
-      setActiveSlide((current) => (current + 1) % slides.length)
-    }, rotationInterval)
-
-    return () => window.clearInterval(interval)
-  }, [slides.length, autoRotate, rotationInterval])
-
-  React.useEffect(() => {
-    if (activeSlide > Math.max(0, slides.length - 1)) {
-      setActiveSlide(0)
-    }
-  }, [activeSlide, slides.length])
-
   const { t } = useTranslation(['dashboard', 'common'])
-  const currentSlide = slides[activeSlide] ?? null
+  // Use first slide data if available, otherwise show defaults
+  const currentSlide = slides[0] ?? null
   const heroCtaHref = resolveHeroCtaHref(currentSlide?.cta_url, '/properties/new')
 
   return (
-    <Card className={cn("border-wisebox-primary-100 overflow-hidden", className)}>
-      <CardContent className="p-0">
-        <div
-          className="bg-gradient-to-r from-wisebox-primary-700 via-wisebox-primary-600 to-wisebox-primary-500 text-white p-8 sm:p-10 min-h-[220px] flex flex-col justify-between"
-          style={
-            currentSlide?.background_color
-              ? { background: currentSlide.background_color }
-              : undefined
-          }
-        >
-          <div className="flex items-center gap-8">
-            {/* Left: text content */}
-            <div className="flex-1 space-y-3">
-              <p className="text-white/80 text-sm uppercase tracking-[0.08em]">
-                {t('dashboard:heroBanner.label')}
-              </p>
-              <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
-                {currentSlide?.title ?? t('dashboard:heroBanner.defaultTitle')}
-              </h1>
-              {currentSlide?.subtitle && (
-                <p className="text-white/90 text-sm sm:text-base">
-                  {currentSlide.subtitle}
-                </p>
-              )}
-              <div className="pt-5 flex flex-wrap items-center gap-3">
-                <Button asChild className="bg-white text-wisebox-primary-700 hover:bg-white/90">
-                  <Link href={heroCtaHref}>
-                    {currentSlide?.cta_text || t('dashboard:addNewProperty')}
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-white/50 bg-transparent text-white hover:bg-white/10 hover:text-white"
-                >
-                  <Link href="/assessment/start">{t('dashboard:getFreeAssessment')}</Link>
-                </Button>
-              </div>
-            </div>
+    <div className={cn("relative rounded-3xl overflow-hidden h-44 sm:h-52 md:h-56 bg-primary/5", className)}>
+      {/* Gradient background */}
+      <img src="/images/gradients/gradient-24.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" />
+      {/* Left-heavy overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent dark:from-black/50 dark:via-black/25 dark:to-transparent" />
 
-            {/* Right: optional image */}
-            {currentSlide?.image_path && (
-              <div className="hidden md:block flex-shrink-0 w-[200px] h-[180px] relative">
-                <Image
-                  src={currentSlide.image_path}
-                  alt={currentSlide.image_alt ?? currentSlide.title ?? ""}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Slide indicators */}
-          {slides.length > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-4">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveSlide(index)}
-                  className={cn(
-                    "h-2 rounded-full transition-all",
-                    index === activeSlide
-                      ? "w-8 bg-white"
-                      : "w-2 bg-white/40 hover:bg-white/60"
-                  )}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          )}
+      {/* Content - always white text, left-aligned */}
+      <div className="relative z-10 flex flex-col justify-center h-full p-6 sm:p-8 max-w-md">
+        <p className="text-sm font-medium text-white/70">
+          {t('dashboard:heroBanner.label')}
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold text-white">
+          {currentSlide?.title ?? t('dashboard:heroBanner.defaultTitle')}
+        </h2>
+        {currentSlide?.subtitle && (
+          <p className="mt-2 text-sm text-white/60 leading-relaxed line-clamp-2">
+            {currentSlide.subtitle}
+          </p>
+        )}
+        <div className="flex flex-wrap items-center gap-3 mt-4">
+          <Link
+            href={heroCtaHref}
+            className="bg-white/90 text-gray-900 hover:bg-white rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 inline-flex items-center"
+          >
+            {currentSlide?.cta_text || t('dashboard:addNewProperty')}
+          </Link>
+          <Link
+            href="/assessment/start"
+            className="border border-white/30 text-white hover:bg-white/10 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 inline-flex items-center"
+          >
+            {t('dashboard:getFreeAssessment')}
+          </Link>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

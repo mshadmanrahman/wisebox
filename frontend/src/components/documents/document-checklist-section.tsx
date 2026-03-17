@@ -45,14 +45,14 @@ export function DocumentChecklistSection({
       ? "text-wisebox-status-success"
       : progressPct >= 50
         ? "text-wisebox-status-warning"
-        : "text-wisebox-status-danger"
+        : "text-destructive"
 
   const progressBgColor =
     progressPct >= 80
       ? "bg-wisebox-status-success"
       : progressPct >= 50
         ? "bg-wisebox-status-warning"
-        : "bg-wisebox-status-danger"
+        : "bg-destructive"
 
   const totalAnswered = Object.keys(values).length
   const totalDocs = documents.length
@@ -62,11 +62,11 @@ export function DocumentChecklistSection({
       {showProgress && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold text-wisebox-text-primary">
+            <h3 className="text-base font-semibold text-foreground">
               Document Availability
             </h3>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-wisebox-text-secondary">
+              <span className="text-sm text-muted-foreground">
                 {totalAnswered}/{totalDocs} answered
               </span>
               <span className={cn("text-sm font-semibold", progressColor)}>
@@ -74,13 +74,13 @@ export function DocumentChecklistSection({
               </span>
             </div>
           </div>
-          <div className="relative h-2 bg-wisebox-background-lighter rounded-full overflow-hidden">
+          <div className="relative h-2 bg-muted rounded-full overflow-hidden">
             <div
               className={cn("h-full transition-all duration-300", progressBgColor)}
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <p className="text-xs text-wisebox-text-secondary">
+          <p className="text-xs text-muted-foreground">
             Primary documents are weighted 2x in the score calculation
           </p>
         </div>
@@ -89,10 +89,10 @@ export function DocumentChecklistSection({
       {primaryDocs.length > 0 && (
         <div className="space-y-3">
           <div>
-            <h4 className="text-sm font-semibold text-wisebox-text-primary mb-1">
+            <h4 className="text-sm font-semibold text-foreground mb-1">
               Primary Documents
             </h4>
-            <p className="text-xs text-wisebox-text-secondary">
+            <p className="text-xs text-muted-foreground">
               Essential documents for property verification (weighted 2x)
             </p>
           </div>
@@ -113,10 +113,10 @@ export function DocumentChecklistSection({
       {secondaryDocs.length > 0 && (
         <div className="space-y-3">
           <div>
-            <h4 className="text-sm font-semibold text-wisebox-text-primary mb-1">
+            <h4 className="text-sm font-semibold text-foreground mb-1">
               Secondary Documents
             </h4>
-            <p className="text-xs text-wisebox-text-secondary">
+            <p className="text-xs text-muted-foreground">
               Supporting documents that improve your property score
             </p>
           </div>

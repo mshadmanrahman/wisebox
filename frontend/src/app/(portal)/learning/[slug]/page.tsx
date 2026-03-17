@@ -4,8 +4,6 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, BookOpen, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { ContentRenderer } from '@/components/learning/content-renderer';
 import {
   LEARNING_ARTICLES,
@@ -23,23 +21,24 @@ export default function LearningArticlePage() {
       <div className="px-6 py-8 space-y-4">
         <Link
           href="/learning"
-          className="inline-flex items-center gap-1.5 text-sm text-wisebox-text-secondary hover:text-white transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
           {t('learning.backToLearning')}
         </Link>
-        <Card className="bg-wisebox-background-card border-wisebox-border">
-          <CardContent className="p-8 text-center space-y-3">
-            <BookOpen className="h-10 w-10 text-wisebox-text-muted mx-auto" />
-            <p className="text-white font-medium">{t('learning.articleNotFound')}</p>
-            <p className="text-sm text-wisebox-text-secondary">
-              {t('learning.articleNotFoundDescription')}
-            </p>
-            <Button asChild variant="outline" className="border-wisebox-border text-white hover:bg-wisebox-background-lighter mt-2">
-              <Link href="/learning">{t('learning.browseAllArticles')}</Link>
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="bg-card border border-border rounded-xl p-8 shadow-sm dark:shadow-none text-center space-y-3">
+          <BookOpen className="w-5 h-5 text-muted-foreground mx-auto" strokeWidth={1.5} />
+          <p className="text-base font-medium text-foreground">{t('learning.articleNotFound')}</p>
+          <p className="text-sm text-muted-foreground">
+            {t('learning.articleNotFoundDescription')}
+          </p>
+          <Link
+            href="/learning"
+            className="inline-flex items-center bg-transparent border border-border text-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-muted transition-all duration-200 h-10 mt-2"
+          >
+            {t('learning.browseAllArticles')}
+          </Link>
+        </div>
       </div>
     );
   }
@@ -56,40 +55,38 @@ export default function LearningArticlePage() {
       {/* Back Link */}
       <Link
         href="/learning"
-        className="inline-flex items-center gap-1.5 text-sm text-wisebox-text-secondary hover:text-white transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
         {t('learning.backToLearning')}
       </Link>
 
       {/* Article Header */}
-      <div className={`bg-gradient-to-r ${catMeta.color} rounded-2xl p-6 sm:p-8 space-y-4`}>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-white text-xs font-medium backdrop-blur-sm">
+      <div className="space-y-4">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
           {catMeta.label}
         </span>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground leading-tight">
           {article.title}
         </h1>
-        <p className="text-white/80 text-sm leading-relaxed max-w-2xl">
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
           {article.description}
         </p>
-        <div className="flex items-center gap-1.5 text-white/60 text-xs">
-          <Clock className="h-3.5 w-3.5" />
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Clock className="w-4 h-4" strokeWidth={1.5} />
           {t('learning.minRead', { minutes: article.readTime })}
         </div>
       </div>
 
       {/* Article Content */}
-      <Card className="bg-wisebox-background-card border-wisebox-border">
-        <CardContent className="p-6 sm:p-8">
-          <ContentRenderer blocks={article.content} />
-        </CardContent>
-      </Card>
+      <div className="bg-card border border-border rounded-xl p-8 shadow-sm dark:shadow-none">
+        <ContentRenderer blocks={article.content} />
+      </div>
 
       {/* Related Articles */}
       {relatedArticles.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-base font-medium text-foreground">
             {t('learning.moreIn', { category: catMeta.label })}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -99,17 +96,15 @@ export default function LearningArticlePage() {
                 href={`/learning/${related.slug}`}
                 className="block group"
               >
-                <Card className="bg-wisebox-background-card border-wisebox-border hover:border-wisebox-border-light transition-all h-full">
-                  <CardContent className="p-4 space-y-2">
-                    <h3 className="text-sm font-medium text-white group-hover:text-wisebox-primary transition-colors line-clamp-2">
-                      {related.title}
-                    </h3>
-                    <span className="flex items-center gap-1 text-xs text-wisebox-text-muted">
-                      <Clock className="h-3 w-3" />
-                      {t('learning.min', { count: related.readTime })}
-                    </span>
-                  </CardContent>
-                </Card>
+                <div className="bg-card border border-border rounded-xl p-4 shadow-sm dark:shadow-none hover:border-border/80 dark:hover:border-white/12 transition-all duration-200 h-full space-y-2">
+                  <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                    {related.title}
+                  </h3>
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="w-4 h-4" strokeWidth={1.5} />
+                    {t('learning.min', { count: related.readTime })}
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
@@ -117,19 +112,22 @@ export default function LearningArticlePage() {
       )}
 
       {/* CTA */}
-      <Card className="bg-gradient-to-r from-wisebox-primary/20 via-blue-900/20 to-cyan-900/20 border-wisebox-primary/30">
-        <CardContent className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <h3 className="font-semibold text-white">{t('learning.needHelp')}</h3>
-            <p className="text-sm text-wisebox-text-secondary">
+            <h3 className="text-base font-medium text-foreground">{t('learning.needHelp')}</h3>
+            <p className="text-sm text-muted-foreground">
               {t('learning.needHelpDescription')}
             </p>
           </div>
-          <Button asChild className="bg-white hover:bg-gray-100 text-wisebox-background font-semibold shrink-0">
-            <Link href="/workspace/services">{t('learning.bookFreeConsultation')}</Link>
-          </Button>
-        </CardContent>
-      </Card>
+          <Link
+            href="/workspace/services"
+            className="bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-primary/90 transition-all duration-200 inline-flex items-center h-10 shrink-0"
+          >
+            {t('learning.bookFreeConsultation')}
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

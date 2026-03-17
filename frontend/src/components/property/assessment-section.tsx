@@ -20,9 +20,9 @@ function scoreColor(status: 'red' | 'yellow' | 'green'): string {
 }
 
 function scoreBgColor(status: 'red' | 'yellow' | 'green'): string {
-  if (status === 'green') return 'bg-green-500/10 border-green-500/20';
-  if (status === 'yellow') return 'bg-amber-500/10 border-amber-500/20';
-  return 'bg-red-500/10 border-red-500/20';
+  if (status === 'green') return 'bg-wisebox-status-success/10 border-wisebox-status-success/20';
+  if (status === 'yellow') return 'bg-wisebox-status-warning/10 border-wisebox-status-warning/20';
+  return 'bg-wisebox-status-danger/10 border-wisebox-status-danger/20';
 }
 
 function scoreRingColor(status: 'red' | 'yellow' | 'green'): string {
@@ -56,8 +56,8 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+        <CardTitle className="text-base font-medium flex items-center gap-2">
+          <ShieldCheck className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} />
           {t('assessment.title')}
         </CardTitle>
       </CardHeader>
@@ -71,7 +71,7 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
               scoreRingColor(status)
             )}
           >
-            <span className={cn('text-2xl font-bold', scoreColor(status))}>
+            <span className={cn('text-2xl font-semibold', scoreColor(status))}>
               {pct}
             </span>
             <span className={cn('text-[10px] font-medium', scoreColor(status))}>
@@ -87,14 +87,14 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
             <Button variant="outline" size="sm" asChild>
               <Link href="/workspace/services">
                 {t('assessment.viewServices')}
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
               </Link>
             </Button>
           </div>
         </div>
 
         <div className="space-y-3 border-t pt-4">
-          <h3 className="text-sm font-semibold text-wisebox-text-primary">{t('assessment.history')}</h3>
+          <h3 className="text-sm font-medium text-foreground">{t('assessment.history')}</h3>
           {assessmentHistory.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t('assessment.noAssessments')}</p>
           ) : (
@@ -105,7 +105,7 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
                   className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
                 >
                   <div>
-                    <p className="font-medium text-wisebox-text-primary">{assessment.overall_score}/100</p>
+                    <p className="font-medium text-foreground">{assessment.overall_score}/100</p>
                     <p className="text-xs text-muted-foreground">{assessment.summary || t('assessment.noSummary')}</p>
                   </div>
                   <div className="text-right">

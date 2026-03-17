@@ -11,10 +11,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Order, PaginatedResponse } from '@/types';
 
 function paymentBadgeClass(status: Order['payment_status']): string {
-  if (status === 'paid') return 'bg-green-500/20 text-green-400';
-  if (status === 'pending') return 'bg-amber-500/20 text-amber-400';
-  if (status === 'failed') return 'bg-red-500/20 text-red-400';
-  return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
+  if (status === 'paid') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'pending') return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
+  if (status === 'failed') return 'bg-destructive/20 text-destructive';
+  return 'bg-muted text-muted-foreground';
 }
 
 export default function OrdersPage() {
@@ -39,28 +39,28 @@ export default function OrdersPage() {
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('orders:title')}</h1>
-          <p className="text-wisebox-text-secondary mt-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t('orders:title')}</h1>
+          <p className="text-muted-foreground mt-1">
             {t('orders:subtitle')}
           </p>
           {isFetching && hasData && (
-            <p className="text-xs text-wisebox-text-secondary mt-1">{t('orders:refreshing')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('orders:refreshing')}</p>
           )}
         </div>
-        <Button asChild className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600">
+        <Button asChild className="bg-primary text-primary-foreground rounded-lg transition-all duration-200">
           <Link href="/workspace/services">{t('orders:addServices')}</Link>
         </Button>
       </div>
 
       {isError && !hasData && (
-        <Card className="border-red-200 bg-red-50/60">
+        <Card className="border-destructive/20 bg-destructive/10 rounded-xl">
           <CardContent className="p-6 space-y-3">
-            <div className="flex items-center gap-2 text-red-700 font-medium">
-              <AlertTriangle className="h-4 w-4" />
+            <div className="flex items-center gap-2 text-destructive font-medium">
+              <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
               {t('orders:couldNotLoad')}
             </div>
-            <p className="text-sm text-red-700/90">{errorMessage}</p>
-            <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+            <p className="text-sm text-destructive/90">{errorMessage}</p>
+            <Button variant="outline" onClick={() => refetch()} disabled={isFetching} className="border border-border hover:bg-muted transition-all duration-200">
               {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
@@ -68,12 +68,12 @@ export default function OrdersPage() {
       )}
 
       {isError && hasData && (
-        <Card className="border-amber-200 bg-amber-50/70">
+        <Card className="border-wisebox-status-warning/20 bg-wisebox-status-warning/10 rounded-xl">
           <CardContent className="p-4 flex items-center justify-between gap-3">
-            <p className="text-sm text-amber-800">
+            <p className="text-sm text-wisebox-status-warning">
               {t('common:showingStaleData')} {errorMessage}
             </p>
-            <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
+            <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching} className="border border-border hover:bg-muted transition-all duration-200">
               {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
@@ -81,19 +81,19 @@ export default function OrdersPage() {
       )}
 
       {isLoading && !hasData && (
-        <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('orders:loadingOrders')}</CardContent>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
+          <CardContent className="p-6 text-sm text-muted-foreground">{t('orders:loadingOrders')}</CardContent>
         </Card>
       )}
 
       {!isLoading && !isError && orders.length === 0 && (
-        <Card>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
           <CardContent className="p-6 space-y-3">
-            <h2 className="font-semibold text-wisebox-text-primary">{t('orders:empty.title')}</h2>
-            <p className="text-sm text-wisebox-text-secondary">
+            <h2 className="font-medium text-foreground">{t('orders:empty.title')}</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {t('orders:empty.description')}
             </p>
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="border border-border hover:bg-muted transition-all duration-200">
               <Link href="/workspace/services">{t('orders:browseServices')}</Link>
             </Button>
           </CardContent>
@@ -102,21 +102,21 @@ export default function OrdersPage() {
 
       <div className="grid gap-4">
         {orders.map((order) => (
-          <Card key={order.id}>
+          <Card key={order.id} className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between gap-3">
-                <CardTitle className="text-base">{order.order_number}</CardTitle>
+                <CardTitle className="text-base font-medium text-foreground">{order.order_number}</CardTitle>
                 <Badge className={paymentBadgeClass(order.payment_status)}>{order.payment_status}</Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-wisebox-text-secondary">
-                <p>{t('orders:fields.total')}: <span className="font-medium text-wisebox-text-primary">{order.currency} {Number(order.total).toFixed(2)}</span></p>
-                <p>{t('orders:fields.status')}: <span className="font-medium text-wisebox-text-primary">{order.status}</span></p>
-                <p>{t('orders:fields.date')}: <span className="font-medium text-wisebox-text-primary">{new Date(order.created_at).toLocaleDateString()}</span></p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-muted-foreground">
+                <p>{t('orders:fields.total')}: <span className="font-medium text-foreground">{order.currency} {Number(order.total).toFixed(2)}</span></p>
+                <p>{t('orders:fields.status')}: <span className="font-medium text-foreground">{order.status}</span></p>
+                <p>{t('orders:fields.date')}: <span className="font-medium text-foreground">{new Date(order.created_at).toLocaleDateString()}</span></p>
               </div>
 
-              <Button asChild variant="outline" className="w-full sm:w-auto">
+              <Button asChild variant="outline" className="w-full sm:w-auto border border-border hover:bg-muted transition-all duration-200">
                 <Link href={`/orders/${order.id}`}>{t('orders:viewOrder')}</Link>
               </Button>
             </CardContent>

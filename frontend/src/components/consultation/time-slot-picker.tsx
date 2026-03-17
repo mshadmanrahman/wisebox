@@ -137,20 +137,20 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
   return (
     <div className="space-y-6">
       {/* Instructions */}
-      <Card className="bg-wisebox-background-card border-wisebox-primary/30">
+      <Card className="bg-card border border-primary/30">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base text-white flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-wisebox-primary" />
+          <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-primary" strokeWidth={1.5} />
             {t('timeSlot.title')}
           </CardTitle>
-          <CardDescription className="text-wisebox-text-secondary">
+          <CardDescription className="text-muted-foreground">
             {t('timeSlot.description', { min: minSlots, max: maxSlots })}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {!hasEnoughSlots && (
             <div className="flex items-start gap-2 p-3 bg-wisebox-status-warning/10 border border-wisebox-status-warning/30 rounded-lg">
-              <AlertCircle className="h-4 w-4 text-wisebox-status-warning shrink-0 mt-0.5" />
+              <AlertCircle className="h-4 w-4 text-wisebox-status-warning shrink-0 mt-0.5" strokeWidth={1.5} />
               <p className="text-sm text-wisebox-status-warning">
                 {t('timeSlot.selectAtLeast', { min: minSlots, remaining: minSlots - selectedSlots.length })}
               </p>
@@ -158,7 +158,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
           )}
           {hasEnoughSlots && (
             <div className="flex items-start gap-2 p-3 bg-wisebox-status-success/10 border border-wisebox-status-success/30 rounded-lg">
-              <CheckCircle2 className="h-4 w-4 text-wisebox-status-success shrink-0 mt-0.5" />
+              <CheckCircle2 className="h-4 w-4 text-wisebox-status-success shrink-0 mt-0.5" strokeWidth={1.5} />
               <p className="text-sm text-wisebox-status-success">
                 {t('timeSlot.selectedCount', { count: selectedSlots.length })}
                 {selectedSlots.length < maxSlots && ` ${t('timeSlot.canSelectMore', { remaining: maxSlots - selectedSlots.length })}`}
@@ -169,9 +169,9 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
       </Card>
 
       {/* Date Selector */}
-      <Card className="bg-wisebox-background-card border-wisebox-border">
+      <Card className="bg-card border border-border">
         <CardHeader>
-          <CardTitle className="text-base text-white">{t('timeSlot.chooseDate')}</CardTitle>
+          <CardTitle className="text-base font-medium text-foreground">{t('timeSlot.chooseDate')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
@@ -186,23 +186,23 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
                   key={date.toISOString()}
                   onClick={() => handleDateSelect(date)}
                   className={cn(
-                    'relative p-3 rounded-lg border-2 transition-all text-center',
+                    'relative p-3 rounded-lg border-2 transition-all duration-200 text-center',
                     isSelected
-                      ? 'border-wisebox-primary bg-wisebox-primary/10'
-                      : 'border-wisebox-border hover:border-wisebox-border-light bg-wisebox-background-lighter',
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-border bg-muted',
                     hasSlots && !isSelected && 'ring-2 ring-wisebox-status-success/30'
                   )}
                 >
                   {hasSlots && !isSelected && (
                     <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-wisebox-status-success" />
                   )}
-                  <p className={cn('text-xs font-medium', isSelected ? 'text-wisebox-primary' : 'text-wisebox-text-secondary')}>
+                  <p className={cn('text-xs font-medium', isSelected ? 'text-primary' : 'text-muted-foreground')}>
                     {date.toLocaleDateString('en-GB', { weekday: 'short' })}
                   </p>
-                  <p className={cn('text-lg font-bold mt-1', isSelected ? 'text-white' : 'text-white')}>
+                  <p className={cn('text-lg font-medium mt-1', 'text-foreground')}>
                     {date.getDate()}
                   </p>
-                  <p className={cn('text-xs', isSelected ? 'text-wisebox-primary' : 'text-wisebox-text-muted')}>
+                  <p className={cn('text-xs', isSelected ? 'text-primary' : 'text-muted-foreground')}>
                     {date.toLocaleDateString('en-GB', { month: 'short' })}
                   </p>
                 </button>
@@ -214,13 +214,13 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
 
       {/* Time Slot Selector */}
       {selectedDate && (
-        <Card className="bg-wisebox-background-card border-wisebox-border">
+        <Card className="bg-card border border-border">
           <CardHeader>
-            <CardTitle className="text-base text-white flex items-center gap-2">
-              <Clock className="h-4 w-4" />
+            <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
+              <Clock className="h-4 w-4" strokeWidth={1.5} />
               {t('timeSlot.chooseTimeSlots', { date: formatDate(selectedDate) })}
             </CardTitle>
-            <CardDescription className="text-wisebox-text-secondary">
+            <CardDescription className="text-muted-foreground">
               {t('timeSlot.timezoneNote')}
             </CardDescription>
           </CardHeader>
@@ -235,15 +235,15 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
                     onClick={() => handleTimeSelect(time)}
                     disabled={!isSelected && selectedSlots.length >= maxSlots}
                     className={cn(
-                      'p-3 rounded-lg border transition-all text-center',
+                      'p-3 rounded-lg border transition-all duration-200 text-center',
                       isSelected
                         ? 'border-wisebox-status-success bg-wisebox-status-success/10 text-wisebox-status-success'
-                        : 'border-wisebox-border hover:border-wisebox-primary bg-wisebox-background-lighter text-white',
+                        : 'border-border hover:border-primary bg-muted text-foreground',
                       !isSelected && selectedSlots.length >= maxSlots && 'opacity-50 cursor-not-allowed'
                     )}
                   >
                     <div className="flex items-center justify-center gap-2">
-                      {isSelected && <CheckCircle2 className="h-3 w-3" />}
+                      {isSelected && <CheckCircle2 className="h-3 w-3" strokeWidth={1.5} />}
                       <span className="text-sm font-medium">{formatTime(time)}</span>
                     </div>
                   </button>
@@ -256,10 +256,10 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
 
       {/* Selected Slots Summary */}
       {selectedSlots.length > 0 && (
-        <Card className="bg-wisebox-background-card border-wisebox-border">
+        <Card className="bg-card border border-border">
           <CardHeader>
-            <CardTitle className="text-base text-white">{t('timeSlot.selectedSlots')}</CardTitle>
-            <CardDescription className="text-wisebox-text-secondary">
+            <CardTitle className="text-base font-medium text-foreground">{t('timeSlot.selectedSlots')}</CardTitle>
+            <CardDescription className="text-muted-foreground">
               {t('timeSlot.confirmNote')}
             </CardDescription>
           </CardHeader>
@@ -268,17 +268,17 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
               {selectedSlots.map((slot, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-wisebox-background-lighter border border-wisebox-border rounded-lg"
+                  className="flex items-center justify-between p-3 bg-muted border border-border rounded-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30">
+                    <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30">
                       #{index + 1}
                     </Badge>
-                    <span className="text-sm text-white">{slot.display}</span>
+                    <span className="text-sm text-foreground">{slot.display}</span>
                   </div>
                   <button
                     onClick={() => removeSlot(index)}
-                    className="text-xs text-wisebox-text-secondary hover:text-red-400 transition-colors"
+                    className="text-xs text-muted-foreground hover:text-wisebox-status-danger transition-colors duration-200"
                   >
                     {t('timeSlot.remove')}
                   </button>

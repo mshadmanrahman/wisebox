@@ -62,29 +62,29 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-900">
+    <div className="min-h-screen flex bg-background">
       {/* Left side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 bg-gradient-icon-secondary rounded-lg flex items-center justify-center">
+              <Shield className="w-5 h-5 text-foreground" />
             </div>
-            <span className="text-xl font-semibold text-white">{t('login.brand')}</span>
+            <span className="text-xl font-semibold text-foreground">{t('login.brand')}</span>
           </div>
 
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">{t('login.title')}</h1>
-            <p className="text-slate-400">
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('login.title')}</h1>
+            <p className="text-muted-foreground">
               {t('login.subtitle')}
             </p>
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
               {error}
             </div>
           )}
@@ -92,7 +92,7 @@ export default function AdminLoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white text-sm font-medium">
+              <Label htmlFor="email" className="text-foreground text-sm font-medium">
                 {t('login.emailLabel')}
               </Label>
               <Input
@@ -100,14 +100,14 @@ export default function AdminLoginPage() {
                 type="email"
                 placeholder={t('login.emailPlaceholder')}
                 autoComplete="email"
-                className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 h-12"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('email')}
               />
-              {errors.email && <p className="text-sm text-red-400">{errors.email.message}</p>}
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white text-sm font-medium">
+              <Label htmlFor="password" className="text-foreground text-sm font-medium">
                 {t('login.passwordLabel')}
               </Label>
               <div className="relative">
@@ -116,25 +116,25 @@ export default function AdminLoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t('login.passwordPlaceholder')}
                   autoComplete="current-password"
-                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 h-12"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                   {...register('password')}
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-400">{errors.password.message}</p>
+                <p className="text-sm text-destructive">{errors.password.message}</p>
               )}
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white h-12 font-semibold"
+              className="w-full bg-wisebox-secondary hover:bg-wisebox-secondary/90 text-foreground h-12 font-semibold"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -147,21 +147,21 @@ export default function AdminLoginPage() {
               )}
             </Button>
 
-            <p className="text-center text-sm text-slate-500">
+            <p className="text-center text-sm text-muted-foreground">
               {t('login.notAdmin')}{' '}
-              <Link href="/login" className="text-amber-400 font-medium hover:underline">
+              <Link href="/login" className="text-wisebox-secondary font-medium hover:underline">
                 {t('login.userLogin')}
               </Link>
               {' | '}
-              <Link href="/login/consultant" className="text-amber-400 font-medium hover:underline">
+              <Link href="/login/consultant" className="text-wisebox-secondary font-medium hover:underline">
                 {t('login.consultantLogin')}
               </Link>
             </p>
           </form>
 
           {/* Footer */}
-          <div className="pt-8 border-t border-slate-800">
-            <p className="text-xs text-slate-600 text-center">
+          <div className="pt-8 border-t border-border">
+            <p className="text-xs text-muted-foreground text-center">
               {t('login.footer')}
             </p>
           </div>
@@ -169,26 +169,26 @@ export default function AdminLoginPage() {
       </div>
 
       {/* Right side - Admin Info */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-amber-600 to-orange-700 p-12 items-center justify-center">
-        <div className="max-w-md text-white space-y-8">
-          <Shield className="w-16 h-16 text-white/80" />
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-auth-admin p-12 items-center justify-center">
+        <div className="max-w-md text-foreground space-y-8">
+          <Shield className="w-16 h-16 text-foreground/80" />
           <h2 className="text-3xl font-bold">{t('login.sideTitle')}</h2>
-          <div className="space-y-4 text-amber-100">
+          <div className="space-y-4 text-foreground/90">
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">1</span>
+                <span className="text-foreground text-xs font-bold">1</span>
               </div>
               <p>{t('login.sideStep1')}</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">2</span>
+                <span className="text-foreground text-xs font-bold">2</span>
               </div>
               <p>{t('login.sideStep2')}</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">3</span>
+                <span className="text-foreground text-xs font-bold">3</span>
               </div>
               <p>{t('login.sideStep3')}</p>
             </div>

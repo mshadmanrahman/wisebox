@@ -28,8 +28,8 @@ export default function OrderConfirmationPage() {
   if (isLoading || !order) {
     return (
       <div className="px-6 py-8">
-        <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('orders:confirmation.loading')}</CardContent>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
+          <CardContent className="p-6 text-sm text-muted-foreground">{t('orders:confirmation.loading')}</CardContent>
         </Card>
       </div>
     );
@@ -39,46 +39,46 @@ export default function OrderConfirmationPage() {
 
   return (
     <div className="px-6 py-8">
-      <Card>
+      <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-base font-medium text-foreground">
             {paid ? (
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <CheckCircle2 className="h-5 w-5 text-wisebox-status-success" strokeWidth={1.5} />
             ) : (
-              <Clock3 className="h-5 w-5 text-amber-600" />
+              <Clock3 className="h-5 w-5 text-wisebox-status-warning" strokeWidth={1.5} />
             )}
             {paid ? t('orders:confirmation.paymentConfirmed') : t('orders:confirmation.paymentProcessing')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-wisebox-text-secondary">
-            {t('orders:confirmation.orderLabel')} <span className="font-medium text-wisebox-text-primary">{order.order_number}</span>
+          <p className="text-sm text-muted-foreground">
+            {t('orders:confirmation.orderLabel')} <span className="font-medium text-foreground">{order.order_number}</span>
           </p>
 
           {paid ? (
-            <p className="text-sm text-wisebox-text-secondary">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {t('orders:confirmation.paymentReceived')}
             </p>
           ) : (
-            <p className="text-sm text-wisebox-text-secondary">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {t('orders:confirmation.waitingForPayment')}
             </p>
           )}
 
-          <div className="rounded-md border bg-wisebox-background-lighter px-4 py-3 text-sm">
-            <p className="text-wisebox-text-secondary">
-              {t('orders:detail.total')}: <span className="font-semibold text-wisebox-text-primary">{order.currency} {Number(order.total).toFixed(2)}</span>
+          <div className="rounded-lg border border-border bg-muted px-4 py-3 text-sm">
+            <p className="text-muted-foreground">
+              {t('orders:detail.total')}: <span className="font-medium text-foreground">{order.currency} {Number(order.total).toFixed(2)}</span>
             </p>
-            <p className="text-wisebox-text-secondary mt-1">
-              {t('orders:confirmation.paymentStatus')}: <span className="font-semibold text-wisebox-text-primary">{order.payment_status}</span>
+            <p className="text-muted-foreground mt-1">
+              {t('orders:confirmation.paymentStatus')}: <span className="font-medium text-foreground">{order.payment_status}</span>
             </p>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <Button asChild className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600">
+            <Button asChild className="bg-primary text-primary-foreground rounded-lg transition-all duration-200">
               <Link href="/orders">{t('orders:detail.backToOrders')}</Link>
             </Button>
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="border border-border hover:bg-muted transition-all duration-200">
               <Link href="/workspace/services">{t('orders:confirmation.bookMoreServices')}</Link>
             </Button>
           </div>

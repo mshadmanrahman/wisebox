@@ -67,6 +67,9 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
         className,
       )}
     >
+      {/* Gradient base layer */}
+      <Image src="/images/gradients/gradient-19.jpg" alt="" fill className="object-cover" sizes="50vw" priority />
+
       {/* Full-bleed photo backgrounds */}
       {testimonials.map((slide, i) => (
         <div
@@ -97,7 +100,7 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
             key={active}
             className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm animate-in fade-in duration-500"
           >
-            <MapPin className="w-4 h-4" />
+            <MapPin className="w-4 h-4" strokeWidth={1.5} />
             <span>{t.location}</span>
           </div>
         </div>

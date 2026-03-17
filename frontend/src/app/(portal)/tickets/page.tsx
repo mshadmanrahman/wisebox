@@ -14,11 +14,11 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { PaginatedResponse, Ticket, TicketStatus } from '@/types';
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-500/20 text-green-400';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
-  if (status === 'scheduled') return 'bg-purple-100 text-purple-700';
-  if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
-  return 'bg-amber-500/20 text-amber-400';
+  if (status === 'completed') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-wisebox-status-info/20 text-wisebox-status-info';
+  if (status === 'scheduled') return 'bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled';
+  if (status === 'cancelled') return 'bg-muted text-muted-foreground';
+  return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
 }
 
 export default function TicketsPage() {
@@ -56,22 +56,22 @@ export default function TicketsPage() {
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('tickets:title')}</h1>
-          <p className="mt-1 text-wisebox-text-secondary">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t('tickets:title')}</h1>
+          <p className="mt-1 text-muted-foreground">
             {isConsultant
               ? t('tickets:subtitleConsultant')
               : t('tickets:subtitleCustomer')}
           </p>
           {isFetching && hasData && (
-            <p className="text-xs text-wisebox-text-secondary mt-1">{t('tickets:refreshing')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('tickets:refreshing')}</p>
           )}
         </div>
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" className="border border-border hover:bg-muted transition-all duration-200">
           <Link href="/orders">{t('tickets:viewOrders')}</Link>
         </Button>
       </div>
 
-      <Card>
+      <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
         <CardContent className="pt-6 space-y-4">
           <Tabs
             value={statusFilter}
@@ -92,10 +92,10 @@ export default function TicketsPage() {
             <div className="flex items-center gap-2 text-sm">
               <button
                 type="button"
-                className={`px-3 py-1.5 rounded-md border ${
+                className={`px-3 py-1.5 rounded-md border transition-all duration-200 ${
                   assignedFilter === 'all'
-                    ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
-                    : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
+                    ? 'bg-primary/10 text-primary border-primary/20'
+                    : 'bg-card text-muted-foreground border-border'
                 }`}
                 onClick={() => setAssignedFilter('all')}
               >
@@ -103,10 +103,10 @@ export default function TicketsPage() {
               </button>
               <button
                 type="button"
-                className={`px-3 py-1.5 rounded-md border ${
+                className={`px-3 py-1.5 rounded-md border transition-all duration-200 ${
                   assignedFilter === 'assigned'
-                    ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
-                    : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
+                    ? 'bg-primary/10 text-primary border-primary/20'
+                    : 'bg-card text-muted-foreground border-border'
                 }`}
                 onClick={() => setAssignedFilter('assigned')}
               >
@@ -114,10 +114,10 @@ export default function TicketsPage() {
               </button>
               <button
                 type="button"
-                className={`px-3 py-1.5 rounded-md border ${
+                className={`px-3 py-1.5 rounded-md border transition-all duration-200 ${
                   assignedFilter === 'unassigned'
-                    ? 'bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200'
-                    : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
+                    ? 'bg-primary/10 text-primary border-primary/20'
+                    : 'bg-card text-muted-foreground border-border'
                 }`}
                 onClick={() => setAssignedFilter('unassigned')}
               >
@@ -129,14 +129,14 @@ export default function TicketsPage() {
       </Card>
 
       {isError && !hasData && (
-        <Card className="border-red-200 bg-red-50/60">
+        <Card className="border-destructive/20 bg-destructive/10 rounded-xl">
           <CardContent className="p-6 space-y-3">
-            <div className="flex items-center gap-2 text-red-700 font-medium">
-              <AlertTriangle className="h-4 w-4" />
+            <div className="flex items-center gap-2 text-destructive font-medium">
+              <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
               {t('tickets:couldNotLoad')}
             </div>
-            <p className="text-sm text-red-700/90">{errorMessage}</p>
-            <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+            <p className="text-sm text-destructive/90">{errorMessage}</p>
+            <Button variant="outline" onClick={() => refetch()} disabled={isFetching} className="border border-border hover:bg-muted transition-all duration-200">
               {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
@@ -144,12 +144,12 @@ export default function TicketsPage() {
       )}
 
       {isError && hasData && (
-        <Card className="border-amber-200 bg-amber-50/70">
+        <Card className="border-wisebox-status-warning/20 bg-wisebox-status-warning/10 rounded-xl">
           <CardContent className="p-4 flex items-center justify-between gap-3">
-            <p className="text-sm text-amber-800">
+            <p className="text-sm text-wisebox-status-warning">
               {t('common:showingStaleData')} {errorMessage}
             </p>
-            <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
+            <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching} className="border border-border hover:bg-muted transition-all duration-200">
               {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
           </CardContent>
@@ -157,19 +157,19 @@ export default function TicketsPage() {
       )}
 
       {isLoading && !hasData && (
-        <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('tickets:loadingTickets')}</CardContent>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
+          <CardContent className="p-6 text-sm text-muted-foreground">{t('tickets:loadingTickets')}</CardContent>
         </Card>
       )}
 
       {!isLoading && !isError && tickets.length === 0 && (
-        <Card>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
           <CardContent className="p-6 space-y-3">
-            <h2 className="font-semibold text-wisebox-text-primary">{t('tickets:empty.title')}</h2>
-            <p className="text-sm text-wisebox-text-secondary">
+            <h2 className="font-medium text-foreground">{t('tickets:empty.title')}</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {t('tickets:empty.description')}
             </p>
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="border border-border hover:bg-muted transition-all duration-200">
               <Link href="/workspace/services">{t('tickets:empty.bookServices')}</Link>
             </Button>
           </CardContent>
@@ -178,49 +178,49 @@ export default function TicketsPage() {
 
       <div className="grid gap-4">
         {tickets.map((ticket) => (
-          <Card key={ticket.id}>
+          <Card key={ticket.id} className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between gap-3">
-                <CardTitle className="text-base">{ticket.ticket_number}</CardTitle>
+                <CardTitle className="text-base font-medium text-foreground">{ticket.ticket_number}</CardTitle>
                 <Badge className={statusBadgeClass(ticket.status)}>{ticket.status}</Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="font-medium text-wisebox-text-primary">{ticket.title}</p>
+              <p className="font-medium text-foreground">{ticket.title}</p>
               {ticket.description && (
-                <p className="text-sm text-wisebox-text-secondary line-clamp-2">{ticket.description}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{ticket.description}</p>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-wisebox-text-secondary">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
                 <p>
-                  {t('tickets:fields.priority')}: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
+                  {t('tickets:fields.priority')}: <span className="font-medium text-foreground">{ticket.priority}</span>
                 </p>
                 <p>
-                  {t('tickets:fields.updated')}: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.updated_at).toLocaleString()}</span>
+                  {t('tickets:fields.updated')}: <span className="font-medium text-foreground">{new Date(ticket.updated_at).toLocaleString()}</span>
                 </p>
                 {ticket.property?.property_name && (
                   <p>
-                    {t('tickets:fields.property')}: <span className="font-medium text-wisebox-text-primary">{ticket.property.property_name}</span>
+                    {t('tickets:fields.property')}: <span className="font-medium text-foreground">{ticket.property.property_name}</span>
                   </p>
                 )}
                 {ticket.service?.name && (
                   <p>
-                    {t('tickets:fields.service')}: <span className="font-medium text-wisebox-text-primary">{ticket.service.name}</span>
+                    {t('tickets:fields.service')}: <span className="font-medium text-foreground">{ticket.service.name}</span>
                   </p>
                 )}
                 {ticket.customer?.name && (
                   <p>
-                    {t('tickets:fields.customer')}: <span className="font-medium text-wisebox-text-primary">{ticket.customer.name}</span>
+                    {t('tickets:fields.customer')}: <span className="font-medium text-foreground">{ticket.customer.name}</span>
                   </p>
                 )}
                 {ticket.consultant?.name && (
                   <p>
-                    {t('tickets:fields.consultant')}: <span className="font-medium text-wisebox-text-primary">{ticket.consultant.name}</span>
+                    {t('tickets:fields.consultant')}: <span className="font-medium text-foreground">{ticket.consultant.name}</span>
                   </p>
                 )}
               </div>
 
-              <Button asChild variant="outline" className="w-full sm:w-auto">
+              <Button asChild variant="outline" className="w-full sm:w-auto border border-border hover:bg-muted transition-all duration-200">
                 <Link href={`/tickets/${ticket.id}`}>{t('tickets:openTicket')}</Link>
               </Button>
             </CardContent>

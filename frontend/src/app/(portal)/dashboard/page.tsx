@@ -10,7 +10,6 @@ import { PropertyCard } from '@/components/property/property-card';
 import { DashboardHeroBanner } from '@/components/dashboard/hero-banner';
 import type { HeroSlide } from '@/components/dashboard/hero-banner';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import type { ApiResponse, DashboardSummary } from '@/types';
 
 
@@ -57,11 +56,11 @@ export default function DashboardPage() {
   if (isLoading && !hasSummary) {
     return (
       <div className="px-6 py-8">
-        <Card className="bg-wisebox-background-card border-wisebox-border">
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">
+        <div className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none">
+          <p className="text-sm text-muted-foreground">
             {t('dashboard:loadingSummary')}
-          </CardContent>
-        </Card>
+          </p>
+        </div>
       </div>
     );
   }
@@ -69,18 +68,20 @@ export default function DashboardPage() {
   if (isError && !hasSummary) {
     return (
       <div className="px-6 py-8 space-y-4">
-        <h1 className="text-2xl font-bold text-white">{t('dashboard:title')}</h1>
-        <Card className="border-red-500/20 bg-red-500/10">
-          <CardContent className="p-6 space-y-3">
-            <p className="text-red-400 font-medium">
-              {t('dashboard:couldNotLoad')}
-            </p>
-            <p className="text-sm text-red-400/90">{errorMessage}</p>
-            <Button variant="outline" onClick={() => refetch()} disabled={isFetching} className="border-wisebox-border text-white hover:bg-wisebox-background-lighter">
-              {isFetching ? t('common:retrying') : t('common:retry')}
-            </Button>
-          </CardContent>
-        </Card>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t('dashboard:title')}</h1>
+        <div className="bg-card border border-destructive/20 rounded-xl p-6 shadow-sm dark:shadow-none space-y-3">
+          <p className="text-sm font-medium text-destructive">
+            {t('dashboard:couldNotLoad')}
+          </p>
+          <p className="text-sm text-muted-foreground">{errorMessage}</p>
+          <button
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="bg-transparent border border-border text-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-muted transition-all duration-200 h-10"
+          >
+            {isFetching ? t('common:retrying') : t('common:retry')}
+          </button>
+        </div>
       </div>
     );
   }
@@ -90,22 +91,22 @@ export default function DashboardPage() {
       {/* Greeting */}
       <div className="flex items-start justify-between gap-6">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-white">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             {user?.name
               ? t('dashboard:greeting', { name: user.name })
               : t('dashboard:greetingFallback')}
           </h1>
-          <p className="text-base text-wisebox-text-secondary">
+          <p className="text-sm text-muted-foreground">
             {topProperties.length === 0
               ? t('dashboard:noPropertiesSubtitle')
               : t('dashboard:propertiesCount', { count: topProperties.length })}
           </p>
           {topProperties.length === 0 && (
             <div className="flex items-center gap-3 pt-2">
-              <Button asChild className="bg-white hover:bg-gray-100 text-wisebox-background font-semibold">
+              <Button asChild className="bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-primary/90 transition-all duration-200 h-10">
                 <Link href="/properties/new">{t('dashboard:addNewProperty')}</Link>
               </Button>
-              <Button asChild variant="outline" className="border-wisebox-border text-white hover:bg-wisebox-background-lighter">
+              <Button asChild variant="outline" className="bg-transparent border border-border text-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-muted transition-all duration-200 h-10">
                 <Link href="/assessment/start">{t('dashboard:getFreeAssessment')}</Link>
               </Button>
             </div>
@@ -113,14 +114,14 @@ export default function DashboardPage() {
         </div>
         {topProperties.length > 0 && (
           <Link href="/properties/new">
-            <div className="bg-gradient-to-br from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 rounded-xl border border-slate-600/50 p-5 transition-all cursor-pointer group min-w-[320px] shadow-md hover:shadow-lg">
+            <div className="bg-card border border-border rounded-xl p-5 shadow-sm dark:shadow-none hover:border-border/80 dark:hover:border-white/12 transition-all duration-200 cursor-pointer group min-w-[320px]">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-white font-semibold text-base">{t('dashboard:addNewProperty')}</p>
-                  <p className="text-slate-400 text-xs mt-1.5">{t('dashboard:completionTime')}</p>
+                  <p className="text-base font-medium text-foreground">{t('dashboard:addNewProperty')}</p>
+                  <p className="text-sm text-muted-foreground mt-1.5">{t('dashboard:completionTime')}</p>
                 </div>
-                <div className="bg-slate-600/50 group-hover:bg-slate-500/50 rounded-lg p-3 transition-colors">
-                  <Plus className="h-5 w-5 text-white" />
+                <div className="bg-muted group-hover:bg-muted/80 rounded-lg p-3 transition-colors">
+                  <Plus className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                 </div>
               </div>
             </div>
@@ -129,90 +130,60 @@ export default function DashboardPage() {
       </div>
 
       {isError && hasSummary && (
-        <Card className="border-amber-500/20 bg-amber-500/10 rounded-xl">
-          <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-amber-400">
-              {t('common:showingStaleData')} {errorMessage}
-            </p>
-            <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching} className="border-wisebox-border text-white hover:bg-wisebox-background-lighter">
-              {isFetching ? t('common:retrying') : t('common:retry')}
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="bg-card border border-border rounded-xl p-4 shadow-sm dark:shadow-none flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            {t('common:showingStaleData')} {errorMessage}
+          </p>
+          <button
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="bg-transparent border border-border text-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-muted transition-all duration-200 h-10"
+          >
+            {isFetching ? t('common:retrying') : t('common:retry')}
+          </button>
+        </div>
       )}
 
       {/* Hero Banner */}
       <DashboardHeroBanner
         slides={heroSlides}
         rotationInterval={5000}
-        className="rounded-2xl shadow-xl"
       />
 
       {/* Guide Section */}
-      <div className="space-y-5">
-        <p className="text-wisebox-text-secondary text-base">
-          {t('common:letsGetStarted')}
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <Link href="/workspace/services" className="block group">
-            <div className="bg-wisebox-background-card border border-wisebox-border rounded-xl p-6 hover:border-wisebox-border-light transition-all hover:shadow-lg">
-              <div className="flex items-start gap-4">
-                <div className="bg-wisebox-background-lighter rounded-lg p-3 group-hover:bg-wisebox-primary/20 transition-colors">
-                  <Compass className="h-6 w-6 text-white" />
+      <section className="space-y-4">
+        <h2 className="text-base font-medium text-foreground">{t('common:letsGetStarted')}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { href: '/workspace/services', icon: Compass, title: t('dashboard:exploreServices'), desc: t('dashboard:exploreServicesDesc') },
+            { href: '/workspace/services', icon: Sparkles, title: t('dashboard:talkToExpert'), desc: t('dashboard:talkToExpertDesc') },
+            { href: '/learning', icon: BookOpen, title: t('dashboard:learningCenter'), desc: t('dashboard:learningCenterDesc') },
+          ].map((card) => {
+            const Icon = card.icon;
+            return (
+              <Link key={card.title} href={card.href} className="block group">
+                <div className="h-full bg-card border border-border rounded-2xl p-6 shadow-md dark:shadow-none transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:hover:border-white/12">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                    <Icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-base font-medium text-foreground">{card.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-1.5">{card.desc}</p>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-white mb-2 text-base">{t('dashboard:exploreServices')}</h3>
-                  <p className="text-sm text-wisebox-text-secondary leading-relaxed">
-                    {t('dashboard:exploreServicesDesc')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          <Link href="/workspace/services" className="block group">
-            <div className="bg-wisebox-background-card border border-wisebox-border rounded-xl p-6 hover:border-wisebox-border-light transition-all hover:shadow-lg">
-              <div className="flex items-start gap-4">
-                <div className="bg-wisebox-background-lighter rounded-lg p-3 group-hover:bg-wisebox-primary/20 transition-colors">
-                  <Sparkles className="h-6 w-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-white mb-2 text-base">{t('dashboard:talkToExpert')}</h3>
-                  <p className="text-sm text-wisebox-text-secondary leading-relaxed">
-                    {t('dashboard:talkToExpertDesc')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          <Link href="/learning" className="block group">
-            <div className="bg-wisebox-background-card border border-wisebox-border rounded-xl p-6 hover:border-wisebox-border-light transition-all hover:shadow-lg">
-              <div className="flex items-start gap-4">
-                <div className="bg-wisebox-background-lighter rounded-lg p-3 group-hover:bg-wisebox-primary/20 transition-colors">
-                  <BookOpen className="h-6 w-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-white mb-2 text-base">{t('dashboard:learningCenter')}</h3>
-                  <p className="text-sm text-wisebox-text-secondary leading-relaxed">
-                    {t('dashboard:learningCenterDesc')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Link>
+              </Link>
+            );
+          })}
         </div>
-      </div>
+      </section>
 
       {/* Property Grid (only when properties exist) */}
       {topProperties.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">{t('dashboard:myProperties')}</h2>
-            <Button asChild variant="ghost" className="text-wisebox-primary hover:bg-wisebox-background-lighter">
+            <h2 className="text-base font-medium text-foreground">{t('dashboard:myProperties')}</h2>
+            <Button asChild variant="ghost" className="text-primary hover:bg-muted">
               <Link href="/properties">
                 {t('common:viewAll')}
-                <ArrowRight className="h-4 w-4 ml-1" />
+                <ArrowRight className="w-4 h-4 ml-1" strokeWidth={1.5} />
               </Link>
             </Button>
           </div>

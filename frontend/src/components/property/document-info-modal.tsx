@@ -30,10 +30,10 @@ export function DocumentInfoModal({
   if (!info) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="bg-wisebox-background-card border-wisebox-border text-white max-w-lg">
+        <DialogContent className="bg-card border-border text-foreground max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-white">{documentTypeName}</DialogTitle>
-            <DialogDescription className="text-wisebox-text-secondary">
+            <DialogTitle className="text-foreground">{documentTypeName}</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               {t('documents.noAdditionalGuidance')}
             </DialogDescription>
           </DialogHeader>
@@ -44,52 +44,52 @@ export function DocumentInfoModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-wisebox-background-card border-wisebox-border text-white max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="bg-card border-border text-foreground max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-white">
+          <DialogTitle className="text-foreground">
             {info.nameEn}
           </DialogTitle>
-          <DialogDescription className="text-wisebox-text-secondary text-base">
+          <DialogDescription className="text-muted-foreground text-base">
             {info.nameBn}
           </DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="what" className="w-full">
-          <TabsList className="w-full bg-wisebox-background-lighter border border-wisebox-border">
+          <TabsList className="w-full bg-muted border border-border">
             <TabsTrigger
               value="what"
-              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
+              className="flex-1 text-xs data-[state=active]:bg-card data-[state=active]:text-foreground text-muted-foreground transition-all duration-200"
             >
               {t('documents.whatIsThis')}
             </TabsTrigger>
             <TabsTrigger
               value="where"
-              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
+              className="flex-1 text-xs data-[state=active]:bg-card data-[state=active]:text-foreground text-muted-foreground transition-all duration-200"
             >
               {t('documents.whereToGetIt')}
             </TabsTrigger>
             <TabsTrigger
               value="missing"
-              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
+              className="flex-1 text-xs data-[state=active]:bg-card data-[state=active]:text-foreground text-muted-foreground transition-all duration-200"
             >
               {t('documents.ifMissing')}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="what" className="space-y-3 mt-4">
-            <p className="text-sm text-wisebox-text-secondary leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {info.whatIsIt}
             </p>
             {info.requiredFor.length > 0 && (
               <div>
-                <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1.5">
+                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
                   {t('documents.requiredFor')}
                 </h4>
                 <div className="flex flex-wrap gap-1.5">
                   {info.requiredFor.map((type) => (
                     <span
                       key={type}
-                      className="inline-block rounded bg-wisebox-background-lighter border border-wisebox-border px-2 py-0.5 text-xs text-wisebox-text-secondary"
+                      className="inline-block rounded bg-muted border border-border px-2 py-0.5 text-xs text-muted-foreground"
                     >
                       {type.replace(/_/g, ' ')}
                     </span>
@@ -100,41 +100,41 @@ export function DocumentInfoModal({
           </TabsContent>
 
           <TabsContent value="where" className="space-y-3 mt-4">
-            <p className="text-sm text-wisebox-text-secondary leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {info.whereToGetIt}
             </p>
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-md bg-wisebox-background-lighter border border-wisebox-border p-3">
-                <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1">
+              <div className="rounded-md bg-muted border border-border p-3">
+                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
                   {t('documents.estimatedCost')}
                 </h4>
-                <p className="text-sm text-white">{info.estimatedCost}</p>
+                <p className="text-sm text-foreground">{info.estimatedCost}</p>
               </div>
-              <div className="rounded-md bg-wisebox-background-lighter border border-wisebox-border p-3">
-                <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1">
+              <div className="rounded-md bg-muted border border-border p-3">
+                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
                   {t('documents.estimatedTime')}
                 </h4>
-                <p className="text-sm text-white">{info.estimatedTime}</p>
+                <p className="text-sm text-foreground">{info.estimatedTime}</p>
               </div>
             </div>
           </TabsContent>
 
           <TabsContent value="missing" className="space-y-3 mt-4">
-            <div className="rounded-md bg-amber-500/10 border border-amber-500/20 p-3">
-              <p className="text-sm text-amber-300 leading-relaxed">
+            <div className="rounded-md bg-wisebox-status-warning/10 border border-wisebox-status-warning/20 p-3">
+              <p className="text-sm text-wisebox-status-warning leading-relaxed">
                 {info.ifMissing}
               </p>
             </div>
             {info.tips.length > 0 && (
               <div>
-                <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1.5">
+                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
                   {t('documents.tips')}
                 </h4>
                 <ul className="space-y-1.5">
                   {info.tips.map((tip, i) => (
                     <li
                       key={i}
-                      className="text-sm text-wisebox-text-secondary leading-relaxed pl-4 relative before:content-[''] before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-wisebox-primary-400"
+                      className="text-sm text-muted-foreground leading-relaxed pl-4 relative before:content-[''] before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-primary"
                     >
                       {tip}
                     </li>

@@ -48,10 +48,10 @@ const statusIcons: Record<ConsultationTicket['status'], React.ComponentType<{ cl
 
 const statusClassNames: Record<ConsultationTicket['status'], string> = {
   open: 'bg-wisebox-status-warning/20 text-wisebox-status-warning border-wisebox-status-warning/30',
-  assigned: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  scheduled: 'bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30',
+  assigned: 'bg-primary/20 text-primary border-primary/30',
+  scheduled: 'bg-primary/20 text-primary border-primary/30',
   completed: 'bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30',
-  closed: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+  closed: 'bg-muted text-muted-foreground border-border',
 };
 
 function formatDate(dateString: string): string {
@@ -90,8 +90,8 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
 
   if (isLoading) {
     return (
-      <Card className="bg-wisebox-background-card border-wisebox-border">
-        <CardContent className="p-6 text-sm text-wisebox-text-secondary">
+      <Card className="bg-card border border-border">
+        <CardContent className="p-6 text-sm text-muted-foreground">
           {t('consultation.loading')}
         </CardContent>
       </Card>
@@ -99,20 +99,20 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
   }
 
   return (
-    <Card className="bg-wisebox-background-card border-wisebox-border">
+    <Card className="bg-card border border-border">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2 text-white">
-          <MessageSquare className="h-5 w-5 text-wisebox-primary" />
+        <CardTitle className="text-base font-medium flex items-center gap-2 text-foreground">
+          <MessageSquare className="h-5 w-5 text-primary" strokeWidth={1.5} />
           {t('consultation.title')}
         </CardTitle>
-        <CardDescription className="text-wisebox-text-secondary">
+        <CardDescription className="text-muted-foreground">
           {t('consultation.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Active Consultation */}
         {activeConsultation && (
-          <div className="bg-wisebox-background-lighter border border-wisebox-border rounded-xl p-5 space-y-4">
+          <div className="bg-muted border border-border rounded-xl p-5 space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
@@ -121,8 +121,8 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
                     {t(statusLabelKeys[activeConsultation.status])}
                   </Badge>
                 </div>
-                <h4 className="font-semibold text-white">{activeConsultation.title}</h4>
-                <p className="text-sm text-wisebox-text-secondary">
+                <h4 className="font-medium text-foreground">{activeConsultation.title}</h4>
+                <p className="text-sm text-muted-foreground">
                   {t('consultation.ticket', { number: activeConsultation.ticket_number })}
                 </p>
               </div>
@@ -130,22 +130,22 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
 
             {activeConsultation.consultant_name && (
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-wisebox-text-secondary">{t('consultation.consultant')}</span>
-                <span className="text-white font-medium">{activeConsultation.consultant_name}</span>
+                <span className="text-muted-foreground">{t('consultation.consultant')}</span>
+                <span className="text-foreground font-medium">{activeConsultation.consultant_name}</span>
               </div>
             )}
 
             {activeConsultation.scheduled_at && (
               <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-wisebox-primary" />
-                <span className="text-white">{formatDateTime(activeConsultation.scheduled_at)}</span>
+                <Calendar className="h-4 w-4 text-primary" strokeWidth={1.5} />
+                <span className="text-foreground">{formatDateTime(activeConsultation.scheduled_at)}</span>
               </div>
             )}
 
             {activeConsultation.meet_link && (
-              <Button asChild className="w-full bg-wisebox-primary hover:bg-wisebox-primary-hover">
+              <Button asChild className="w-full bg-primary hover:bg-primary/90 transition-all duration-200">
                 <a href={activeConsultation.meet_link} target="_blank" rel="noopener noreferrer">
-                  <Video className="h-4 w-4 mr-2" />
+                  <Video className="h-4 w-4 mr-2" strokeWidth={1.5} />
                   {t('consultation.joinGoogleMeet')}
                 </a>
               </Button>
@@ -155,10 +155,10 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
 
         {/* Book Consultation CTA */}
         {!hasConsultations && (
-          <div className="bg-gradient-to-br from-wisebox-primary/10 to-wisebox-primary/5 border border-wisebox-primary/30 rounded-xl p-6 space-y-4">
+          <div className="bg-primary/10 border border-primary/30 rounded-xl p-6 space-y-4">
             <div className="space-y-2">
-              <h4 className="font-semibold text-white">{t('consultation.needExpertHelp')}</h4>
-              <p className="text-sm text-wisebox-text-secondary leading-relaxed">
+              <h4 className="font-medium text-foreground">{t('consultation.needExpertHelp')}</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {t('consultation.expertHelpDesc')}
               </p>
             </div>
@@ -176,9 +176,9 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
             trigger={
               <Button
                 variant="outline"
-                className="w-full border-wisebox-border text-white hover:bg-wisebox-background-lighter"
+                className="w-full border-border text-foreground hover:bg-muted transition-all duration-200"
               >
-                <Calendar className="h-4 w-4 mr-2" />
+                <Calendar className="h-4 w-4 mr-2" strokeWidth={1.5} />
                 {t('consultation.bookAnother')}
               </Button>
             }
@@ -187,18 +187,18 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
 
         {/* Consultation History */}
         {hasConsultations && (
-          <div className="space-y-3 border-t border-wisebox-border pt-4">
-            <h3 className="text-sm font-semibold text-white">{t('consultation.history')}</h3>
+          <div className="space-y-3 border-t border-border pt-4">
+            <h3 className="text-sm font-medium text-foreground">{t('consultation.history')}</h3>
             <div className="space-y-2">
               {consultations.map((consultation) => (
                 <div
                   key={consultation.id}
-                  className="bg-wisebox-background-lighter border border-wisebox-border rounded-lg p-4 space-y-3"
+                  className="bg-muted border border-border rounded-lg p-4 space-y-3"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1">
-                      <p className="font-medium text-white text-sm">{consultation.title}</p>
-                      <p className="text-xs text-wisebox-text-muted">
+                      <p className="font-medium text-foreground text-sm">{consultation.title}</p>
+                      <p className="text-xs text-muted-foreground">
                         {formatDate(consultation.created_at)}
                       </p>
                     </div>
@@ -211,15 +211,15 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
                   </div>
 
                   {consultation.consultant_name && (
-                    <p className="text-sm text-wisebox-text-secondary">
-                      {t('consultation.with')} <span className="text-white">{consultation.consultant_name}</span>
+                    <p className="text-sm text-muted-foreground">
+                      {t('consultation.with')} <span className="text-foreground">{consultation.consultant_name}</span>
                     </p>
                   )}
 
                   {consultation.consultation_notes && (
-                    <div className="bg-wisebox-background rounded-lg p-3">
-                      <p className="text-xs font-medium text-wisebox-text-secondary mb-1">{t('consultation.consultationNotes')}</p>
-                      <p className="text-sm text-white leading-relaxed">
+                    <div className="bg-background rounded-lg p-3">
+                      <p className="text-xs font-medium text-muted-foreground mb-1">{t('consultation.consultationNotes')}</p>
+                      <p className="text-sm text-foreground leading-relaxed">
                         {consultation.consultation_notes}
                       </p>
                     </div>
@@ -230,11 +230,11 @@ export function ConsultationSection({ property }: ConsultationSectionProps) {
                       variant="ghost"
                       size="sm"
                       asChild
-                      className="w-full text-wisebox-primary hover:bg-wisebox-primary/10"
+                      className="w-full text-primary hover:bg-primary/10 transition-all duration-200"
                     >
                       <Link href={`/tickets/${consultation.id}`}>
                         {t('consultation.viewFullDetails')}
-                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                        <ArrowRight className="h-3.5 w-3.5 ml-1" strokeWidth={1.5} />
                       </Link>
                     </Button>
                   )}

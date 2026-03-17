@@ -18,6 +18,7 @@ export interface MarketingFeature {
 export interface PricingPlan {
   name: string;
   price: string;
+  priceSuffix?: string;
   subtitle: string;
   description: string;
   ctaLabel: string;
@@ -33,81 +34,89 @@ export interface MarketingFaq {
 
 export const marketingPainPoints: MarketingPainPoint[] = [
   {
-    title: 'Scattered records across family members',
+    title: 'Documents live in too many places',
     description:
-      'Documents are often stored in multiple homes and inboxes, making legal or emergency access difficult.',
+      'Deeds, mutation records, tax receipts, utility bills. Spread across family members, filing cabinets, and old email threads. When you need them urgently, they\u2019re never in one place.',
   },
   {
-    title: 'No visibility into property status',
+    title: 'You can\u2019t see what\u2019s happening on the ground',
     description:
-      'Diaspora owners cannot easily track pending issues, legal updates, or municipal requirements from abroad.',
+      'Municipal deadlines, encroachment risks, tenant issues, legal notices. By the time you hear about a problem, it has already compounded.',
   },
   {
-    title: 'Reactive support instead of proactive planning',
+    title: 'Most families only act during a crisis',
     description:
-      'Most owners only act when there is a crisis, causing delays, stress, and avoidable legal costs.',
+      'A boundary dispute. A forged deed. A missed tax payment. Without a system, every property issue becomes an emergency.',
   },
   {
-    title: 'Unclear ownership and inheritance documentation',
+    title: 'Inheritance is complicated without structure',
     description:
-      'Lack of structured records creates confusion for families and makes succession planning much harder.',
+      'Who owns what? Which documents are current? What happens if something changes? Most families don\u2019t have clear answers, and the cost of ambiguity grows with time.',
   },
 ];
 
 export const marketingHowItWorks: MarketingStep[] = [
   {
-    step: '01',
-    title: 'Add your property profile',
+    step: '1',
+    title: 'Create your property profile',
     description:
-      'Capture location, ownership details, and baseline context in a single digital record.',
+      'Capture location, ownership details, and baseline context in a single digital record. One property, one source of truth.',
   },
   {
-    step: '02',
-    title: 'Upload and assess documents',
+    step: '2',
+    title: 'Assess your document readiness',
     description:
-      'Get a clarity score with actionable recommendations for missing or weak documentation.',
+      'Upload what you have. Wisebox scores your documentation against what\u2019s required, flags what\u2019s missing, and gives you a prioritized action list.',
   },
   {
-    step: '03',
-    title: 'Use services as needed',
+    step: '3',
+    title: 'Coordinate support as needed',
     description:
-      'Book legal, valuation, or retrieval support and track every ticket from the same workspace.',
+      'Book legal consultations, property valuations, or document retrieval. Every request becomes a tracked ticket with status updates and consultant notes.',
   },
 ];
 
 export const marketingFeatures: MarketingFeature[] = [
   {
-    title: 'Smart Document Management',
-    description: 'Track required documents, upload history, and ownership evidence in one secure timeline.',
+    title: 'Document Management',
+    description:
+      'Organize deeds, tax records, legal correspondence, and ownership evidence in a secure, searchable timeline.',
   },
   {
     title: 'Property Monitoring',
-    description: 'Stay updated on property progress, status changes, and action items from anywhere.',
+    description:
+      'Track property status, action items, and updates from consultants and contacts on the ground.',
   },
   {
     title: 'Legal Consultations',
-    description: 'Connect with consultants for legal and process guidance linked directly to your ticket thread.',
+    description:
+      'Connect with licensed consultants for legal guidance, dispute resolution, and compliance questions. Every interaction is linked to your property record.',
+  },
+  {
+    title: 'Ticket Tracking',
+    description:
+      'Every service request, from document retrieval to property inspection, becomes a tracked ticket with status history and consultant notes.',
+  },
+  {
+    title: 'Notification Center',
+    description:
+      'Receive targeted alerts for comments, assignments, status changes, and deadlines. Stay informed without checking in constantly.',
+  },
+  {
+    title: 'Assessment Scoring',
+    description:
+      'Get a clarity score for each property based on document completeness, ownership structure, and operational readiness. Know where you stand.',
   },
   {
     title: 'Digital Will Creation',
-    description: 'Plan inheritance with structured guidance and guided document readiness paths.',
+    description:
+      'Plan inheritance with structured guidance and document readiness paths. Ensure your family has clarity, not confusion.',
     comingSoon: true,
   },
   {
-    title: 'Smart Notifications',
-    description: 'Receive targeted alerts for comments, assignments, order updates, and workflow changes.',
-  },
-  {
-    title: 'Flexible Payments',
-    description: 'Use free and paid service flows with transparent status tracking and receipts.',
-  },
-  {
-    title: 'Property Valuation',
-    description: 'Request valuation support and keep reports linked to each property profile.',
-  },
-  {
     title: 'Family Collaboration',
-    description: 'Coordinate with co-owners and family stakeholders without scattered messaging.',
+    description:
+      'Invite co-owners and family stakeholders into a shared workspace. Coordinate decisions without scattered WhatsApp threads.',
     comingSoon: true,
   },
 ];
@@ -117,7 +126,8 @@ export const pricingPlans: PricingPlan[] = [
     name: 'Free',
     price: '$0',
     subtitle: 'For getting started',
-    description: 'Best for baseline readiness checks and initial organization.',
+    description:
+      'Establish your baseline. See where your property stands before committing to anything.',
     ctaLabel: 'Get Free Assessment',
     ctaHref: '/assessment/start',
     features: [
@@ -129,9 +139,11 @@ export const pricingPlans: PricingPlan[] = [
   },
   {
     name: 'Premium',
-    price: '$29/mo',
+    price: '$29',
+    priceSuffix: '/mo',
     subtitle: 'For active property management',
-    description: 'For users who need ongoing support and frequent service coordination.',
+    description:
+      'For families who need ongoing coordination, priority support, and deeper document tracking.',
     ctaLabel: 'Start Managing Properties',
     ctaHref: '/register',
     highlighted: true,
@@ -140,20 +152,23 @@ export const pricingPlans: PricingPlan[] = [
       'Priority ticket workflows',
       'Consultant assignment visibility',
       'Advanced document tracking',
+      'Status history and audit trail',
     ],
   },
   {
     name: 'Enterprise',
     price: 'Custom',
     subtitle: 'For families and portfolios',
-    description: 'For larger portfolios requiring tailored processes and governance.',
-    ctaLabel: 'Contact Sales',
+    description:
+      'For larger property portfolios requiring tailored workflows, dedicated onboarding, and governance support.',
+    ctaLabel: 'Contact Us',
     ctaHref: '/contact',
     features: [
+      'Everything in Premium',
       'Multi-property portfolio support',
-      'Custom workflow and SLA',
+      'Custom workflow and SLA configuration',
       'Dedicated onboarding support',
-      'Expanded reporting roadmap',
+      'Expanded reporting',
     ],
   },
 ];
@@ -162,32 +177,37 @@ export const marketingFaqs: MarketingFaq[] = [
   {
     question: 'Is Wisebox only for people living outside Bangladesh?',
     answer:
-      'No. Wisebox is built for any property owner who wants structured recordkeeping and service coordination, with special attention to diaspora needs.',
+      'No. Wisebox is built for anyone managing property in Bangladesh, whether you live in Dhaka or Dallas. That said, the platform is especially designed for diaspora families who need visibility and coordination from a distance.',
   },
   {
-    question: 'Do I need all documents before I start?',
+    question: 'Do I need all my documents before I can start?',
     answer:
-      'No. You can begin with what you have. Wisebox highlights missing items and suggests next actions based on your profile.',
+      'Not at all. Start with what you have. The assessment will identify what\u2019s missing and help you prioritize what to gather next.',
   },
   {
     question: 'Can I invite family members to collaborate?',
     answer:
-      'Collaboration features are on the roadmap. Current workflows already support co-owner details and shared context in tickets.',
+      'Family collaboration is on our near-term roadmap. Today, you can manage your properties individually and share updates manually. Shared workspaces are coming soon.',
   },
   {
     question: 'How secure are my documents?',
     answer:
-      'Uploads are handled through secure API flows and designed for encrypted storage and controlled access paths.',
+      'All documents are encrypted at rest and in transit. Access is role-based and permission-controlled. We do not share your data with third parties.',
   },
   {
     question: 'Can I speak to a consultant before placing a paid order?',
     answer:
-      'Yes. Start from the assessment flow and create a support ticket; our team can guide the recommended service path.',
+      'Yes. You can submit a consultation request through the platform and discuss your needs before committing to any paid service.',
+  },
+  {
+    question: 'What types of properties does Wisebox support?',
+    answer:
+      'Residential, agricultural, and commercial properties in Bangladesh. Whether it\u2019s ancestral land, a family home, or a rental property, Wisebox can help you organize and manage it.',
   },
 ];
 
 export const marketingNavLinks = [
-  { href: '/about', label: 'About' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/contact', label: 'Contact' },
+  { href: '#features-section', label: 'Overview' },
+  { href: '#features-section', label: 'Features' },
+  { href: '#faq-section', label: 'Results' },
 ];

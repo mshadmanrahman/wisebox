@@ -59,24 +59,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-wisebox-background">
+    <div className="min-h-screen flex bg-background">
       {/* Left side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
-          <WiseboxLogo variant="light" />
+          <WiseboxLogo variant="auto" />
 
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">{t('auth:login.title')}</h1>
-            <p className="text-wisebox-text-secondary">
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('auth:login.title')}</h1>
+            <p className="text-muted-foreground">
               {t('auth:login.subtitle')}
             </p>
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
               {error}
             </div>
           )}
@@ -84,7 +84,7 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white text-sm font-medium">
+              <Label htmlFor="email" className="text-foreground text-sm font-medium">
                 {t('auth:login.emailLabel')}
               </Label>
               <Input
@@ -92,20 +92,20 @@ export default function LoginPage() {
                 type="email"
                 placeholder={t('auth:login.emailPlaceholder')}
                 autoComplete="email"
-                className="bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted h-12"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('email')}
               />
-              {errors.email && <p className="text-sm text-red-400">{errors.email.message}</p>}
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-white text-sm font-medium">
+                <Label htmlFor="password" className="text-foreground text-sm font-medium">
                   {t('auth:login.passwordLabel')}
                 </Label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-wisebox-primary hover:underline"
+                  className="text-sm text-primary hover:underline"
                 >
                   {t('auth:login.forgotPassword')}
                 </Link>
@@ -116,25 +116,25 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t('auth:login.passwordPlaceholder')}
                   autoComplete="current-password"
-                  className="bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted h-12"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                   {...register('password')}
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-wisebox-text-muted hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-400">{errors.password.message}</p>
+                <p className="text-sm text-destructive">{errors.password.message}</p>
               )}
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-white hover:bg-gray-100 text-wisebox-background h-12 font-semibold"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 font-medium"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -149,39 +149,39 @@ export default function LoginPage() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-wisebox-border" />
+                <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-wisebox-background px-2 text-wisebox-text-muted">{t('auth:login.orContinueWith')}</span>
+                <span className="bg-background px-2 text-muted-foreground">{t('auth:login.orContinueWith')}</span>
               </div>
             </div>
 
             <div ref={googleButtonRef} className="w-full flex justify-center" />
             {googleError && (
-              <p className="text-sm text-red-400 text-center">{googleError}</p>
+              <p className="text-sm text-destructive text-center">{googleError}</p>
             )}
 
-            <p className="text-center text-sm text-wisebox-text-secondary">
+            <p className="text-center text-sm text-muted-foreground">
               {t('auth:login.noAccount')}{' '}
-              <Link href="/register" className="text-white font-medium hover:underline">
+              <Link href="/register" className="text-foreground font-medium hover:underline">
                 {t('auth:login.createAccount')}
               </Link>
             </p>
           </form>
 
           {/* Footer */}
-          <div className="pt-8 border-t border-wisebox-border">
-            <p className="text-xs text-wisebox-text-muted text-center">
+          <div className="pt-8 border-t border-border">
+            <p className="text-xs text-muted-foreground text-center">
               {t('common:copyright')}
             </p>
             <div className="flex justify-center gap-6 mt-2">
-              <Link href="/privacy" className="text-xs text-wisebox-text-muted hover:text-white">
+              <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">
                 {t('common:privacyPolicy')}
               </Link>
-              <Link href="/terms" className="text-xs text-wisebox-text-muted hover:text-white">
+              <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
                 {t('common:termsOfService')}
               </Link>
-              <Link href="/help" className="text-xs text-wisebox-text-muted hover:text-white">
+              <Link href="/help" className="text-xs text-muted-foreground hover:text-foreground">
                 {t('common:helpCenter')}
               </Link>
             </div>

@@ -28,17 +28,17 @@ export function DocumentChecklistItem({
   const { t } = useTranslation('properties');
 
   return (
-    <div className="rounded-lg border border-wisebox-border bg-wisebox-background-card p-3 space-y-2">
+    <div className="rounded-xl border border-border bg-card p-3 space-y-2 shadow-sm dark:shadow-none">
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className="text-sm font-medium text-wisebox-text-primary">
+            <h4 className="text-sm font-medium text-foreground">
               {document.name}
             </h4>
             {document.category === "primary" && (
               <Badge
                 variant="outline"
-                className="h-4 px-1.5 text-[10px] leading-none bg-wisebox-primary-50 text-wisebox-primary-700 border-wisebox-primary-200"
+                className="h-4 px-1.5 text-[10px] leading-none bg-primary/10 text-primary border-primary/20"
               >
                 Primary
               </Badge>
@@ -46,14 +46,14 @@ export function DocumentChecklistItem({
             {document.required && (
               <Badge
                 variant="outline"
-                className="h-4 px-1.5 text-[10px] leading-none text-wisebox-status-danger border-wisebox-status-danger/20"
+                className="h-4 px-1.5 text-[10px] leading-none text-destructive border-destructive/20"
               >
                 Required
               </Badge>
             )}
           </div>
           {document.description && (
-            <p className="text-xs text-wisebox-text-secondary mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {document.description}
             </p>
           )}
@@ -66,15 +66,15 @@ export function DocumentChecklistItem({
           onClick={() => onChange("have")}
           disabled={disabled}
           className={cn(
-            "flex-1 flex items-center justify-center gap-1.5 rounded-md border-2 px-3 py-2 text-sm font-medium transition-all",
-            "hover:bg-wisebox-primary-50 focus:outline-none focus:ring-2 focus:ring-wisebox-primary-500 focus:ring-offset-2",
+            "flex-1 flex items-center justify-center gap-1.5 rounded-md border-2 px-3 py-2 text-sm font-medium transition-all duration-200",
+            "hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50",
             value === "have"
-              ? "border-wisebox-primary-600 bg-wisebox-primary-50 text-wisebox-primary-700"
-              : "border-wisebox-border bg-wisebox-background-card text-wisebox-text-secondary"
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground"
           )}
         >
-          <Check className={cn("h-4 w-4", value === "have" && "text-wisebox-primary-600")} />
+          <Check className={cn("h-4 w-4", value === "have" && "text-primary")} strokeWidth={1.5} />
           <span>{t('documents.have')}</span>
         </button>
 
@@ -83,15 +83,15 @@ export function DocumentChecklistItem({
           onClick={() => onChange("dont-have")}
           disabled={disabled}
           className={cn(
-            "flex-1 flex items-center justify-center gap-1.5 rounded-md border-2 px-3 py-2 text-sm font-medium transition-all",
-            "hover:bg-wisebox-background-lighter focus:outline-none focus:ring-2 focus:ring-wisebox-border-light focus:ring-offset-2",
+            "flex-1 flex items-center justify-center gap-1.5 rounded-md border-2 px-3 py-2 text-sm font-medium transition-all duration-200",
+            "hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50",
             value === "dont-have"
-              ? "border-wisebox-border-light bg-wisebox-background-lighter text-wisebox-text-secondary"
-              : "border-wisebox-border bg-wisebox-background-card text-wisebox-text-secondary"
+              ? "border-border bg-muted text-muted-foreground"
+              : "border-border bg-card text-muted-foreground"
           )}
         >
-          <X className={cn("h-4 w-4", value === "dont-have" && "text-wisebox-text-secondary")} />
+          <X className={cn("h-4 w-4", value === "dont-have" && "text-muted-foreground")} strokeWidth={1.5} />
           <span>{t('documents.dontHave')}</span>
         </button>
       </div>

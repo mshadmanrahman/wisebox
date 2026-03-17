@@ -23,13 +23,13 @@ export default function AdminLearningPage() {
   if (!isAdmin) {
     return (
       <div className="px-6 py-8">
-        <Card className="bg-white border-slate-200 shadow-sm">
+        <Card className="bg-card border-border shadow-sm">
           <CardContent className="p-8 text-center space-y-2">
-            <p className="text-slate-900 font-medium">{t('admin:learning.accessDenied')}</p>
-            <p className="text-sm text-slate-500">
+            <p className="text-foreground font-medium">{t('admin:learning.accessDenied')}</p>
+            <p className="text-sm text-muted-foreground">
               {t('admin:learning.adminOnly')}
             </p>
-            <Button asChild variant="outline" className="mt-3 border-slate-200 text-slate-700 hover:bg-slate-50">
+            <Button asChild variant="outline" className="mt-3 border-border text-foreground hover:bg-muted">
               <Link href="/dashboard">{t('admin:learning.backToDashboard')}</Link>
             </Button>
           </CardContent>
@@ -56,24 +56,24 @@ export default function AdminLearningPage() {
         <div className="space-y-2">
           <Link
             href="/admin/dashboard"
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             {t('admin:learning.adminDashboard')}
           </Link>
           <div className="flex items-center gap-3">
-            <div className="bg-amber-50 rounded-lg p-2.5">
-              <Settings className="h-5 w-5 text-amber-600" />
+            <div className="bg-wisebox-status-warning/10 rounded-lg p-2.5">
+              <Settings className="h-5 w-5 text-wisebox-status-warning" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">{t('admin:learning.manageContent')}</h1>
-              <p className="text-slate-500 text-sm">
+              <h1 className="text-2xl font-bold text-foreground">{t('admin:learning.manageContent')}</h1>
+              <p className="text-muted-foreground text-sm">
                 {LEARNING_ARTICLES.length} articles across {Object.keys(CATEGORY_META).length} categories
               </p>
             </div>
           </div>
         </div>
-        <Button disabled className="bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200">
+        <Button disabled className="bg-muted text-muted-foreground cursor-not-allowed border-border">
           <Plus className="h-4 w-4 mr-2" />
           {t('admin:learning.addArticle')}
         </Button>
@@ -89,26 +89,26 @@ export default function AdminLearningPage() {
               onClick={() => setFilterCategory(filterCategory === cat ? 'all' : cat)}
               className={`rounded-xl p-3 text-left transition-all border ${
                 filterCategory === cat
-                  ? 'border-amber-400 bg-amber-50 shadow-sm'
-                  : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+                  ? 'border-wisebox-status-warning bg-wisebox-status-warning/10 shadow-sm'
+                  : 'border-border bg-card hover:border-border hover:shadow-sm'
               }`}
             >
-              <p className="text-xs text-slate-500">{meta.label}</p>
-              <p className="text-lg font-bold text-slate-900 mt-0.5">{categoryCounts[cat]}</p>
+              <p className="text-xs text-muted-foreground">{meta.label}</p>
+              <p className="text-lg font-bold text-foreground mt-0.5">{categoryCounts[cat]}</p>
             </button>
           );
         })}
       </div>
 
       {/* Info Banner */}
-      <Card className="border-blue-200 bg-blue-50 shadow-sm">
+      <Card className="border-wisebox-status-info/20 bg-wisebox-status-info/10 shadow-sm">
         <CardContent className="p-4 flex items-start gap-3">
-          <BookOpen className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+          <BookOpen className="h-5 w-5 text-wisebox-status-info mt-0.5 shrink-0" />
           <div className="space-y-1">
-            <p className="text-sm text-blue-800 font-medium">
+            <p className="text-sm text-wisebox-status-info font-medium">
               {t('admin:learning.staticContentMode')}
             </p>
-            <p className="text-xs text-blue-600">
+            <p className="text-xs text-wisebox-status-info">
               {t('admin:learning.staticContentDescription')}
             </p>
           </div>
@@ -116,25 +116,25 @@ export default function AdminLearningPage() {
       </Card>
 
       {/* Articles Table */}
-      <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+      <div className="rounded-xl border border-border overflow-hidden bg-card shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="px-4 py-3 text-left font-medium text-slate-700">{t('admin:learning.colTitle')}</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-700">{t('admin:learning.colCategory')}</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-700">{t('admin:learning.colReadTime')}</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-700">{t('admin:learning.colContentBlocks')}</th>
-              <th className="px-4 py-3 text-right font-medium text-slate-700">{t('admin:learning.colActions')}</th>
+            <tr className="bg-muted border-b border-border">
+              <th className="px-4 py-3 text-left font-medium text-foreground">{t('admin:learning.colTitle')}</th>
+              <th className="px-4 py-3 text-left font-medium text-foreground">{t('admin:learning.colCategory')}</th>
+              <th className="px-4 py-3 text-left font-medium text-foreground">{t('admin:learning.colReadTime')}</th>
+              <th className="px-4 py-3 text-left font-medium text-foreground">{t('admin:learning.colContentBlocks')}</th>
+              <th className="px-4 py-3 text-right font-medium text-foreground">{t('admin:learning.colActions')}</th>
             </tr>
           </thead>
           <tbody>
             {filteredArticles.map((article) => {
               const catMeta = CATEGORY_META[article.category];
               return (
-                <tr key={article.slug} className="border-t border-slate-100 hover:bg-slate-50/50">
+                <tr key={article.slug} className="border-t border-border hover:bg-muted/50">
                   <td className="px-4 py-3">
-                    <p className="text-slate-900 font-medium">{article.title}</p>
-                    <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{article.description}</p>
+                    <p className="text-foreground font-medium">{article.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{article.description}</p>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r ${catMeta.color} text-white`}>
@@ -142,18 +142,18 @@ export default function AdminLearningPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="flex items-center gap-1 text-slate-500">
+                    <span className="flex items-center gap-1 text-muted-foreground">
                       <Clock className="h-3.5 w-3.5" />
                       {article.readTime} {t('admin:learning.min')}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-500">
+                  <td className="px-4 py-3 text-muted-foreground">
                     {article.content.length} {t('admin:learning.blocks')}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/learning/${article.slug}`}
-                      className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                      className="inline-flex items-center gap-1 text-xs text-wisebox-status-info hover:text-wisebox-status-info transition-colors"
                     >
                       {t('admin:learning.view')}
                       <ExternalLink className="h-3 w-3" />

@@ -56,11 +56,11 @@ export default function ContactPage() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-wisebox-background">
+      <main className="bg-background">
         <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
-            <h1 className="text-4xl font-bold text-wisebox-text-primary sm:text-5xl">Contact Wisebox</h1>
-            <p className="text-lg text-wisebox-text-secondary">
+            <h1 className="text-4xl font-bold text-foreground sm:text-5xl">Contact Wisebox</h1>
+            <p className="text-lg text-muted-foreground">
               Reach out for onboarding, service guidance, or collaboration requests.
             </p>
           </div>
@@ -69,15 +69,15 @@ export default function ContactPage() {
             {channels.map((channel) => {
               const Icon = channel.icon;
               return (
-                <Card key={channel.title} className="border-wisebox-border bg-wisebox-background-card">
+                <Card key={channel.title} className="border-border bg-card">
                   <CardHeader>
-                    <Icon className="h-5 w-5 text-wisebox-primary-700" />
-                    <CardTitle className="text-lg text-wisebox-text-primary">{channel.title}</CardTitle>
+                    <Icon className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg text-foreground">{channel.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <p className="font-medium text-wisebox-text-primary">{channel.detail}</p>
-                    <p className="text-sm leading-6 text-wisebox-text-secondary">{channel.note}</p>
-                    <Button asChild variant="outline" className="border-wisebox-border text-wisebox-primary-400">
+                    <p className="font-medium text-foreground">{channel.detail}</p>
+                    <p className="text-sm leading-6 text-muted-foreground">{channel.note}</p>
+                    <Button asChild variant="outline" className="border-border text-primary">
                       <Link href={channel.href}>Open</Link>
                     </Button>
                   </CardContent>

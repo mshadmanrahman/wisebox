@@ -122,13 +122,6 @@ export function ServiceDetailPanel({
 
   const price = formatPrice(service);
   const isFree = service.pricing_type === 'free' || (!service.price || Number(service.price) === 0);
-  const gradient = service.category?.slug === 'consultation'
-    ? 'from-cyan-600 via-blue-700 to-indigo-800'
-    : service.category?.slug === 'legal'
-    ? 'from-emerald-600 via-teal-700 to-cyan-800'
-    : service.category?.slug === 'administrative'
-    ? 'from-violet-600 via-purple-700 to-indigo-800'
-    : 'from-slate-600 via-slate-700 to-slate-800';
 
   const ctaLabel = isFree
     ? t('services.detail.bookNow')
@@ -140,29 +133,27 @@ export function ServiceDetailPanel({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         className={cn(
-          'w-full bg-wisebox-background border-wisebox-border overflow-y-auto',
+          'w-full bg-card border-l border-border overflow-y-auto',
           needsScheduling ? 'sm:max-w-2xl' : 'sm:max-w-lg'
         )}
       >
         <SheetHeader className="pb-0">
-          {/* Gradient header */}
-          <div className={cn('rounded-xl h-24 bg-gradient-to-r -mx-2 mb-4', gradient)} />
           <div className="flex items-start justify-between gap-4">
-            <SheetTitle className="text-xl text-white">{service.name}</SheetTitle>
+            <SheetTitle className="text-xl font-semibold text-foreground">{service.name}</SheetTitle>
             <Badge
               className={cn(
-                'text-sm font-semibold shrink-0',
+                'px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0',
                 isFree
-                  ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                  : 'bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30'
+                  ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                  : 'bg-primary/10 text-primary border-primary/20'
               )}
             >
               {price}
             </Badge>
           </div>
           {service.estimated_duration_minutes && (
-            <p className="text-xs text-wisebox-text-muted flex items-center gap-1 mt-1">
-              <Calendar className="h-3 w-3" />
+            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+              <Calendar className="h-3 w-3" strokeWidth={1.5} />
               {t('services.detail.estimatedDuration', { minutes: service.estimated_duration_minutes })}
             </p>
           )}
@@ -171,10 +162,10 @@ export function ServiceDetailPanel({
         <div className="space-y-6 mt-6">
           {/* Description */}
           <div className="space-y-2">
-            <h3 className="text-sm font-medium text-wisebox-text-secondary uppercase tracking-wider">
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               {t('services.detail.aboutService')}
             </h3>
-            <p className="text-sm text-white leading-relaxed">
+            <p className="text-sm text-foreground leading-relaxed">
               {service.description || service.short_description || t('services.detail.noDescription')}
             </p>
           </div>
@@ -182,30 +173,30 @@ export function ServiceDetailPanel({
           {/* Category */}
           {service.category && (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-wisebox-text-secondary uppercase tracking-wider">
+              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {t('services.detail.category')}
               </h3>
-              <Badge variant="outline" className="border-wisebox-border text-white">
+              <Badge variant="outline" className="border-border text-foreground">
                 {service.category.name}
               </Badge>
             </div>
           )}
 
           {/* Property Selection + Scheduling + Buy */}
-          <div className="space-y-5 border-t border-wisebox-border pt-6">
+          <div className="space-y-5 border-t border-border pt-6">
             {/* Step 1: Select Property */}
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-white flex items-center gap-2">
-                <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">1</span>
+              <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs">1</span>
                 {t('services.detail.selectProperty')}
               </h3>
               <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
-                <SelectTrigger className="bg-wisebox-background-input border-wisebox-border text-white">
+                <SelectTrigger className="bg-background border-border text-foreground transition-all duration-200">
                   <SelectValue placeholder={t('services.detail.chooseProperty')} />
                 </SelectTrigger>
-                <SelectContent className="bg-wisebox-background-card border-wisebox-border">
+                <SelectContent className="bg-card border-border">
                   {properties.map((property) => (
-                    <SelectItem key={property.id} value={String(property.id)} className="text-white hover:bg-wisebox-background-lighter">
+                    <SelectItem key={property.id} value={String(property.id)} className="text-foreground hover:bg-muted">
                       {property.property_name}
                     </SelectItem>
                   ))}
@@ -216,21 +207,21 @@ export function ServiceDetailPanel({
             {/* Step 2: Describe your needs */}
             {needsScheduling && (
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-white flex items-center gap-2">
-                  <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">2</span>
+                <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs">2</span>
                   {t('services.detail.describeNeeds')}
                 </h3>
                 <div className="relative">
-                  <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-wisebox-text-muted" />
+                  <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
                   <Textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder={t('services.detail.descriptionPlaceholder')}
-                    className="pl-10 min-h-[100px] bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted resize-none"
+                    className="pl-10 min-h-[100px] bg-background border-border text-foreground placeholder:text-muted-foreground resize-none"
                     maxLength={1000}
                   />
                 </div>
-                <p className="text-xs text-wisebox-text-muted text-right">
+                <p className="text-xs text-muted-foreground text-right">
                   {description.length}/1000
                 </p>
               </div>
@@ -239,11 +230,11 @@ export function ServiceDetailPanel({
             {/* Step 3: Preferred Time Slots */}
             {needsScheduling && (
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-white flex items-center gap-2">
-                  <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">3</span>
+                <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs">3</span>
                   {t('services.detail.chooseTimeSlots')}
                 </h3>
-                <p className="text-xs text-wisebox-text-secondary">
+                <p className="text-xs text-muted-foreground">
                   {t('services.detail.timeSlotsHelp')}
                 </p>
                 <TimeSlotPicker
@@ -256,14 +247,14 @@ export function ServiceDetailPanel({
 
             {/* Error */}
             {error && (
-              <div className="rounded-md border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+              <div className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive">
                 {error}
               </div>
             )}
 
             {/* CTA Button */}
             <Button
-              className="w-full bg-wisebox-primary hover:bg-wisebox-primary-hover text-white"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all duration-200"
               disabled={
                 createOrderMutation.isPending ||
                 !selectedPropertyId ||
@@ -282,13 +273,13 @@ export function ServiceDetailPanel({
               ) : (
                 <>
                   {ctaLabel}
-                  <ArrowRight className="h-4 w-4 ml-2" />
+                  <ArrowRight className="h-4 w-4 ml-2" strokeWidth={1.5} />
                 </>
               )}
             </Button>
 
             {needsScheduling && !hasEnoughSlots && selectedPropertyId && (
-              <p className="text-xs text-center text-wisebox-text-muted">
+              <p className="text-xs text-center text-muted-foreground">
                 {t('services.detail.selectAtLeast2Slots')}
               </p>
             )}
@@ -296,8 +287,8 @@ export function ServiceDetailPanel({
 
           {/* Related Properties */}
           {properties.length > 0 && (
-            <div className="space-y-3 border-t border-wisebox-border pt-6">
-              <h3 className="text-sm font-medium text-wisebox-text-secondary uppercase tracking-wider">
+            <div className="space-y-3 border-t border-border pt-6">
+              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {t('services.detail.yourProperties')}
               </h3>
               <div className="space-y-2">
@@ -306,12 +297,12 @@ export function ServiceDetailPanel({
                   return (
                     <div
                       key={property.id}
-                      className="rounded-lg border border-wisebox-border p-3 bg-wisebox-background-card"
+                      className="bg-card border border-border rounded-xl p-3"
                     >
-                      <p className="text-sm font-medium text-white">{property.property_name}</p>
+                      <p className="text-sm font-medium text-foreground">{property.property_name}</p>
                       {location && (
-                        <div className="flex items-center gap-1 mt-1 text-xs text-wisebox-text-secondary">
-                          <MapPin className="h-3 w-3" />
+                        <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                          <MapPin className="h-3 w-3" strokeWidth={1.5} />
                           <span>{location}</span>
                         </div>
                       )}

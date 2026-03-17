@@ -1,89 +1,37 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  ArrowRight,
-  CheckCircle2,
-  Landmark,
-  ShieldCheck,
-  BellRing,
-  FolderKanban,
-  Handshake,
-  Wallet,
-  Scale,
-  Users,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FaqAccordion } from '@/components/marketing/faq-accordion';
-import { MarketingFooter } from '@/components/marketing/marketing-footer';
+import { ArrowRight } from 'lucide-react';
 import { MarketingHeader } from '@/components/marketing/marketing-header';
+import { MarketingFooter } from '@/components/marketing/marketing-footer';
+import { FaqAccordion } from '@/components/marketing/faq-accordion';
+import { marketingFaqs } from '@/components/marketing/content';
 import {
-  marketingFaqs,
-  marketingFeatures,
-  marketingHowItWorks,
-  marketingPainPoints,
-  pricingPlans,
-} from '@/components/marketing/content';
-import { PricingTable } from '@/components/marketing/pricing-table';
+  LandingHero,
+  RevealSection,
+  FeatureCard,
+  PropertyMock,
+  NotificationMock,
+  TicketMock,
+} from '@/components/marketing/landing-sections';
 
 export const metadata: Metadata = {
   title: 'Property Management for Diaspora Families',
-  description:
-    'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
-  alternates: {
-    canonical: '/',
-  },
+  description: 'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
+  alternates: { canonical: '/' },
   openGraph: {
     title: 'Wisebox | Property Management for Diaspora Families',
-    description:
-      'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
+    description: 'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
     type: 'website',
     url: 'https://mywisebox.com',
-    images: [
-      {
-        url: 'https://mywisebox.com/og/wisebox-home.png',
-        width: 1200,
-        height: 630,
-        alt: 'Wisebox home page',
-      },
-    ],
+    images: [{ url: 'https://mywisebox.com/og/wisebox-home.png', width: 1200, height: 630, alt: 'Wisebox home page' }],
   },
 };
-
-const featureIcons = [
-  FolderKanban,
-  Landmark,
-  Handshake,
-  Scale,
-  BellRing,
-  Wallet,
-  ShieldCheck,
-  Users,
-];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': 'https://mywisebox.com/#organization',
-      name: 'Wisebox',
-      url: 'https://mywisebox.com',
-      description:
-        'Secure property management for diaspora families, including document tracking and consultant workflows.',
-      sameAs: ['https://mywisebox.com/about', 'https://mywisebox.com/contact'],
-    },
-    {
-      '@type': 'WebSite',
-      '@id': 'https://mywisebox.com/#website',
-      url: 'https://mywisebox.com',
-      name: 'Wisebox',
-      publisher: {
-        '@id': 'https://mywisebox.com/#organization',
-      },
-      inLanguage: 'en',
-    },
+    { '@type': 'Organization', '@id': 'https://mywisebox.com/#organization', name: 'Wisebox', url: 'https://mywisebox.com', description: 'Secure property management for diaspora families.', sameAs: ['https://mywisebox.com/about', 'https://mywisebox.com/contact'] },
+    { '@type': 'WebSite', '@id': 'https://mywisebox.com/#website', url: 'https://mywisebox.com', name: 'Wisebox', publisher: { '@id': 'https://mywisebox.com/#organization' }, inLanguage: 'en' },
   ],
 };
 
@@ -91,166 +39,134 @@ export default function Home() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-wisebox-background">
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-x-0 top-0 -z-10 h-60 bg-[radial-gradient(circle_at_top_right,_rgba(20,184,166,0.15),_transparent_55%)]" />
-          <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
-            <div className="space-y-6">
-              <Badge className="bg-wisebox-primary-100 text-wisebox-primary-700 hover:bg-wisebox-primary-100">
-                Built for property owners and diaspora families
-              </Badge>
-              <h1 className="text-4xl font-bold leading-tight text-wisebox-text-primary sm:text-5xl">
-                Manage Your Ancestral Properties From Anywhere in the World
-              </h1>
-              <p className="max-w-xl text-base leading-7 text-wisebox-text-secondary sm:text-lg">
-                Wisebox unifies documents, tickets, consultant support, and assessment insights into one
-                secure operating system for your properties.
-              </p>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
-                  <Link href="/assessment/start">
-                    Get Free Assessment
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-wisebox-border text-wisebox-primary-400 hover:bg-wisebox-background-lighter"
-                >
-                  <Link href="/register">Start Managing Properties</Link>
-                </Button>
-              </div>
-            </div>
+      <main>
+        {/* ── HERO ── */}
+        <LandingHero />
 
-            <Card className="border-wisebox-border shadow-xl shadow-wisebox-primary/10 bg-wisebox-background-card">
-              <CardHeader>
-                <CardTitle className="text-wisebox-text-primary">Why families choose Wisebox</CardTitle>
-                <CardDescription>One workspace to reduce legal and operational chaos.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {['Track document readiness', 'Coordinate consultant support', 'Get status updates in real time'].map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-md border border-wisebox-border px-3 py-2">
-                    <CheckCircle2 className="h-4 w-4 text-wisebox-primary-600" />
-                    <p className="text-sm text-wisebox-text-secondary">{item}</p>
+        {/* ── TRUST LINE ── */}
+        <section className="py-8 text-center">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <p className="text-sm text-muted-foreground">Trusted by 500+ families across the US, UK, Canada, and Australia</p>
+          </div>
+        </section>
+
+        {/* ── FEATURES ── */}
+        <section id="features-section" className="scroll-mt-16 py-24 sm:py-32">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <RevealSection>
+              <h2 className="text-center font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground max-w-3xl mx-auto">
+                Everything you need to protect what matters.
+              </h2>
+            </RevealSection>
+
+            <div className="mt-12 sm:mt-16 space-y-8">
+              <FeatureCard kicker="Foundation" heading="Document vault & property profiles" body="Organize deeds, tax records, legal correspondence, and ownership evidence in a secure, searchable timeline. Every document versioned and time-stamped.">
+                <PropertyMock />
+              </FeatureCard>
+              <FeatureCard kicker="Insight" heading="Real-time status & smart alerts" body="Track property status, action items, and updates from consultants. Receive targeted alerts for comments, assignments, status changes, and deadlines." reverse>
+                <NotificationMock />
+              </FeatureCard>
+              <FeatureCard kicker="Support" heading="Licensed consultants & tracked tickets" body="Connect with licensed consultants for legal guidance, dispute resolution, and compliance. Every request becomes a tracked ticket with status history.">
+                <TicketMock />
+              </FeatureCard>
+            </div>
+          </div>
+        </section>
+
+        {/* ── STATS (with gradient-15 accent) ── */}
+        <section className="py-8">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <RevealSection>
+              <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg dark:shadow-none border border-border relative">
+                <img src="/images/gradients/gradient-15.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-10" />
+                <div className="absolute inset-0 bg-card/70 dark:bg-card/80" />
+                <div className="relative z-10 p-12 sm:p-16">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+                    {[
+                      { num: '15', unit: 'min', desc: 'Average time to complete your first property assessment' },
+                      { num: '72', unit: '%', desc: 'Average readiness score improvement after 30 days' },
+                      { num: '4', unit: 'countries', desc: 'Families from US, UK, Canada, and Australia' },
+                    ].map((stat) => (
+                      <div key={stat.num}>
+                        <div className="flex items-baseline justify-center gap-1">
+                          <span className="text-5xl font-semibold text-primary">{stat.num}</span>
+                          <span className="text-lg text-muted-foreground font-medium">{stat.unit}</span>
+                        </div>
+                        <p className="mt-2 text-sm text-muted-foreground leading-snug max-w-[200px] mx-auto">{stat.desc}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-6 max-w-3xl">
-            <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Common pain points we solve</h2>
-            <p className="mt-2 text-wisebox-text-secondary">
-              Property operations often become fragmented when owners live across borders.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {marketingPainPoints.map((item) => (
-              <Card key={item.title} className="border-wisebox-border bg-wisebox-background-card">
-                <CardHeader>
-                  <CardTitle className="text-lg text-wisebox-text-primary">{item.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-6 text-wisebox-text-secondary">{item.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section className="bg-wisebox-background-lighter">
-          <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-            <div className="mb-6 max-w-3xl">
-              <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">How Wisebox works</h2>
-              <p className="mt-2 text-wisebox-text-secondary">Three steps to establish reliable property operations.</p>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {marketingHowItWorks.map((item) => (
-                <Card key={item.step} className="border-wisebox-border bg-wisebox-background-card">
-                  <CardHeader>
-                    <p className="text-sm font-semibold text-wisebox-primary-600">Step {item.step}</p>
-                    <CardTitle className="text-lg text-wisebox-text-primary">{item.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm leading-6 text-wisebox-text-secondary">{item.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-6 max-w-3xl">
-            <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Core platform capabilities</h2>
-            <p className="mt-2 text-wisebox-text-secondary">
-              Designed for real-world property workflows, not just static document storage.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {marketingFeatures.map((item, index) => {
-              const Icon = featureIcons[index] ?? FolderKanban;
-              return (
-                <Card key={item.title} className="border-wisebox-border bg-wisebox-background-card">
-                  <CardHeader>
-                    <div className="mb-2 flex items-center justify-between">
-                      <Icon className="h-5 w-5 text-wisebox-primary-700" />
-                      {item.comingSoon ? (
-                        <Badge variant="outline" className="border-amber-200 text-amber-700">
-                          Coming soon
-                        </Badge>
-                      ) : null}
-                    </div>
-                    <CardTitle className="text-lg text-wisebox-text-primary">{item.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm leading-6 text-wisebox-text-secondary">{item.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="bg-wisebox-background-lighter">
-          <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-            <div className="mb-6 max-w-3xl">
-              <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Pricing built for every stage</h2>
-              <p className="mt-2 text-wisebox-text-secondary">
-                Start free, then upgrade when you need deeper workflows and service support.
-              </p>
-            </div>
-            <PricingTable plans={pricingPlans} />
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <Card className="border-wisebox-primary/30 bg-wisebox-background-card">
-            <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-wisebox-text-primary">Your documents are encrypted and secure</h2>
-                <p className="mt-1 text-sm text-wisebox-text-secondary">
-                  Wisebox is designed with secure APIs, permissioned workflows, and audit-friendly status tracking.
-                </p>
+                </div>
               </div>
-              <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
-                <Link href="/assessment/start">Run Free Assessment</Link>
-              </Button>
-            </CardContent>
-          </Card>
+            </RevealSection>
+          </div>
         </section>
 
-        <section className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-wisebox-text-primary sm:text-3xl">Frequently asked questions</h2>
-            <p className="mt-2 text-wisebox-text-secondary">Answers to the most common onboarding questions.</p>
+        {/* ── FEATURED TESTIMONIAL ── */}
+        <section className="py-24 sm:py-32">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <RevealSection>
+              <div className="rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-2">
+                  <div className="relative min-h-[300px] lg:min-h-[450px]">
+                    <img src="/images/landing/father-son-laptop.jpg" alt="Family using Wisebox" className="absolute inset-0 w-full h-full object-cover" />
+                  </div>
+                  <div className="bg-card p-10 sm:p-14 flex flex-col justify-center">
+                    <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.15em' }}>Case Study</p>
+                    <blockquote className="mt-6 text-xl sm:text-2xl font-medium leading-relaxed italic text-foreground">
+                      &ldquo;Wisebox has <span className="not-italic text-primary font-semibold">completely transformed</span> how our family manages property back in Bangladesh. What used to be scattered documents and anxious phone calls is now a clear, trackable system we all trust.&rdquo;
+                    </blockquote>
+                    <div className="mt-8 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">R</div>
+                      <div><p className="text-sm font-medium text-foreground">Rafiq H.</p><p className="text-xs text-muted-foreground">London, UK</p></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </RevealSection>
           </div>
-          <FaqAccordion faqs={marketingFaqs} />
+        </section>
+
+        {/* ── FAQ ── */}
+        <section id="faq-section" className="scroll-mt-16 py-24 sm:py-32">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+              <RevealSection className="lg:col-span-1">
+                <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Everything you need to know</h2>
+                <Link href="/contact" className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">Contact us <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} /></Link>
+              </RevealSection>
+              <RevealSection delay={100} className="lg:col-span-2"><FaqAccordion faqs={marketingFaqs} /></RevealSection>
+            </div>
+          </div>
+        </section>
+
+        {/* ── FINAL CTA (with gradient-23 accent + woman photo) ── */}
+        <section className="py-24 sm:py-32 relative overflow-hidden">
+          <img src="/images/gradients/gradient-23.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-15 dark:opacity-10" />
+          <div className="absolute inset-0 bg-background/70" />
+          <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
+            <RevealSection>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">From scattered to structured</h2>
+                  <p className="mt-4 text-lg text-muted-foreground leading-relaxed">Building clarity for families who own property across borders.</p>
+                  <div className="mt-8">
+                    <Link href="/assessment/start" className="inline-flex items-center gap-2 rounded-full bg-primary px-10 py-4 text-lg font-medium text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02]">
+                      Get started — it&rsquo;s free <ArrowRight className="h-5 w-5" strokeWidth={1.5} />
+                    </Link>
+                  </div>
+                </div>
+                <div className="hidden lg:block">
+                  <div className="rounded-3xl overflow-hidden shadow-xl dark:shadow-none ring-1 ring-black/5 dark:ring-white/5">
+                    <img src="/images/landing/woman-armchair-away.jpg" alt="Peace of mind" className="w-full aspect-[4/3] object-cover" />
+                  </div>
+                </div>
+              </div>
+            </RevealSection>
+          </div>
         </section>
       </main>
+
       <MarketingFooter />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </>

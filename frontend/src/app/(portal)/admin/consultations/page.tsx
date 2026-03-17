@@ -26,11 +26,11 @@ interface ConsultationRequest {
 }
 
 const statusColors: Record<string, string> = {
-  open: 'bg-amber-50 text-amber-700 border-amber-200',
-  assigned: 'bg-blue-50 text-blue-700 border-blue-200',
-  scheduled: 'bg-purple-50 text-purple-700 border-purple-200',
-  completed: 'bg-green-50 text-green-700 border-green-200',
-  cancelled: 'bg-red-50 text-red-700 border-red-200',
+  open: 'bg-wisebox-status-warning/10 text-wisebox-status-warning border-wisebox-status-warning/20',
+  assigned: 'bg-wisebox-status-info/10 text-wisebox-status-info border-wisebox-status-info/20',
+  scheduled: 'bg-wisebox-status-scheduled/10 text-wisebox-status-scheduled-dark border-wisebox-status-scheduled/20',
+  completed: 'bg-wisebox-status-success/10 text-wisebox-status-success border-wisebox-status-success/20',
+  cancelled: 'bg-wisebox-status-danger/10 text-wisebox-status-danger border-wisebox-status-danger/20',
 };
 
 const STATUS_LABEL_KEYS: Record<string, string> = {
@@ -42,9 +42,9 @@ const STATUS_LABEL_KEYS: Record<string, string> = {
 };
 
 const completionColors: Record<string, string> = {
-  red: 'bg-red-500',
-  yellow: 'bg-yellow-500',
-  green: 'bg-green-500',
+  red: 'bg-wisebox-status-danger',
+  yellow: 'bg-wisebox-status-warning',
+  green: 'bg-wisebox-status-success',
 };
 
 export default function AdminConsultationsPage() {
@@ -77,8 +77,8 @@ export default function AdminConsultationsPage() {
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">{t('consultations.title')}</h1>
-        <p className="text-slate-600 mt-1">
+        <h1 className="text-2xl font-bold text-foreground">{t('consultations.title')}</h1>
+        <p className="text-muted-foreground mt-1">
           {t('consultations.subtitle')}
         </p>
       </div>
@@ -92,8 +92,8 @@ export default function AdminConsultationsPage() {
             size="sm"
             className={cn(
               statusFilter === btn.value
-                ? 'bg-amber-500 text-white hover:bg-amber-600'
-                : 'border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 bg-white'
+                ? 'bg-wisebox-status-warning text-white hover:bg-wisebox-status-warning/90'
+                : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground bg-card'
             )}
             onClick={() => setStatusFilter(btn.value)}
           >
@@ -104,69 +104,69 @@ export default function AdminConsultationsPage() {
       </div>
 
       {/* Consultations List */}
-      <Card className="bg-white border-slate-200 shadow-sm">
+      <Card className="bg-card border-border shadow-sm">
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-6 text-sm text-slate-500">{t('consultations.loading')}</div>
+            <div className="p-6 text-sm text-muted-foreground">{t('consultations.loading')}</div>
           ) : consultations.length === 0 ? (
             <div className="text-center py-16">
-              <Filter className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500">
+              <Filter className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">
                 {statusFilter ? t('consultations.noFilteredConsultations', { status: t(`consultations.statusLabels.${statusFilter}`) }) : t('consultations.noConsultations')}
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-border">
               {consultations.map((consultation) => (
                 <Link
                   key={consultation.id}
                   href={`/admin/consultations/${consultation.id}`}
-                  className="block hover:bg-slate-50 transition-colors"
+                  className="block hover:bg-muted transition-colors"
                 >
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline" className="text-xs text-slate-500 border-slate-300 bg-slate-50">
+                          <Badge variant="outline" className="text-xs text-muted-foreground border-border bg-muted">
                             {consultation.ticket_number}
                           </Badge>
                           <Badge variant="outline" className={cn('text-xs', statusColors[consultation.status] || '')}>
                             {STATUS_LABEL_KEYS[consultation.status] ? t(STATUS_LABEL_KEYS[consultation.status]) : consultation.status}
                           </Badge>
                           {consultation.property?.completion_status && (
-                            <span className="flex items-center gap-1 text-xs text-slate-400">
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
                               <span className={cn('w-2 h-2 rounded-full', completionColors[consultation.property.completion_status])} />
                               {t('consultations.percentComplete', { percent: consultation.property.completion_percentage })}
                             </span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-slate-900">{consultation.title}</h3>
+                        <h3 className="font-semibold text-foreground">{consultation.title}</h3>
                         {consultation.description && (
-                          <p className="text-sm text-slate-600 mt-1 line-clamp-1">
+                          <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
                             {consultation.description}
                           </p>
                         )}
                       </div>
-                      <ArrowRight className="h-5 w-5 text-slate-400 shrink-0 mt-1" />
+                      <ArrowRight className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
                       <div>
-                        <p className="text-slate-400 text-xs">{t('consultations.fields.customer')}</p>
-                        <p className="text-slate-900 font-medium">{consultation.customer?.name || 'N/A'}</p>
-                        <p className="text-slate-400 text-xs">{consultation.customer?.email}</p>
+                        <p className="text-muted-foreground text-xs">{t('consultations.fields.customer')}</p>
+                        <p className="text-foreground font-medium">{consultation.customer?.name || 'N/A'}</p>
+                        <p className="text-muted-foreground text-xs">{consultation.customer?.email}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-xs">{t('consultations.fields.property')}</p>
-                        <p className="text-slate-900 font-medium truncate">{consultation.property?.property_name || 'N/A'}</p>
+                        <p className="text-muted-foreground text-xs">{t('consultations.fields.property')}</p>
+                        <p className="text-foreground font-medium truncate">{consultation.property?.property_name || 'N/A'}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-xs">{t('consultations.fields.consultant')}</p>
-                        <p className="text-slate-900 font-medium">{consultation.consultant?.name || t('consultations.fields.unassigned')}</p>
+                        <p className="text-muted-foreground text-xs">{t('consultations.fields.consultant')}</p>
+                        <p className="text-foreground font-medium">{consultation.consultant?.name || t('consultations.fields.unassigned')}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-xs">{t('consultations.fields.requested')}</p>
-                        <p className="text-slate-900 font-medium">
+                        <p className="text-muted-foreground text-xs">{t('consultations.fields.requested')}</p>
+                        <p className="text-foreground font-medium">
                           {new Date(consultation.created_at).toLocaleDateString('en-GB', {
                             day: 'numeric', month: 'short', year: 'numeric',
                           })}
@@ -175,9 +175,9 @@ export default function AdminConsultationsPage() {
                     </div>
 
                     {consultation.status === 'open' && consultation.preferred_time_slots && (
-                      <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2">
-                        <Calendar className="h-3.5 w-3.5 text-amber-500" />
-                        <span className="text-xs text-amber-600 font-medium">
+                      <div className="mt-3 pt-3 border-t border-border flex items-center gap-2">
+                        <Calendar className="h-3.5 w-3.5 text-wisebox-status-warning" />
+                        <span className="text-xs text-wisebox-status-warning font-medium">
                           {t('consultations.preferredSlots', { count: consultation.preferred_time_slots.length })}
                         </span>
                       </div>

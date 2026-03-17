@@ -55,13 +55,13 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between rounded-lg bg-wisebox-primary-50 px-4 py-3">
-        <span className="text-sm font-medium text-wisebox-primary-800">
+      <div className="flex items-center justify-between rounded-lg bg-primary/10 px-4 py-3">
+        <span className="text-sm font-medium text-primary">
           {t('coOwnerFields.yourOwnership', { percent: ownerPercentage })}
         </span>
         {exceeds100 && (
-          <span className="flex items-center gap-1.5 text-sm font-medium text-amber-700">
-            <AlertTriangle className="h-4 w-4" />
+          <span className="flex items-center gap-1.5 text-sm font-medium text-wisebox-status-warning">
+            <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
             {t('coOwnerFields.totalExceeds')}
           </span>
         )}
@@ -70,20 +70,20 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
       {coOwners.map((coOwner, index) => (
         <div
           key={index}
-          className="relative rounded-lg border border-wisebox-border bg-wisebox-background-card p-4 space-y-3"
+          className="relative rounded-xl border border-border bg-card p-4 space-y-3 shadow-sm dark:shadow-none"
         >
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-wisebox-text-secondary">
+            <span className="text-sm font-medium text-muted-foreground">
               {t('coOwnerFields.coOwnerIndex', { index: index + 1 })}
             </span>
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-wisebox-text-muted hover:text-red-500"
+              className="h-7 w-7 text-muted-foreground hover:text-wisebox-status-danger transition-all duration-200"
               onClick={() => removeCoOwner(index)}
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" strokeWidth={1.5} />
             </Button>
           </div>
 
@@ -157,10 +157,10 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
         type="button"
         variant="outline"
         size="sm"
-        className="w-full border-dashed"
+        className="w-full border-dashed transition-all duration-200"
         onClick={addCoOwner}
       >
-        <Plus className="h-4 w-4 mr-1.5" />
+        <Plus className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
         {t('coOwnerFields.addCoOwner')}
       </Button>
     </div>

@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
 interface WiseboxLogoProps {
-  variant?: 'light' | 'dark';
+  variant?: 'auto' | 'light' | 'dark';
   className?: string;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -14,33 +14,47 @@ const sizeMap = {
   lg: { logo: { w: 188, h: 38 }, symbol: { w: 40, h: 38 } },
 };
 
-export function WiseboxLogo({ variant = 'light', className, showText = true, size = 'md' }: WiseboxLogoProps) {
-  // variant='light' = light-colored logo for dark backgrounds (white text)
-  // variant='dark' = dark-colored logo for light backgrounds (navy text)
-  const suffix = variant === 'light' ? 'dark' : 'light';
+export function WiseboxLogo({ variant = 'auto', className, showText = true, size = 'md' }: WiseboxLogoProps) {
   const dims = sizeMap[size];
+  const type = showText ? 'logo' : 'symbol';
+  const d = showText ? dims.logo : dims.symbol;
 
-  if (showText) {
+  if (variant !== 'auto') {
     return (
       <Image
-        src={`/images/wisebox-logo-${suffix}.svg`}
+        src={`/images/wisebox-${type}-${variant}.svg`}
         alt="Wisebox"
-        width={dims.logo.w}
-        height={dims.logo.h}
+        width={d.w}
+        height={d.h}
         className={cn('object-contain', className)}
         priority
       />
     );
   }
 
+  // Fixed-size container — both images absolutely positioned inside.
+  // Container never changes size. Only visibility swaps via CSS.
   return (
-    <Image
-      src={`/images/wisebox-symbol-${suffix}.svg`}
-      alt="Wisebox"
-      width={dims.symbol.w}
-      height={dims.symbol.h}
-      className={cn('object-contain', className)}
-      priority
-    />
+    <span
+      className={cn('relative inline-block', className)}
+      style={{ width: d.w, height: d.h }}
+    >
+      <Image
+        src={`/images/wisebox-${type}-light.svg`}
+        alt="Wisebox"
+        width={d.w}
+        height={d.h}
+        className="absolute inset-0 object-contain block dark:hidden"
+        priority
+      />
+      <Image
+        src={`/images/wisebox-${type}-dark.svg`}
+        alt="Wisebox"
+        width={d.w}
+        height={d.h}
+        className="absolute inset-0 object-contain hidden dark:block"
+        priority
+      />
+    </span>
   );
 }
