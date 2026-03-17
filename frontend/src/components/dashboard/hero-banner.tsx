@@ -3,7 +3,6 @@
 import * as React from "react"
 import Link from "next/link"
 import { useTranslation } from "react-i18next"
-import { Rocket } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export interface HeroSlide {
@@ -66,33 +65,42 @@ export function DashboardHeroBanner({
   const heroCtaHref = resolveHeroCtaHref(currentSlide?.cta_url, '/properties/new')
 
   return (
-    <div className={cn("bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none", className)}>
-      <div className="space-y-4">
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/10 rounded-full px-2.5 py-0.5">
-          <Rocket className="w-3.5 h-3.5" strokeWidth={1.5} />
-          {t('dashboard:heroBanner.label')}
-        </span>
+    <div className={cn("relative rounded-xl overflow-hidden h-44 sm:h-52 md:h-56", className)}>
+      {/* Theme-swapped gradient backgrounds */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat block dark:hidden"
+        style={{ backgroundImage: "url('/images/gradients/gradient-09-light.png')" }}
+      />
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block"
+        style={{ backgroundImage: "url('/images/gradients/gradient-09-dark.png')" }}
+      />
+      {/* Left-heavy overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent dark:from-black/50 dark:via-black/25 dark:to-transparent" />
 
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+      {/* Content - always white text, left-aligned */}
+      <div className="relative z-10 flex flex-col justify-center h-full p-6 sm:p-8 max-w-md">
+        <p className="text-sm font-medium text-white/70">
+          {t('dashboard:heroBanner.label')}
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold text-white">
           {currentSlide?.title ?? t('dashboard:heroBanner.defaultTitle')}
         </h2>
-
         {currentSlide?.subtitle && (
-          <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
+          <p className="mt-2 text-sm text-white/60 leading-relaxed line-clamp-2">
             {currentSlide.subtitle}
           </p>
         )}
-
-        <div className="flex flex-wrap items-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center gap-3 mt-4">
           <Link
             href={heroCtaHref}
-            className="bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-primary/90 transition-all duration-200 inline-flex items-center h-10"
+            className="bg-white/90 text-gray-900 hover:bg-white rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 inline-flex items-center"
           >
             {currentSlide?.cta_text || t('dashboard:addNewProperty')}
           </Link>
           <Link
             href="/assessment/start"
-            className="bg-transparent border border-border text-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-muted transition-all duration-200 inline-flex items-center h-10"
+            className="border border-white/30 text-white hover:bg-white/10 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 inline-flex items-center"
           >
             {t('dashboard:getFreeAssessment')}
           </Link>

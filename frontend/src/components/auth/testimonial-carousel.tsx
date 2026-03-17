@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -10,7 +9,6 @@ interface Testimonial {
   name: string;
   title: string;
   location: string;
-  image: string;
 }
 
 const testimonials: Testimonial[] = [
@@ -20,7 +18,6 @@ const testimonials: Testimonial[] = [
     name: 'Ahmed Hassan',
     title: 'Software Engineer',
     location: 'Toronto, Canada',
-    image: '/images/auth/father-son-laptop.jpg',
   },
   {
     quote:
@@ -28,7 +25,6 @@ const testimonials: Testimonial[] = [
     name: 'Enayet Chowdhury',
     title: 'Retd. Physician',
     location: 'Sydney, Australia',
-    image: '/images/auth/grandfather-grandson-park.jpg',
   },
   {
     quote:
@@ -36,7 +32,6 @@ const testimonials: Testimonial[] = [
     name: 'Fatima Rahman',
     title: 'University Lecturer',
     location: 'London, UK',
-    image: '/images/auth/woman-armchair-phone.jpg',
   },
   {
     quote:
@@ -44,7 +39,6 @@ const testimonials: Testimonial[] = [
     name: 'Rafiq Uddin',
     title: 'IT Consultant',
     location: 'Stockholm, Sweden',
-    image: '/images/auth/woman-cafe-laptop.jpg',
   },
 ];
 
@@ -67,45 +61,23 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
         className,
       )}
     >
-      {/* Full-bleed photo backgrounds */}
-      {testimonials.map((slide, i) => (
-        <div
-          key={i}
-          className={cn(
-            'absolute inset-0 transition-opacity duration-700',
-            i === active ? 'opacity-100' : 'opacity-0',
-          )}
-        >
-          <Image
-            src={slide.image}
-            alt={slide.name}
-            fill
-            className="object-cover"
-            sizes="50vw"
-            priority={i === 0}
-          />
-        </div>
-      ))}
+      {/* Theme-swapped gradient backgrounds */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat block dark:hidden"
+        style={{ backgroundImage: "url('/images/gradients/gradient-10-light.png')" }}
+      />
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block"
+        style={{ backgroundImage: "url('/images/gradients/gradient-10-dark.png')" }}
+      />
+      {/* Bottom-to-top overlay: darkens bottom for testimonial text */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-      {/* Gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
-
-      <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full">
-        {/* Location badge */}
-        <div className="flex justify-end">
-          <div
-            key={active}
-            className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm animate-in fade-in duration-500"
-          >
-            <MapPin className="w-4 h-4" strokeWidth={1.5} />
-            <span>{t.location}</span>
-          </div>
-        </div>
-
-        {/* Testimonial content */}
+      {/* Testimonial content pinned to bottom */}
+      <div className="relative z-10 flex flex-col justify-end h-full p-10 text-white w-full">
         <div
           key={active}
-          className="max-w-xl space-y-4 bg-black/30 backdrop-blur-sm p-8 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+          className="max-w-xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500"
         >
           <svg
             className="w-10 h-10 text-white/80"
@@ -118,11 +90,15 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
           <div>
             <p className="font-semibold">{t.name}</p>
             <p className="text-sm text-white/80">{t.title}</p>
+            <p className="text-sm text-white/60 flex items-center gap-1.5 mt-1">
+              <MapPin className="w-3.5 h-3.5" strokeWidth={1.5} />
+              {t.location}
+            </p>
           </div>
         </div>
 
         {/* Dot indicators */}
-        <div className="flex items-center justify-center gap-2 pt-4">
+        <div className="flex items-center gap-2 mt-6">
           {testimonials.map((_, i) => (
             <button
               key={i}

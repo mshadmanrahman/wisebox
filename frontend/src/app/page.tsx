@@ -103,24 +103,38 @@ export default function Home() {
       <MarketingHeader />
       <main className="scroll-smooth">
         {/* ── Hero ── */}
-        <section className="px-6 pb-16 pt-24 sm:pb-24 sm:pt-40 md:pt-40">
-          <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+        <section className="relative overflow-hidden">
+          {/* Theme-swapped gradient backgrounds */}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat block dark:hidden"
+            style={{ backgroundImage: "url('/images/gradients/gradient-02-light.png')" }}
+          />
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block"
+            style={{ backgroundImage: "url('/images/gradients/gradient-02-dark.png')" }}
+          />
+          {/* Overlays for text readability */}
+          <div className="absolute inset-0 bg-white/10 dark:bg-black/30" />
+          {/* Bottom fade into page background */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background" />
+
+          <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pb-24 pt-24 text-center sm:pb-28 sm:pt-40 md:pt-40">
             <p
-              className="text-xs font-medium uppercase text-muted-foreground"
+              className="text-xs font-medium uppercase text-muted-foreground dark:text-white/60"
               style={{ letterSpacing: '0.05em' }}
             >
               Property operations for Bangladeshi families abroad
             </p>
 
             <h1
-              className="mt-6 max-w-4xl font-[family-name:var(--font-geist-sans)] text-2xl font-semibold leading-[1.1] text-foreground sm:text-4xl md:text-5xl lg:text-6xl"
+              className="mt-6 max-w-4xl font-[family-name:var(--font-geist-sans)] text-2xl font-semibold leading-[1.1] text-foreground dark:text-white sm:text-4xl md:text-5xl lg:text-6xl"
               style={{ letterSpacing: '-0.02em' }}
             >
               Your property in Bangladesh deserves the same care you&rsquo;d give it in person.
             </h1>
 
             <p
-              className="mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg"
+              className="mt-6 max-w-2xl text-base text-muted-foreground dark:text-white/70 sm:text-lg"
               style={{ lineHeight: '1.6' }}
             >
               Wisebox gives diaspora families a single, secure workspace to organize documents, track
@@ -141,7 +155,7 @@ export default function Home() {
               <Button
                 asChild
                 variant="outline"
-                className="h-11 rounded-lg border-border px-6 text-foreground transition-all duration-200 hover:border-wisebox-border-light"
+                className="h-11 rounded-lg px-6 transition-all duration-200 border-foreground/20 text-foreground hover:bg-foreground/5 dark:border-white/30 dark:text-white dark:hover:bg-white/10"
               >
                 <a href="#process-section">Learn How It Works</a>
               </Button>
@@ -365,16 +379,32 @@ export default function Home() {
         </section>
 
         {/* ── [07] Final CTA ── */}
-        <section>
-          <div className="mx-auto flex w-full max-w-2xl flex-col items-center px-6 py-20 text-center sm:py-32">
+        <section className="relative overflow-hidden">
+          {/* Theme-swapped gradient backgrounds */}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat block dark:hidden"
+            style={{ backgroundImage: "url('/images/gradients/gradient-12-light.png')" }}
+          />
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block"
+            style={{ backgroundImage: "url('/images/gradients/gradient-12-dark.png')" }}
+          />
+          {/* Overlays */}
+          <div className="absolute inset-0 bg-white/10 dark:bg-black/30" />
+          {/* Top fade from page background into gradient */}
+          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background to-transparent" />
+          {/* Bottom fade from gradient back into footer */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-background" />
+
+          <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center px-6 py-20 text-center sm:py-32">
             <h2
-              className="font-[family-name:var(--font-geist-sans)] text-2xl font-semibold leading-tight text-foreground sm:text-3xl md:text-4xl"
+              className="font-[family-name:var(--font-geist-sans)] text-2xl font-semibold leading-tight text-foreground dark:text-white sm:text-3xl md:text-4xl"
               style={{ letterSpacing: '-0.02em' }}
             >
               Start with clarity. Everything else follows.
             </h2>
             <p
-              className="mt-4 max-w-lg text-sm text-muted-foreground sm:text-base"
+              className="mt-4 max-w-lg text-sm text-muted-foreground dark:text-white/70 sm:text-base"
               style={{ lineHeight: '1.6' }}
             >
               Run a free assessment to see where your property stands. No payment required. No
@@ -394,7 +424,7 @@ export default function Home() {
               <Button
                 asChild
                 variant="outline"
-                className="h-11 rounded-lg border-border px-6 text-foreground transition-all duration-200 hover:border-wisebox-border-light"
+                className="h-11 rounded-lg px-6 transition-all duration-200 border-foreground/20 text-foreground hover:bg-foreground/5 dark:border-white/30 dark:text-white dark:hover:bg-white/10"
               >
                 <a href="#pricing-section">See Our Plans</a>
               </Button>
