@@ -68,10 +68,10 @@ export default function PropertyDetailPage() {
     return (
       <div className="px-6 py-8 space-y-6">
         <div className="animate-pulse space-y-6">
-          <div className="h-5 w-48 rounded bg-wisebox-background-lighter" />
-          <div className="h-64 w-full rounded-xl bg-wisebox-background-card" />
-          <div className="h-48 w-full rounded-xl bg-wisebox-background-card" />
-          <div className="h-32 w-full rounded-xl bg-wisebox-background-card" />
+          <div className="h-5 w-48 rounded bg-muted" />
+          <div className="h-64 w-full rounded-xl bg-card" />
+          <div className="h-48 w-full rounded-xl bg-card" />
+          <div className="h-32 w-full rounded-xl bg-card" />
         </div>
       </div>
     );
@@ -80,13 +80,13 @@ export default function PropertyDetailPage() {
   if (error || !property) {
     return (
       <div className="px-6 py-8">
-        <div className="rounded-xl border border-wisebox-status-danger/20 bg-wisebox-status-danger/10 p-8 text-center space-y-4">
-          <p className="text-sm text-wisebox-status-danger">
+        <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-8 text-center space-y-4">
+          <p className="text-sm text-destructive">
             {t('properties:detail.notFound')}
           </p>
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="outline" size="sm" asChild className="border border-border hover:bg-muted transition-all duration-200">
             <Link href="/properties">
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
               {t('properties:detail.backToProperties')}
             </Link>
           </Button>
@@ -98,23 +98,23 @@ export default function PropertyDetailPage() {
   return (
     <div className="px-6 py-8 space-y-6">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-wisebox-text-secondary">
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
         <Link
           href="/properties"
-          className="hover:text-wisebox-text-primary transition-colors"
+          className="hover:text-foreground transition-all duration-200"
         >
           {t('properties:breadcrumb.properties')}
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
+        <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.5} />
         {property.property_type && (
           <>
-            <span className="text-wisebox-primary uppercase text-xs font-medium">
+            <span className="text-primary uppercase text-xs font-medium">
               {property.property_type.name}
             </span>
-            <ChevronRight className="h-3.5 w-3.5" />
+            <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.5} />
           </>
         )}
-        <span className="text-wisebox-text-primary font-medium truncate max-w-xs">
+        <span className="text-foreground font-medium truncate max-w-xs">
           {property.property_name}
         </span>
       </nav>
@@ -137,41 +137,41 @@ export default function PropertyDetailPage() {
           <AssessmentSection property={property} assessmentHistory={assessmentsResponse?.data ?? []} />
 
           {/* Consultation Resources */}
-          <Card className="bg-wisebox-background-card border-wisebox-border">
+          <Card className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none">
             <CardHeader>
-              <CardTitle className="text-lg text-wisebox-text-primary">{t('properties:detail.consultationResources')}</CardTitle>
+              <CardTitle className="text-base font-medium text-foreground">{t('properties:detail.consultationResources')}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Link href={`/properties/${property.id}/journal`}>
-                <div className="p-4 rounded-lg border border-wisebox-border hover:border-wisebox-primary/50 bg-wisebox-background-lighter hover:bg-wisebox-background-lighter/80 transition-all cursor-pointer group">
+                <div className="p-4 rounded-lg border border-border hover:border-primary/50 bg-muted hover:bg-muted/80 transition-all duration-200 cursor-pointer group">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <History className="h-5 w-5 text-wisebox-primary" />
-                        <h3 className="font-semibold text-wisebox-text-primary">{t('properties:detail.consultationHistory')}</h3>
+                        <History className="h-5 w-5 text-primary" strokeWidth={1.5} />
+                        <h3 className="font-medium text-foreground">{t('properties:detail.consultationHistory')}</h3>
                       </div>
-                      <p className="text-sm text-wisebox-text-secondary">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {t('properties:detail.consultationHistoryDesc')}
                       </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-wisebox-text-muted group-hover:text-wisebox-primary transition-colors flex-shrink-0" />
+                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-all duration-200 flex-shrink-0" strokeWidth={1.5} />
                   </div>
                 </div>
               </Link>
 
               <Link href={`/properties/${property.id}/recommendations`}>
-                <div className="p-4 rounded-lg border border-wisebox-border hover:border-wisebox-primary/50 bg-wisebox-background-lighter hover:bg-wisebox-background-lighter/80 transition-all cursor-pointer group">
+                <div className="p-4 rounded-lg border border-border hover:border-primary/50 bg-muted hover:bg-muted/80 transition-all duration-200 cursor-pointer group">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <ClipboardList className="h-5 w-5 text-wisebox-primary" />
-                        <h3 className="font-semibold text-wisebox-text-primary">{t('properties:detail.recommendations')}</h3>
+                        <ClipboardList className="h-5 w-5 text-primary" strokeWidth={1.5} />
+                        <h3 className="font-medium text-foreground">{t('properties:detail.recommendations')}</h3>
                       </div>
-                      <p className="text-sm text-wisebox-text-secondary">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {t('properties:detail.recommendationsDesc')}
                       </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-wisebox-text-muted group-hover:text-wisebox-primary transition-colors flex-shrink-0" />
+                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-all duration-200 flex-shrink-0" strokeWidth={1.5} />
                   </div>
                 </div>
               </Link>
@@ -179,25 +179,25 @@ export default function PropertyDetailPage() {
           </Card>
 
           {/* Danger Zone */}
-          <div className="rounded-xl border border-wisebox-status-danger/20 p-6 space-y-3">
-            <h3 className="text-sm font-medium text-wisebox-status-danger">{t('properties:detail.dangerZone')}</h3>
-            <Separator className="bg-wisebox-status-danger/20" />
+          <div className="rounded-xl border border-destructive/20 p-6 space-y-3">
+            <h3 className="text-sm font-medium text-destructive">{t('properties:detail.dangerZone')}</h3>
+            <Separator className="bg-destructive/20" />
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-wisebox-text-primary">{t('properties:detail.deleteProperty')}</p>
-                <p className="text-xs text-wisebox-text-secondary">{t('properties:detail.deleteDescription')}</p>
+                <p className="text-sm text-foreground">{t('properties:detail.deleteProperty')}</p>
+                <p className="text-xs text-muted-foreground">{t('properties:detail.deleteDescription')}</p>
               </div>
               <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="border-wisebox-status-danger/30 text-wisebox-status-danger hover:bg-wisebox-status-danger/10 hover:text-wisebox-status-danger/80">
-                    <Trash2 className="h-4 w-4" />
+                  <Button variant="outline" className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive/80 transition-all duration-200">
+                    <Trash2 className="h-4 w-4" strokeWidth={1.5} />
                     {t('properties:detail.deleteProperty')}
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-wisebox-background-card border-wisebox-border">
+                <DialogContent className="bg-card border-border">
                   <DialogHeader>
-                    <DialogTitle className="text-wisebox-text-primary">{t('properties:detail.deleteConfirmTitle')}</DialogTitle>
-                    <DialogDescription className="text-wisebox-text-secondary">
+                    <DialogTitle className="text-foreground">{t('properties:detail.deleteConfirmTitle')}</DialogTitle>
+                    <DialogDescription className="text-muted-foreground">
                       {t('properties:detail.deleteConfirmDescription', { name: property.property_name })}
                     </DialogDescription>
                   </DialogHeader>
@@ -206,6 +206,7 @@ export default function PropertyDetailPage() {
                       variant="outline"
                       onClick={() => setDeleteOpen(false)}
                       disabled={deleteMutation.isPending}
+                      className="border border-border hover:bg-muted transition-all duration-200"
                     >
                       {t('common:cancel')}
                     </Button>
@@ -213,12 +214,13 @@ export default function PropertyDetailPage() {
                       variant="destructive"
                       onClick={() => deleteMutation.mutate()}
                       disabled={deleteMutation.isPending}
+                      className="transition-all duration-200"
                     >
                       {deleteMutation.isPending ? t('properties:detail.deleting') : t('common:delete')}
                     </Button>
                   </DialogFooter>
                   {deleteMutation.isError && (
-                    <p className="text-sm text-wisebox-status-danger">
+                    <p className="text-sm text-destructive">
                       {t('properties:detail.deleteFailed')}
                     </p>
                   )}

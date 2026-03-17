@@ -97,7 +97,7 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
             key={active}
             className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm animate-in fade-in duration-500"
           >
-            <MapPin className="w-4 h-4" />
+            <MapPin className="w-4 h-4" strokeWidth={1.5} />
             <span>{t.location}</span>
           </div>
         </div>
@@ -105,7 +105,7 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
         {/* Testimonial content */}
         <div
           key={active}
-          className="max-w-xl space-y-4 bg-wisebox-overlay-light backdrop-blur-sm p-8 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+          className="max-w-xl space-y-4 bg-black/30 backdrop-blur-sm p-8 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500"
         >
           <svg
             className="w-10 h-10 text-white/80"

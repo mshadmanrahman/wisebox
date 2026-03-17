@@ -90,7 +90,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-wisebox-background">
+    <div className="min-h-screen flex bg-background">
       {/* Left side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md space-y-8">
@@ -99,15 +99,15 @@ export default function RegisterPage() {
 
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-wisebox-text-primary mb-2">{t('auth:register.title')}</h1>
-            <p className="text-wisebox-text-secondary">
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('auth:register.title')}</h1>
+            <p className="text-muted-foreground">
               {t('auth:register.subtitle')}
             </p>
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="p-3 text-sm text-wisebox-status-danger bg-wisebox-status-danger/10 border border-wisebox-status-danger/20 rounded-lg">
+            <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
               {error}
             </div>
           )}
@@ -115,21 +115,21 @@ export default function RegisterPage() {
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-wisebox-text-primary text-sm font-medium">
+              <Label htmlFor="name" className="text-foreground text-sm font-medium">
                 {t('auth:register.nameLabel')}
               </Label>
               <Input
                 id="name"
                 placeholder={t('auth:register.namePlaceholder')}
                 autoComplete="name"
-                className="bg-wisebox-background-input border-wisebox-border text-wisebox-text-primary placeholder:text-wisebox-text-muted h-12"
+                className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('name')}
               />
-              {errors.name && <p className="text-sm text-wisebox-status-danger">{errors.name.message}</p>}
+              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-wisebox-text-primary text-sm font-medium">
+              <Label htmlFor="email" className="text-foreground text-sm font-medium">
                 {t('auth:register.emailLabel')}
               </Label>
               <Input
@@ -137,14 +137,14 @@ export default function RegisterPage() {
                 type="email"
                 placeholder={t('auth:register.emailPlaceholder')}
                 autoComplete="email"
-                className="bg-wisebox-background-input border-wisebox-border text-wisebox-text-primary placeholder:text-wisebox-text-muted h-12"
+                className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('email')}
               />
-              {errors.email && <p className="text-sm text-wisebox-status-danger">{errors.email.message}</p>}
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-wisebox-text-primary text-sm font-medium">
+              <Label htmlFor="password" className="text-foreground text-sm font-medium">
                 {t('auth:register.passwordLabel')}
               </Label>
               <Input
@@ -152,27 +152,27 @@ export default function RegisterPage() {
                 type="password"
                 placeholder={t('auth:register.passwordPlaceholder')}
                 autoComplete="new-password"
-                className="bg-wisebox-background-input border-wisebox-border text-wisebox-text-primary placeholder:text-wisebox-text-muted h-12"
+                className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('password')}
               />
-              {errors.password && <p className="text-sm text-wisebox-status-danger">{errors.password.message}</p>}
+              {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label className="text-wisebox-text-primary text-sm font-medium">{t('auth:register.countryLabel')}</Label>
+              <Label className="text-foreground text-sm font-medium">{t('auth:register.countryLabel')}</Label>
               <Select
                 value={watchedCountry}
                 onValueChange={(value) => setValue('country_of_residence', value, { shouldValidate: true })}
               >
-                <SelectTrigger className="bg-wisebox-background-input border-wisebox-border text-wisebox-text-primary h-12">
+                <SelectTrigger className="bg-muted border-border text-foreground h-12">
                   <SelectValue placeholder={t('auth:register.countryPlaceholder')} />
                 </SelectTrigger>
-                <SelectContent className="bg-wisebox-background-card border-wisebox-border">
+                <SelectContent className="bg-card border-border">
                   {COUNTRIES.map((country) => (
                     <SelectItem
                       key={country.code}
                       value={country.code}
-                      className="text-wisebox-text-primary hover:bg-wisebox-background-lighter"
+                      className="text-foreground hover:bg-muted"
                     >
                       {country.flag} {country.name}
                     </SelectItem>
@@ -180,7 +180,7 @@ export default function RegisterPage() {
                 </SelectContent>
               </Select>
               {errors.country_of_residence && (
-                <p className="text-sm text-wisebox-status-danger">{errors.country_of_residence.message}</p>
+                <p className="text-sm text-destructive">{errors.country_of_residence.message}</p>
               )}
             </div>
 
@@ -188,25 +188,25 @@ export default function RegisterPage() {
               <input
                 type="checkbox"
                 id="terms"
-                className="mt-1 h-4 w-4 rounded border-wisebox-border bg-wisebox-background-input checked:bg-wisebox-primary checked:border-wisebox-primary focus:ring-wisebox-primary focus:ring-offset-wisebox-background"
+                className="mt-1 h-4 w-4 rounded border-border bg-muted checked:bg-primary checked:border-primary focus:ring-primary focus:ring-offset-background"
                 {...register('terms_accepted')}
               />
-              <label htmlFor="terms" className="text-sm text-wisebox-text-secondary">
+              <label htmlFor="terms" className="text-sm text-muted-foreground">
                 {t('auth:register.termsAgree')}{' '}
-                <Link href="/terms" className="text-wisebox-primary hover:underline">
+                <Link href="/terms" className="text-primary hover:underline">
                   {t('common:termsOfService')}
                 </Link>{' '}
                 {t('auth:register.termsAnd')}{' '}
-                <Link href="/privacy" className="text-wisebox-primary hover:underline">
+                <Link href="/privacy" className="text-primary hover:underline">
                   {t('common:privacyPolicy')}.
                 </Link>
               </label>
             </div>
-            {errors.terms_accepted && <p className="text-sm text-wisebox-status-danger">{errors.terms_accepted.message}</p>}
+            {errors.terms_accepted && <p className="text-sm text-destructive">{errors.terms_accepted.message}</p>}
 
             <Button
               type="submit"
-              className="w-full bg-white hover:bg-white/90 text-wisebox-background h-12 font-semibold"
+              className="w-full bg-white hover:bg-white/90 text-background h-12 font-semibold"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -221,39 +221,39 @@ export default function RegisterPage() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-wisebox-border" />
+                <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-wisebox-background px-2 text-wisebox-text-muted">{t('auth:register.orContinueWith')}</span>
+                <span className="bg-background px-2 text-muted-foreground">{t('auth:register.orContinueWith')}</span>
               </div>
             </div>
 
             <div ref={googleButtonRef} className="w-full flex justify-center" />
             {googleError && (
-              <p className="text-sm text-wisebox-status-danger text-center">{googleError}</p>
+              <p className="text-sm text-destructive text-center">{googleError}</p>
             )}
 
-            <p className="text-center text-sm text-wisebox-text-secondary">
+            <p className="text-center text-sm text-muted-foreground">
               {t('auth:register.hasAccount')}{' '}
-              <Link href="/login" className="text-wisebox-text-primary font-medium hover:underline">
+              <Link href="/login" className="text-foreground font-medium hover:underline">
                 {t('auth:register.logIn')}
               </Link>
             </p>
           </form>
 
           {/* Footer */}
-          <div className="pt-8 border-t border-wisebox-border">
-            <p className="text-xs text-wisebox-text-muted text-center">
+          <div className="pt-8 border-t border-border">
+            <p className="text-xs text-muted-foreground text-center">
               {t('common:copyright')}
             </p>
             <div className="flex justify-center gap-6 mt-2">
-              <Link href="/privacy" className="text-xs text-wisebox-text-muted hover:text-wisebox-text-primary">
+              <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">
                 {t('common:privacyPolicy')}
               </Link>
-              <Link href="/terms" className="text-xs text-wisebox-text-muted hover:text-wisebox-text-primary">
+              <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
                 {t('common:termsOfService')}
               </Link>
-              <Link href="/help" className="text-xs text-wisebox-text-muted hover:text-wisebox-text-primary">
+              <Link href="/help" className="text-xs text-muted-foreground hover:text-foreground">
                 {t('common:helpCenter')}
               </Link>
             </div>

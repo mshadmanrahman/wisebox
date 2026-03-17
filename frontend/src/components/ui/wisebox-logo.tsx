@@ -1,8 +1,12 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
 interface WiseboxLogoProps {
-  variant?: 'light' | 'dark';
+  variant?: 'auto' | 'light' | 'dark';
   className?: string;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -14,10 +18,32 @@ const sizeMap = {
   lg: { logo: { w: 188, h: 38 }, symbol: { w: 40, h: 38 } },
 };
 
-export function WiseboxLogo({ variant = 'light', className, showText = true, size = 'md' }: WiseboxLogoProps) {
-  // variant='light' = light-colored logo for dark backgrounds (white text)
-  // variant='dark' = dark-colored logo for light backgrounds (navy text)
-  const suffix = variant === 'light' ? 'dark' : 'light';
+export function WiseboxLogo({ variant = 'auto', className, showText = true, size = 'md' }: WiseboxLogoProps) {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Determine which logo file to use:
+  // - 'light' variant = logo for light backgrounds (dark wordmark) = wisebox-logo-light.svg
+  // - 'dark' variant = logo for dark backgrounds (white wordmark) = wisebox-logo-dark.svg
+  // - 'auto' = pick based on current theme
+  let suffix: string;
+  if (variant === 'auto') {
+    if (!mounted) {
+      // Before hydration, use light suffix (for light default theme)
+      suffix = 'light';
+    } else {
+      suffix = resolvedTheme === 'dark' ? 'dark' : 'light';
+    }
+  } else {
+    // variant='light' means "use on light bg" = light file (dark wordmark)
+    // variant='dark' means "use on dark bg" = dark file (white wordmark)
+    suffix = variant;
+  }
+
   const dims = sizeMap[size];
 
   if (showText) {

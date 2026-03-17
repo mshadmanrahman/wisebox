@@ -62,13 +62,13 @@ const SIZE_UNITS: { value: SizeUnit; label: string }[] = [
 ];
 
 const PROPERTY_TYPE_ICONS: Record<string, React.ReactNode> = {
-  land: <Tractor className="h-6 w-6" />,
-  building: <Building2 className="h-6 w-6" />,
-  apartment: <Home className="h-6 w-6" />,
-  commercial: <Store className="h-6 w-6" />,
-  agricultural: <Tractor className="h-6 w-6" />,
-  industrial: <Factory className="h-6 w-6" />,
-  residential: <Home className="h-6 w-6" />,
+  land: <Tractor className="h-6 w-6" strokeWidth={1.5} />,
+  building: <Building2 className="h-6 w-6" strokeWidth={1.5} />,
+  apartment: <Home className="h-6 w-6" strokeWidth={1.5} />,
+  commercial: <Store className="h-6 w-6" strokeWidth={1.5} />,
+  agricultural: <Tractor className="h-6 w-6" strokeWidth={1.5} />,
+  industrial: <Factory className="h-6 w-6" strokeWidth={1.5} />,
+  residential: <Home className="h-6 w-6" strokeWidth={1.5} />,
 };
 
 const coOwnerSchema = z.object({
@@ -98,7 +98,7 @@ const step1Schema = z.object({
 type Step1FormData = z.input<typeof step1Schema>;
 
 function getPropertyTypeIcon(slug: string): React.ReactNode {
-  return PROPERTY_TYPE_ICONS[slug] || <Home className="h-6 w-6" />;
+  return PROPERTY_TYPE_ICONS[slug] || <Home className="h-6 w-6" strokeWidth={1.5} />;
 }
 
 export default function AddPropertyPage() {
@@ -293,22 +293,22 @@ export default function AddPropertyPage() {
 
   return (
     <div className="px-6 py-8">
-      <nav className="flex items-center gap-1.5 text-sm text-wisebox-text-muted mb-6">
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6">
         <button
           onClick={() => router.push('/properties')}
-          className="hover:text-wisebox-primary transition-colors"
+          className="hover:text-primary transition-all duration-200"
         >
           {t('properties:breadcrumb.properties')}
         </button>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-wisebox-text-primary font-medium">{t('properties:breadcrumb.addNew')}</span>
+        <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.5} />
+        <span className="text-foreground font-medium">{t('properties:breadcrumb.addNew')}</span>
       </nav>
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('properties:new.title')}</h1>
-        <div className="flex items-center gap-3 text-sm text-wisebox-text-muted">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t('properties:new.title')}</h1>
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <span>{t('properties:new.percentComplete', { percent: overallPct })}</span>
-          <Progress value={overallPct} className="w-32 h-2" />
+          <Progress value={overallPct} className="w-32 h-1 rounded-full" />
         </div>
       </div>
 
@@ -322,13 +322,13 @@ export default function AddPropertyPage() {
             setActiveStep(val);
           }}
         >
-          <AccordionItem value="step-1" className="border rounded-lg mb-4 px-6">
-            <AccordionTrigger className="text-base font-semibold hover:no-underline">
+          <AccordionItem value="step-1" className="border border-border rounded-xl mb-4 px-6">
+            <AccordionTrigger className="text-base font-medium hover:no-underline">
               <div className="flex items-center gap-3">
                 {createdProperty ? (
-                  <CheckCircle2 className="h-5 w-5 text-wisebox-primary" />
+                  <CheckCircle2 className="h-5 w-5 text-primary" strokeWidth={1.5} />
                 ) : (
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-wisebox-primary text-white text-xs font-bold">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
                     1
                   </span>
                 )}
@@ -338,7 +338,7 @@ export default function AddPropertyPage() {
             <AccordionContent className="pt-2 pb-6">
               <form onSubmit={handleSubmit(onStep1Submit)} className="space-y-6">
                 {step1Error && (
-                  <div className="p-3 text-sm text-wisebox-status-danger bg-wisebox-status-danger/10 border border-wisebox-status-danger/20 rounded-md">
+                  <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
                     {step1Error}
                   </div>
                 )}
@@ -351,7 +351,7 @@ export default function AddPropertyPage() {
                     {...register('property_name')}
                   />
                   {errors.property_name && (
-                    <p className="text-sm text-wisebox-status-danger">{errors.property_name.message}</p>
+                    <p className="text-sm text-destructive">{errors.property_name.message}</p>
                   )}
                 </div>
 
@@ -377,7 +377,7 @@ export default function AddPropertyPage() {
                     )}
                   />
                   {errors.property_type_id && (
-                    <p className="text-sm text-wisebox-status-danger">{errors.property_type_id.message}</p>
+                    <p className="text-sm text-destructive">{errors.property_type_id.message}</p>
                   )}
                 </div>
 
@@ -386,7 +386,7 @@ export default function AddPropertyPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label>{t('properties:new.ownershipStatusRequired')}</Label>
-                    <p className="text-sm text-wisebox-text-secondary">{t('properties:new.ownershipStatusDesc')}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{t('properties:new.ownershipStatusDesc')}</p>
                     <Controller
                       name="ownership_status_id"
                       control={control}
@@ -407,13 +407,13 @@ export default function AddPropertyPage() {
                       )}
                     />
                     {errors.ownership_status_id && (
-                      <p className="text-sm text-wisebox-status-danger">{errors.ownership_status_id.message}</p>
+                      <p className="text-sm text-destructive">{errors.ownership_status_id.message}</p>
                     )}
                   </div>
 
                   <div className="space-y-2">
                     <Label>{t('properties:new.ownershipTypeRequired')}</Label>
-                    <p className="text-sm text-wisebox-text-secondary">{t('properties:new.ownershipTypeDesc')}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{t('properties:new.ownershipTypeDesc')}</p>
                     <Controller
                       name="ownership_type_id"
                       control={control}
@@ -433,7 +433,7 @@ export default function AddPropertyPage() {
                       )}
                     />
                     {errors.ownership_type_id && (
-                      <p className="text-sm text-wisebox-status-danger">{errors.ownership_type_id.message}</p>
+                      <p className="text-sm text-destructive">{errors.ownership_type_id.message}</p>
                     )}
                   </div>
                 </div>
@@ -453,7 +453,7 @@ export default function AddPropertyPage() {
                       )}
                     />
                     {errors.co_owners && (
-                      <p className="text-sm text-wisebox-status-danger">
+                      <p className="text-sm text-destructive">
                         {t('properties:new.fixCoOwnerDetails')}
                       </p>
                     )}
@@ -464,7 +464,7 @@ export default function AddPropertyPage() {
 
                 <div className="space-y-2">
                   <Label className="text-base font-medium">{t('properties:new.locationTitle')}</Label>
-                  <p className="text-sm text-wisebox-text-muted">{t('properties:new.country')}</p>
+                  <p className="text-sm text-muted-foreground">{t('properties:new.country')}</p>
                   <Controller
                     name="division_id"
                     control={control}
@@ -513,7 +513,7 @@ export default function AddPropertyPage() {
                       })}
                     />
                     {errors.size_value && (
-                      <p className="text-sm text-wisebox-status-danger">{errors.size_value.message}</p>
+                      <p className="text-sm text-destructive">{errors.size_value.message}</p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -555,7 +555,7 @@ export default function AddPropertyPage() {
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    className="w-full sm:w-auto bg-wisebox-primary hover:bg-wisebox-primary-hover"
+                    className="w-full sm:w-auto bg-primary text-primary-foreground rounded-lg transition-all duration-200"
                     disabled={createPropertyMutation.isPending}
                   >
                     {createPropertyMutation.isPending ? (
@@ -574,23 +574,23 @@ export default function AddPropertyPage() {
 
           <AccordionItem
             value="step-2"
-            className={`border rounded-lg px-6 ${!createdProperty ? 'opacity-50' : ''}`}
+            className={`border border-border rounded-xl px-6 ${!createdProperty ? 'opacity-50' : ''}`}
             disabled={!createdProperty}
           >
-            <AccordionTrigger className="text-base font-semibold hover:no-underline">
+            <AccordionTrigger className="text-base font-medium hover:no-underline">
               <div className="flex items-center gap-3">
                 <span
-                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
                     createdProperty
-                      ? 'bg-wisebox-primary text-white'
-                      : 'bg-wisebox-background-lighter text-wisebox-text-muted'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   2
                 </span>
                 {t('properties:new.step2Title')}
                 {createdProperty && totalApplicableDocs > 0 && (
-                  <span className="ml-2 text-sm font-normal text-wisebox-text-muted">
+                  <span className="ml-2 text-sm font-normal text-muted-foreground">
                     ({uploadedOrHandledCount}/{totalApplicableDocs})
                   </span>
                 )}
@@ -600,16 +600,16 @@ export default function AddPropertyPage() {
               {createdProperty && (
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-wisebox-text-muted">
+                    <span className="text-sm text-muted-foreground">
                       {t('properties:new.docCompletion', { percent: docCompletionPct })}
                     </span>
-                    <Progress value={docCompletionPct} className="flex-1 h-2" />
+                    <Progress value={docCompletionPct} className="flex-1 h-1 rounded-full" />
                   </div>
 
                   {primaryDocs.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold text-wisebox-text-primary">{t('properties:new.primaryDocuments')}</h3>
-                      <p className="text-sm text-wisebox-text-muted">
+                      <h3 className="text-base font-medium text-foreground">{t('properties:new.primaryDocuments')}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {t('properties:new.primaryDocsDesc')}
                       </p>
                       <div className="space-y-3">
@@ -629,8 +629,8 @@ export default function AddPropertyPage() {
                   {secondaryDocs.length > 0 && (
                     <div className="space-y-3">
                       <Separator />
-                      <h3 className="text-lg font-semibold text-wisebox-text-primary">{t('properties:new.secondaryDocuments')}</h3>
-                      <p className="text-sm text-wisebox-text-muted">
+                      <h3 className="text-base font-medium text-foreground">{t('properties:new.secondaryDocuments')}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {t('properties:new.secondaryDocsDesc')}
                       </p>
                       <div className="space-y-3">
@@ -648,7 +648,7 @@ export default function AddPropertyPage() {
                   )}
 
                   {applicableDocTypes.length === 0 && (
-                    <p className="text-sm text-wisebox-text-muted py-4">
+                    <p className="text-sm text-muted-foreground py-4">
                       {t('properties:new.noDocTypes')}
                     </p>
                   )}
@@ -656,7 +656,7 @@ export default function AddPropertyPage() {
                   <div className="pt-4">
                     <Button
                       type="button"
-                      className="w-full sm:w-auto bg-wisebox-primary hover:bg-wisebox-primary-hover"
+                      className="w-full sm:w-auto bg-primary text-primary-foreground rounded-lg transition-all duration-200"
                       onClick={handleFinish}
                     >
                       {t('properties:new.finish')}

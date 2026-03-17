@@ -36,28 +36,28 @@ export function LanguageSwitcher() {
         <Button
           variant="ghost"
           size="icon"
-          className="text-wisebox-text-primary hover:bg-wisebox-background-lighter gap-1 w-auto px-2"
+          className="text-foreground hover:bg-muted gap-1 w-auto px-2 transition-all duration-200"
         >
-          <Globe className="h-4 w-4" />
+          <Globe className="h-4 w-4" strokeWidth={1.5} />
           <span className="text-xs font-medium">{currentLang.label}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-36 bg-wisebox-background-card border-wisebox-border"
+        className="w-36 bg-card border-border"
       >
         {LANGUAGES.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
             onClick={() => handleLanguageChange(lang.code)}
-            className={`cursor-pointer ${
+            className={`cursor-pointer transition-all duration-200 ${
               language === lang.code
-                ? 'text-wisebox-primary'
-                : 'text-wisebox-text-primary'
-            } hover:bg-wisebox-background-lighter`}
+                ? 'text-primary'
+                : 'text-foreground'
+            } hover:bg-muted`}
           >
             <span className="font-medium">{lang.label}</span>
-            <span className="ml-2 text-wisebox-text-secondary text-xs">
+            <span className="ml-2 text-muted-foreground text-xs">
               {lang.fullLabel}
             </span>
           </DropdownMenuItem>

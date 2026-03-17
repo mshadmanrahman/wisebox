@@ -64,17 +64,12 @@ function normalizeServiceCatalogPayload(
 
 const categoryTabSlugs = ['all', 'consultation', 'legal', 'administrative'] as const;
 
-const categoryGradients: Record<string, string> = {
-  consultation: 'bg-gradient-service-consultation',
-  legal: 'bg-gradient-service-legal',
-  administrative: 'bg-gradient-service-admin',
-  default: 'bg-gradient-service-default',
+const categoryTabLabels: Record<string, string> = {
+  all: 'All',
+  consultation: 'Consultation',
+  legal: 'Legal',
+  administrative: 'Administrative',
 };
-
-function getServiceGradient(service: Service): string {
-  const slug = service.category?.slug ?? '';
-  return categoryGradients[slug] || categoryGradients.default;
-}
 
 function useFormatPrice() {
   const { t } = useTranslation('common');
@@ -166,95 +161,90 @@ export default function ServicesPage() {
     <div className="px-6 py-8 space-y-8">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-wisebox-text-primary">{t('services.title')}</h1>
-        <p className="text-wisebox-text-secondary mt-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t('services.title')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           {t('services.subtitle')}
         </p>
       </div>
 
       {/* Free Consultation Banner */}
       {!hasUsedFreeConsultation && (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-service-consultation p-[1px]">
-          <div className="relative rounded-2xl bg-gradient-service-consultation px-6 py-8 sm:px-8">
-            {/* Decorative pattern overlay */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.06%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50 pointer-events-none" />
-
-            <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              {/* Left: Text */}
-              <div className="space-y-3 lg:max-w-xl">
-                <div className="flex items-center gap-2">
-                  <div className="bg-white/15 rounded-full p-2 backdrop-blur-sm">
-                    <Sparkles className="h-5 w-5 text-white" />
-                  </div>
-                  <Badge className="bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30 text-xs font-semibold">
-                    {t('services.freeConsultation.badge')}
-                  </Badge>
+        <div className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            {/* Left: Icon + Badge + Text + Metadata */}
+            <div className="space-y-3 lg:max-w-xl">
+              <div className="flex items-center gap-2">
+                <div className="bg-primary/10 rounded-full p-2">
+                  <Sparkles className="h-5 w-5 text-primary" strokeWidth={1.5} />
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
-                  {t('services.freeConsultation.title')}
-                </h2>
-                <p className="text-white/80 text-sm sm:text-base leading-relaxed">
-                  {t('services.freeConsultation.description')}
+                <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                  {t('services.freeConsultation.badge')}
+                </Badge>
+              </div>
+              <h2 className="text-xl font-semibold text-foreground leading-tight">
+                {t('services.freeConsultation.title')}
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {t('services.freeConsultation.description')}
+              </p>
+              <div className="flex items-center gap-4 text-muted-foreground text-xs">
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5" strokeWidth={1.5} />
+                  {t('services.freeConsultation.duration')}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle className="h-3.5 w-3.5" strokeWidth={1.5} />
+                  {t('services.freeConsultation.noPayment')}
+                </span>
+              </div>
+            </div>
+
+            {/* Right: Property selector + CTA */}
+            <div className="flex flex-col gap-3 lg:min-w-[320px]">
+              <label className="text-sm font-medium text-foreground">
+                {t('services.freeConsultation.selectProperty')}
+              </label>
+              {(properties ?? []).length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  {t('services.freeConsultation.addPropertyFirst')}
                 </p>
-                <div className="flex items-center gap-4 text-white/60 text-xs">
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {t('services.freeConsultation.duration')}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <CheckCircle className="h-3.5 w-3.5" />
-                    {t('services.freeConsultation.noPayment')}
-                  </span>
-                </div>
-              </div>
+              ) : (
+                <Select value={consultPropertyId} onValueChange={setConsultPropertyId}>
+                  <SelectTrigger className="bg-background border-border text-foreground hover:bg-muted transition-all duration-200 h-12">
+                    <SelectValue placeholder={t('services.freeConsultation.chooseProperty')} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    {(properties ?? []).map((property) => (
+                      <SelectItem key={property.id} value={String(property.id)} className="text-foreground hover:bg-muted">
+                        {property.property_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
 
-              {/* Right: Property selector + CTA */}
-              <div className="flex flex-col gap-3 lg:min-w-[320px]">
-                <label className="text-white/80 text-sm font-medium">
-                  {t('services.freeConsultation.selectProperty')}
-                </label>
-                {(properties ?? []).length === 0 ? (
-                  <p className="text-white/60 text-sm">
-                    {t('services.freeConsultation.addPropertyFirst')}
-                  </p>
-                ) : (
-                  <Select value={consultPropertyId} onValueChange={setConsultPropertyId}>
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white hover:bg-white/15 transition-colors backdrop-blur-sm h-12">
-                      <SelectValue placeholder={t('services.freeConsultation.chooseProperty')} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-wisebox-background-card border-wisebox-border">
-                      {(properties ?? []).map((property) => (
-                        <SelectItem key={property.id} value={String(property.id)} className="text-wisebox-text-primary hover:bg-wisebox-background-lighter">
-                          {property.property_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-
-                {selectedConsultProperty ? (
-                  <FreeConsultationDialog
-                    propertyId={selectedConsultProperty.id}
-                    propertyName={selectedConsultProperty.property_name}
-                    trigger={
-                      <Button className="w-full bg-white hover:bg-white/90 text-wisebox-primary-800 font-semibold h-12 text-base shadow-lg">
-                        <Calendar className="h-5 w-5 mr-2" />
-                        {t('services.freeConsultation.bookFree')}
-                      </Button>
-                    }
-                  />
-                ) : (
-                  <Button
-                    disabled
-                    className="w-full bg-white/20 text-white/50 cursor-not-allowed h-12 text-base"
-                  >
-                    <Calendar className="h-5 w-5 mr-2" />
-                    {(properties ?? []).length === 0
-                      ? t('services.freeConsultation.addPropertyBtn')
-                      : t('services.freeConsultation.selectPropertyAbove')}
-                  </Button>
-                )}
-              </div>
+              {selectedConsultProperty ? (
+                <FreeConsultationDialog
+                  propertyId={selectedConsultProperty.id}
+                  propertyName={selectedConsultProperty.property_name}
+                  trigger={
+                    <Button className="w-full bg-primary text-primary-foreground rounded-lg font-medium h-12 text-base transition-all duration-200">
+                      <Calendar className="h-5 w-5 mr-2" strokeWidth={1.5} />
+                      {t('services.freeConsultation.bookFree')}
+                    </Button>
+                  }
+                />
+              ) : (
+                <Button
+                  disabled
+                  className="w-full bg-muted text-muted-foreground cursor-not-allowed h-12 text-base rounded-lg"
+                >
+                  <Calendar className="h-5 w-5 mr-2" strokeWidth={1.5} />
+                  {(properties ?? []).length === 0
+                    ? t('services.freeConsultation.addPropertyBtn')
+                    : t('services.freeConsultation.selectPropertyAbove')}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -268,13 +258,13 @@ export default function ServicesPage() {
             type="button"
             onClick={() => setActiveTab(slug)}
             className={cn(
-              'px-5 py-2.5 rounded-lg text-sm font-medium transition-all',
+              'px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
               activeTab === slug
-                ? 'bg-white text-wisebox-background shadow-md'
-                : 'bg-wisebox-background-card text-wisebox-text-secondary border border-wisebox-border hover:border-wisebox-border-light hover:text-wisebox-text-primary'
+                ? 'bg-primary text-primary-foreground'
+                : 'border border-border text-foreground hover:bg-muted'
             )}
           >
-            {t(`services.${slug}`)}
+            {categoryTabLabels[slug] ?? slug}
           </button>
         ))}
       </div>
@@ -282,15 +272,15 @@ export default function ServicesPage() {
       {/* Loading State */}
       {loadingServices && services.length === 0 && (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-wisebox-text-secondary" />
-          <span className="ml-2 text-sm text-wisebox-text-secondary">{t('services.loadingServices')}</span>
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" strokeWidth={1.5} />
+          <span className="ml-2 text-sm text-muted-foreground">{t('services.loadingServices')}</span>
         </div>
       )}
 
       {/* Empty State */}
       {!loadingServices && services.length === 0 && (
-        <div className="rounded-2xl border border-wisebox-border bg-wisebox-background-card p-8 text-center">
-          <p className="text-wisebox-text-secondary">{t('services.noServicesInCategory')}</p>
+        <div className="bg-card border border-border rounded-xl p-8 text-center shadow-sm dark:shadow-none">
+          <p className="text-sm text-muted-foreground">{t('services.noServicesInCategory')}</p>
         </div>
       )}
 
@@ -298,7 +288,6 @@ export default function ServicesPage() {
       {services.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((service) => {
-            const gradient = getServiceGradient(service);
             const price = formatPrice(service as Service);
 
             return (
@@ -306,38 +295,35 @@ export default function ServicesPage() {
                 key={service.id}
                 type="button"
                 onClick={() => openServiceDetail(service)}
-                className="text-left rounded-2xl border border-wisebox-border overflow-hidden transition-all hover:shadow-lg hover:border-wisebox-border-light bg-wisebox-background-card group"
+                className="text-left bg-card border border-border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md hover:border-border/80 group"
               >
-                {/* Gradient Banner */}
-                <div className={cn('h-32 relative', gradient)}>
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50" />
-                </div>
-
                 {/* Content */}
-                <div className="p-5 space-y-3">
-                  <h3 className="text-lg font-semibold text-wisebox-text-primary group-hover:text-wisebox-primary-light transition-colors">
+                <div className="p-6 space-y-2">
+                  <h3 className="text-lg font-medium text-foreground">
                     {service.name}
                   </h3>
                   {service.short_description && (
-                    <p className="text-sm text-wisebox-text-secondary line-clamp-2">
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
                       {service.short_description}
                     </p>
                   )}
-                  <div className="flex items-center justify-between pt-2">
-                    <Badge
-                      className={cn(
-                        'text-xs font-semibold',
-                        service.pricing_type === 'free'
-                          ? 'bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30'
-                          : 'bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30'
-                      )}
-                    >
-                      {price}
-                    </Badge>
-                    <span className="text-xs text-wisebox-primary group-hover:text-wisebox-primary-light transition-colors">
-                      {t('services.viewDetails')} →
-                    </span>
-                  </div>
+                </div>
+
+                {/* Bottom row */}
+                <div className="border-t border-border px-6 py-4 flex items-center justify-between">
+                  <Badge
+                    className={cn(
+                      'px-2.5 py-0.5 rounded-full text-xs font-medium',
+                      service.pricing_type === 'free'
+                        ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                        : 'bg-primary/10 text-primary border-primary/20'
+                    )}
+                  >
+                    {price}
+                  </Badge>
+                  <span className="text-sm text-primary font-medium transition-all duration-200">
+                    {t('services.viewDetails')} &rarr;
+                  </span>
                 </div>
               </button>
             );
@@ -348,7 +334,7 @@ export default function ServicesPage() {
       {/* Pagination */}
       {serviceMeta && serviceMeta.last_page > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-wisebox-text-secondary">
+          <p className="text-xs text-muted-foreground">
             {t('page', { current: serviceMeta.current_page, total: serviceMeta.last_page })}
           </p>
           <div className="flex items-center gap-2">
@@ -357,7 +343,7 @@ export default function ServicesPage() {
               variant="outline"
               onClick={() => setPage((c) => Math.max(1, c - 1))}
               disabled={serviceMeta.current_page <= 1 || loadingServices}
-              className="border-wisebox-border text-wisebox-text-primary hover:bg-wisebox-background-lighter"
+              className="border border-border text-foreground hover:bg-muted rounded-lg transition-all duration-200"
             >
               {t('previous')}
             </Button>
@@ -366,7 +352,7 @@ export default function ServicesPage() {
               variant="outline"
               onClick={() => setPage((c) => Math.min(serviceMeta.last_page, c + 1))}
               disabled={serviceMeta.current_page >= serviceMeta.last_page || loadingServices}
-              className="border-wisebox-border text-wisebox-text-primary hover:bg-wisebox-background-lighter"
+              className="border border-border text-foreground hover:bg-muted rounded-lg transition-all duration-200"
             >
               {t('next')}
             </Button>

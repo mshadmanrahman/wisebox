@@ -139,8 +139,8 @@ export default function SettingsPage() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('title')}</h1>
-        <p className="text-wisebox-text-secondary mt-1">{t('subtitle')}</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t('title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-4">
@@ -151,10 +151,10 @@ export default function SettingsPage() {
         </TabsList>
 
         <TabsContent value="profile">
-          <Card>
+          <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
             <CardHeader>
-              <CardTitle>{t('profile.title')}</CardTitle>
-              <CardDescription>{t('profile.description')}</CardDescription>
+              <CardTitle className="text-base font-medium text-foreground">{t('profile.title')}</CardTitle>
+              <CardDescription className="text-muted-foreground">{t('profile.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -193,6 +193,7 @@ export default function SettingsPage() {
                     type="button"
                     variant={profileForm.preferred_language === 'en' ? 'default' : 'outline'}
                     onClick={() => setProfileForm((prev) => ({ ...prev, preferred_language: 'en' }))}
+                    className="transition-all duration-200"
                   >
                     {t('profile.english')}
                   </Button>
@@ -200,6 +201,7 @@ export default function SettingsPage() {
                     type="button"
                     variant={profileForm.preferred_language === 'bn' ? 'default' : 'outline'}
                     onClick={() => setProfileForm((prev) => ({ ...prev, preferred_language: 'bn' }))}
+                    className="transition-all duration-200"
                   >
                     {t('profile.bangla')}
                   </Button>
@@ -207,7 +209,7 @@ export default function SettingsPage() {
               </Field>
 
               <div className="space-y-3">
-                <p className="text-sm font-medium text-wisebox-text-primary">{t('profile.emailPreferences')}</p>
+                <p className="text-sm font-medium text-foreground">{t('profile.emailPreferences')}</p>
                 <PreferenceRow
                   label={t('profile.orderUpdates')}
                   checked={profileForm.order_updates}
@@ -230,7 +232,7 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <Button onClick={saveProfile} disabled={isSavingProfile}>
+              <Button onClick={saveProfile} disabled={isSavingProfile} className="bg-primary text-primary-foreground rounded-lg transition-all duration-200">
                 {isSavingProfile ? t('profile.saving') : t('profile.saveChanges')}
               </Button>
             </CardContent>
@@ -238,10 +240,10 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="password">
-          <Card>
+          <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
             <CardHeader>
-              <CardTitle>{t('password.title')}</CardTitle>
-              <CardDescription>{t('password.description')}</CardDescription>
+              <CardTitle className="text-base font-medium text-foreground">{t('password.title')}</CardTitle>
+              <CardDescription className="text-muted-foreground">{t('password.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 max-w-lg">
               <Field label={t('password.currentPassword')}>
@@ -269,7 +271,7 @@ export default function SettingsPage() {
                   }
                 />
               </Field>
-              <Button onClick={changePassword} disabled={isSavingPassword}>
+              <Button onClick={changePassword} disabled={isSavingPassword} className="bg-primary text-primary-foreground rounded-lg transition-all duration-200">
                 {isSavingPassword ? t('password.updating') : t('password.updatePassword')}
               </Button>
             </CardContent>
@@ -277,16 +279,16 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="danger">
-          <Card className="border-wisebox-status-danger/20">
+          <Card className="bg-card border border-destructive/20 rounded-xl shadow-sm dark:shadow-none">
             <CardHeader>
-              <CardTitle className="text-wisebox-status-danger">{t('danger.title')}</CardTitle>
-              <CardDescription>{t('danger.description')}</CardDescription>
+              <CardTitle className="text-base font-medium text-destructive">{t('danger.title')}</CardTitle>
+              <CardDescription className="text-muted-foreground">{t('danger.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-wisebox-text-secondary">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {t('danger.deleteInfo')}
               </p>
-              <Button variant="destructive" disabled>
+              <Button variant="destructive" disabled className="transition-all duration-200">
                 {t('danger.deleteButton')}
               </Button>
             </CardContent>
@@ -319,12 +321,12 @@ function PreferenceRow({
     <button
       type="button"
       onClick={onToggle}
-      className="w-full flex items-center justify-between rounded-lg border px-3 py-2 text-left hover:bg-wisebox-background-lighter"
+      className="w-full flex items-center justify-between rounded-lg border border-border px-3 py-2 text-left hover:bg-muted transition-all duration-200"
     >
-      <span className="text-sm text-wisebox-text-primary">{label}</span>
+      <span className="text-sm text-foreground">{label}</span>
       <span
-        className={`inline-flex h-6 w-11 items-center rounded-full p-1 transition-colors ${
-          checked ? 'bg-wisebox-primary-600 justify-end' : 'bg-wisebox-background-lighter justify-start'
+        className={`inline-flex h-6 w-11 items-center rounded-full p-1 transition-all duration-200 ${
+          checked ? 'bg-primary justify-end' : 'bg-muted justify-start'
         }`}
       >
         <span className="h-4 w-4 rounded-full bg-white" />

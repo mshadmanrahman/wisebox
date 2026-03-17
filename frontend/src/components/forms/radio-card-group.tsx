@@ -43,16 +43,16 @@ const RadioCardGroup = React.forwardRef<
           size={size}
         >
           {option.icon && (
-            <div className="text-wisebox-primary-600">
+            <div className="text-primary">
               {option.icon}
             </div>
           )}
           <div className="flex-1">
-            <div className="font-semibold text-wisebox-text-primary">
+            <div className="font-medium text-foreground">
               {option.label}
             </div>
             {option.description && (
-              <div className="text-sm text-wisebox-text-secondary mt-1">
+              <div className="text-sm text-muted-foreground mt-1 leading-relaxed">
                 {option.description}
               </div>
             )}
@@ -83,11 +83,11 @@ const RadioCardItem = React.forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "group relative flex items-start rounded-lg border-2 bg-wisebox-background-card transition-all cursor-pointer",
-        "hover:border-wisebox-primary-400 hover:bg-wisebox-primary-900/30",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-wisebox-primary-500 focus-visible:ring-offset-2",
+        "group relative flex items-start rounded-xl border-2 bg-card transition-all duration-200 cursor-pointer shadow-sm dark:shadow-none",
+        "hover:border-primary hover:bg-primary/5",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        "data-[state=checked]:border-wisebox-primary-600 data-[state=checked]:bg-wisebox-primary-900/20",
+        "data-[state=checked]:border-primary data-[state=checked]:bg-primary/10",
         cardSizes[size],
         className
       )}
@@ -97,9 +97,9 @@ const RadioCardItem = React.forwardRef<
         {children}
         <div
           className={cn(
-            "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all",
-            "border-wisebox-border",
-            "group-data-[state=checked]:border-wisebox-primary-600 group-data-[state=checked]:bg-wisebox-primary-600"
+            "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200",
+            "border-border",
+            "group-data-[state=checked]:border-primary group-data-[state=checked]:bg-primary"
           )}
         >
           <RadioGroupPrimitive.Indicator className="flex items-center justify-center">

@@ -52,33 +52,33 @@ export default function AboutPage() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-wisebox-background">
+      <main className="bg-background">
         <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
-            <h1 className="text-4xl font-bold text-wisebox-text-primary sm:text-5xl">About Wisebox</h1>
-            <p className="text-lg text-wisebox-text-secondary">
+            <h1 className="text-4xl font-bold text-foreground sm:text-5xl">About Wisebox</h1>
+            <p className="text-lg text-muted-foreground">
               Wisebox exists to give property owners a reliable system for handling documentation,
               service requests, and long-term planning with less friction.
             </p>
-            <p className="text-wisebox-text-secondary">
+            <p className="text-muted-foreground">
               We focus on real operational needs: tracking records, resolving issues quickly, and
               creating visibility for families who manage assets across borders.
             </p>
           </div>
         </section>
 
-        <section className="bg-wisebox-background-lighter">
+        <section className="bg-muted">
           <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-4 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
             {pillars.map((pillar) => {
               const Icon = pillar.icon;
               return (
-                <Card key={pillar.title} className="border-wisebox-border bg-wisebox-background-card">
+                <Card key={pillar.title} className="border-border bg-card">
                   <CardHeader>
-                    <Icon className="h-5 w-5 text-wisebox-primary-700" />
-                    <CardTitle className="text-lg text-wisebox-text-primary">{pillar.title}</CardTitle>
+                    <Icon className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg text-foreground">{pillar.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm leading-6 text-wisebox-text-secondary">{pillar.description}</p>
+                    <p className="text-sm leading-6 text-muted-foreground">{pillar.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -87,15 +87,15 @@ export default function AboutPage() {
         </section>
 
         <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <Card className="border-wisebox-primary/30 bg-wisebox-background-card">
+          <Card className="border-primary/30 bg-card">
             <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-2xl font-semibold text-wisebox-text-primary">Start with a free readiness check</h2>
-                <p className="mt-2 text-sm text-wisebox-text-secondary">
+                <h2 className="text-2xl font-semibold text-foreground">Start with a free readiness check</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
                   Run the free assessment to understand your current documentation status and next best actions.
                 </p>
               </div>
-              <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
+              <Button asChild className="bg-primary text-white hover:bg-primary/90">
                 <Link href="/assessment/start">
                   Get Free Assessment
                   <ArrowRight className="ml-2 h-4 w-4" />

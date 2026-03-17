@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { useEffect } from 'react';
 import { LayoutDashboard, MessageSquare, BookOpen, Languages, LogOut, ArrowLeft } from 'lucide-react';
 import { WiseboxLogo } from '@/components/ui/wisebox-logo';
 import { Button } from '@/components/ui/button';
@@ -26,6 +28,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const { setTheme } = useTheme();
+
+  // Force admin to light mode
+  useEffect(() => {
+    setTheme('light');
+  }, [setTheme]);
 
   const handleLogout = async () => {
     await logout();
@@ -33,12 +41,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="theme-light min-h-screen bg-muted">
-      {/* Admin header */}
+    <div className="min-h-screen bg-muted">
       <div className="bg-card border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <WiseboxLogo variant="dark" size="sm" />
+            <WiseboxLogo variant="light" size="sm" />
             <span className="bg-wisebox-status-warning/15 text-wisebox-status-warning text-xs font-semibold px-2.5 py-1 rounded-full">
               Admin
             </span>
@@ -53,13 +60,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                      'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
                       isActive
                         ? 'bg-muted text-foreground'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     )}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-4 w-4" strokeWidth={1.5} />
                     {item.label}
                   </Link>
                 );
@@ -67,7 +74,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </nav>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full bg-muted hover:bg-muted text-foreground h-8 w-8">
+                <Button variant="ghost" size="icon" className="rounded-full bg-muted hover:bg-muted/80 text-foreground h-8 w-8 transition-all duration-200">
                   <span className="text-sm font-medium">
                     {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
                   </span>
@@ -82,12 +89,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 )}
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard" className="cursor-pointer">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    <ArrowLeft className="h-4 w-4 mr-2" strokeWidth={1.5} />
                     Back to Portal
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-wisebox-status-danger">
-                  <LogOut className="h-4 w-4 mr-2" />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
+                  <LogOut className="h-4 w-4 mr-2" strokeWidth={1.5} />
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -96,7 +103,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </div>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto">
         {children}
       </div>

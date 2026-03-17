@@ -46,7 +46,7 @@ function statusBadgeClass(status: Ticket['status']): string {
   if (status === 'completed') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
   if (status === 'in_progress' || status === 'assigned') return 'bg-wisebox-status-info/20 text-wisebox-status-info';
   if (status === 'scheduled') return 'bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled';
-  if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
+  if (status === 'cancelled') return 'bg-muted text-muted-foreground';
   return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
 }
 
@@ -208,8 +208,8 @@ export default function TicketDetailPage() {
   if (isLoading) {
     return (
       <div className="px-6 py-8">
-        <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('tickets:detail.loading')}</CardContent>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
+          <CardContent className="p-6 text-sm text-muted-foreground">{t('tickets:detail.loading')}</CardContent>
         </Card>
       </div>
     );
@@ -218,10 +218,10 @@ export default function TicketDetailPage() {
   if (!ticket) {
     return (
       <div className="px-6 py-8">
-        <Card>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
           <CardContent className="p-6 space-y-3">
-            <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.notFound')}</p>
-            <Button asChild variant="outline">
+            <p className="font-medium text-foreground">{t('tickets:detail.notFound')}</p>
+            <Button asChild variant="outline" className="border border-border hover:bg-muted transition-all duration-200">
               <Link href="/tickets">{t('tickets:detail.backToTickets')}</Link>
             </Button>
           </CardContent>
@@ -232,54 +232,54 @@ export default function TicketDetailPage() {
 
   return (
     <div className="px-6 py-8 space-y-6">
-      <Button asChild variant="ghost" className="-ml-2">
+      <Button asChild variant="ghost" className="-ml-2 transition-all duration-200">
         <Link href="/tickets">
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2" strokeWidth={1.5} />
           {t('tickets:detail.backToTickets')}
         </Link>
       </Button>
 
-      <Card>
+      <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
-            <CardTitle>{ticket.ticket_number}</CardTitle>
+            <CardTitle className="text-base font-medium text-foreground">{ticket.ticket_number}</CardTitle>
             <Badge className={statusBadgeClass(ticket.status)}>{ticket.status}</Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <p className="font-semibold text-wisebox-text-primary">{ticket.title}</p>
-          {ticket.description && <p className="text-wisebox-text-secondary">{ticket.description}</p>}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-wisebox-text-secondary">
+          <p className="font-medium text-foreground">{ticket.title}</p>
+          {ticket.description && <p className="text-muted-foreground leading-relaxed">{ticket.description}</p>}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-muted-foreground">
             <p>
-              {t('tickets:detail.priority')}: <span className="font-medium text-wisebox-text-primary">{ticket.priority}</span>
+              {t('tickets:detail.priority')}: <span className="font-medium text-foreground">{ticket.priority}</span>
             </p>
             <p>
-              {t('tickets:detail.created')}: <span className="font-medium text-wisebox-text-primary">{new Date(ticket.created_at).toLocaleString()}</span>
+              {t('tickets:detail.created')}: <span className="font-medium text-foreground">{new Date(ticket.created_at).toLocaleString()}</span>
             </p>
             {ticket.customer?.name && (
               <p>
-                {t('tickets:detail.customer')}: <span className="font-medium text-wisebox-text-primary">{ticket.customer.name}</span>
+                {t('tickets:detail.customer')}: <span className="font-medium text-foreground">{ticket.customer.name}</span>
               </p>
             )}
             {ticket.consultant?.name && (
               <p>
-                {t('tickets:detail.consultant')}: <span className="font-medium text-wisebox-text-primary">{ticket.consultant.name}</span>
+                {t('tickets:detail.consultant')}: <span className="font-medium text-foreground">{ticket.consultant.name}</span>
               </p>
             )}
             {ticket.property?.property_name && (
               <p>
-                {t('tickets:detail.property')}: <span className="font-medium text-wisebox-text-primary">{ticket.property.property_name}</span>
+                {t('tickets:detail.property')}: <span className="font-medium text-foreground">{ticket.property.property_name}</span>
               </p>
             )}
             {ticket.service?.name && (
               <p>
-                {t('tickets:detail.service')}: <span className="font-medium text-wisebox-text-primary">{ticket.service.name}</span>
+                {t('tickets:detail.service')}: <span className="font-medium text-foreground">{ticket.service.name}</span>
               </p>
             )}
           </div>
 
-          <div className="space-y-3 pt-2 border-t">
-            <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.statusTimeline')}</p>
+          <div className="space-y-3 pt-2 border-t border-border">
+            <p className="font-medium text-foreground">{t('tickets:detail.statusTimeline')}</p>
             <div className="flex flex-wrap gap-2">
               {STATUS_TIMELINE_IDS.map((stepId, index) => {
                 const currentIndex = timelineStepIndex(ticket.status);
@@ -287,10 +287,10 @@ export default function TicketDetailPage() {
                 return (
                   <span
                     key={stepId}
-                    className={`px-2.5 py-1 rounded-full text-xs border ${
+                    className={`px-2.5 py-1 rounded-full text-xs border transition-all duration-200 ${
                       isActive
-                        ? 'bg-wisebox-primary-500/15 text-wisebox-primary-400 border-wisebox-primary-500/30'
-                        : 'bg-wisebox-background-card text-wisebox-text-secondary border-wisebox-border'
+                        ? 'bg-primary/15 text-primary border-primary/30'
+                        : 'bg-card text-muted-foreground border-border'
                     }`}
                   >
                     {t(`tickets:detail.timeline.${stepId}`)}
@@ -299,40 +299,40 @@ export default function TicketDetailPage() {
               })}
             </div>
             {(ticket.status === 'awaiting_customer' || ticket.status === 'awaiting_consultant') && (
-              <p className="text-xs text-wisebox-text-secondary">
+              <p className="text-xs text-muted-foreground">
                 {t('tickets:detail.conversationRequired')}
               </p>
             )}
             {ticket.status === 'cancelled' && (
-              <p className="text-xs text-wisebox-status-danger">{t('tickets:detail.ticketCancelled')}</p>
+              <p className="text-xs text-destructive">{t('tickets:detail.ticketCancelled')}</p>
             )}
           </div>
 
-          <div className="space-y-3 pt-2 border-t">
+          <div className="space-y-3 pt-2 border-t border-border">
             <div className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4 text-wisebox-primary-400" />
-              <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.meeting')}</p>
+              <CalendarDays className="h-4 w-4 text-primary" strokeWidth={1.5} />
+              <p className="font-medium text-foreground">{t('tickets:detail.meeting')}</p>
             </div>
 
             {ticket.scheduled_at ? (
-              <p className="text-sm text-wisebox-text-secondary">
+              <p className="text-sm text-muted-foreground">
                 {t('tickets:detail.scheduledFor')}{' '}
-                <span className="font-medium text-wisebox-text-primary">
+                <span className="font-medium text-foreground">
                   {new Date(ticket.scheduled_at).toLocaleString()}
                 </span>
                 {ticket.meeting_duration_minutes ? ` (${ticket.meeting_duration_minutes} ${t('tickets:detail.mins')})` : ''}
               </p>
             ) : (
-              <p className="text-sm text-wisebox-text-secondary">
+              <p className="text-sm text-muted-foreground">
                 {t('tickets:detail.noMeetingScheduled')}
               </p>
             )}
 
             <div className="flex flex-wrap gap-2">
               {ticket.meeting_url && (
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="border border-border hover:bg-muted transition-all duration-200">
                   <a href={ticket.meeting_url} target="_blank" rel="noreferrer">
-                    <ExternalLink className="h-4 w-4 mr-2" />
+                    <ExternalLink className="h-4 w-4 mr-2" strokeWidth={1.5} />
                     {t('tickets:detail.joinMeeting')}
                   </a>
                 </Button>
@@ -344,6 +344,7 @@ export default function TicketDetailPage() {
                   variant="outline"
                   onClick={() => schedulingLinkMutation.mutate()}
                   disabled={schedulingLinkMutation.isPending}
+                  className="border border-border hover:bg-muted transition-all duration-200"
                 >
                   {schedulingLinkMutation.isPending ? t('tickets:detail.generatingLink') : t('tickets:detail.getSchedulingLink')}
                 </Button>
@@ -351,13 +352,13 @@ export default function TicketDetailPage() {
             </div>
 
             {schedulingUrl && (
-              <p className="text-xs text-wisebox-text-secondary break-all">
+              <p className="text-xs text-muted-foreground break-all">
                 {t('tickets:detail.latestLink')}:{' '}
                 <a
                   href={schedulingUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-wisebox-primary-400 underline underline-offset-2"
+                  className="text-primary underline underline-offset-2"
                 >
                   {schedulingUrl}
                 </a>
@@ -366,10 +367,10 @@ export default function TicketDetailPage() {
           </div>
 
           {(canManageStatus || isAdmin) && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-border">
               {canManageStatus && (
                 <div className="space-y-2">
-                  <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.updateStatus')}</p>
+                  <p className="font-medium text-foreground">{t('tickets:detail.updateStatus')}</p>
                   <div className="flex gap-2">
                     <Select
                       value={effectiveStatusValue}
@@ -389,6 +390,7 @@ export default function TicketDetailPage() {
                     <Button
                       type="button"
                       variant="outline"
+                      className="border border-border hover:bg-muted transition-all duration-200"
                       disabled={
                         updateStatusMutation.isPending ||
                         !effectiveStatusValue ||
@@ -404,7 +406,7 @@ export default function TicketDetailPage() {
 
               {isAdmin && (
                 <div className="space-y-2">
-                  <p className="font-medium text-wisebox-text-primary">{t('tickets:detail.assignConsultant')}</p>
+                  <p className="font-medium text-foreground">{t('tickets:detail.assignConsultant')}</p>
                   <div className="flex gap-2">
                     <Select
                       value={effectiveConsultantValue}
@@ -424,6 +426,7 @@ export default function TicketDetailPage() {
                     <Button
                       type="button"
                       variant="outline"
+                      className="border border-border hover:bg-muted transition-all duration-200"
                       disabled={
                         assignConsultantMutation.isPending ||
                         !effectiveConsultantValue ||
@@ -440,42 +443,42 @@ export default function TicketDetailPage() {
           )}
 
           {actionError && (
-            <p className="text-sm text-wisebox-status-danger border border-wisebox-status-danger/30 bg-wisebox-status-danger/10 rounded-md px-3 py-2">
+            <p className="text-sm text-destructive border border-destructive/30 bg-destructive/10 rounded-md px-3 py-2">
               {actionError}
             </p>
           )}
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
         <CardHeader>
-          <CardTitle>{t('tickets:detail.conversation')}</CardTitle>
+          <CardTitle className="text-base font-medium text-foreground">{t('tickets:detail.conversation')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {(ticket.comments ?? []).length === 0 ? (
-            <p className="text-sm text-wisebox-text-secondary">{t('tickets:detail.noComments')}</p>
+            <p className="text-sm text-muted-foreground">{t('tickets:detail.noComments')}</p>
           ) : (
             <div className="space-y-3">
               {(ticket.comments ?? []).map((comment) => (
-                <div key={comment.id} className="rounded-md border p-3 bg-wisebox-background-card">
+                <div key={comment.id} className="rounded-lg border border-border p-3 bg-card">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? t('tickets:detail.user')}</p>
+                    <p className="text-sm font-medium text-foreground">{comment.user?.name ?? t('tickets:detail.user')}</p>
                     <div className="flex items-center gap-2">
                       {comment.is_internal && (
                         <Badge className="bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled">{t('tickets:detail.internal')}</Badge>
                       )}
-                      <span className="text-xs text-wisebox-text-secondary">
+                      <span className="text-xs text-muted-foreground">
                         {new Date(comment.created_at).toLocaleString()}
                       </span>
                     </div>
                   </div>
-                  <p className="mt-2 text-sm text-wisebox-text-secondary whitespace-pre-wrap">{comment.body}</p>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{comment.body}</p>
                   {(comment.attachments ?? []).length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-2">
                       {(comment.attachments ?? []).map((attachment) => (
                         <span
                           key={attachment}
-                          className="rounded-full border border-wisebox-border bg-wisebox-background-card px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                          className="rounded-full border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground"
                         >
                           {attachment.split('/').pop()}
                         </span>
@@ -487,7 +490,7 @@ export default function TicketDetailPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-3 border-t pt-4">
+          <form onSubmit={handleSubmit} className="space-y-3 border-t border-border pt-4">
             <Textarea
               value={commentBody}
               onChange={(e) => setCommentBody(e.target.value)}
@@ -500,14 +503,14 @@ export default function TicketDetailPage() {
                 multiple
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 onChange={(e) => setCommentFiles(Array.from(e.target.files ?? []))}
-                className="block w-full text-sm text-wisebox-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-wisebox-primary-500/20 file:px-3 file:py-1.5 file:text-wisebox-primary-400"
+                className="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-md file:border-0 file:bg-primary/20 file:px-3 file:py-1.5 file:text-primary"
               />
               {commentFiles.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {commentFiles.map((file) => (
                     <span
                       key={`${file.name}-${file.size}`}
-                      className="rounded-full border border-wisebox-border bg-wisebox-background-card px-2.5 py-1 text-xs text-wisebox-text-secondary"
+                      className="rounded-full border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground"
                     >
                       {file.name}
                     </span>
@@ -516,7 +519,7 @@ export default function TicketDetailPage() {
               )}
             </div>
             {canUseInternalComments && (
-              <label className="flex items-center gap-2 text-sm text-wisebox-text-secondary">
+              <label className="flex items-center gap-2 text-sm text-muted-foreground">
                 <input
                   type="checkbox"
                   checked={isInternal}
@@ -527,7 +530,7 @@ export default function TicketDetailPage() {
             )}
             <Button
               type="submit"
-              className="bg-wisebox-primary-500 hover:bg-wisebox-primary-600"
+              className="bg-primary text-primary-foreground rounded-lg transition-all duration-200"
               disabled={addCommentMutation.isPending || (!commentBody.trim() && commentFiles.length === 0)}
             >
               {addCommentMutation.isPending ? (
@@ -537,7 +540,7 @@ export default function TicketDetailPage() {
                 </>
               ) : (
                 <>
-                  <Send className="h-4 w-4 mr-2" />
+                  <Send className="h-4 w-4 mr-2" strokeWidth={1.5} />
                   {t('tickets:detail.sendMessage')}
                 </>
               )}

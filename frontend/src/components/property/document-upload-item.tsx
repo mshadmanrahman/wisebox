@@ -199,17 +199,17 @@ export function DocumentUploadItem({
   };
 
   return (
-    <div className="rounded-lg border border-wisebox-border bg-wisebox-background-card p-4 space-y-3">
+    <div className="rounded-xl border border-border bg-card p-4 space-y-3 shadow-sm dark:shadow-none">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className="text-sm font-medium text-wisebox-text-primary">{documentType.name}</h4>
+            <h4 className="text-sm font-medium text-foreground">{documentType.name}</h4>
             <Badge
               variant={documentType.category === 'primary' ? 'default' : 'secondary'}
               className={
                 documentType.category === 'primary'
-                  ? 'bg-wisebox-primary-900/30 text-wisebox-primary-300 border-wisebox-primary-600/30 hover:bg-wisebox-primary-900/30'
-                  : 'bg-wisebox-background-lighter text-wisebox-text-secondary border-wisebox-border hover:bg-wisebox-background-lighter'
+                  ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/10'
+                  : 'bg-muted text-muted-foreground border-border hover:bg-muted'
               }
             >
               {documentType.category === 'primary' ? t('documents.primary') : t('documents.secondary')}
@@ -221,9 +221,9 @@ export function DocumentUploadItem({
             )}
           </div>
           {documentType.description && (
-            <p className="text-xs text-wisebox-text-secondary mt-1">{documentType.description}</p>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{documentType.description}</p>
           )}
-          <p className="text-xs text-wisebox-text-secondary mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
             {t('documents.scoreWeight', {
               weight: documentType.score_weight,
               size: documentType.max_file_size_mb,
@@ -235,10 +235,10 @@ export function DocumentUploadItem({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 shrink-0"
+          className="h-8 w-8 shrink-0 transition-all duration-200"
           onClick={() => setInfoOpen(true)}
         >
-          <Info className="h-4 w-4 text-wisebox-text-muted" />
+          <Info className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
         </Button>
         <DocumentInfoModal
           slug={documentType.slug}
@@ -254,21 +254,21 @@ export function DocumentUploadItem({
             type="button"
             variant="outline"
             size="sm"
-            className="border-wisebox-primary-600/40 text-wisebox-primary-300 hover:bg-wisebox-primary-900/20"
+            className="border-primary/40 text-primary hover:bg-primary/10 transition-all duration-200"
             onClick={handleHaveThis}
           >
-            <Check className="h-3.5 w-3.5 mr-1" />
+            <Check className="h-3.5 w-3.5 mr-1" strokeWidth={1.5} />
             {t('documents.iHaveThis')}
           </Button>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="border-wisebox-border text-wisebox-text-secondary hover:bg-wisebox-background-lighter"
+            className="border-border text-muted-foreground hover:bg-muted transition-all duration-200"
             onClick={handleDontHaveThis}
             disabled={markMissingMutation.isPending}
           >
-            <X className="h-3.5 w-3.5 mr-1" />
+            <X className="h-3.5 w-3.5 mr-1" strokeWidth={1.5} />
             {t('documents.iDontHaveThis')}
           </Button>
         </div>
@@ -279,21 +279,21 @@ export function DocumentUploadItem({
           <div
             {...getRootProps()}
             className={`
-              flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 cursor-pointer transition-colors
-              ${isDragActive ? 'border-wisebox-primary-400 bg-wisebox-primary-900/20' : 'border-wisebox-border hover:border-wisebox-primary-400 hover:bg-wisebox-background-lighter'}
+              flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 cursor-pointer transition-colors duration-200
+              ${isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary hover:bg-muted'}
               ${state === 'uploading' ? 'pointer-events-none opacity-60' : ''}
             `}
           >
             <input {...getInputProps()} />
-            <Upload className="h-8 w-8 text-wisebox-text-muted mb-2" />
+            <Upload className="h-8 w-8 text-muted-foreground mb-2" strokeWidth={1.5} />
             {isDragActive ? (
-              <p className="text-sm text-wisebox-primary font-medium">{t('documents.dropHere')}</p>
+              <p className="text-sm text-primary font-medium">{t('documents.dropHere')}</p>
             ) : (
-              <p className="text-sm text-wisebox-text-muted">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {t('documents.dropFileOrBrowse', { defaultValue: 'Drop file here or click to browse' })}
               </p>
             )}
-            <p className="text-xs text-wisebox-text-muted mt-1">
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
               {t('documents.fileFormats', {
                 formats: acceptedFormats.join(', ').toUpperCase() || 'PDF, JPG, PNG, DOC, DOCX',
                 size: documentType.max_file_size_mb,
@@ -304,7 +304,7 @@ export function DocumentUploadItem({
           {state === 'uploading' && (
             <div className="space-y-1">
               <Progress value={uploadProgress} className="h-2" />
-              <p className="text-xs text-wisebox-text-muted text-right">{uploadProgress}%</p>
+              <p className="text-xs text-muted-foreground text-right">{uploadProgress}%</p>
             </div>
           )}
 
@@ -314,7 +314,7 @@ export function DocumentUploadItem({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 px-2 text-xs text-wisebox-text-secondary hover:text-wisebox-status-warning"
+                className="h-7 px-2 text-xs text-muted-foreground hover:text-wisebox-status-warning transition-all duration-200"
                 onClick={handleDontHaveThis}
                 disabled={markMissingMutation.isPending}
               >
@@ -328,21 +328,21 @@ export function DocumentUploadItem({
       {state === 'uploaded' && (
         <div className="flex items-center justify-between rounded-md bg-wisebox-status-success/10 border border-wisebox-status-success/20 px-3 py-2">
           <div className="flex items-center gap-2 min-w-0">
-            <FileText className="h-4 w-4 text-wisebox-status-success shrink-0" />
+            <FileText className="h-4 w-4 text-wisebox-status-success shrink-0" strokeWidth={1.5} />
             <span className="text-sm text-wisebox-status-success truncate">
               {uploadedDocument?.file_name || t('documents.documentUploaded')}
             </span>
-            <Check className="h-4 w-4 text-wisebox-status-success shrink-0" />
+            <Check className="h-4 w-4 text-wisebox-status-success shrink-0" strokeWidth={1.5} />
           </div>
           <div className="flex gap-1.5 shrink-0">
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="h-7 text-xs text-wisebox-text-muted hover:text-wisebox-primary"
+              className="h-7 text-xs text-muted-foreground hover:text-primary transition-all duration-200"
               onClick={handleReplace}
             >
-              <RefreshCw className="h-3 w-3 mr-1" />
+              <RefreshCw className="h-3 w-3 mr-1" strokeWidth={1.5} />
               {t('documents.replace')}
             </Button>
           </div>
@@ -352,11 +352,11 @@ export function DocumentUploadItem({
       {state === 'missing' && (
         <div className="space-y-2">
           <div className="flex items-start gap-2 rounded-md bg-wisebox-status-warning/10 border border-wisebox-status-warning/20 px-3 py-2">
-            <AlertCircle className="h-4 w-4 text-wisebox-status-warning mt-0.5 shrink-0" />
+            <AlertCircle className="h-4 w-4 text-wisebox-status-warning mt-0.5 shrink-0" strokeWidth={1.5} />
             <div className="min-w-0">
               <p className="text-sm font-medium text-wisebox-status-warning">{t('documents.markedAsMissing')}</p>
               {documentType.missing_guidance && (
-                <p className="text-xs text-wisebox-status-warning mt-0.5">{documentType.missing_guidance}</p>
+                <p className="text-xs text-wisebox-status-warning mt-0.5 leading-relaxed">{documentType.missing_guidance}</p>
               )}
             </div>
           </div>
@@ -364,7 +364,7 @@ export function DocumentUploadItem({
             type="button"
             variant="outline"
             size="sm"
-            className="border-wisebox-primary-600/40 text-wisebox-primary-300 hover:bg-wisebox-primary-900/20"
+            className="border-primary/40 text-primary hover:bg-primary/10 transition-all duration-200"
             onClick={handleFoundIt}
           >
             {t('documents.iFoundIt')}
@@ -374,7 +374,7 @@ export function DocumentUploadItem({
 
       {error && (
         <p className="text-sm text-wisebox-status-danger flex items-center gap-1.5">
-          <AlertCircle className="h-3.5 w-3.5" />
+          <AlertCircle className="h-3.5 w-3.5" strokeWidth={1.5} />
           {error}
         </p>
       )}

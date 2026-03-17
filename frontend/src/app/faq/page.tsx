@@ -34,11 +34,11 @@ export default function FaqPage() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-wisebox-background">
+      <main className="bg-background">
         <section className="mx-auto w-full max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="mb-8 space-y-3">
-            <h1 className="text-4xl font-bold text-wisebox-text-primary sm:text-5xl">Frequently asked questions</h1>
-            <p className="text-lg text-wisebox-text-secondary">
+            <h1 className="text-4xl font-bold text-foreground sm:text-5xl">Frequently asked questions</h1>
+            <p className="text-lg text-muted-foreground">
               If you are new to Wisebox, start here for quick answers about setup and workflows.
             </p>
           </div>
@@ -46,15 +46,15 @@ export default function FaqPage() {
         </section>
 
         <section className="mx-auto w-full max-w-4xl px-4 pb-16 sm:px-6 lg:px-8">
-          <Card className="border-wisebox-primary/30 bg-wisebox-background-card">
+          <Card className="border-primary/30 bg-card">
             <CardContent className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-lg font-semibold text-wisebox-text-primary">Need more help?</p>
-                <p className="text-sm text-wisebox-text-secondary">
+                <p className="text-lg font-semibold text-foreground">Need more help?</p>
+                <p className="text-sm text-muted-foreground">
                   Contact our team for onboarding guidance and service recommendations.
                 </p>
               </div>
-              <Button asChild className="bg-wisebox-primary-600 text-white hover:bg-wisebox-primary-700">
+              <Button asChild className="bg-primary text-white hover:bg-primary/90">
                 <Link href="/contact">
                   Contact us
                   <ArrowRight className="ml-2 h-4 w-4" />

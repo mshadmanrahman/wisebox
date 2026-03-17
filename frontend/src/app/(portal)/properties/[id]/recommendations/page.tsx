@@ -31,8 +31,8 @@ export default function PropertyRecommendationsPage() {
   if (isLoading || !recommendations) {
     return (
       <div className="px-6 py-8">
-        <Card>
-          <CardContent className="p-6 text-sm text-wisebox-text-secondary">
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
+          <CardContent className="p-6 text-sm text-muted-foreground">
             {t('recommendations.loading')}
           </CardContent>
         </Card>
@@ -69,9 +69,9 @@ export default function PropertyRecommendationsPage() {
 
   const getCategoryColor = (category: string) => {
     return categoryColors[category] || {
-      bg: 'bg-wisebox-background-card',
-      text: 'text-wisebox-text-secondary',
-      icon: 'border-wisebox-border',
+      bg: 'bg-card',
+      text: 'text-muted-foreground',
+      icon: 'border-border',
     };
   };
 
@@ -79,47 +79,47 @@ export default function PropertyRecommendationsPage() {
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-wisebox-text-primary">{t('recommendations.title')}</h1>
-        <p className="text-wisebox-text-secondary mt-2">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t('recommendations.title')}</h1>
+        <p className="text-muted-foreground mt-2">
           {t('recommendations.subtitle')}
         </p>
       </div>
 
       {/* Summary Card */}
-      <Card className="bg-gradient-to-r from-wisebox-primary-50 to-wisebox-primary-100 border-wisebox-primary-200">
-        <CardContent className="p-6">
+      <Card className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none">
+        <CardContent className="p-0">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-wisebox-primary-200 flex items-center justify-center">
-                <ClipboardList className="h-6 w-6 text-wisebox-primary-700" />
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <ClipboardList className="h-6 w-6 text-primary" strokeWidth={1.5} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-wisebox-primary-700">{recommendations.length}</p>
-                <p className="text-sm text-wisebox-text-secondary">{t('recommendations.totalRecommendations')}</p>
+                <p className="text-2xl font-semibold text-foreground">{recommendations.length}</p>
+                <p className="text-sm text-muted-foreground">{t('recommendations.totalRecommendations')}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-wisebox-status-info/20 flex items-center justify-center">
-                <AlertCircle className="h-6 w-6 text-wisebox-status-info" />
+                <AlertCircle className="h-6 w-6 text-wisebox-status-info" strokeWidth={1.5} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-wisebox-status-info">
+                <p className="text-2xl font-semibold text-wisebox-status-info">
                   {Object.keys(groupedRecommendations).length}
                 </p>
-                <p className="text-sm text-wisebox-text-secondary">{t('recommendations.categories')}</p>
+                <p className="text-sm text-muted-foreground">{t('recommendations.categories')}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-wisebox-status-success/20 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-wisebox-status-success" />
+                <CheckCircle2 className="h-6 w-6 text-wisebox-status-success" strokeWidth={1.5} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-wisebox-status-success">
+                <p className="text-2xl font-semibold text-wisebox-status-success">
                   {new Set(recommendations.map((r) => r.consultant_name)).size}
                 </p>
-                <p className="text-sm text-wisebox-text-secondary">{t('recommendations.consultants')}</p>
+                <p className="text-sm text-muted-foreground">{t('recommendations.consultants')}</p>
               </div>
             </div>
           </div>
@@ -128,10 +128,10 @@ export default function PropertyRecommendationsPage() {
 
       {/* Empty State */}
       {recommendations.length === 0 ? (
-        <Card>
+        <Card className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
           <CardContent className="p-12 text-center">
-            <ClipboardList className="h-16 w-16 text-wisebox-text-muted mx-auto mb-4" />
-            <p className="text-wisebox-text-secondary">
+            <ClipboardList className="h-16 w-16 text-muted-foreground mx-auto mb-4" strokeWidth={1.5} />
+            <p className="text-muted-foreground">
               {t('recommendations.noRecommendations')}
             </p>
           </CardContent>
@@ -143,17 +143,17 @@ export default function PropertyRecommendationsPage() {
             const colors = getCategoryColor(category);
 
             return (
-              <Card key={category}>
+              <Card key={category} className="bg-card border border-border rounded-xl shadow-sm dark:shadow-none">
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-10 h-10 rounded-lg ${colors.bg} ${colors.icon} border-2 flex items-center justify-center`}
                     >
-                      <ClipboardList className={`h-5 w-5 ${colors.text}`} />
+                      <ClipboardList className={`h-5 w-5 ${colors.text}`} strokeWidth={1.5} />
                     </div>
                     <div className="flex-1">
-                      <CardTitle className="text-lg">{category}</CardTitle>
-                      <p className="text-sm text-wisebox-text-secondary">
+                      <CardTitle className="text-base font-medium text-foreground">{category}</CardTitle>
+                      <p className="text-sm text-muted-foreground">
                         {categoryRecs.length !== 1
                           ? t('recommendations.recommendationCountPlural', { count: categoryRecs.length })
                           : t('recommendations.recommendationCount', { count: categoryRecs.length })}
@@ -165,19 +165,19 @@ export default function PropertyRecommendationsPage() {
                   {categoryRecs.map((rec, index) => (
                     <div
                       key={index}
-                      className="bg-wisebox-background-lighter rounded-lg p-4 space-y-3 border-l-4 border-wisebox-primary-500"
+                      className="bg-muted rounded-lg p-4 space-y-3 border-l-4 border-primary"
                     >
-                      <p className="text-sm text-wisebox-text-primary whitespace-pre-wrap">
+                      <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
                         {rec.recommendation}
                       </p>
 
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-wisebox-text-secondary">
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
+                          <User className="h-3 w-3" strokeWidth={1.5} />
                           <span>{rec.consultant_name}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                          <Calendar className="h-3 w-3" strokeWidth={1.5} />
                           <span>
                             {new Date(rec.date).toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : 'en-US', {
                               month: 'short',
@@ -198,13 +198,13 @@ export default function PropertyRecommendationsPage() {
 
       {/* Action Items Note */}
       {recommendations.length > 0 && (
-        <Card className="bg-wisebox-primary-50 border-wisebox-primary-200">
-          <CardContent className="p-6">
+        <Card className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none">
+          <CardContent className="p-0">
             <div className="flex gap-3">
-              <AlertCircle className="h-5 w-5 text-wisebox-primary-700 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" strokeWidth={1.5} />
               <div>
-                <p className="font-medium text-wisebox-primary-700 mb-1">{t('recommendations.important')}</p>
-                <p className="text-sm text-wisebox-text-secondary">
+                <p className="font-medium text-foreground mb-1">{t('recommendations.important')}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {t('recommendations.importantDescription')}
                 </p>
               </div>
