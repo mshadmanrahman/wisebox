@@ -67,6 +67,9 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
         className,
       )}
     >
+      {/* Gradient base layer */}
+      <Image src="/images/gradients/gradient-19.jpg" alt="" fill className="object-cover" sizes="50vw" priority />
+
       {/* Full-bleed photo backgrounds */}
       {testimonials.map((slide, i) => (
         <div

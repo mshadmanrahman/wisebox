@@ -47,8 +47,8 @@ export function LandingHero() {
   useEffect(() => setLoaded(true), []);
 
   return (
-    <section className="pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pt-40 lg:pb-32">
-      <div className="mx-auto max-w-6xl px-6">
+    <section className="pt-16 pb-16 sm:pt-24 sm:pb-24">
+      <div className="max-w-6xl mx-auto px-6 sm:px-8">
         {/* Centered text */}
         <div className="text-center max-w-4xl mx-auto">
           <h1
@@ -76,7 +76,7 @@ export function LandingHero() {
 
         {/* Hero visual: photo + product mock side by side */}
         <div className={cn('mt-12 transition-all duration-1000', loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')} style={{ transitionDelay: '600ms' }}>
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6 items-end">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-end">
             {/* Left: Large lifestyle photo */}
             <div className="lg:col-span-2 rounded-3xl overflow-hidden shadow-xl dark:shadow-none ring-1 ring-black/5 dark:ring-white/5">
               <img src="/images/landing/hero-family.jpg" alt="Grandfather and grandson" className="w-full aspect-[3/4] object-cover" />
@@ -158,7 +158,7 @@ export function TestimonialScroller({ testimonials }: { testimonials: Testimonia
       <div className="-mx-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
         <div className="flex gap-5 sm:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]">
           {testimonials.map((t) => (
-            <div key={t.name} className="min-w-[340px] sm:min-w-[380px] shrink-0 snap-start rounded-2xl border border-border bg-card p-6 shadow-md dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/15">
+            <div key={t.name} className="min-w-[360px] sm:min-w-[400px] shrink-0 snap-start rounded-2xl border border-border bg-card p-8 shadow-md dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/15">
               <p className="text-base text-foreground leading-relaxed">{t.quote}</p>
               <div className="mt-5 flex items-center gap-3">
                 <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">{t.name.charAt(0)}</div>
@@ -169,7 +169,7 @@ export function TestimonialScroller({ testimonials }: { testimonials: Testimonia
         </div>
       </div>
       {/* Right edge fade */}
-      <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-6 w-20 bg-gradient-to-l from-background to-transparent pointer-events-none" />
     </div>
   );
 }

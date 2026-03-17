@@ -54,14 +54,14 @@ export default function Home() {
 
         {/* ── TRUST LINE ── */}
         <section className="py-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Trusted by 500+ families across the US, UK, Canada, and Australia
-          </p>
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <p className="text-sm text-muted-foreground">Trusted by 500+ families across the US, UK, Canada, and Australia</p>
+          </div>
         </section>
 
         {/* ── FEATURES ── */}
         <section id="features-section" className="scroll-mt-16 py-24 sm:py-32">
-          <div className="mx-auto max-w-6xl px-6">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
               <h2 className="text-center font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground max-w-3xl mx-auto">
                 Everything you need to protect what matters.
@@ -83,52 +83,65 @@ export default function Home() {
         </section>
 
         {/* ── LIFESTYLE PHOTO BREAK ── */}
-        <section className="py-16 px-6">
-          <RevealSection>
-            <div className="max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-xl dark:shadow-none ring-1 ring-black/5 dark:ring-white/5">
-              <img src="/images/landing/woman-armchair-away.jpg" alt="Managing property from home" className="w-full aspect-[21/9] object-cover object-center" />
-            </div>
-            <p className="text-center text-sm text-muted-foreground mt-4">Manage your property from anywhere in the world.</p>
-          </RevealSection>
+        <section className="py-24 sm:py-32">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <RevealSection>
+              <div className="rounded-3xl overflow-hidden shadow-xl dark:shadow-none ring-1 ring-black/5 dark:ring-white/5">
+                <img src="/images/landing/woman-armchair-away.jpg" alt="Managing property from home" className="w-full aspect-[2.5/1] object-cover object-center" />
+              </div>
+              <p className="text-center text-sm text-muted-foreground mt-4">Manage your property from anywhere in the world.</p>
+            </RevealSection>
+          </div>
         </section>
 
-        {/* ── STATS ── */}
-        <section className="py-8 px-6">
-          <RevealSection>
-            <div className="max-w-5xl mx-auto bg-card rounded-3xl shadow-lg dark:shadow-none border border-border p-12 sm:p-16">
-              <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 text-center">
-                {[
-                  { num: '15', unit: 'min', desc: 'Average time to complete your first property assessment' },
-                  { num: '72', unit: '%', desc: 'Average readiness score improvement after 30 days' },
-                  { num: '4', unit: 'countries', desc: 'Families from US, UK, Canada, and Australia' },
-                ].map((stat) => (
-                  <div key={stat.num}>
-                    <p className="text-5xl font-semibold text-primary">{stat.num}<span className="text-2xl font-normal text-muted-foreground ml-1">{stat.unit}</span></p>
-                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{stat.desc}</p>
+        {/* ── STATS (with gradient-15 accent) ── */}
+        <section className="py-8">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <RevealSection>
+              <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg dark:shadow-none border border-border relative">
+                <img src="/images/gradients/gradient-15.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-10" />
+                <div className="absolute inset-0 bg-card/70 dark:bg-card/80" />
+                <div className="relative z-10 p-12 sm:p-16">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+                    {[
+                      { num: '15', unit: 'min', desc: 'Average time to complete your first property assessment' },
+                      { num: '72', unit: '%', desc: 'Average readiness score improvement after 30 days' },
+                      { num: '4', unit: 'countries', desc: 'Families from US, UK, Canada, and Australia' },
+                    ].map((stat) => (
+                      <div key={stat.num}>
+                        <div className="flex items-baseline justify-center gap-1">
+                          <span className="text-5xl font-semibold text-primary">{stat.num}</span>
+                          <span className="text-lg text-muted-foreground font-medium">{stat.unit}</span>
+                        </div>
+                        <p className="mt-2 text-sm text-muted-foreground leading-snug max-w-[200px] mx-auto">{stat.desc}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
-          </RevealSection>
+            </RevealSection>
+          </div>
         </section>
 
         {/* ── FEATURED TESTIMONIAL ── */}
         <section className="py-24 sm:py-32">
-          <div className="mx-auto max-w-5xl px-6">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
-              <div className="rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden grid grid-cols-1 lg:grid-cols-5">
-                <div className="lg:col-span-3 p-10 sm:p-14 flex flex-col justify-center">
-                  <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.15em' }}>Case Study</p>
-                  <blockquote className="mt-6 text-xl sm:text-2xl font-medium leading-relaxed italic text-foreground">
-                    &ldquo;Wisebox has <em className="not-italic text-primary font-semibold">completely transformed</em> how our family manages property back in Bangladesh. What used to be scattered documents and anxious phone calls is now a clear, trackable system we all trust.&rdquo;
-                  </blockquote>
-                  <div className="mt-8 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">R</div>
-                    <div><p className="text-base font-medium text-foreground">Rafiq H.</p><p className="text-sm text-muted-foreground">London, UK</p></div>
+              <div className="max-w-5xl mx-auto rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-5">
+                  <div className="lg:col-span-3 p-10 sm:p-14 flex flex-col justify-center">
+                    <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.15em' }}>Case Study</p>
+                    <blockquote className="mt-6 text-xl sm:text-2xl font-medium leading-relaxed italic text-foreground">
+                      &ldquo;Wisebox has <em className="not-italic text-primary font-semibold">completely transformed</em> how our family manages property back in Bangladesh. What used to be scattered documents and anxious phone calls is now a clear, trackable system we all trust.&rdquo;
+                    </blockquote>
+                    <div className="mt-8 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">R</div>
+                      <div><p className="text-sm font-medium text-foreground">Rafiq H.</p><p className="text-xs text-muted-foreground">London, UK</p></div>
+                    </div>
                   </div>
-                </div>
-                <div className="lg:col-span-2 hidden lg:block">
-                  <img src="/images/landing/father-son-laptop.jpg" alt="Family using Wisebox" className="w-full h-full object-cover" />
+                  <div className="lg:col-span-2 hidden lg:block min-h-[300px]">
+                    <img src="/images/landing/father-son-laptop.jpg" alt="Family using Wisebox" className="w-full h-full object-cover" />
+                  </div>
                 </div>
               </div>
             </RevealSection>
@@ -136,8 +149,8 @@ export default function Home() {
         </section>
 
         {/* ── TESTIMONIAL CAROUSEL ── */}
-        <section className="py-16">
-          <div className="mx-auto max-w-6xl px-6">
+        <section className="py-24 sm:py-32">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection><p className="text-xl font-medium text-muted-foreground">Real stories from real families</p></RevealSection>
           </div>
           <TestimonialScroller testimonials={testimonials} />
@@ -145,20 +158,22 @@ export default function Home() {
 
         {/* ── FAQ ── */}
         <section id="faq-section" className="scroll-mt-16 py-24 sm:py-32">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.5fr]">
-              <RevealSection>
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+              <RevealSection className="lg:col-span-1">
                 <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Everything you need to know</h2>
                 <Link href="/contact" className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">Contact us <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} /></Link>
               </RevealSection>
-              <RevealSection delay={100}><FaqAccordion faqs={marketingFaqs} /></RevealSection>
+              <RevealSection delay={100} className="lg:col-span-2"><FaqAccordion faqs={marketingFaqs} /></RevealSection>
             </div>
           </div>
         </section>
 
-        {/* ── FINAL CTA ── */}
-        <section className="py-24 sm:py-32">
-          <div className="mx-auto max-w-3xl px-6 text-center">
+        {/* ── FINAL CTA (with gradient-23 accent) ── */}
+        <section className="py-24 sm:py-32 relative overflow-hidden">
+          <img src="/images/gradients/gradient-23.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-15 dark:opacity-10" />
+          <div className="absolute inset-0 bg-background/60" />
+          <div className="relative z-10 max-w-3xl mx-auto px-6 sm:px-8 text-center">
             <RevealSection>
               <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">From scattered to structured</h2>
               <div className="mt-8">
