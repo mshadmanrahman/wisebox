@@ -15,6 +15,9 @@ import {
   UsersRound,
   Shield,
   ArrowRight,
+  Mail,
+  MessageSquare,
+  Phone,
 } from 'lucide-react';
 import { MarketingHeader } from '@/components/marketing/marketing-header';
 import { MarketingFooter } from '@/components/marketing/marketing-footer';
@@ -295,6 +298,43 @@ export default function Home() {
             <RevealSection delay={100}>
               <FaqAccordion faqs={marketingFaqs} />
             </RevealSection>
+          </div>
+        </section>
+
+        {/* ─── [07] CONTACT ─── */}
+        <section id="contact-section" className="scroll-mt-16 border-t border-border py-24 sm:py-32">
+          <div className="mx-auto max-w-6xl px-6">
+            <RevealSection>
+              <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.2em' }}>[07]&ensp;Contact</p>
+              <h2 className="mt-6 max-w-lg font-[family-name:var(--font-geist-sans)] text-2xl font-semibold text-foreground sm:text-3xl" style={{ letterSpacing: '-0.02em' }}>
+                Get in touch
+              </h2>
+              <p className="mt-3 max-w-lg text-sm text-muted-foreground leading-relaxed">
+                Reach out for onboarding, service guidance, or collaboration requests.
+              </p>
+            </RevealSection>
+
+            <StaggerGrid className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {[
+                { icon: Mail, title: 'Email support', detail: 'support@mywisebox.com', note: 'Best for account and onboarding help within one business day.', href: 'mailto:support@mywisebox.com' },
+                { icon: MessageSquare, title: 'In-app tickets', detail: 'Ticket workflow', note: 'Track updates and consultant replies directly in your workspace.', href: '/login' },
+                { icon: Phone, title: 'Call scheduling', detail: '+1 (555) 014-2026', note: 'For service planning and enterprise onboarding discussions.', href: 'tel:+15550142026' },
+              ].map((channel) => {
+                const Icon = channel.icon;
+                return (
+                  <a
+                    key={channel.title}
+                    href={channel.href}
+                    className="group rounded-2xl border border-border bg-card p-8 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/12 block"
+                  >
+                    <Icon className="mb-4 h-5 w-5 text-primary" strokeWidth={1.5} />
+                    <p className="text-base font-medium text-foreground">{channel.title}</p>
+                    <p className="mt-1 text-sm font-medium text-primary">{channel.detail}</p>
+                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{channel.note}</p>
+                  </a>
+                );
+              })}
+            </StaggerGrid>
           </div>
         </section>
 
