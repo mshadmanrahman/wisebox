@@ -74,75 +74,117 @@ export function LandingHero() {
           </div>
         </div>
 
-        {/* Hero visual: photo + product mock side by side */}
-        <div className={cn('mt-12 transition-all duration-1000', loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')} style={{ transitionDelay: '600ms' }}>
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-end">
-            {/* Left: Large lifestyle photo */}
-            <div className="lg:col-span-2 rounded-3xl overflow-hidden shadow-xl dark:shadow-none ring-1 ring-black/5 dark:ring-white/5">
-              <img src="/images/landing/hero-family.jpg" alt="Grandfather and grandson" className="w-full aspect-[3/4] object-cover" />
+        {/* Hero visual: floating composition */}
+        <div className={cn('mt-16 relative transition-all duration-1000', loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')} style={{ transitionDelay: '600ms' }}>
+          <div className="max-w-3xl mx-auto relative">
+            {/* Central product mock */}
+            <div className="bg-card rounded-3xl shadow-2xl dark:shadow-none border border-border overflow-hidden">
+              <div className="grid grid-cols-1 lg:grid-cols-[160px_1fr] min-h-[320px]">
+                {/* Sidebar */}
+                <div className="hidden lg:block border-r border-border bg-muted/50 p-4 space-y-3">
+                  <div className="h-5 w-20 rounded-lg bg-primary/10" />
+                  <div className="space-y-1.5 mt-5">
+                    {['Dashboard', 'Properties', 'Documents', 'Tickets'].map((label) => (
+                      <div key={label} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-muted-foreground">
+                        <div className="w-3.5 h-3.5 rounded bg-border" />
+                        <span>{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Main content */}
+                <div className="p-5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div><p className="text-sm font-medium text-foreground">My Properties</p><p className="text-[10px] text-muted-foreground mt-0.5">2 properties tracked</p></div>
+                    <div className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-medium text-primary">+ Add</div>
+                  </div>
+                  <div className="bg-muted/50 rounded-xl p-3.5 border border-border">
+                    <div className="flex items-center gap-2.5 mb-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"><Home className="w-4 h-4 text-primary" strokeWidth={1.5} /></div>
+                      <div><p className="text-xs font-medium">Family Home, Sylhet</p><p className="text-[9px] text-muted-foreground">Added 3 days ago</p></div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[9px]"><span className="text-muted-foreground">Readiness</span><span className="font-medium text-primary">72%</span></div>
+                      <div className="h-1 rounded-full bg-muted"><div className="h-full w-[72%] rounded-full bg-primary" /></div>
+                    </div>
+                  </div>
+                  <div className="bg-muted/50 rounded-xl p-3.5 border border-border">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center"><Home className="w-4 h-4 text-secondary" strokeWidth={1.5} /></div>
+                      <div><p className="text-xs font-medium">Agricultural Land, Comilla</p><p className="text-[9px] text-muted-foreground">Added 2 weeks ago</p></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            {/* Right: Product mock */}
-            <div className="lg:col-span-3 rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-[180px_1fr_240px] min-h-[360px]">
-              {/* Sidebar mock */}
-              <div className="hidden lg:block border-r border-border bg-muted/50 p-4 space-y-3">
-                <div className="h-6 w-24 rounded-lg bg-primary/10" />
-                <div className="space-y-2 mt-6">
-                  {['Dashboard', 'Properties', 'Documents', 'Tickets'].map((label) => (
-                    <div key={label} className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-muted-foreground">
-                      <div className="w-4 h-4 rounded bg-border" />
-                      <span>{label}</span>
+
+            {/* Floating: Grandfather photo — bottom-left */}
+            <div className="absolute -bottom-8 -left-4 sm:left-4 lg:-left-12 z-20">
+              <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-2xl overflow-hidden shadow-xl border-4 border-background">
+                <img src="/images/landing/hero-family.jpg" alt="Family" className="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            {/* Floating: Readiness score — top-right */}
+            <div className="absolute -top-4 -right-4 sm:right-2 lg:-right-16 z-20">
+              <div className="bg-card rounded-2xl shadow-lg dark:shadow-none border border-border p-4 w-40">
+                <p className="text-[10px] text-muted-foreground">Overall Score</p>
+                <div className="flex items-baseline gap-0.5 mt-1">
+                  <span className="text-3xl font-semibold text-primary">72</span>
+                  <span className="text-xs text-muted-foreground">/100</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-muted mt-2"><div className="h-full w-[72%] rounded-full bg-primary" /></div>
+              </div>
+            </div>
+
+            {/* Floating: Notification — mid-right (desktop) */}
+            <div className="hidden lg:block absolute top-1/3 -right-20 z-20">
+              <div className="bg-card rounded-xl shadow-lg dark:shadow-none border border-border p-3 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium">Document uploaded</p>
+                  <p className="text-[9px] text-muted-foreground">2 minutes ago</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating: Document status — left (desktop) */}
+            <div className="hidden lg:block absolute top-1/4 -left-20 z-20">
+              <div className="bg-card rounded-xl shadow-lg dark:shadow-none border border-border p-3 w-44">
+                <p className="text-[10px] font-medium text-muted-foreground mb-2">Documents</p>
+                <div className="space-y-1.5">
+                  {[
+                    { color: 'bg-green-100 dark:bg-green-900/30', icon: 'text-green-600 dark:text-green-400', label: 'Property Deed' },
+                    { color: 'bg-amber-100 dark:bg-amber-900/30', icon: 'text-amber-600 dark:text-amber-400', label: 'Mutation Certificate' },
+                    { color: 'bg-red-100 dark:bg-red-900/30', icon: 'text-red-500 dark:text-red-400', label: 'Tax Clearance' },
+                  ].map((d) => (
+                    <div key={d.label} className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded flex items-center justify-center ${d.color}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${d.icon.replace('text-', 'bg-')}`} />
+                      </div>
+                      <span className="text-[11px]">{d.label}</span>
                     </div>
                   ))}
                 </div>
               </div>
+            </div>
 
-              {/* Main content mock */}
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div><p className="text-sm font-medium text-foreground">My Properties</p><p className="text-xs text-muted-foreground mt-0.5">2 properties tracked</p></div>
-                  <div className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">+ Add Property</div>
+            {/* Floating: Family count — bottom-right */}
+            <div className="hidden sm:block absolute -bottom-6 right-4 lg:-right-8 z-20">
+              <div className="bg-card rounded-full shadow-lg dark:shadow-none border border-border px-4 py-2 flex items-center gap-2">
+                <div className="flex -space-x-1.5">
+                  <div className="w-5 h-5 rounded-full bg-primary/20 border-2 border-card" />
+                  <div className="w-5 h-5 rounded-full bg-secondary/20 border-2 border-card" />
+                  <div className="w-5 h-5 rounded-full bg-primary/30 border-2 border-card" />
                 </div>
-                {/* Property card mock */}
-                <div className="bg-muted/50 rounded-2xl p-4 border border-border">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><Home className="w-5 h-5 text-primary" strokeWidth={1.5} /></div>
-                    <div><p className="text-sm font-medium">Family Home, Sylhet</p><p className="text-[10px] text-muted-foreground">Added 3 days ago</p></div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-[10px]"><span className="text-muted-foreground">Readiness</span><span className="font-medium text-primary">72%</span></div>
-                    <div className="h-1.5 rounded-full bg-muted"><div className="h-full w-[72%] rounded-full bg-primary" /></div>
-                  </div>
-                </div>
-                <div className="bg-muted/50 rounded-2xl p-4 border border-border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center"><Home className="w-5 h-5 text-secondary" strokeWidth={1.5} /></div>
-                    <div><p className="text-sm font-medium">Agricultural Land, Comilla</p><p className="text-[10px] text-muted-foreground">Added 2 weeks ago</p></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right sidebar — notifications/score */}
-              <div className="hidden lg:block border-l border-border p-4 space-y-4">
-                <p className="text-xs font-medium text-foreground">Notifications</p>
-                {[
-                  { text: 'Document uploaded', time: '2m ago', color: 'bg-primary' },
-                  { text: 'Consultant assigned', time: '1h ago', color: 'bg-secondary' },
-                  { text: 'Assessment complete', time: '3h ago', color: 'bg-wisebox-status-success' },
-                ].map((n) => (
-                  <div key={n.text} className="flex items-start gap-2">
-                    <div className={`w-1.5 h-1.5 rounded-full mt-1.5 ${n.color}`} />
-                    <div><p className="text-[10px] font-medium">{n.text}</p><p className="text-[9px] text-muted-foreground">{n.time}</p></div>
-                  </div>
-                ))}
-                <div className="mt-4 p-3 rounded-xl bg-primary/5 border border-primary/10">
-                  <p className="text-[10px] text-muted-foreground mb-1">Overall Score</p>
-                  <p className="text-2xl font-semibold text-primary">72<span className="text-sm font-normal text-muted-foreground">/100</span></p>
-                </div>
-              </div>
+                <p className="text-[11px] font-medium text-muted-foreground">+500 families</p>
               </div>
             </div>
           </div>
+          {/* Bottom spacer for overflow */}
+          <div className="h-12" />
         </div>
       </div>
     </section>
