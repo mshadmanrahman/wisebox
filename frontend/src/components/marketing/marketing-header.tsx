@@ -1,23 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { WiseboxLogo } from '@/components/ui/wisebox-logo';
 import { marketingNavLinks } from '@/components/marketing/content';
+import { cn } from '@/lib/utils';
 
 export function MarketingHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
-        <Link
-          href="/"
-          className="shrink-0 text-base font-semibold text-foreground transition-all duration-200"
-          style={{ letterSpacing: '-0.01em' }}
-        >
-          Wisebox
+    <header
+      className={cn(
+        'sticky top-0 z-40 h-16 transition-all duration-300',
+        scrolled
+          ? 'bg-background/80 backdrop-blur-xl border-b border-border'
+          : 'bg-transparent border-b border-transparent',
+      )}
+    >
+      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between px-6">
+        <Link href="/" className="shrink-0">
+          <WiseboxLogo variant="auto" size="sm" className="transition-all duration-200 hover:opacity-80" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -44,7 +57,7 @@ export function MarketingHeader() {
             size="sm"
             className="bg-primary text-primary-foreground transition-all duration-200 hover:bg-primary/90 rounded-lg"
           >
-            <Link href="/register">Get Started</Link>
+            <Link href="/assessment/start">Get Free Assessment</Link>
           </Button>
         </div>
 
@@ -54,16 +67,12 @@ export function MarketingHeader() {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle navigation"
         >
-          {mobileOpen ? (
-            <X className="h-5 w-5" strokeWidth={1.5} />
-          ) : (
-            <Menu className="h-5 w-5" strokeWidth={1.5} />
-          )}
+          {mobileOpen ? <X className="h-5 w-5" strokeWidth={1.5} /> : <Menu className="h-5 w-5" strokeWidth={1.5} />}
         </button>
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-border px-6 pb-6 pt-4 md:hidden">
+        <div className="border-t border-border bg-background px-6 pb-6 pt-4 md:hidden">
           <nav className="flex flex-col gap-4">
             {marketingNavLinks.map((item) => (
               <a
@@ -89,8 +98,8 @@ export function MarketingHeader() {
               size="sm"
               className="w-full bg-primary text-primary-foreground transition-all duration-200 hover:bg-primary/90 rounded-lg"
             >
-              <Link href="/register" onClick={() => setMobileOpen(false)}>
-                Get Started
+              <Link href="/assessment/start" onClick={() => setMobileOpen(false)}>
+                Get Free Assessment
               </Link>
             </Button>
           </div>
