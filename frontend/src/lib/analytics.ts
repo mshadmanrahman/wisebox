@@ -3,11 +3,35 @@ import * as amplitude from '@amplitude/analytics-browser';
 const isEnabled = typeof window !== 'undefined' && !!process.env.NEXT_PUBLIC_AMPLITUDE_KEY;
 let initialized = false;
 
+function generateDeviceId(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const crypto = typeof window !== 'undefined' ? window.crypto : undefined;
+  if (crypto) {
+    const values = new Uint8Array(22);
+    crypto.getRandomValues(values);
+    for (const v of values) result += chars[v % chars.length];
+  } else {
+    for (let i = 0; i < 22; i++) result += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return result;
+}
+
 /** Initialize Amplitude. Call once from root layout. */
 export function initAnalytics() {
   if (!isEnabled || initialized) return;
+
+  // Ensure a valid device_id exists (Amplitude v2 requires min 20 chars)
+  const storageKey = 'AMP_device_id';
+  let deviceId = localStorage.getItem(storageKey);
+  if (!deviceId || deviceId.length < 20) {
+    deviceId = generateDeviceId();
+    localStorage.setItem(storageKey, deviceId);
+  }
+
   amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_KEY!, {
     autocapture: true,
+    deviceId,
   });
   initialized = true;
 }
