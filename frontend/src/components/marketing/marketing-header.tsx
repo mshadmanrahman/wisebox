@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { WiseboxLogo } from '@/components/ui/wisebox-logo';
 import { marketingNavLinks } from '@/components/marketing/content';
 import { cn } from '@/lib/utils';
@@ -17,6 +18,17 @@ export function MarketingHeader() {
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const handleAnchorClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const el = document.querySelector(href);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      setMobileOpen(false);
+    }
   }, []);
 
   return (
@@ -38,6 +50,7 @@ export function MarketingHeader() {
             <a
               key={item.href}
               href={item.href}
+              onClick={(e) => handleAnchorClick(e, item.href)}
               className="text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
             >
               {item.label}
@@ -45,7 +58,8 @@ export function MarketingHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggle />
           <Link
             href="/login"
             className="text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
@@ -79,13 +93,17 @@ export function MarketingHeader() {
                 key={item.href}
                 href={item.href}
                 className="text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
-                onClick={() => setMobileOpen(false)}
+                onClick={(e) => handleAnchorClick(e, item.href)}
               >
                 {item.label}
               </a>
             ))}
           </nav>
           <div className="mt-6 flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <span className="text-sm text-muted-foreground">Toggle theme</span>
+            </div>
             <Link
               href="/login"
               className="text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"

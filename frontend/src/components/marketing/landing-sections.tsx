@@ -150,12 +150,13 @@ export function LandingHero() {
             >
               Get Free Assessment <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
             </Link>
-            <a
-              href="#process-section"
+            <button
+              type="button"
+              onClick={() => document.querySelector('#process-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               className="group inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-4 text-base font-medium text-foreground transition-all duration-200 hover:bg-muted"
             >
               See How It Works <ChevronDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" strokeWidth={1.5} />
-            </a>
+            </button>
           </div>
 
           <p
