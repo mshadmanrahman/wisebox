@@ -101,7 +101,7 @@ export default function Home() {
         <LandingHero />
 
         {/* ─── SOCIAL PROOF ─── */}
-        <section className="border-y border-border bg-muted/30 py-12">
+        <section className="bg-muted/30 py-12">
           <div className="mx-auto max-w-6xl px-6 text-center">
             <p className="text-sm text-muted-foreground">
               Trusted by diaspora families across the US, UK, Canada, and Australia.
@@ -151,7 +151,7 @@ export default function Home() {
         </section>
 
         {/* ─── [02] THE PROCESS ─── */}
-        <section id="process-section" className="scroll-mt-16 border-t border-border py-24 sm:py-32 lg:py-40">
+        <section id="process-section" className="scroll-mt-16 py-24 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-6xl px-6">
             <RevealSection>
               <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.2em' }}>[02]&ensp;The Process</p>
@@ -201,7 +201,7 @@ export default function Home() {
         </section>
 
         {/* ─── [03] FEATURES ─── */}
-        <section id="features-section" className="scroll-mt-16 border-t border-border py-24 sm:py-32 lg:py-40">
+        <section id="features-section" className="scroll-mt-16 py-24 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-6xl px-6">
             <RevealSection>
               <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.2em' }}>[03]&ensp;The Platform</p>
@@ -261,7 +261,7 @@ export default function Home() {
         </section>
 
         {/* ─── [05] PRICING ─── */}
-        <section id="pricing-section" className="scroll-mt-16 border-t border-border py-24 sm:py-32 lg:py-40">
+        <section id="pricing-section" className="scroll-mt-16 py-24 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-6xl px-6">
             <RevealSection>
               <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.2em' }}>[05]&ensp;Pricing</p>
@@ -274,7 +274,7 @@ export default function Home() {
         </section>
 
         {/* ─── SECURITY ─── */}
-        <section className="border-t border-border py-24 sm:py-32">
+        <section className="py-24 sm:py-32">
           <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
             <RevealSection>
               <Shield className="h-8 w-8 text-primary" strokeWidth={1.5} />
@@ -289,7 +289,7 @@ export default function Home() {
         </section>
 
         {/* ─── [06] FAQ ─── */}
-        <section id="faq-section" className="scroll-mt-16 border-t border-border py-24 sm:py-32">
+        <section id="faq-section" className="scroll-mt-16 py-24 sm:py-32">
           <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 lg:grid-cols-[1fr_1.5fr]">
             <RevealSection>
               <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.2em' }}>[06]&ensp;FAQ</p>
@@ -302,7 +302,7 @@ export default function Home() {
         </section>
 
         {/* ─── [07] CONTACT ─── */}
-        <section id="contact-section" className="scroll-mt-16 border-t border-border py-24 sm:py-32">
+        <section id="contact-section" className="scroll-mt-16 py-24 sm:py-32">
           <div className="mx-auto max-w-6xl px-6">
             <RevealSection>
               <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.2em' }}>[07]&ensp;Contact</p>
@@ -343,8 +343,8 @@ export default function Home() {
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat block dark:hidden" style={{ backgroundImage: "url('/images/gradients/gradient-12-light.png')" }} />
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block" style={{ backgroundImage: "url('/images/gradients/gradient-12-dark.png')" }} />
           <div className="absolute inset-0 bg-white/10 dark:bg-black/30" />
-          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-background" />
+          <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-background to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-b from-transparent to-background" />
 
           <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-32 sm:py-40 lg:grid-cols-2">
             <div>
