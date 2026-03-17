@@ -15,9 +15,7 @@ import {
   UsersRound,
   Shield,
   ArrowRight,
-  Mail,
-  MessageSquare,
-  Phone,
+  Home as HomeIcon,
 } from 'lucide-react';
 import { MarketingHeader } from '@/components/marketing/marketing-header';
 import { MarketingFooter } from '@/components/marketing/marketing-footer';
@@ -76,12 +74,18 @@ const painPoints = [
 ];
 
 const features = [
-  { icon: FileText, title: 'Document Vault', body: 'Organize deeds, tax records, legal correspondence, and ownership evidence in a secure, searchable timeline.', size: 'large' as const },
+  { icon: FileText, title: 'Document Vault', body: 'Organize deeds, tax records, legal correspondence, and ownership evidence in a secure, searchable timeline. Every document versioned and time-stamped.', size: 'large' as const },
   { icon: Activity, title: 'Property Status', body: 'Track action items, updates from consultants, and changes on the ground.', size: 'small' as const },
   { icon: Scale, title: 'Legal Consultations', body: 'Connect with licensed consultants for guidance, disputes, and compliance. Every interaction linked to your property.', size: 'small' as const },
   { icon: Ticket, title: 'Tracked Tickets', body: 'Every service request becomes a tracked ticket with status history and consultant notes.', size: 'small' as const },
   { icon: Bell, title: 'Smart Notifications', body: 'Targeted alerts for comments, assignments, status changes, and deadlines.', size: 'small' as const },
-  { icon: BarChart3, title: 'Readiness Score', body: 'A clarity score for each property based on document completeness, ownership structure, and operational readiness.', size: 'full' as const },
+  { icon: BarChart3, title: 'Readiness Score', body: 'A clarity score for each property based on document completeness, ownership structure, and operational readiness. Know where you stand.', size: 'full' as const },
+];
+
+const processSteps = [
+  { num: '1', title: 'Add your property', body: 'Capture location, ownership details, and baseline context in a single digital record. One property, one source of truth.', mockLabel: 'Add Property Form', mockIcon: HomeIcon},
+  { num: '2', title: 'See where you stand', body: 'Upload what you have. Wisebox scores your documentation against what\u2019s required, flags what\u2019s missing, and gives you a prioritized action list.', mockLabel: 'Assessment Results', mockIcon: BarChart3 },
+  { num: '3', title: 'Get support when you need it', body: 'Book legal consultations, property valuations, or document retrieval. Every request becomes a tracked ticket with status updates and consultant notes.', mockLabel: 'Ticket Tracking', mockIcon: Ticket },
 ];
 
 const testimonials = [
@@ -91,6 +95,29 @@ const testimonials = [
   { quote: 'My siblings and I were arguing about the family property for months. Wisebox gave us one place to see the actual status.', name: 'Farhana R.', location: 'Sydney, Australia' },
   { quote: 'I was always anxious about our property in Sylhet. Now I check the app once a week and I know exactly where things stand.', name: 'Imran S.', location: 'New York, USA' },
 ];
+
+/* Browser frame mock for process section */
+function BrowserMock({ icon: Icon, label }: { icon: typeof HomeIcon; label: string }) {
+  return (
+    <div className="rounded-2xl bg-card border border-border dark:border-white/10 overflow-hidden shadow-sm dark:shadow-none">
+      <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border bg-muted/50">
+        <div className="w-2.5 h-2.5 rounded-full bg-border" />
+        <div className="w-2.5 h-2.5 rounded-full bg-border" />
+        <div className="w-2.5 h-2.5 rounded-full bg-border" />
+        <div className="ml-3 h-5 w-48 rounded bg-border/50" />
+      </div>
+      <div className="h-64 sm:h-80 bg-muted/30 flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+            <Icon className="h-5 w-5" strokeWidth={1.5} />
+          </div>
+          <p className="text-sm font-medium text-muted-foreground">{label}</p>
+          <p className="text-xs text-muted-foreground/60 mt-1">Screenshot coming soon</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
@@ -124,7 +151,7 @@ export default function Home() {
               </RevealSection>
               <RevealSection delay={200} className="hidden lg:block">
                 <div className="relative w-72 xl:w-80">
-                  <img src="/images/landing/father-son-laptop.jpg" alt="Father and son at laptop" className="rounded-2xl object-cover shadow-2xl dark:shadow-none dark:border dark:border-border aspect-[3/4]" />
+                  <img src="/images/landing/father-son-laptop.jpg" alt="Father and son at laptop" className="rounded-2xl object-cover shadow-2xl dark:shadow-none ring-1 ring-black/10 dark:ring-white/5 aspect-[3/4]" />
                 </div>
               </RevealSection>
             </div>
@@ -135,14 +162,15 @@ export default function Home() {
               </p>
             </RevealSection>
 
+            {/* Fix #2: Card body text-base + leading-relaxed, p-8 confirmed */}
             <StaggerGrid className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2">
               {painPoints.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.title} className="group rounded-2xl border border-border bg-card p-8 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/12">
+                  <div key={item.title} className="group rounded-2xl border border-border dark:border-white/10 bg-card dark:bg-white/[0.03] p-8 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/15">
                     <Icon className="mb-4 h-5 w-5 text-primary" strokeWidth={1.5} />
                     <p className="text-base font-medium text-foreground leading-snug">{item.title}</p>
-                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{item.body}</p>
+                    <p className="mt-3 text-base text-muted-foreground leading-relaxed">{item.body}</p>
                   </div>
                 );
               })}
@@ -163,36 +191,21 @@ export default function Home() {
               </Link>
             </RevealSection>
 
+            {/* Fix #3: Proper browser frame mocks */}
             <div className="mt-20 space-y-24 sm:space-y-32">
-              {[
-                { num: '1', title: 'Add your property', body: 'Capture location, ownership details, and baseline context in a single digital record. One property, one source of truth.', mock: 'Property Profile View', img: '/images/landing/family-laptop.jpg' },
-                { num: '2', title: 'See where you stand', body: 'Upload what you have. Wisebox scores your documentation against what\u2019s required, flags what\u2019s missing, and gives you a prioritized action list.', mock: 'Assessment Results', img: null },
-                { num: '3', title: 'Get support when you need it', body: 'Book legal consultations, property valuations, or document retrieval. Every request becomes a tracked ticket with status updates and consultant notes.', mock: 'Ticket Detail View', img: null },
-              ].map((step, i) => (
+              {processSteps.map((step, i) => (
                 <div key={step.num} className={`grid grid-cols-1 items-center gap-12 lg:grid-cols-2 ${i === 1 ? 'lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1' : ''}`}>
                   <RevealSection delay={i === 1 ? 0 : undefined}>
                     <div className="flex items-start gap-6">
                       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-2xl font-semibold text-primary">{step.num}</div>
                       <div>
                         <h3 className="text-2xl font-semibold text-foreground sm:text-3xl" style={{ letterSpacing: '-0.01em' }}>{step.title}</h3>
-                        <p className="mt-3 max-w-md text-sm text-muted-foreground leading-relaxed">{step.body}</p>
+                        <p className="mt-3 max-w-md text-base text-muted-foreground leading-relaxed">{step.body}</p>
                       </div>
                     </div>
                   </RevealSection>
                   <RevealSection delay={150}>
-                    <div className="relative">
-                      <div className="rounded-xl border border-border bg-card p-4 shadow-sm dark:shadow-none">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="h-3 w-3 rounded-full bg-destructive/40" />
-                          <div className="h-3 w-3 rounded-full bg-wisebox-status-warning/40" />
-                          <div className="h-3 w-3 rounded-full bg-wisebox-status-success/40" />
-                        </div>
-                        <div className="rounded-lg bg-muted h-48 flex items-center justify-center text-muted-foreground text-sm">{step.mock}</div>
-                      </div>
-                      {step.img && (
-                        <img src={step.img} alt="" className="absolute -bottom-4 -left-4 h-20 w-20 rounded-xl border-4 border-background object-cover shadow-lg" />
-                      )}
-                    </div>
+                    <BrowserMock icon={step.mockIcon} label={step.mockLabel} />
                   </RevealSection>
                 </div>
               ))}
@@ -211,20 +224,23 @@ export default function Home() {
             </RevealSection>
 
             <RevealSection delay={100}>
-              <div className="mt-12 overflow-hidden rounded-2xl">
+              <div className="mt-12 overflow-hidden rounded-2xl ring-1 ring-black/10 dark:ring-white/5">
                 <img src="/images/landing/woman-armchair-away.jpg" alt="Manage your property from anywhere" className="w-full object-cover aspect-[21/9]" />
               </div>
               <p className="mt-3 text-center text-xs text-muted-foreground">Manage your property from anywhere.</p>
             </RevealSection>
 
+            {/* Fix #4: Bento grid with proper sizing — large card w-8 h-8 icon, full-width card py-6 */}
             <StaggerGrid className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3">
               {features.map((f) => {
                 const Icon = f.icon;
+                const isLarge = f.size === 'large';
+                const isFull = f.size === 'full';
                 return (
-                  <div key={f.title} className={`group rounded-2xl border border-border bg-card p-8 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/12 ${f.size === 'large' ? 'sm:col-span-2 sm:row-span-2' : ''} ${f.size === 'full' ? 'sm:col-span-3' : ''}`}>
-                    <Icon className="mb-4 h-5 w-5 text-primary" strokeWidth={1.5} />
-                    <p className="text-lg font-medium text-foreground">{f.title}</p>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.body}</p>
+                  <div key={f.title} className={`group rounded-2xl border border-border dark:border-white/10 bg-card dark:bg-white/[0.03] shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/15 ${isLarge ? 'sm:col-span-2 sm:row-span-2 p-10' : ''} ${isFull ? 'sm:col-span-3 px-8 py-6' : ''} ${!isLarge && !isFull ? 'p-8' : ''}`}>
+                    <Icon className={`mb-4 text-primary ${isLarge ? 'h-8 w-8' : 'h-5 w-5'}`} strokeWidth={1.5} />
+                    <p className={`font-medium text-foreground ${isLarge ? 'text-xl' : 'text-lg'}`}>{f.title}</p>
+                    <p className={`mt-2 text-muted-foreground leading-relaxed ${isLarge ? 'text-base' : 'text-sm'}`}>{f.body}</p>
                   </div>
                 );
               })}
@@ -279,11 +295,11 @@ export default function Home() {
             <RevealSection>
               <Shield className="h-8 w-8 text-primary" strokeWidth={1.5} />
               <h2 className="mt-4 font-[family-name:var(--font-geist-sans)] text-2xl font-semibold text-foreground sm:text-3xl" style={{ letterSpacing: '-0.02em' }}>Your documents are encrypted and access-controlled.</h2>
-              <p className="mt-4 max-w-md text-sm text-muted-foreground leading-relaxed">Wisebox is built with secure APIs, role-based permissions, and audit-friendly status tracking. Your property records are private by default and shared only with people you authorize.</p>
+              <p className="mt-4 max-w-md text-base text-muted-foreground leading-relaxed">Wisebox is built with secure APIs, role-based permissions, and audit-friendly status tracking. Your property records are private by default and shared only with people you authorize.</p>
               <Link href="/assessment/start" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">Run Free Assessment <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} /></Link>
             </RevealSection>
             <RevealSection delay={200}>
-              <img src="/images/landing/woman-couch.jpg" alt="Woman relaxing at home" className="rounded-2xl object-cover shadow-2xl dark:shadow-none dark:border dark:border-border aspect-[4/3]" />
+              <img src="/images/landing/woman-couch.jpg" alt="Woman relaxing at home" className="rounded-2xl object-cover shadow-2xl dark:shadow-none ring-1 ring-black/10 dark:ring-white/5 aspect-[4/3]" />
             </RevealSection>
           </div>
         </section>
@@ -301,48 +317,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ─── [07] CONTACT ─── */}
-        <section id="contact-section" className="scroll-mt-16 py-24 sm:py-32">
-          <div className="mx-auto max-w-6xl px-6">
-            <RevealSection>
-              <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.2em' }}>[07]&ensp;Contact</p>
-              <h2 className="mt-6 max-w-lg font-[family-name:var(--font-geist-sans)] text-2xl font-semibold text-foreground sm:text-3xl" style={{ letterSpacing: '-0.02em' }}>
-                Get in touch
-              </h2>
-              <p className="mt-3 max-w-lg text-sm text-muted-foreground leading-relaxed">
-                Reach out for onboarding, service guidance, or collaboration requests.
-              </p>
-            </RevealSection>
-
-            <StaggerGrid className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
-              {[
-                { icon: Mail, title: 'Email support', detail: 'support@mywisebox.com', note: 'Best for account and onboarding help within one business day.', href: 'mailto:support@mywisebox.com' },
-                { icon: MessageSquare, title: 'In-app tickets', detail: 'Ticket workflow', note: 'Track updates and consultant replies directly in your workspace.', href: '/login' },
-                { icon: Phone, title: 'Call scheduling', detail: '+1 (555) 014-2026', note: 'For service planning and enterprise onboarding discussions.', href: 'tel:+15550142026' },
-              ].map((channel) => {
-                const Icon = channel.icon;
-                return (
-                  <a
-                    key={channel.title}
-                    href={channel.href}
-                    className="group rounded-2xl border border-border bg-card p-8 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/12 block"
-                  >
-                    <Icon className="mb-4 h-5 w-5 text-primary" strokeWidth={1.5} />
-                    <p className="text-base font-medium text-foreground">{channel.title}</p>
-                    <p className="mt-1 text-sm font-medium text-primary">{channel.detail}</p>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{channel.note}</p>
-                  </a>
-                );
-              })}
-            </StaggerGrid>
-          </div>
-        </section>
-
         {/* ─── FINAL CTA ─── */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat block dark:hidden" style={{ backgroundImage: "url('/images/gradients/gradient-12-light.png')" }} />
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block" style={{ backgroundImage: "url('/images/gradients/gradient-12-dark.png')" }} />
-          <div className="absolute inset-0 bg-white/10 dark:bg-black/30" />
+          {/* Fix #1: lighter dark overlay */}
+          <div className="absolute inset-0 bg-white/10 dark:bg-black/15" />
           <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-background to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-b from-transparent to-background" />
 
@@ -358,12 +338,13 @@ export default function Home() {
               </div>
             </div>
             <div className="hidden lg:block">
-              <img src="/images/landing/woman-armchair-phone.jpg" alt="Woman using Wisebox" className="rounded-2xl object-cover shadow-2xl dark:shadow-none dark:border dark:border-white/10 aspect-[4/5] w-full max-w-sm ml-auto" />
+              <img src="/images/landing/woman-armchair-phone.jpg" alt="Woman using Wisebox" className="rounded-2xl object-cover shadow-2xl dark:shadow-none ring-1 ring-black/10 dark:ring-white/5 aspect-[4/5] w-full max-w-sm ml-auto" />
             </div>
           </div>
         </section>
       </main>
 
+      {/* Fix #10: footer with contact email inline */}
       <MarketingFooter />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </>

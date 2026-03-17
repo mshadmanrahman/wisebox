@@ -211,5 +211,5 @@ export const marketingNavLinks = [
   { href: '#features-section', label: 'Features' },
   { href: '#pricing-section', label: 'Pricing' },
   { href: '#faq-section', label: 'FAQ' },
-  { href: '#contact-section', label: 'Contact' },
+  { href: '/about', label: 'About' },
 ];

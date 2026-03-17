@@ -34,7 +34,7 @@ export function MarketingHeader() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 h-16 transition-all duration-300',
+        'sticky top-0 z-50 h-16 transition-all duration-300',
         scrolled
           ? 'bg-background/80 backdrop-blur-xl border-b border-border'
           : 'bg-transparent border-b border-transparent',
@@ -69,7 +69,7 @@ export function MarketingHeader() {
           <Button
             asChild
             size="sm"
-            className="bg-primary text-primary-foreground transition-all duration-200 hover:bg-primary/90 rounded-lg"
+            className="bg-primary text-primary-foreground transition-all duration-200 hover:bg-primary/90 rounded-xl"
           >
             <Link href="/assessment/start">Get Free Assessment</Link>
           </Button>

@@ -170,7 +170,7 @@ export function LandingHero() {
           </p>
         </div>
 
-        {/* Right — hero image */}
+        {/* Right — hero image (fix #1: ring for clean edge in dark mode, reduced dark overlay would be on gradient sections) */}
         <div
           className={cn(
             'relative transition-all duration-1000',
@@ -178,7 +178,7 @@ export function LandingHero() {
           )}
           style={{ transitionDelay: '400ms' }}
         >
-          <div className="overflow-hidden rounded-3xl shadow-2xl dark:shadow-none dark:border dark:border-border">
+          <div className="overflow-hidden rounded-3xl shadow-2xl dark:shadow-none ring-1 ring-black/10 dark:ring-white/5">
             <img
               src="/images/landing/hero-family.jpg"
               alt="Grandfather and grandson walking together"
@@ -203,19 +203,19 @@ interface Testimonial {
 
 export function TestimonialScroller({ testimonials }: { testimonials: Testimonial[] }) {
   return (
-    <div className="mt-12 overflow-x-auto pb-4 scrollbar-hide">
-      <div className="flex gap-6 px-6 sm:px-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]">
+    <div className="mt-12 -mx-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+      <div className="flex gap-6 sm:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]">
         {testimonials.map((t) => (
           <div
             key={t.name}
-            className="min-w-[320px] sm:min-w-[380px] shrink-0 snap-start rounded-2xl border border-border bg-card p-8 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/12"
+            className="min-w-[340px] sm:min-w-[400px] shrink-0 snap-start rounded-2xl border border-border dark:border-white/10 bg-card dark:bg-white/[0.03] p-8 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/15"
           >
             <svg className="mb-4 h-8 w-8 text-primary/30" fill="currentColor" viewBox="0 0 32 32">
               <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
             </svg>
             <p className="text-base text-foreground leading-relaxed">{t.quote}</p>
             <div className="mt-6 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium text-muted-foreground">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
                 {t.name.charAt(0)}
               </div>
               <div>

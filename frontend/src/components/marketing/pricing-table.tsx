@@ -13,21 +13,22 @@ export function PricingTable({ plans }: PricingTableProps) {
       {plans.map((plan) => (
         <div
           key={plan.name}
-          className={`relative flex h-full flex-col rounded-xl border p-6 transition-all duration-200 ${
+          className={`relative flex h-full flex-col rounded-2xl p-6 transition-all duration-200 ${
             plan.highlighted
-              ? 'border-primary bg-primary/5'
-              : 'border-border hover:border-wisebox-border-light'
+              ? 'border-2 border-primary bg-primary/[0.03] dark:bg-primary/[0.05]'
+              : 'border border-border dark:border-white/10 bg-card dark:bg-white/[0.03] hover:border-border/80 dark:hover:border-white/15'
           }`}
         >
           {plan.highlighted && (
-            <span className="absolute -top-3 left-6 rounded-full bg-primary/10 px-3 py-0.5 text-xs font-medium text-primary">
+            <span className="absolute -top-3.5 left-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
               Recommended
             </span>
           )}
 
           <div className="mb-6">
-            <p className="text-xs text-muted-foreground">{plan.subtitle}</p>
-            <p className="mt-3 font-[family-name:var(--font-geist-sans)] text-3xl font-semibold text-foreground" style={{ letterSpacing: '-0.02em' }}>
+            <p className="text-sm font-medium text-foreground">{plan.name}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{plan.subtitle}</p>
+            <p className="mt-4 font-[family-name:var(--font-geist-sans)] text-3xl font-semibold text-foreground" style={{ letterSpacing: '-0.02em' }}>
               {plan.price}
               {plan.priceSuffix && (
                 <span className="text-base font-normal text-muted-foreground">{plan.priceSuffix}</span>
@@ -49,10 +50,10 @@ export function PricingTable({ plans }: PricingTableProps) {
 
           <Button
             asChild
-            className={`w-full rounded-lg transition-all duration-200 ${
+            className={`w-full rounded-xl transition-all duration-200 ${
               plan.highlighted
-                ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                : 'border border-border bg-transparent text-muted-foreground hover:border-wisebox-border-light hover:text-foreground'
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90 py-3 text-base shadow-lg shadow-primary/20'
+                : 'border border-border bg-transparent text-muted-foreground hover:text-foreground hover:border-border/80 dark:hover:border-white/15'
             }`}
             variant={plan.highlighted ? 'default' : 'outline'}
           >
