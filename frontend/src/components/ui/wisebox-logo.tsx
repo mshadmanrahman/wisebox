@@ -19,7 +19,6 @@ export function WiseboxLogo({ variant = 'auto', className, showText = true, size
   const type = showText ? 'logo' : 'symbol';
   const d = showText ? dims.logo : dims.symbol;
 
-  // Fixed variant — render single image, no theme dependency
   if (variant !== 'auto') {
     return (
       <Image
@@ -33,15 +32,19 @@ export function WiseboxLogo({ variant = 'auto', className, showText = true, size
     );
   }
 
-  // Auto variant — use CSS dark: classes for instant swap, no JS, no hydration flash
+  // Fixed-size container — both images absolutely positioned inside.
+  // Container never changes size. Only visibility swaps via CSS.
   return (
-    <span className={cn('inline-flex', className)}>
+    <span
+      className={cn('relative inline-block', className)}
+      style={{ width: d.w, height: d.h }}
+    >
       <Image
         src={`/images/wisebox-${type}-light.svg`}
         alt="Wisebox"
         width={d.w}
         height={d.h}
-        className="object-contain block dark:hidden"
+        className="absolute inset-0 object-contain block dark:hidden"
         priority
       />
       <Image
@@ -49,7 +52,7 @@ export function WiseboxLogo({ variant = 'auto', className, showText = true, size
         alt="Wisebox"
         width={d.w}
         height={d.h}
-        className="object-contain hidden dark:block"
+        className="absolute inset-0 object-contain hidden dark:block"
         priority
       />
     </span>
