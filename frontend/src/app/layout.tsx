@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { HtmlLangUpdater } from "@/components/html-lang-updater";
 import { ThemeProviderWrapper } from "@/components/providers/theme-provider";
+import { AnalyticsProvider } from "@/components/providers/analytics-provider";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -70,8 +71,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProviderWrapper>
-          <HtmlLangUpdater />
-          {children}
+          <AnalyticsProvider>
+            <HtmlLangUpdater />
+            {children}
+          </AnalyticsProvider>
         </ThemeProviderWrapper>
       </body>
     </html>

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import api from '@/lib/api';
 import type { User, LoginData, RegisterData, AuthResponse } from '@/types';
+import { trackLoginCompleted, trackRegistrationCompleted, resetAnalytics } from '@/lib/analytics';
 
 interface AuthState {
   user: User | null;
@@ -34,6 +35,7 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem('wisebox_token', token);
           document.cookie = `wisebox_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
           set({ user, token, isAuthenticated: true, isLoading: false });
+          trackLoginCompleted(user.role);
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -48,6 +50,7 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem('wisebox_token', token);
           document.cookie = `wisebox_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
           set({ user, token, isAuthenticated: true, isLoading: false });
+          trackRegistrationCompleted(user.role);
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -62,6 +65,7 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem('wisebox_token', token);
           document.cookie = `wisebox_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
           set({ user, token, isAuthenticated: true, isLoading: false });
+          trackLoginCompleted(user.role);
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -74,6 +78,7 @@ export const useAuthStore = create<AuthState>()(
         } catch {
           // Ignore logout errors
         } finally {
+          resetAnalytics();
           localStorage.removeItem('wisebox_token');
           document.cookie = 'wisebox_token=; path=/; max-age=0';
           set({ user: null, token: null, isAuthenticated: false });

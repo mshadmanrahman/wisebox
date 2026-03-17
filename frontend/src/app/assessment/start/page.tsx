@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import api from '@/lib/api';
+import { trackAssessmentStarted, trackAssessmentCompleted } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -54,6 +55,10 @@ export default function FreeAssessmentPage() {
   const [submitError, setSubmitError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAdvancing, setIsAdvancing] = useState(false);
+
+  useEffect(() => {
+    trackAssessmentStarted();
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -127,6 +132,7 @@ export default function FreeAssessmentPage() {
 
       const response = await api.post<ApiResponse<AssessmentResult>>('/assessments/free', payload);
       setResult(response.data.data);
+      trackAssessmentCompleted(response.data.data.score);
     } catch {
       setSubmitError('Could not process the assessment. Please try again.');
     } finally {

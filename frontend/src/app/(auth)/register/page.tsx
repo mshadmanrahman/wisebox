@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
+import { trackRegistrationStarted } from '@/lib/analytics';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
@@ -64,6 +65,10 @@ export default function RegisterPage() {
   });
 
   const watchedCountry = watch('country_of_residence');
+
+  useEffect(() => {
+    trackRegistrationStarted();
+  }, []);
 
   const onSubmit = async (data: RegisterFormData) => {
     setError(null);
