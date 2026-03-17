@@ -7,8 +7,7 @@ let initialized = false;
 export function initAnalytics() {
   if (!isEnabled || initialized) return;
   amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_KEY!, {
-    autocapture: { pageViews: true, sessions: true, elementInteractions: true, formInteractions: true, fileDownloads: true },
-    defaultTracking: { pageViews: true, sessions: true, formInteractions: true, fileDownloads: true },
+    autocapture: true,
   });
   initialized = true;
 }
