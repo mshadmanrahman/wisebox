@@ -12,9 +12,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ApiResponse, Order } from '@/types';
 
 function paymentBadgeClass(status: Order['payment_status']): string {
-  if (status === 'paid') return 'bg-green-500/20 text-green-400';
-  if (status === 'pending') return 'bg-amber-500/20 text-amber-400';
-  if (status === 'failed') return 'bg-red-500/20 text-red-400';
+  if (status === 'paid') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'pending') return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
+  if (status === 'failed') return 'bg-wisebox-status-danger/20 text-wisebox-status-danger';
   return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
 }
 

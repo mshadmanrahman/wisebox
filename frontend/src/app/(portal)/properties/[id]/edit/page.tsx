@@ -290,8 +290,8 @@ export default function EditPropertyPage() {
   if (!property) {
     return (
       <div className="px-6 py-8">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center space-y-4">
-          <p className="text-sm text-red-700">
+        <div className="rounded-xl border border-wisebox-status-danger/20 bg-wisebox-status-danger/10 p-8 text-center space-y-4">
+          <p className="text-sm text-wisebox-status-danger">
             {t('properties:detail.notFound')}
           </p>
           <Button variant="outline" size="sm" asChild>
@@ -308,22 +308,22 @@ export default function EditPropertyPage() {
   return (
     <div className="px-6 py-8 space-y-6 max-w-3xl">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+      <nav className="flex items-center gap-1.5 text-sm text-wisebox-text-secondary">
         <Link
           href="/properties"
-          className="hover:text-foreground transition-colors"
+          className="hover:text-wisebox-text-primary transition-colors"
         >
           {t('properties:breadcrumb.properties')}
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <Link
           href={`/properties/${id}`}
-          className="hover:text-foreground transition-colors truncate max-w-[200px]"
+          className="hover:text-wisebox-text-primary transition-colors truncate max-w-[200px]"
         >
           {property.property_name}
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-foreground font-medium">{t('properties:breadcrumb.edit')}</span>
+        <span className="text-wisebox-text-primary font-medium">{t('properties:breadcrumb.edit')}</span>
       </nav>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -341,7 +341,7 @@ export default function EditPropertyPage() {
                 {...register('property_name')}
               />
               {errors.property_name && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-wisebox-status-danger">
                   {errors.property_name.message}
                 </p>
               )}
@@ -368,7 +368,7 @@ export default function EditPropertyPage() {
                             'flex flex-col items-center gap-2 rounded-lg border-2 p-4 text-sm font-medium transition-all',
                             selected
                               ? 'border-wisebox-primary bg-wisebox-primary-50 text-wisebox-primary-700'
-                              : 'border-wisebox-border hover:border-wisebox-border-light text-muted-foreground'
+                              : 'border-wisebox-border hover:border-wisebox-border-light text-wisebox-text-secondary'
                           )}
                         >
                           <Icon className="h-6 w-6" />
@@ -380,7 +380,7 @@ export default function EditPropertyPage() {
                 )}
               />
               {errors.property_type_id && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-wisebox-status-danger">
                   {errors.property_type_id.message}
                 </p>
               )}
@@ -412,7 +412,7 @@ export default function EditPropertyPage() {
                   )}
                 />
                 {errors.ownership_status_id && (
-                  <p className="text-xs text-red-600">
+                  <p className="text-xs text-wisebox-status-danger">
                     {errors.ownership_status_id.message}
                   </p>
                 )}
@@ -442,7 +442,7 @@ export default function EditPropertyPage() {
                   )}
                 />
                 {errors.ownership_type_id && (
-                  <p className="text-xs text-red-600">
+                  <p className="text-xs text-wisebox-status-danger">
                     {errors.ownership_type_id.message}
                   </p>
                 )}
@@ -489,7 +489,7 @@ export default function EditPropertyPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {fields.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">
+                <p className="text-sm text-wisebox-text-secondary text-center py-4">
                   {t('properties:edit.noCoOwners')}
                 </p>
               )}
@@ -506,7 +506,7 @@ export default function EditPropertyPage() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 text-muted-foreground hover:text-red-600"
+                      className="h-7 w-7 text-wisebox-text-secondary hover:text-wisebox-status-danger"
                       onClick={() => remove(index)}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -520,7 +520,7 @@ export default function EditPropertyPage() {
                         {...register(`co_owners.${index}.name`)}
                       />
                       {errors.co_owners?.[index]?.name && (
-                        <p className="text-xs text-red-600">
+                        <p className="text-xs text-wisebox-status-danger">
                           {errors.co_owners[index].name?.message}
                         </p>
                       )}
@@ -770,7 +770,7 @@ export default function EditPropertyPage() {
         </div>
 
         {updateMutation.isError && (
-          <p className="text-sm text-red-600">
+          <p className="text-sm text-wisebox-status-danger">
             {t('properties:edit.updateFailed')}
           </p>
         )}

@@ -80,8 +80,8 @@ export default function PropertyDetailPage() {
   if (error || !property) {
     return (
       <div className="px-6 py-8">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center space-y-4">
-          <p className="text-sm text-red-700">
+        <div className="rounded-xl border border-wisebox-status-danger/20 bg-wisebox-status-danger/10 p-8 text-center space-y-4">
+          <p className="text-sm text-wisebox-status-danger">
             {t('properties:detail.notFound')}
           </p>
           <Button variant="outline" size="sm" asChild>
@@ -101,7 +101,7 @@ export default function PropertyDetailPage() {
       <nav className="flex items-center gap-1.5 text-sm text-wisebox-text-secondary">
         <Link
           href="/properties"
-          className="hover:text-white transition-colors"
+          className="hover:text-wisebox-text-primary transition-colors"
         >
           {t('properties:breadcrumb.properties')}
         </Link>
@@ -114,7 +114,7 @@ export default function PropertyDetailPage() {
             <ChevronRight className="h-3.5 w-3.5" />
           </>
         )}
-        <span className="text-white font-medium truncate max-w-xs">
+        <span className="text-wisebox-text-primary font-medium truncate max-w-xs">
           {property.property_name}
         </span>
       </nav>
@@ -139,7 +139,7 @@ export default function PropertyDetailPage() {
           {/* Consultation Resources */}
           <Card className="bg-wisebox-background-card border-wisebox-border">
             <CardHeader>
-              <CardTitle className="text-lg text-white">{t('properties:detail.consultationResources')}</CardTitle>
+              <CardTitle className="text-lg text-wisebox-text-primary">{t('properties:detail.consultationResources')}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Link href={`/properties/${property.id}/journal`}>
@@ -148,7 +148,7 @@ export default function PropertyDetailPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <History className="h-5 w-5 text-wisebox-primary" />
-                        <h3 className="font-semibold text-white">{t('properties:detail.consultationHistory')}</h3>
+                        <h3 className="font-semibold text-wisebox-text-primary">{t('properties:detail.consultationHistory')}</h3>
                       </div>
                       <p className="text-sm text-wisebox-text-secondary">
                         {t('properties:detail.consultationHistoryDesc')}
@@ -165,7 +165,7 @@ export default function PropertyDetailPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <ClipboardList className="h-5 w-5 text-wisebox-primary" />
-                        <h3 className="font-semibold text-white">{t('properties:detail.recommendations')}</h3>
+                        <h3 className="font-semibold text-wisebox-text-primary">{t('properties:detail.recommendations')}</h3>
                       </div>
                       <p className="text-sm text-wisebox-text-secondary">
                         {t('properties:detail.recommendationsDesc')}
@@ -179,9 +179,9 @@ export default function PropertyDetailPage() {
           </Card>
 
           {/* Danger Zone */}
-          <div className="rounded-xl border border-red-500/20 p-6 space-y-3">
-            <h3 className="text-sm font-medium text-red-400">{t('properties:detail.dangerZone')}</h3>
-            <Separator className="bg-red-500/20" />
+          <div className="rounded-xl border border-wisebox-status-danger/20 p-6 space-y-3">
+            <h3 className="text-sm font-medium text-wisebox-status-danger">{t('properties:detail.dangerZone')}</h3>
+            <Separator className="bg-wisebox-status-danger/20" />
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-wisebox-text-primary">{t('properties:detail.deleteProperty')}</p>
@@ -189,14 +189,14 @@ export default function PropertyDetailPage() {
               </div>
               <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300">
+                  <Button variant="outline" className="border-wisebox-status-danger/30 text-wisebox-status-danger hover:bg-wisebox-status-danger/10 hover:text-wisebox-status-danger/80">
                     <Trash2 className="h-4 w-4" />
                     {t('properties:detail.deleteProperty')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-wisebox-background-card border-wisebox-border">
                   <DialogHeader>
-                    <DialogTitle className="text-white">{t('properties:detail.deleteConfirmTitle')}</DialogTitle>
+                    <DialogTitle className="text-wisebox-text-primary">{t('properties:detail.deleteConfirmTitle')}</DialogTitle>
                     <DialogDescription className="text-wisebox-text-secondary">
                       {t('properties:detail.deleteConfirmDescription', { name: property.property_name })}
                     </DialogDescription>
@@ -218,7 +218,7 @@ export default function PropertyDetailPage() {
                     </Button>
                   </DialogFooter>
                   {deleteMutation.isError && (
-                    <p className="text-sm text-red-400">
+                    <p className="text-sm text-wisebox-status-danger">
                       {t('properties:detail.deleteFailed')}
                     </p>
                   )}

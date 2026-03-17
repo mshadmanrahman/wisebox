@@ -44,11 +44,11 @@ const STATUS_FLOW: TicketStatus[] = [
 ];
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-500/20 text-green-400';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
-  if (status === 'scheduled') return 'bg-purple-500/20 text-purple-400';
+  if (status === 'completed') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-wisebox-status-info/20 text-wisebox-status-info';
+  if (status === 'scheduled') return 'bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled';
   if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
-  return 'bg-amber-500/20 text-amber-400';
+  return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
 }
 
 function toLocalDateTimeValue(dateString: string | null | undefined): string {
@@ -503,7 +503,7 @@ export default function ConsultantTicketDetailPage() {
           </Button>
 
           {actionError && (
-            <p className="text-sm text-red-400 border border-red-500/30 bg-red-500/10 rounded-md px-3 py-2">
+            <p className="text-sm text-wisebox-status-danger border border-wisebox-status-danger/30 bg-wisebox-status-danger/10 rounded-md px-3 py-2">
               {actionError}
             </p>
           )}
@@ -566,7 +566,7 @@ export default function ConsultantTicketDetailPage() {
                         </a>
                       </Button>
                     )}
-                    <Badge className={doc.has_document ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}>
+                    <Badge className={doc.has_document ? 'bg-wisebox-status-success/20 text-wisebox-status-success' : 'bg-wisebox-status-warning/20 text-wisebox-status-warning'}>
                       {doc.has_document ? doc.status : 'missing'}
                     </Badge>
                   </div>
@@ -616,10 +616,10 @@ export default function ConsultantTicketDetailPage() {
                   </div>
                   <Badge className={
                     inv.status === 'completed'
-                      ? 'bg-green-500/20 text-green-400'
+                      ? 'bg-wisebox-status-success/20 text-wisebox-status-success'
                       : inv.status === 'expired' || new Date(inv.expires_at) < new Date()
                         ? 'bg-wisebox-background-lighter text-wisebox-text-secondary'
-                        : 'bg-amber-500/20 text-amber-400'
+                        : 'bg-wisebox-status-warning/20 text-wisebox-status-warning'
                   }>
                     {inv.status === 'completed'
                       ? t('detail.forms.statusCompleted')
@@ -778,7 +778,7 @@ export default function ConsultantTicketDetailPage() {
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? t('detail.conversation.user')}</p>
                     <div className="flex items-center gap-2">
-                      {comment.is_internal && <Badge className="bg-purple-500/20 text-purple-400">{t('detail.conversation.internalBadge')}</Badge>}
+                      {comment.is_internal && <Badge className="bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled">{t('detail.conversation.internalBadge')}</Badge>}
                       <span className="text-xs text-wisebox-text-secondary">{new Date(comment.created_at).toLocaleString()}</span>
                     </div>
                   </div>

@@ -51,19 +51,19 @@ export default function PropertyRecommendationsPage() {
 
   const categoryColors: Record<string, { bg: string; text: string; icon: string }> = {
     'Property Legal Assessment': {
-      bg: 'bg-blue-500/10',
-      text: 'text-blue-400',
-      icon: 'border-blue-500/30',
+      bg: 'bg-wisebox-status-info/10',
+      text: 'text-wisebox-status-info',
+      icon: 'border-wisebox-status-info/30',
     },
     'Property Physical Inspection': {
-      bg: 'bg-amber-500/10',
-      text: 'text-amber-400',
-      icon: 'border-amber-500/30',
+      bg: 'bg-wisebox-status-warning/10',
+      text: 'text-wisebox-status-warning',
+      icon: 'border-wisebox-status-warning/30',
     },
     'Property Valuation Review': {
-      bg: 'bg-green-500/10',
-      text: 'text-green-400',
-      icon: 'border-green-500/30',
+      bg: 'bg-wisebox-status-success/10',
+      text: 'text-wisebox-status-success',
+      icon: 'border-wisebox-status-success/30',
     },
   };
 
@@ -100,11 +100,11 @@ export default function PropertyRecommendationsPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-                <AlertCircle className="h-6 w-6 text-blue-400" />
+              <div className="w-12 h-12 rounded-full bg-wisebox-status-info/20 flex items-center justify-center">
+                <AlertCircle className="h-6 w-6 text-wisebox-status-info" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-400">
+                <p className="text-2xl font-bold text-wisebox-status-info">
                   {Object.keys(groupedRecommendations).length}
                 </p>
                 <p className="text-sm text-wisebox-text-secondary">{t('recommendations.categories')}</p>
@@ -112,11 +112,11 @@ export default function PropertyRecommendationsPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-green-400" />
+              <div className="w-12 h-12 rounded-full bg-wisebox-status-success/20 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-wisebox-status-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-400">
+                <p className="text-2xl font-bold text-wisebox-status-success">
                   {new Set(recommendations.map((r) => r.consultant_name)).size}
                 </p>
                 <p className="text-sm text-wisebox-text-secondary">{t('recommendations.consultants')}</p>

@@ -176,18 +176,18 @@ export default function PublicFormPage() {
     const value = responses[field.field_name] || '';
     const error = fieldErrors[field.field_name];
     const baseInputClass =
-      'w-full rounded-lg border bg-[#1a1f2e] text-white px-4 py-3 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-colors';
-    const errorBorderClass = error ? 'border-red-500' : 'border-gray-700';
+      'w-full rounded-lg border bg-wisebox-background-card text-wisebox-text-primary px-4 py-3 text-sm placeholder-wisebox-text-muted focus:outline-none focus:ring-2 focus:ring-wisebox-border-focus/50 focus:border-wisebox-border-focus transition-colors';
+    const errorBorderClass = error ? 'border-wisebox-status-danger' : 'border-wisebox-border';
 
     switch (field.field_type) {
       case 'text':
         return (
           <div key={field.id} className="space-y-2">
-            <label htmlFor={field.field_name} className="block text-sm font-medium text-gray-200">
+            <label htmlFor={field.field_name} className="block text-sm font-medium text-wisebox-text-secondary">
               {field.field_label}
-              {field.is_required && <span className="text-red-400 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </label>
-            {field.help_text && <p className="text-xs text-gray-400">{field.help_text}</p>}
+            {field.help_text && <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>}
             <input
               id={field.field_name}
               type="text"
@@ -195,18 +195,18 @@ export default function PublicFormPage() {
               onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
               className={`${baseInputClass} ${errorBorderClass}`}
             />
-            {error && <p className="text-xs text-red-400">{error}</p>}
+            {error && <p className="text-xs text-wisebox-status-danger">{error}</p>}
           </div>
         );
 
       case 'textarea':
         return (
           <div key={field.id} className="space-y-2">
-            <label htmlFor={field.field_name} className="block text-sm font-medium text-gray-200">
+            <label htmlFor={field.field_name} className="block text-sm font-medium text-wisebox-text-secondary">
               {field.field_label}
-              {field.is_required && <span className="text-red-400 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </label>
-            {field.help_text && <p className="text-xs text-gray-400">{field.help_text}</p>}
+            {field.help_text && <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>}
             <textarea
               id={field.field_name}
               rows={4}
@@ -214,18 +214,18 @@ export default function PublicFormPage() {
               onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
               className={`${baseInputClass} ${errorBorderClass} resize-y`}
             />
-            {error && <p className="text-xs text-red-400">{error}</p>}
+            {error && <p className="text-xs text-wisebox-status-danger">{error}</p>}
           </div>
         );
 
       case 'number':
         return (
           <div key={field.id} className="space-y-2">
-            <label htmlFor={field.field_name} className="block text-sm font-medium text-gray-200">
+            <label htmlFor={field.field_name} className="block text-sm font-medium text-wisebox-text-secondary">
               {field.field_label}
-              {field.is_required && <span className="text-red-400 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </label>
-            {field.help_text && <p className="text-xs text-gray-400">{field.help_text}</p>}
+            {field.help_text && <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>}
             <input
               id={field.field_name}
               type="number"
@@ -233,18 +233,18 @@ export default function PublicFormPage() {
               onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
               className={`${baseInputClass} ${errorBorderClass}`}
             />
-            {error && <p className="text-xs text-red-400">{error}</p>}
+            {error && <p className="text-xs text-wisebox-status-danger">{error}</p>}
           </div>
         );
 
       case 'date':
         return (
           <div key={field.id} className="space-y-2">
-            <label htmlFor={field.field_name} className="block text-sm font-medium text-gray-200">
+            <label htmlFor={field.field_name} className="block text-sm font-medium text-wisebox-text-secondary">
               {field.field_label}
-              {field.is_required && <span className="text-red-400 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </label>
-            {field.help_text && <p className="text-xs text-gray-400">{field.help_text}</p>}
+            {field.help_text && <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>}
             <input
               id={field.field_name}
               type="date"
@@ -252,18 +252,18 @@ export default function PublicFormPage() {
               onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
               className={`${baseInputClass} ${errorBorderClass}`}
             />
-            {error && <p className="text-xs text-red-400">{error}</p>}
+            {error && <p className="text-xs text-wisebox-status-danger">{error}</p>}
           </div>
         );
 
       case 'select':
         return (
           <div key={field.id} className="space-y-2">
-            <label htmlFor={field.field_name} className="block text-sm font-medium text-gray-200">
+            <label htmlFor={field.field_name} className="block text-sm font-medium text-wisebox-text-secondary">
               {field.field_label}
-              {field.is_required && <span className="text-red-400 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </label>
-            {field.help_text && <p className="text-xs text-gray-400">{field.help_text}</p>}
+            {field.help_text && <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>}
             <select
               id={field.field_name}
               value={value as string}
@@ -277,18 +277,18 @@ export default function PublicFormPage() {
                 </option>
               ))}
             </select>
-            {error && <p className="text-xs text-red-400">{error}</p>}
+            {error && <p className="text-xs text-wisebox-status-danger">{error}</p>}
           </div>
         );
 
       case 'radio':
         return (
           <div key={field.id} className="space-y-2">
-            <span className="block text-sm font-medium text-gray-200">
+            <span className="block text-sm font-medium text-wisebox-text-secondary">
               {field.field_label}
-              {field.is_required && <span className="text-red-400 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </span>
-            {field.help_text && <p className="text-xs text-gray-400">{field.help_text}</p>}
+            {field.help_text && <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>}
             <div className="space-y-2 pt-1">
               {field.field_options?.map((option) => (
                 <label key={option} className="flex items-center gap-3 cursor-pointer group">
@@ -298,24 +298,24 @@ export default function PublicFormPage() {
                     value={option}
                     checked={value === option}
                     onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
-                    className="w-4 h-4 text-emerald-500 border-gray-600 focus:ring-emerald-500/50"
+                    className="w-4 h-4 text-wisebox-status-success border-wisebox-border-light focus:ring-wisebox-border-focus/50"
                   />
-                  <span className="text-sm text-gray-300 group-hover:text-white transition-colors">{option}</span>
+                  <span className="text-sm text-wisebox-text-secondary group-hover:text-wisebox-text-primary transition-colors">{option}</span>
                 </label>
               ))}
             </div>
-            {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+            {error && <p className="text-xs text-wisebox-status-danger mt-1">{error}</p>}
           </div>
         );
 
       case 'checkbox':
         return (
           <div key={field.id} className="space-y-2">
-            <span className="block text-sm font-medium text-gray-200">
+            <span className="block text-sm font-medium text-wisebox-text-secondary">
               {field.field_label}
-              {field.is_required && <span className="text-red-400 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </span>
-            {field.help_text && <p className="text-xs text-gray-400">{field.help_text}</p>}
+            {field.help_text && <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>}
             <div className="space-y-2 pt-1">
               {field.field_options?.map((option) => (
                 <label key={option} className="flex items-center gap-3 cursor-pointer group">
@@ -323,13 +323,13 @@ export default function PublicFormPage() {
                     type="checkbox"
                     checked={((value as string[]) || []).includes(option)}
                     onChange={(e) => handleCheckboxChange(field.field_name, option, e.target.checked)}
-                    className="w-4 h-4 text-emerald-500 border-gray-600 rounded focus:ring-emerald-500/50"
+                    className="w-4 h-4 text-wisebox-status-success border-wisebox-border-light rounded focus:ring-wisebox-border-focus/50"
                   />
-                  <span className="text-sm text-gray-300 group-hover:text-white transition-colors">{option}</span>
+                  <span className="text-sm text-wisebox-text-secondary group-hover:text-wisebox-text-primary transition-colors">{option}</span>
                 </label>
               ))}
             </div>
-            {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+            {error && <p className="text-xs text-wisebox-status-danger mt-1">{error}</p>}
           </div>
         );
 
@@ -341,10 +341,10 @@ export default function PublicFormPage() {
   // Loading state
   if (pageState === 'loading') {
     return (
-      <div className="min-h-screen bg-[#0f1219] flex items-center justify-center">
+      <div className="min-h-screen bg-wisebox-background-darker flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-10 w-10 text-emerald-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-400 text-sm">Loading your form...</p>
+          <Loader2 className="h-10 w-10 text-wisebox-status-success animate-spin mx-auto mb-4" />
+          <p className="text-wisebox-text-secondary text-sm">Loading your form...</p>
         </div>
       </div>
     );
@@ -356,27 +356,27 @@ export default function PublicFormPage() {
     const isCompleted = errorInfo.code === 'already_completed';
 
     return (
-      <div className="min-h-screen bg-[#0f1219] flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-[#151a27] rounded-2xl border border-gray-800 p-8 text-center">
+      <div className="min-h-screen bg-wisebox-background-darker flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-wisebox-background-card rounded-2xl border border-wisebox-border p-8 text-center">
           {isExpired ? (
-            <Clock className="h-16 w-16 text-amber-400 mx-auto mb-4" />
+            <Clock className="h-16 w-16 text-wisebox-secondary mx-auto mb-4" />
           ) : isCompleted ? (
-            <CheckCircle2 className="h-16 w-16 text-emerald-500 mx-auto mb-4" />
+            <CheckCircle2 className="h-16 w-16 text-wisebox-status-success mx-auto mb-4" />
           ) : (
-            <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
+            <AlertCircle className="h-16 w-16 text-wisebox-status-danger mx-auto mb-4" />
           )}
-          <h2 className="text-xl font-semibold text-white mb-2">
+          <h2 className="text-xl font-semibold text-wisebox-text-primary mb-2">
             {isExpired
               ? 'Form Expired'
               : isCompleted
                 ? 'Already Completed'
                 : 'Something Went Wrong'}
           </h2>
-          <p className="text-gray-400 text-sm">
+          <p className="text-wisebox-text-secondary text-sm">
             {errorInfo.message}
           </p>
           {(isExpired || errorInfo.code === 'not_found') && (
-            <p className="text-gray-500 text-xs mt-4">
+            <p className="text-wisebox-text-muted text-xs mt-4">
               Please contact your consultant to request a new form link.
             </p>
           )}
@@ -388,16 +388,16 @@ export default function PublicFormPage() {
   // Success state
   if (pageState === 'success') {
     return (
-      <div className="min-h-screen bg-[#0f1219] flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-[#151a27] rounded-2xl border border-gray-800 p-8 text-center">
-          <CheckCircle2 className="h-16 w-16 text-emerald-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">
+      <div className="min-h-screen bg-wisebox-background-darker flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-wisebox-background-card rounded-2xl border border-wisebox-border p-8 text-center">
+          <CheckCircle2 className="h-16 w-16 text-wisebox-status-success mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-wisebox-text-primary mb-2">
             Form Submitted Successfully!
           </h2>
-          <p className="text-gray-400 text-sm mb-2">
+          <p className="text-wisebox-text-secondary text-sm mb-2">
             Thank you for completing the form. Your consultant has been notified and will review your responses.
           </p>
-          <p className="text-gray-500 text-xs">
+          <p className="text-wisebox-text-muted text-xs">
             You can safely close this page.
           </p>
         </div>
@@ -411,34 +411,34 @@ export default function PublicFormPage() {
   const sortedFields = [...formData.template.fields].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <div className="min-h-screen bg-[#0f1219] py-8 px-4">
+    <div className="min-h-screen bg-wisebox-background-darker py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-white mb-1">Wisebox</h1>
-          <p className="text-gray-500 text-sm">Property Consultation Form</p>
+          <h1 className="text-2xl font-bold text-wisebox-text-primary mb-1">Wisebox</h1>
+          <p className="text-wisebox-text-muted text-sm">Property Consultation Form</p>
         </div>
 
         {/* Ticket info banner */}
-        <div className="bg-[#151a27] rounded-xl border border-gray-800 p-4 mb-6">
+        <div className="bg-wisebox-background-card rounded-xl border border-wisebox-border p-4 mb-6">
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
             <div>
-              <span className="text-gray-500">Ticket:</span>{' '}
-              <span className="text-white font-medium">{formData.ticket_number}</span>
+              <span className="text-wisebox-text-muted">Ticket:</span>{' '}
+              <span className="text-wisebox-text-primary font-medium">{formData.ticket_number}</span>
             </div>
             <div>
-              <span className="text-gray-500">Property:</span>{' '}
-              <span className="text-white font-medium">{formData.property_name}</span>
+              <span className="text-wisebox-text-muted">Property:</span>{' '}
+              <span className="text-wisebox-text-primary font-medium">{formData.property_name}</span>
             </div>
           </div>
         </div>
 
         {/* Form card */}
-        <div className="bg-[#151a27] rounded-2xl border border-gray-800 overflow-hidden">
-          <div className="p-6 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-white">{formData.template.name}</h2>
+        <div className="bg-wisebox-background-card rounded-2xl border border-wisebox-border overflow-hidden">
+          <div className="p-6 border-b border-wisebox-border">
+            <h2 className="text-lg font-semibold text-wisebox-text-primary">{formData.template.name}</h2>
             {formData.template.description && (
-              <p className="text-sm text-gray-400 mt-1">{formData.template.description}</p>
+              <p className="text-sm text-wisebox-text-secondary mt-1">{formData.template.description}</p>
             )}
           </div>
 
@@ -446,16 +446,16 @@ export default function PublicFormPage() {
             {sortedFields.map((field) => renderField(field))}
 
             {Object.keys(fieldErrors).length > 0 && (
-              <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-3">
-                <p className="text-sm text-red-400">Please fill in all required fields before submitting.</p>
+              <div className="rounded-lg bg-wisebox-status-danger/10 border border-wisebox-status-danger/30 p-3">
+                <p className="text-sm text-wisebox-status-danger">Please fill in all required fields before submitting.</p>
               </div>
             )}
 
-            <div className="pt-4 border-t border-gray-800">
+            <div className="pt-4 border-t border-wisebox-border">
               <button
                 type="submit"
                 disabled={pageState === 'submitting'}
-                className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 text-sm transition-colors flex items-center justify-center gap-2"
+                className="w-full rounded-lg bg-wisebox-primary hover:bg-wisebox-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-wisebox-text-primary font-medium py-3 px-6 text-sm transition-colors flex items-center justify-center gap-2"
               >
                 {pageState === 'submitting' ? (
                   <>
@@ -471,7 +471,7 @@ export default function PublicFormPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-600 text-xs mt-6">
+        <p className="text-center text-wisebox-text-muted text-xs mt-6">
           Powered by Wisebox. Your responses are securely stored.
         </p>
       </div>

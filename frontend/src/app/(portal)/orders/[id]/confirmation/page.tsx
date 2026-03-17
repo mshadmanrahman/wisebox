@@ -43,9 +43,9 @@ export default function OrderConfirmationPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             {paid ? (
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <CheckCircle2 className="h-5 w-5 text-wisebox-status-success" />
             ) : (
-              <Clock3 className="h-5 w-5 text-amber-600" />
+              <Clock3 className="h-5 w-5 text-wisebox-status-warning" />
             )}
             {paid ? t('orders:confirmation.paymentConfirmed') : t('orders:confirmation.paymentProcessing')}
           </CardTitle>

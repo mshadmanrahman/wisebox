@@ -65,10 +65,10 @@ function normalizeServiceCatalogPayload(
 const categoryTabSlugs = ['all', 'consultation', 'legal', 'administrative'] as const;
 
 const categoryGradients: Record<string, string> = {
-  consultation: 'from-cyan-600 via-blue-700 to-indigo-800',
-  legal: 'from-emerald-600 via-teal-700 to-cyan-800',
-  administrative: 'from-violet-600 via-purple-700 to-indigo-800',
-  default: 'from-slate-600 via-slate-700 to-slate-800',
+  consultation: 'bg-gradient-service-consultation',
+  legal: 'bg-gradient-service-legal',
+  administrative: 'bg-gradient-service-admin',
+  default: 'bg-gradient-service-default',
 };
 
 function getServiceGradient(service: Service): string {
@@ -166,7 +166,7 @@ export default function ServicesPage() {
     <div className="px-6 py-8 space-y-8">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">{t('services.title')}</h1>
+        <h1 className="text-3xl font-bold text-wisebox-text-primary">{t('services.title')}</h1>
         <p className="text-wisebox-text-secondary mt-1">
           {t('services.subtitle')}
         </p>
@@ -174,8 +174,8 @@ export default function ServicesPage() {
 
       {/* Free Consultation Banner */}
       {!hasUsedFreeConsultation && (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-600 via-blue-700 to-indigo-800 p-[1px]">
-          <div className="relative rounded-2xl bg-gradient-to-r from-cyan-600/95 via-blue-700/95 to-indigo-800/95 px-6 py-8 sm:px-8">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-service-consultation p-[1px]">
+          <div className="relative rounded-2xl bg-gradient-service-consultation px-6 py-8 sm:px-8">
             {/* Decorative pattern overlay */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.06%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50 pointer-events-none" />
 
@@ -186,7 +186,7 @@ export default function ServicesPage() {
                   <div className="bg-white/15 rounded-full p-2 backdrop-blur-sm">
                     <Sparkles className="h-5 w-5 text-white" />
                   </div>
-                  <Badge className="bg-green-500/20 text-green-300 border-green-400/30 text-xs font-semibold">
+                  <Badge className="bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30 text-xs font-semibold">
                     {t('services.freeConsultation.badge')}
                   </Badge>
                 </div>
@@ -224,7 +224,7 @@ export default function ServicesPage() {
                     </SelectTrigger>
                     <SelectContent className="bg-wisebox-background-card border-wisebox-border">
                       {(properties ?? []).map((property) => (
-                        <SelectItem key={property.id} value={String(property.id)} className="text-white hover:bg-wisebox-background-lighter">
+                        <SelectItem key={property.id} value={String(property.id)} className="text-wisebox-text-primary hover:bg-wisebox-background-lighter">
                           {property.property_name}
                         </SelectItem>
                       ))}
@@ -237,7 +237,7 @@ export default function ServicesPage() {
                     propertyId={selectedConsultProperty.id}
                     propertyName={selectedConsultProperty.property_name}
                     trigger={
-                      <Button className="w-full bg-white hover:bg-gray-100 text-blue-800 font-semibold h-12 text-base shadow-lg">
+                      <Button className="w-full bg-white hover:bg-white/90 text-wisebox-primary-800 font-semibold h-12 text-base shadow-lg">
                         <Calendar className="h-5 w-5 mr-2" />
                         {t('services.freeConsultation.bookFree')}
                       </Button>
@@ -271,7 +271,7 @@ export default function ServicesPage() {
               'px-5 py-2.5 rounded-lg text-sm font-medium transition-all',
               activeTab === slug
                 ? 'bg-white text-wisebox-background shadow-md'
-                : 'bg-wisebox-background-card text-wisebox-text-secondary border border-wisebox-border hover:border-wisebox-border-light hover:text-white'
+                : 'bg-wisebox-background-card text-wisebox-text-secondary border border-wisebox-border hover:border-wisebox-border-light hover:text-wisebox-text-primary'
             )}
           >
             {t(`services.${slug}`)}
@@ -309,13 +309,13 @@ export default function ServicesPage() {
                 className="text-left rounded-2xl border border-wisebox-border overflow-hidden transition-all hover:shadow-lg hover:border-wisebox-border-light bg-wisebox-background-card group"
               >
                 {/* Gradient Banner */}
-                <div className={cn('h-32 bg-gradient-to-r relative', gradient)}>
+                <div className={cn('h-32 relative', gradient)}>
                   <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50" />
                 </div>
 
                 {/* Content */}
                 <div className="p-5 space-y-3">
-                  <h3 className="text-lg font-semibold text-white group-hover:text-wisebox-primary-light transition-colors">
+                  <h3 className="text-lg font-semibold text-wisebox-text-primary group-hover:text-wisebox-primary-light transition-colors">
                     {service.name}
                   </h3>
                   {service.short_description && (
@@ -328,7 +328,7 @@ export default function ServicesPage() {
                       className={cn(
                         'text-xs font-semibold',
                         service.pricing_type === 'free'
-                          ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                          ? 'bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30'
                           : 'bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30'
                       )}
                     >
@@ -357,7 +357,7 @@ export default function ServicesPage() {
               variant="outline"
               onClick={() => setPage((c) => Math.max(1, c - 1))}
               disabled={serviceMeta.current_page <= 1 || loadingServices}
-              className="border-wisebox-border text-white hover:bg-wisebox-background-lighter"
+              className="border-wisebox-border text-wisebox-text-primary hover:bg-wisebox-background-lighter"
             >
               {t('previous')}
             </Button>
@@ -366,7 +366,7 @@ export default function ServicesPage() {
               variant="outline"
               onClick={() => setPage((c) => Math.min(serviceMeta.last_page, c + 1))}
               disabled={serviceMeta.current_page >= serviceMeta.last_page || loadingServices}
-              className="border-wisebox-border text-white hover:bg-wisebox-background-lighter"
+              className="border-wisebox-border text-wisebox-text-primary hover:bg-wisebox-background-lighter"
             >
               {t('next')}
             </Button>

@@ -123,12 +123,12 @@ export function ServiceDetailPanel({
   const price = formatPrice(service);
   const isFree = service.pricing_type === 'free' || (!service.price || Number(service.price) === 0);
   const gradient = service.category?.slug === 'consultation'
-    ? 'from-cyan-600 via-blue-700 to-indigo-800'
+    ? 'bg-gradient-service-consultation'
     : service.category?.slug === 'legal'
-    ? 'from-emerald-600 via-teal-700 to-cyan-800'
+    ? 'bg-gradient-service-legal'
     : service.category?.slug === 'administrative'
-    ? 'from-violet-600 via-purple-700 to-indigo-800'
-    : 'from-slate-600 via-slate-700 to-slate-800';
+    ? 'bg-gradient-service-admin'
+    : 'bg-gradient-service-default';
 
   const ctaLabel = isFree
     ? t('services.detail.bookNow')
@@ -146,14 +146,14 @@ export function ServiceDetailPanel({
       >
         <SheetHeader className="pb-0">
           {/* Gradient header */}
-          <div className={cn('rounded-xl h-24 bg-gradient-to-r -mx-2 mb-4', gradient)} />
+          <div className={cn('rounded-xl h-24 -mx-2 mb-4', gradient)} />
           <div className="flex items-start justify-between gap-4">
-            <SheetTitle className="text-xl text-white">{service.name}</SheetTitle>
+            <SheetTitle className="text-xl text-wisebox-text-primary">{service.name}</SheetTitle>
             <Badge
               className={cn(
                 'text-sm font-semibold shrink-0',
                 isFree
-                  ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                  ? 'bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30'
                   : 'bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30'
               )}
             >
@@ -174,7 +174,7 @@ export function ServiceDetailPanel({
             <h3 className="text-sm font-medium text-wisebox-text-secondary uppercase tracking-wider">
               {t('services.detail.aboutService')}
             </h3>
-            <p className="text-sm text-white leading-relaxed">
+            <p className="text-sm text-wisebox-text-primary leading-relaxed">
               {service.description || service.short_description || t('services.detail.noDescription')}
             </p>
           </div>
@@ -185,7 +185,7 @@ export function ServiceDetailPanel({
               <h3 className="text-sm font-medium text-wisebox-text-secondary uppercase tracking-wider">
                 {t('services.detail.category')}
               </h3>
-              <Badge variant="outline" className="border-wisebox-border text-white">
+              <Badge variant="outline" className="border-wisebox-border text-wisebox-text-primary">
                 {service.category.name}
               </Badge>
             </div>
@@ -195,17 +195,17 @@ export function ServiceDetailPanel({
           <div className="space-y-5 border-t border-wisebox-border pt-6">
             {/* Step 1: Select Property */}
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <h3 className="text-sm font-medium text-wisebox-text-primary flex items-center gap-2">
                 <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">1</span>
                 {t('services.detail.selectProperty')}
               </h3>
               <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
-                <SelectTrigger className="bg-wisebox-background-input border-wisebox-border text-white">
+                <SelectTrigger className="bg-wisebox-background-input border-wisebox-border text-wisebox-text-primary">
                   <SelectValue placeholder={t('services.detail.chooseProperty')} />
                 </SelectTrigger>
                 <SelectContent className="bg-wisebox-background-card border-wisebox-border">
                   {properties.map((property) => (
-                    <SelectItem key={property.id} value={String(property.id)} className="text-white hover:bg-wisebox-background-lighter">
+                    <SelectItem key={property.id} value={String(property.id)} className="text-wisebox-text-primary hover:bg-wisebox-background-lighter">
                       {property.property_name}
                     </SelectItem>
                   ))}
@@ -216,7 +216,7 @@ export function ServiceDetailPanel({
             {/* Step 2: Describe your needs */}
             {needsScheduling && (
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                <h3 className="text-sm font-medium text-wisebox-text-primary flex items-center gap-2">
                   <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">2</span>
                   {t('services.detail.describeNeeds')}
                 </h3>
@@ -226,7 +226,7 @@ export function ServiceDetailPanel({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder={t('services.detail.descriptionPlaceholder')}
-                    className="pl-10 min-h-[100px] bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted resize-none"
+                    className="pl-10 min-h-[100px] bg-wisebox-background-input border-wisebox-border text-wisebox-text-primary placeholder:text-wisebox-text-muted resize-none"
                     maxLength={1000}
                   />
                 </div>
@@ -239,7 +239,7 @@ export function ServiceDetailPanel({
             {/* Step 3: Preferred Time Slots */}
             {needsScheduling && (
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                <h3 className="text-sm font-medium text-wisebox-text-primary flex items-center gap-2">
                   <span className="flex items-center justify-center h-5 w-5 rounded-full bg-wisebox-primary/20 text-wisebox-primary text-xs font-bold">3</span>
                   {t('services.detail.chooseTimeSlots')}
                 </h3>
@@ -256,14 +256,14 @@ export function ServiceDetailPanel({
 
             {/* Error */}
             {error && (
-              <div className="rounded-md border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+              <div className="rounded-md border border-wisebox-status-danger/20 bg-wisebox-status-danger/10 px-3 py-2 text-sm text-wisebox-status-danger">
                 {error}
               </div>
             )}
 
             {/* CTA Button */}
             <Button
-              className="w-full bg-wisebox-primary hover:bg-wisebox-primary-hover text-white"
+              className="w-full bg-wisebox-primary hover:bg-wisebox-primary-hover text-wisebox-text-primary"
               disabled={
                 createOrderMutation.isPending ||
                 !selectedPropertyId ||
@@ -308,7 +308,7 @@ export function ServiceDetailPanel({
                       key={property.id}
                       className="rounded-lg border border-wisebox-border p-3 bg-wisebox-background-card"
                     >
-                      <p className="text-sm font-medium text-white">{property.property_name}</p>
+                      <p className="text-sm font-medium text-wisebox-text-primary">{property.property_name}</p>
                       {location && (
                         <div className="flex items-center gap-1 mt-1 text-xs text-wisebox-text-secondary">
                           <MapPin className="h-3 w-3" />

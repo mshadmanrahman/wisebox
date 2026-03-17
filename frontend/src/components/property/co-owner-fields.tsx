@@ -60,7 +60,7 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
           {t('coOwnerFields.yourOwnership', { percent: ownerPercentage })}
         </span>
         {exceeds100 && (
-          <span className="flex items-center gap-1.5 text-sm font-medium text-amber-700">
+          <span className="flex items-center gap-1.5 text-sm font-medium text-wisebox-status-warning">
             <AlertTriangle className="h-4 w-4" />
             {t('coOwnerFields.totalExceeds')}
           </span>
@@ -80,7 +80,7 @@ export function CoOwnerFields({ coOwners, onChange, ownerPercentage }: CoOwnerFi
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-wisebox-text-muted hover:text-red-500"
+              className="h-7 w-7 text-wisebox-text-muted hover:text-wisebox-status-danger"
               onClick={() => removeCoOwner(index)}
             >
               <X className="h-4 w-4" />

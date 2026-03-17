@@ -43,11 +43,11 @@ function timelineStepIndex(status: TicketStatus): number {
 }
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-500/20 text-green-400';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
-  if (status === 'scheduled') return 'bg-purple-500/20 text-purple-400';
+  if (status === 'completed') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-wisebox-status-info/20 text-wisebox-status-info';
+  if (status === 'scheduled') return 'bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled';
   if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
-  return 'bg-amber-500/20 text-amber-400';
+  return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
 }
 
 interface ConsultantOption {
@@ -304,7 +304,7 @@ export default function TicketDetailPage() {
               </p>
             )}
             {ticket.status === 'cancelled' && (
-              <p className="text-xs text-red-400">{t('tickets:detail.ticketCancelled')}</p>
+              <p className="text-xs text-wisebox-status-danger">{t('tickets:detail.ticketCancelled')}</p>
             )}
           </div>
 
@@ -440,7 +440,7 @@ export default function TicketDetailPage() {
           )}
 
           {actionError && (
-            <p className="text-sm text-red-400 border border-red-500/30 bg-red-500/10 rounded-md px-3 py-2">
+            <p className="text-sm text-wisebox-status-danger border border-wisebox-status-danger/30 bg-wisebox-status-danger/10 rounded-md px-3 py-2">
               {actionError}
             </p>
           )}
@@ -462,7 +462,7 @@ export default function TicketDetailPage() {
                     <p className="text-sm font-medium text-wisebox-text-primary">{comment.user?.name ?? t('tickets:detail.user')}</p>
                     <div className="flex items-center gap-2">
                       {comment.is_internal && (
-                        <Badge className="bg-purple-500/20 text-purple-400">{t('tickets:detail.internal')}</Badge>
+                        <Badge className="bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled">{t('tickets:detail.internal')}</Badge>
                       )}
                       <span className="text-xs text-wisebox-text-secondary">
                         {new Date(comment.created_at).toLocaleString()}

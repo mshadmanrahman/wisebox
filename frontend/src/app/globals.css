@@ -15,23 +15,23 @@
     /* Dark theme by default */
     --background: 215 50% 10%; /* #0A1628 - Dark navy */
     --foreground: 0 0% 100%; /* White text */
-    --card: 220 40% 15%; /* #141E35 - Card background */
+    --card: 220 33% 17%; /* #182640 - Card surface, clear layer separation */
     --card-foreground: 0 0% 100%;
-    --popover: 220 40% 15%;
+    --popover: 220 33% 17%;
     --popover-foreground: 0 0% 100%;
-    --primary: 199 89% 48%; /* #0EA5E9 - Cyan accent */
+    --primary: 215 75% 50%; /* #2070DF - Deep institutional blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 38 92% 50%; /* #F59E0B - Orange */
+    --secondary: 38 55% 50%; /* #C69239 - Warm premium gold */
     --secondary-foreground: 0 0% 100%;
     --muted: 215 20% 25%;
-    --muted-foreground: 215 15% 58%; /* #94A3B8 */
-    --accent: 199 89% 48%;
+    --muted-foreground: 215 16% 62%; /* #939EAD - WCAG AA on dark bg */
+    --accent: 215 75% 50%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 55%; /* Desaturated red */
     --destructive-foreground: 0 0% 100%;
-    --border: 215 20% 25%; /* #2D3F59 - more visible borders */
-    --input: 215 20% 25%;
-    --ring: 199 89% 48%;
+    --border: 215 14% 20%; /* Subtle, barely visible edges */
+    --input: 215 14% 22%;
+    --ring: 215 75% 50%;
     --radius: 0.75rem;
   }
 }
@@ -46,12 +46,19 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
+    --primary: 215 75% 44%; /* Darker blue for white-bg contrast */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 38 55% 45%; /* Gold, darker for light surfaces */
+    --secondary-foreground: 0 0% 100%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --destructive: 0 70% 50%; /* Desaturated red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 20% 90%; /* Subtle, clean edges */
+    --input: 215 20% 90%;
+    --ring: 215 75% 44%;
   }
 
   * {

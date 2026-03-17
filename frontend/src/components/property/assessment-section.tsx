@@ -20,9 +20,9 @@ function scoreColor(status: 'red' | 'yellow' | 'green'): string {
 }
 
 function scoreBgColor(status: 'red' | 'yellow' | 'green'): string {
-  if (status === 'green') return 'bg-green-500/10 border-green-500/20';
-  if (status === 'yellow') return 'bg-amber-500/10 border-amber-500/20';
-  return 'bg-red-500/10 border-red-500/20';
+  if (status === 'green') return 'bg-wisebox-status-success/10 border-wisebox-status-success/20';
+  if (status === 'yellow') return 'bg-wisebox-status-warning/10 border-wisebox-status-warning/20';
+  return 'bg-wisebox-status-danger/10 border-wisebox-status-danger/20';
 }
 
 function scoreRingColor(status: 'red' | 'yellow' | 'green'): string {
@@ -57,7 +57,7 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+          <ShieldCheck className="h-5 w-5 text-wisebox-text-secondary" />
           {t('assessment.title')}
         </CardTitle>
       </CardHeader>
@@ -81,7 +81,7 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
 
           {/* Recommendation */}
           <div className="space-y-3 pt-1">
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-wisebox-text-secondary leading-relaxed">
               {t(recommendationKey(pct))}
             </p>
             <Button variant="outline" size="sm" asChild>
@@ -96,7 +96,7 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
         <div className="space-y-3 border-t pt-4">
           <h3 className="text-sm font-semibold text-wisebox-text-primary">{t('assessment.history')}</h3>
           {assessmentHistory.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('assessment.noAssessments')}</p>
+            <p className="text-sm text-wisebox-text-secondary">{t('assessment.noAssessments')}</p>
           ) : (
             <div className="space-y-2">
               {assessmentHistory.map((assessment) => (
@@ -106,13 +106,13 @@ export function AssessmentSection({ property, assessmentHistory = [] }: Assessme
                 >
                   <div>
                     <p className="font-medium text-wisebox-text-primary">{assessment.overall_score}/100</p>
-                    <p className="text-xs text-muted-foreground">{assessment.summary || t('assessment.noSummary')}</p>
+                    <p className="text-xs text-wisebox-text-secondary">{assessment.summary || t('assessment.noSummary')}</p>
                   </div>
                   <div className="text-right">
                     <p className={cn('text-xs font-medium uppercase', scoreColor(assessment.score_status))}>
                       {t(statusLabelKey[assessment.score_status])}
                     </p>
-                    <p className="text-xs text-muted-foreground">{formatDate(assessment.created_at)}</p>
+                    <p className="text-xs text-wisebox-text-secondary">{formatDate(assessment.created_at)}</p>
                   </div>
                 </div>
               ))}

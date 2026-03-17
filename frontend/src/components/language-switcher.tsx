@@ -36,7 +36,7 @@ export function LanguageSwitcher() {
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-wisebox-background-lighter gap-1 w-auto px-2"
+          className="text-wisebox-text-primary hover:bg-wisebox-background-lighter gap-1 w-auto px-2"
         >
           <Globe className="h-4 w-4" />
           <span className="text-xs font-medium">{currentLang.label}</span>
@@ -53,7 +53,7 @@ export function LanguageSwitcher() {
             className={`cursor-pointer ${
               language === lang.code
                 ? 'text-wisebox-primary'
-                : 'text-white'
+                : 'text-wisebox-text-primary'
             } hover:bg-wisebox-background-lighter`}
           >
             <span className="font-medium">{lang.label}</span>

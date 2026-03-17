@@ -82,10 +82,10 @@ const docStatusLabelKeys: Record<PropertyDocument['status'], string> = {
 };
 
 const docStatusClassNames: Record<PropertyDocument['status'], string> = {
-  uploaded: 'bg-blue-500/20 text-blue-400',
-  under_review: 'bg-amber-500/20 text-amber-400',
-  verified: 'bg-green-500/20 text-green-400',
-  rejected: 'bg-red-500/20 text-red-400',
+  uploaded: 'bg-wisebox-primary/20 text-wisebox-primary',
+  under_review: 'bg-wisebox-status-warning/20 text-wisebox-status-warning',
+  verified: 'bg-wisebox-status-success/20 text-wisebox-status-success',
+  rejected: 'bg-wisebox-status-danger/20 text-wisebox-status-danger',
 };
 
 function completionBarColor(status: 'red' | 'yellow' | 'green'): string {
@@ -155,7 +155,7 @@ export function DocumentStatusList({
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-sm text-red-600">
+          <p className="text-sm text-wisebox-status-danger">
             {t('documents.failedToLoad')}
           </p>
         </CardContent>
@@ -193,7 +193,7 @@ export function DocumentStatusList({
         {/* Completion bar */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">{t('documents.completion')}</span>
+            <span className="text-wisebox-text-secondary">{t('documents.completion')}</span>
             <span
               className={cn('font-semibold', completionTextColor(completionStatus))}
             >
@@ -257,7 +257,7 @@ function DocumentSection({
 }: DocumentSectionProps) {
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+      <h3 className="text-sm font-medium text-wisebox-text-secondary">{title}</h3>
       <div className="space-y-2">
         {types.map((docType) => {
           const uploaded = uploadedByType.get(docType.id);
@@ -382,13 +382,13 @@ function DocumentRow({
           <div className="min-w-0">
             <p className="text-sm font-medium">{docType.name}</p>
             {docType.guidance_text && (
-              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+              <p className="text-xs text-wisebox-text-secondary mt-0.5 line-clamp-1">
                 {docType.guidance_text}
               </p>
             )}
           </div>
         </div>
-        <span className="text-xs text-muted-foreground shrink-0">
+        <span className="text-xs text-wisebox-text-secondary shrink-0">
           {t('documents.pts', { weight: docType.score_weight })}
         </span>
       </div>
@@ -396,13 +396,13 @@ function DocumentRow({
       {uploaded && (
         <div className="ml-6 flex items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="truncate text-muted-foreground">
+            <span className="truncate text-wisebox-text-secondary">
               {uploaded.file_name}
             </span>
-            <span className="text-muted-foreground shrink-0">
+            <span className="text-wisebox-text-secondary shrink-0">
               ({formatFileSize(uploaded.file_size)})
             </span>
-            <span className="text-muted-foreground shrink-0">
+            <span className="text-wisebox-text-secondary shrink-0">
               {formatDate(uploaded.created_at)}
             </span>
           </div>
@@ -418,7 +418,7 @@ function DocumentRow({
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-muted-foreground hover:text-red-600"
+              className="h-6 w-6 text-wisebox-text-secondary hover:text-wisebox-status-danger"
               onClick={() => deleteMutation.mutate(uploaded.id)}
               disabled={deleteMutation.isPending}
             >
@@ -443,7 +443,7 @@ function DocumentRow({
             {uploadMutation.isPending ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-wisebox-primary" />
-                <span className="text-muted-foreground">{t('documents.uploading')}</span>
+                <span className="text-wisebox-text-secondary">{t('documents.uploading')}</span>
               </>
             ) : isDragActive ? (
               <>
@@ -452,15 +452,15 @@ function DocumentRow({
               </>
             ) : (
               <>
-                <Upload className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-muted-foreground">
+                <Upload className="h-3.5 w-3.5 text-wisebox-text-secondary" />
+                <span className="text-wisebox-text-secondary">
                   {t('documents.clickOrDragUpload', { size: docType.max_file_size_mb })}
                 </span>
               </>
             )}
           </div>
           {uploadError && (
-            <p className="text-xs text-red-600 mt-1">{uploadError}</p>
+            <p className="text-xs text-wisebox-status-danger mt-1">{uploadError}</p>
           )}
         </div>
       )}

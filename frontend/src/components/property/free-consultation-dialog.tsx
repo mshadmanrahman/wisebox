@@ -71,11 +71,11 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="bg-wisebox-background-card border-wisebox-border text-white max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="bg-wisebox-background-card border-wisebox-border text-wisebox-text-primary max-w-2xl max-h-[85vh] overflow-y-auto">
         {success ? (
           <div className="py-8 text-center space-y-4">
-            <CheckCircle className="h-16 w-16 text-green-400 mx-auto" />
-            <h3 className="text-xl font-bold text-white">{t('freeConsultation.successTitle')}</h3>
+            <CheckCircle className="h-16 w-16 text-wisebox-status-success mx-auto" />
+            <h3 className="text-xl font-bold text-wisebox-text-primary">{t('freeConsultation.successTitle')}</h3>
             <p className="text-wisebox-text-secondary">
               {t('freeConsultation.successDescription')}
             </p>
@@ -83,7 +83,7 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle className="text-white text-xl">
+              <DialogTitle className="text-wisebox-text-primary text-xl">
                 {t('freeConsultation.dialogTitle')}
               </DialogTitle>
               <DialogDescription className="text-wisebox-text-secondary">
@@ -94,14 +94,14 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
             <div className="space-y-5 mt-4">
               {/* Description */}
               <div className="space-y-2">
-                <Label className="text-white text-sm font-medium">
+                <Label className="text-wisebox-text-primary text-sm font-medium">
                   {t('freeConsultation.whatHelpNeeded')}
                 </Label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder={t('freeConsultation.descriptionPlaceholder')}
-                  className="bg-wisebox-background-lighter border-wisebox-border text-white placeholder:text-wisebox-text-muted min-h-[100px]"
+                  className="bg-wisebox-background-lighter border-wisebox-border text-wisebox-text-primary placeholder:text-wisebox-text-muted min-h-[100px]"
                   maxLength={2000}
                 />
                 <p className="text-xs text-wisebox-text-muted">{t('freeConsultation.charCount', { current: description.length, max: 2000 })}</p>
@@ -121,7 +121,7 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
               <Button
                 onClick={() => mutation.mutate()}
                 disabled={!canSubmit || mutation.isPending}
-                className="w-full bg-wisebox-primary hover:bg-wisebox-primary-hover text-white h-12 font-semibold"
+                className="w-full bg-wisebox-primary hover:bg-wisebox-primary-hover text-wisebox-text-primary h-12 font-semibold"
               >
                 {mutation.isPending ? (
                   <>
@@ -137,7 +137,7 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
               </Button>
 
               {mutation.isError && (
-                <p className="text-sm text-red-400 text-center">
+                <p className="text-sm text-wisebox-status-danger text-center">
                   {(mutation.error as Error)?.message || t('freeConsultation.submitFailed')}
                 </p>
               )}

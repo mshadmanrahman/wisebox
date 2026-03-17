@@ -14,11 +14,11 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { PaginatedResponse, Ticket, TicketStatus } from '@/types';
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-500/20 text-green-400';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
-  if (status === 'scheduled') return 'bg-purple-100 text-purple-700';
+  if (status === 'completed') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-wisebox-status-info/20 text-wisebox-status-info';
+  if (status === 'scheduled') return 'bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled';
   if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
-  return 'bg-amber-500/20 text-amber-400';
+  return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
 }
 
 export default function TicketsPage() {
@@ -129,13 +129,13 @@ export default function TicketsPage() {
       </Card>
 
       {isError && !hasData && (
-        <Card className="border-red-200 bg-red-50/60">
+        <Card className="border-wisebox-status-danger/20 bg-wisebox-status-danger/10">
           <CardContent className="p-6 space-y-3">
-            <div className="flex items-center gap-2 text-red-700 font-medium">
+            <div className="flex items-center gap-2 text-wisebox-status-danger font-medium">
               <AlertTriangle className="h-4 w-4" />
               {t('tickets:couldNotLoad')}
             </div>
-            <p className="text-sm text-red-700/90">{errorMessage}</p>
+            <p className="text-sm text-wisebox-status-danger/90">{errorMessage}</p>
             <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
               {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
@@ -144,9 +144,9 @@ export default function TicketsPage() {
       )}
 
       {isError && hasData && (
-        <Card className="border-amber-200 bg-amber-50/70">
+        <Card className="border-wisebox-status-warning/20 bg-wisebox-status-warning/10">
           <CardContent className="p-4 flex items-center justify-between gap-3">
-            <p className="text-sm text-amber-800">
+            <p className="text-sm text-wisebox-status-warning">
               {t('common:showingStaleData')} {errorMessage}
             </p>
             <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>

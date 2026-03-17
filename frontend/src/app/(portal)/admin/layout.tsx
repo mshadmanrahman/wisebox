@@ -33,13 +33,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="theme-light min-h-screen bg-slate-50">
+    <div className="theme-light min-h-screen bg-muted">
       {/* Admin header */}
-      <div className="bg-white border-b border-slate-200 shadow-sm">
+      <div className="bg-card border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <WiseboxLogo variant="dark" size="sm" />
-            <span className="bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+            <span className="bg-wisebox-status-warning/15 text-wisebox-status-warning text-xs font-semibold px-2.5 py-1 rounded-full">
               Admin
             </span>
           </div>
@@ -55,8 +55,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     className={cn(
                       'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-slate-100 text-slate-900'
-                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                        ? 'bg-muted text-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -67,7 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </nav>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 h-8 w-8">
+                <Button variant="ghost" size="icon" className="rounded-full bg-muted hover:bg-muted text-foreground h-8 w-8">
                   <span className="text-sm font-medium">
                     {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
                   </span>
@@ -76,7 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <DropdownMenuContent align="end" className="w-48">
                 {user && (
                   <>
-                    <div className="px-2 py-1.5 text-sm text-slate-500 truncate">{user.email}</div>
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground truncate">{user.email}</div>
                     <DropdownMenuSeparator />
                   </>
                 )}
@@ -86,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     Back to Portal
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-wisebox-status-danger">
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
                 </DropdownMenuItem>

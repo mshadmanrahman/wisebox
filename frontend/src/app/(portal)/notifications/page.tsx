@@ -124,13 +124,13 @@ export default function NotificationsPage() {
       </Card>
 
       {isError && !hasData ? (
-        <Card className="border-red-200 bg-red-50/60">
+        <Card className="border-wisebox-status-danger/20 bg-wisebox-status-danger/10">
           <CardContent className="p-6 space-y-3">
-            <div className="flex items-center gap-2 text-red-700 font-medium">
+            <div className="flex items-center gap-2 text-wisebox-status-danger font-medium">
               <AlertTriangle className="h-4 w-4" />
               {t('notifications:couldNotLoad')}
             </div>
-            <p className="text-sm text-red-700/90">{errorMessage}</p>
+            <p className="text-sm text-wisebox-status-danger/90">{errorMessage}</p>
             <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
               {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
@@ -141,9 +141,9 @@ export default function NotificationsPage() {
           <CardContent className="p-6 text-sm text-wisebox-text-secondary">{t('notifications:loadingNotifications')}</CardContent>
         </Card>
       ) : isError && hasData ? (
-        <Card className="border-amber-200 bg-amber-50/70">
+        <Card className="border-wisebox-status-warning/20 bg-wisebox-status-warning/10">
           <CardContent className="p-4 flex items-center justify-between gap-3">
-            <p className="text-sm text-amber-800">
+            <p className="text-sm text-wisebox-status-warning">
               {t('common:showingStaleData')} {errorMessage}
             </p>
             <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
@@ -154,7 +154,7 @@ export default function NotificationsPage() {
       ) : notifications.length === 0 ? (
         <Card>
           <CardContent className="p-10 text-center space-y-3">
-            <div className="mx-auto h-12 w-12 rounded-full bg-wisebox-primary-50 text-wisebox-primary-600 flex items-center justify-center">
+            <div className="mx-auto h-12 w-12 rounded-full bg-wisebox-primary/20 text-wisebox-primary flex items-center justify-center">
               <Bell className="h-6 w-6" />
             </div>
             <h2 className="text-lg font-semibold text-wisebox-text-primary">{t('notifications:empty.title')}</h2>

@@ -25,10 +25,10 @@ interface PropertyOverviewProps {
 }
 
 const statusClassNames: Record<Property['status'], string> = {
-  draft: 'bg-wisebox-background-lighter text-white border-wisebox-border',
-  active: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  under_review: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  verified: 'bg-green-500/20 text-green-400 border-green-500/30',
+  draft: 'bg-wisebox-background-lighter text-wisebox-text-primary border-wisebox-border',
+  active: 'bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30',
+  under_review: 'bg-wisebox-status-warning/20 text-wisebox-status-warning border-wisebox-status-warning/30',
+  verified: 'bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30',
   archived: 'bg-wisebox-background-lighter text-wisebox-text-muted border-wisebox-border',
 };
 
@@ -61,7 +61,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
           <div className="space-y-1">
             <CardTitle className="text-xl">{property.property_name}</CardTitle>
             {property.property_type && (
-              <div className="flex items-center gap-1.5 text-sm text-white">
+              <div className="flex items-center gap-1.5 text-sm text-wisebox-text-primary">
                 <Building2 className="h-3.5 w-3.5" />
                 <span>{property.property_type.name}</span>
               </div>
@@ -81,7 +81,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
         {(property.ownership_status || property.ownership_type) && (
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-white" />
+              <ShieldCheck className="h-4 w-4 text-wisebox-text-primary" />
               {t('overview.ownership')}
             </h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -105,7 +105,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
         {location && (
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-white" />
+              <MapPin className="h-4 w-4 text-wisebox-text-primary" />
               {t('overview.location')}
             </h3>
             <p className="text-sm">{location}</p>
@@ -116,7 +116,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
         {property.address && (
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
-              <Tag className="h-4 w-4 text-white" />
+              <Tag className="h-4 w-4 text-wisebox-text-primary" />
               {t('overview.address')}
             </h3>
             <p className="text-sm">{property.address}</p>
@@ -127,7 +127,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
         {property.size_value && property.size_unit && (
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
-              <Ruler className="h-4 w-4 text-white" />
+              <Ruler className="h-4 w-4 text-wisebox-text-primary" />
               {t('overview.size')}
             </h3>
             <p className="text-sm">
@@ -140,7 +140,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
         {property.description && (
           <div className="space-y-2">
             <h3 className="text-sm font-medium flex items-center gap-1.5">
-              <FileText className="h-4 w-4 text-white" />
+              <FileText className="h-4 w-4 text-wisebox-text-primary" />
               {t('overview.description')}
             </h3>
             <p className="text-sm text-wisebox-text-secondary">
@@ -150,7 +150,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
         )}
 
         {/* Created date */}
-        <div className="flex items-center gap-1.5 text-xs text-white">
+        <div className="flex items-center gap-1.5 text-xs text-wisebox-text-primary">
           <Calendar className="h-3.5 w-3.5" />
           <span>{t('overview.created', { date: formatDate(property.created_at) })}</span>
         </div>
@@ -161,7 +161,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
             <Separator />
             <div className="space-y-3">
               <h3 className="text-sm font-medium flex items-center gap-1.5">
-                <Users className="h-4 w-4 text-white" />
+                <Users className="h-4 w-4 text-wisebox-text-primary" />
                 {property.co_owners.length === 1
                   ? t('overview.coOwnedBy', { count: property.co_owners.length })
                   : t('overview.coOwnedByPlural', { count: property.co_owners.length })}

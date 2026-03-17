@@ -97,7 +97,7 @@ export default function PublicServicesPage() {
                   <CardContent>
                     <p className="text-sm leading-6 text-wisebox-text-secondary">{feature.description}</p>
                     {feature.comingSoon ? (
-                      <Badge variant="outline" className="mt-3 border-amber-200 text-amber-700">
+                      <Badge variant="outline" className="mt-3 border-wisebox-status-warning/30 text-wisebox-status-warning">
                         Coming soon
                       </Badge>
                     ) : null}

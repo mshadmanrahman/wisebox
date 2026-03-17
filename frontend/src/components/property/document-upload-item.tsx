@@ -203,7 +203,7 @@ export function DocumentUploadItem({
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className="text-sm font-medium text-white">{documentType.name}</h4>
+            <h4 className="text-sm font-medium text-wisebox-text-primary">{documentType.name}</h4>
             <Badge
               variant={documentType.category === 'primary' ? 'default' : 'secondary'}
               className={
@@ -215,7 +215,7 @@ export function DocumentUploadItem({
               {documentType.category === 'primary' ? t('documents.primary') : t('documents.secondary')}
             </Badge>
             {documentType.is_required && (
-              <Badge variant="outline" className="text-red-400 border-red-500/30">
+              <Badge variant="outline" className="text-wisebox-status-danger border-wisebox-status-danger/30">
                 {t('documents.required')}
               </Badge>
             )}
@@ -287,7 +287,7 @@ export function DocumentUploadItem({
             <input {...getInputProps()} />
             <Upload className="h-8 w-8 text-wisebox-text-muted mb-2" />
             {isDragActive ? (
-              <p className="text-sm text-teal-600 font-medium">{t('documents.dropHere')}</p>
+              <p className="text-sm text-wisebox-primary font-medium">{t('documents.dropHere')}</p>
             ) : (
               <p className="text-sm text-wisebox-text-muted">
                 {t('documents.dropFileOrBrowse', { defaultValue: 'Drop file here or click to browse' })}
@@ -314,7 +314,7 @@ export function DocumentUploadItem({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 px-2 text-xs text-wisebox-text-secondary hover:text-amber-700"
+                className="h-7 px-2 text-xs text-wisebox-text-secondary hover:text-wisebox-status-warning"
                 onClick={handleDontHaveThis}
                 disabled={markMissingMutation.isPending}
               >
@@ -326,20 +326,20 @@ export function DocumentUploadItem({
       )}
 
       {state === 'uploaded' && (
-        <div className="flex items-center justify-between rounded-md bg-green-500/10 border border-green-500/20 px-3 py-2">
+        <div className="flex items-center justify-between rounded-md bg-wisebox-status-success/10 border border-wisebox-status-success/20 px-3 py-2">
           <div className="flex items-center gap-2 min-w-0">
-            <FileText className="h-4 w-4 text-green-600 shrink-0" />
-            <span className="text-sm text-green-400 truncate">
+            <FileText className="h-4 w-4 text-wisebox-status-success shrink-0" />
+            <span className="text-sm text-wisebox-status-success truncate">
               {uploadedDocument?.file_name || t('documents.documentUploaded')}
             </span>
-            <Check className="h-4 w-4 text-green-600 shrink-0" />
+            <Check className="h-4 w-4 text-wisebox-status-success shrink-0" />
           </div>
           <div className="flex gap-1.5 shrink-0">
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="h-7 text-xs text-wisebox-text-muted hover:text-teal-600"
+              className="h-7 text-xs text-wisebox-text-muted hover:text-wisebox-primary"
               onClick={handleReplace}
             >
               <RefreshCw className="h-3 w-3 mr-1" />
@@ -351,12 +351,12 @@ export function DocumentUploadItem({
 
       {state === 'missing' && (
         <div className="space-y-2">
-          <div className="flex items-start gap-2 rounded-md bg-amber-500/10 border border-amber-500/20 px-3 py-2">
-            <AlertCircle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 rounded-md bg-wisebox-status-warning/10 border border-wisebox-status-warning/20 px-3 py-2">
+            <AlertCircle className="h-4 w-4 text-wisebox-status-warning mt-0.5 shrink-0" />
             <div className="min-w-0">
-              <p className="text-sm font-medium text-amber-300">{t('documents.markedAsMissing')}</p>
+              <p className="text-sm font-medium text-wisebox-status-warning">{t('documents.markedAsMissing')}</p>
               {documentType.missing_guidance && (
-                <p className="text-xs text-amber-400 mt-0.5">{documentType.missing_guidance}</p>
+                <p className="text-xs text-wisebox-status-warning mt-0.5">{documentType.missing_guidance}</p>
               )}
             </div>
           </div>
@@ -373,7 +373,7 @@ export function DocumentUploadItem({
       )}
 
       {error && (
-        <p className="text-sm text-red-600 flex items-center gap-1.5">
+        <p className="text-sm text-wisebox-status-danger flex items-center gap-1.5">
           <AlertCircle className="h-3.5 w-3.5" />
           {error}
         </p>

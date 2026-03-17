@@ -139,7 +139,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
       {/* Instructions */}
       <Card className="bg-wisebox-background-card border-wisebox-primary/30">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base text-white flex items-center gap-2">
+          <CardTitle className="text-base text-wisebox-text-primary flex items-center gap-2">
             <Calendar className="h-4 w-4 text-wisebox-primary" />
             {t('timeSlot.title')}
           </CardTitle>
@@ -171,7 +171,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
       {/* Date Selector */}
       <Card className="bg-wisebox-background-card border-wisebox-border">
         <CardHeader>
-          <CardTitle className="text-base text-white">{t('timeSlot.chooseDate')}</CardTitle>
+          <CardTitle className="text-base text-wisebox-text-primary">{t('timeSlot.chooseDate')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
@@ -199,7 +199,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
                   <p className={cn('text-xs font-medium', isSelected ? 'text-wisebox-primary' : 'text-wisebox-text-secondary')}>
                     {date.toLocaleDateString('en-GB', { weekday: 'short' })}
                   </p>
-                  <p className={cn('text-lg font-bold mt-1', isSelected ? 'text-white' : 'text-white')}>
+                  <p className={cn('text-lg font-bold mt-1', isSelected ? 'text-wisebox-text-primary' : 'text-wisebox-text-primary')}>
                     {date.getDate()}
                   </p>
                   <p className={cn('text-xs', isSelected ? 'text-wisebox-primary' : 'text-wisebox-text-muted')}>
@@ -216,7 +216,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
       {selectedDate && (
         <Card className="bg-wisebox-background-card border-wisebox-border">
           <CardHeader>
-            <CardTitle className="text-base text-white flex items-center gap-2">
+            <CardTitle className="text-base text-wisebox-text-primary flex items-center gap-2">
               <Clock className="h-4 w-4" />
               {t('timeSlot.chooseTimeSlots', { date: formatDate(selectedDate) })}
             </CardTitle>
@@ -238,7 +238,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
                       'p-3 rounded-lg border transition-all text-center',
                       isSelected
                         ? 'border-wisebox-status-success bg-wisebox-status-success/10 text-wisebox-status-success'
-                        : 'border-wisebox-border hover:border-wisebox-primary bg-wisebox-background-lighter text-white',
+                        : 'border-wisebox-border hover:border-wisebox-primary bg-wisebox-background-lighter text-wisebox-text-primary',
                       !isSelected && selectedSlots.length >= maxSlots && 'opacity-50 cursor-not-allowed'
                     )}
                   >
@@ -258,7 +258,7 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
       {selectedSlots.length > 0 && (
         <Card className="bg-wisebox-background-card border-wisebox-border">
           <CardHeader>
-            <CardTitle className="text-base text-white">{t('timeSlot.selectedSlots')}</CardTitle>
+            <CardTitle className="text-base text-wisebox-text-primary">{t('timeSlot.selectedSlots')}</CardTitle>
             <CardDescription className="text-wisebox-text-secondary">
               {t('timeSlot.confirmNote')}
             </CardDescription>
@@ -274,11 +274,11 @@ export function TimeSlotPicker({ onSlotsChange, minSlots = 2, maxSlots = 5 }: Ti
                     <Badge variant="outline" className="bg-wisebox-primary/20 text-wisebox-primary border-wisebox-primary/30">
                       #{index + 1}
                     </Badge>
-                    <span className="text-sm text-white">{slot.display}</span>
+                    <span className="text-sm text-wisebox-text-primary">{slot.display}</span>
                   </div>
                   <button
                     onClick={() => removeSlot(index)}
-                    className="text-xs text-wisebox-text-secondary hover:text-red-400 transition-colors"
+                    className="text-xs text-wisebox-text-secondary hover:text-wisebox-status-danger transition-colors"
                   >
                     {t('timeSlot.remove')}
                   </button>

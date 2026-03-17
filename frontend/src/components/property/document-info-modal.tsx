@@ -30,9 +30,9 @@ export function DocumentInfoModal({
   if (!info) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="bg-wisebox-background-card border-wisebox-border text-white max-w-lg">
+        <DialogContent className="bg-wisebox-background-card border-wisebox-border text-wisebox-text-primary max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-white">{documentTypeName}</DialogTitle>
+            <DialogTitle className="text-wisebox-text-primary">{documentTypeName}</DialogTitle>
             <DialogDescription className="text-wisebox-text-secondary">
               {t('documents.noAdditionalGuidance')}
             </DialogDescription>
@@ -44,9 +44,9 @@ export function DocumentInfoModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-wisebox-background-card border-wisebox-border text-white max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="bg-wisebox-background-card border-wisebox-border text-wisebox-text-primary max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-white">
+          <DialogTitle className="text-wisebox-text-primary">
             {info.nameEn}
           </DialogTitle>
           <DialogDescription className="text-wisebox-text-secondary text-base">
@@ -58,19 +58,19 @@ export function DocumentInfoModal({
           <TabsList className="w-full bg-wisebox-background-lighter border border-wisebox-border">
             <TabsTrigger
               value="what"
-              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
+              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-wisebox-text-primary text-wisebox-text-muted"
             >
               {t('documents.whatIsThis')}
             </TabsTrigger>
             <TabsTrigger
               value="where"
-              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
+              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-wisebox-text-primary text-wisebox-text-muted"
             >
               {t('documents.whereToGetIt')}
             </TabsTrigger>
             <TabsTrigger
               value="missing"
-              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-white text-wisebox-text-muted"
+              className="flex-1 text-xs data-[state=active]:bg-wisebox-background-card data-[state=active]:text-wisebox-text-primary text-wisebox-text-muted"
             >
               {t('documents.ifMissing')}
             </TabsTrigger>
@@ -108,20 +108,20 @@ export function DocumentInfoModal({
                 <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1">
                   {t('documents.estimatedCost')}
                 </h4>
-                <p className="text-sm text-white">{info.estimatedCost}</p>
+                <p className="text-sm text-wisebox-text-primary">{info.estimatedCost}</p>
               </div>
               <div className="rounded-md bg-wisebox-background-lighter border border-wisebox-border p-3">
                 <h4 className="text-xs font-medium text-wisebox-text-muted uppercase tracking-wide mb-1">
                   {t('documents.estimatedTime')}
                 </h4>
-                <p className="text-sm text-white">{info.estimatedTime}</p>
+                <p className="text-sm text-wisebox-text-primary">{info.estimatedTime}</p>
               </div>
             </div>
           </TabsContent>
 
           <TabsContent value="missing" className="space-y-3 mt-4">
-            <div className="rounded-md bg-amber-500/10 border border-amber-500/20 p-3">
-              <p className="text-sm text-amber-300 leading-relaxed">
+            <div className="rounded-md bg-wisebox-status-warning/10 border border-wisebox-status-warning/20 p-3">
+              <p className="text-sm text-wisebox-status-warning leading-relaxed">
                 {info.ifMissing}
               </p>
             </div>

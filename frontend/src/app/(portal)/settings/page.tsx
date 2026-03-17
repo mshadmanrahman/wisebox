@@ -277,9 +277,9 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="danger">
-          <Card className="border-red-200">
+          <Card className="border-wisebox-status-danger/20">
             <CardHeader>
-              <CardTitle className="text-red-700">{t('danger.title')}</CardTitle>
+              <CardTitle className="text-wisebox-status-danger">{t('danger.title')}</CardTitle>
               <CardDescription>{t('danger.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">

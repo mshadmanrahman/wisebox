@@ -98,7 +98,7 @@ function InlineEditCell({
 
   if (translationId === null) {
     return (
-      <span className="text-slate-400 italic text-sm">No translation</span>
+      <span className="text-muted-foreground italic text-sm">No translation</span>
     );
   }
 
@@ -116,7 +116,7 @@ function InlineEditCell({
               if (isEditing) handleSave();
             }, 150);
           }}
-          className="h-8 text-sm bg-white border-slate-300 text-slate-900"
+          className="h-8 text-sm bg-card border-border text-foreground"
           disabled={isSaving}
         />
         <button
@@ -125,7 +125,7 @@ function InlineEditCell({
             e.preventDefault();
             handleSave();
           }}
-          className="p-1 text-green-600 hover:text-green-700"
+          className="p-1 text-wisebox-status-success hover:text-wisebox-status-success"
           tabIndex={-1}
         >
           <Check className="h-3.5 w-3.5" />
@@ -136,7 +136,7 @@ function InlineEditCell({
             e.preventDefault();
             handleCancel();
           }}
-          className="p-1 text-slate-400 hover:text-slate-600"
+          className="p-1 text-muted-foreground hover:text-muted-foreground"
           tabIndex={-1}
         >
           <X className="h-3.5 w-3.5" />
@@ -149,10 +149,10 @@ function InlineEditCell({
     <button
       type="button"
       onClick={() => setIsEditing(true)}
-      className="group flex items-center gap-1.5 text-left w-full min-h-[32px] px-2 py-1 -mx-2 rounded hover:bg-slate-100 transition-colors"
+      className="group flex items-center gap-1.5 text-left w-full min-h-[32px] px-2 py-1 -mx-2 rounded hover:bg-muted transition-colors"
     >
-      <span className="text-sm text-slate-700 break-words flex-1">{value}</span>
-      <Pencil className="h-3 w-3 text-slate-400 opacity-0 group-hover:opacity-100 shrink-0 transition-opacity" />
+      <span className="text-sm text-foreground break-words flex-1">{value}</span>
+      <Pencil className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 shrink-0 transition-opacity" />
     </button>
   );
 }
@@ -249,23 +249,23 @@ export default function AdminTranslationsPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <Languages className="h-6 w-6 text-indigo-500" />
-          <h1 className="text-3xl font-bold text-slate-900">
+          <Languages className="h-6 w-6 text-wisebox-accent-violet" />
+          <h1 className="text-3xl font-bold text-foreground">
             {t('translations.title', 'Translations')}
           </h1>
         </div>
-        <p className="text-slate-600">
+        <p className="text-muted-foreground">
           {t('translations.subtitle', 'Manage English and Bangla translations for all UI strings.')}
         </p>
       </div>
 
       {/* Filters */}
-      <Card className="bg-white border-slate-200 shadow-sm">
+      <Card className="bg-card border-border shadow-sm">
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="w-full sm:w-48">
               <Select value={namespace} onValueChange={handleNamespaceChange}>
-                <SelectTrigger className="bg-white border-slate-200 text-slate-900">
+                <SelectTrigger className="bg-card border-border text-foreground">
                   <SelectValue placeholder="All namespaces" />
                 </SelectTrigger>
                 <SelectContent>
@@ -279,15 +279,15 @@ export default function AdminTranslationsPage() {
               </Select>
             </div>
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder={t('translations.searchPlaceholder', 'Search by key or value...')}
-                className="pl-9 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
+                className="pl-9 bg-card border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
-            <div className="flex items-center gap-2 text-sm text-slate-500">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               {isFetching && <Loader2 className="h-4 w-4 animate-spin" />}
               <span>{total} {t('translations.keys', 'keys')}</span>
             </div>
@@ -296,18 +296,18 @@ export default function AdminTranslationsPage() {
       </Card>
 
       {/* Table */}
-      <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
+      <Card className="bg-card border-border shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
-              <span className="ml-2 text-slate-500">{t('translations.loading', 'Loading translations...')}</span>
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <span className="ml-2 text-muted-foreground">{t('translations.loading', 'Loading translations...')}</span>
             </div>
           ) : translations.length === 0 ? (
             <div className="text-center py-20">
-              <Languages className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500">{t('translations.noResults', 'No translations found.')}</p>
-              <p className="text-sm text-slate-400 mt-1">
+              <Languages className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground">{t('translations.noResults', 'No translations found.')}</p>
+              <p className="text-sm text-muted-foreground mt-1">
                 {t('translations.noResultsHint', 'Try adjusting your search or namespace filter.')}
               </p>
             </div>
@@ -315,22 +315,22 @@ export default function AdminTranslationsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50">
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider w-[200px]">
+                  <tr className="border-b border-border bg-muted">
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-[200px]">
                       {t('translations.colKey', 'Key')}
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       {t('translations.colEnglish', 'English')}
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       {t('translations.colBangla', 'Bangla')}
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider w-[140px]">
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-[140px]">
                       {t('translations.colUpdated', 'Last Updated')}
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-border">
                   {translations.map((row) => {
                     const latestUpdate = row.bn?.updated_at
                       ? new Date(row.bn.updated_at) > new Date(row.en.updated_at)
@@ -341,16 +341,16 @@ export default function AdminTranslationsPage() {
                     return (
                       <tr
                         key={`${row.namespace}.${row.key}`}
-                        className="hover:bg-slate-50/50 transition-colors"
+                        className="hover:bg-muted/50 transition-colors"
                       >
                         <td className="px-4 py-3 align-top">
                           <div className="space-y-1">
-                            <code className="text-xs font-mono text-slate-600 break-all">
+                            <code className="text-xs font-mono text-muted-foreground break-all">
                               {row.key}
                             </code>
                             <Badge
                               variant="outline"
-                              className="text-[10px] border-slate-200 text-slate-500 bg-slate-50"
+                              className="text-[10px] border-border text-muted-foreground bg-muted"
                             >
                               {row.namespace}
                             </Badge>
@@ -373,7 +373,7 @@ export default function AdminTranslationsPage() {
                           />
                         </td>
                         <td className="px-4 py-3 align-top">
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-muted-foreground">
                             {new Date(latestUpdate).toLocaleDateString('en-GB', {
                               day: 'numeric',
                               month: 'short',
@@ -394,7 +394,7 @@ export default function AdminTranslationsPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted-foreground">
             {t('translations.pageInfo', 'Page {{page}} of {{total}}', {
               page,
               total: totalPages,
@@ -406,7 +406,7 @@ export default function AdminTranslationsPage() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="border-border text-foreground hover:bg-muted"
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
               {t('translations.prev', 'Previous')}
@@ -416,7 +416,7 @@ export default function AdminTranslationsPage() {
               size="sm"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="border-border text-foreground hover:bg-muted"
             >
               {t('translations.next', 'Next')}
               <ChevronRight className="h-4 w-4 ml-1" />

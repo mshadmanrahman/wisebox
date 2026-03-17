@@ -199,7 +199,7 @@ export default function Home() {
                     <div className="mb-2 flex items-center justify-between">
                       <Icon className="h-5 w-5 text-wisebox-primary-700" />
                       {item.comingSoon ? (
-                        <Badge variant="outline" className="border-amber-200 text-amber-700">
+                        <Badge variant="outline" className="border-wisebox-status-warning/30 text-wisebox-status-warning">
                           Coming soon
                         </Badge>
                       ) : null}

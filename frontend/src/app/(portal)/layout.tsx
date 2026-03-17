@@ -129,38 +129,38 @@ function PortalHeader() {
         <nav className="hidden md:flex items-center gap-6 text-sm">
           {isConsultantOnly ? (
             <>
-              <Link href="/consultant" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/consultant" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.myCases')}
               </Link>
-              <Link href="/consultant/tickets" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/consultant/tickets" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.allTickets')}
               </Link>
-              <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/settings" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.settings')}
               </Link>
             </>
           ) : (
             <>
-              <Link href="/properties" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/properties" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.assets')}
               </Link>
-              <Link href="/learning" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/learning" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.learning')}
               </Link>
-              <Link href="/assessment/start" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/assessment/start" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.assessment')}
               </Link>
-              <Link href="/workspace/services" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/workspace/services" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.services')}
               </Link>
-              <Link href="/tickets" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/tickets" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.tickets')}
               </Link>
-              <Link href="/settings" className="text-wisebox-text-secondary hover:text-white transition-colors">
+              <Link href="/settings" className="text-wisebox-text-secondary hover:text-wisebox-text-primary transition-colors">
                 {t('nav.settings')}
               </Link>
               {isAdminRole && (
-                <Link href="/admin/dashboard" className="text-amber-400 hover:text-amber-300 transition-colors">
+                <Link href="/admin/dashboard" className="text-wisebox-status-warning hover:text-wisebox-status-warning/80 transition-colors">
                   {t('nav.adminPanel')}
                 </Link>
               )}
@@ -171,13 +171,13 @@ function PortalHeader() {
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
 
-          <Button variant="ghost" size="icon" className="relative text-white hover:bg-wisebox-background-lighter">
+          <Button variant="ghost" size="icon" className="relative text-wisebox-text-primary hover:bg-wisebox-background-lighter">
             <Sparkles className="h-5 w-5" />
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative text-white hover:bg-wisebox-background-lighter">
+              <Button variant="ghost" size="icon" className="relative text-wisebox-text-primary hover:bg-wisebox-background-lighter">
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-wisebox-primary text-white text-[10px] leading-[18px] text-center">
@@ -187,13 +187,13 @@ function PortalHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[340px] bg-wisebox-background-card border-wisebox-border">
-              <DropdownMenuLabel className="flex items-center justify-between text-white">
+              <DropdownMenuLabel className="flex items-center justify-between text-wisebox-text-primary">
                 <span>{t('header.notifications')}</span>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-xs text-wisebox-text-secondary hover:text-white hover:bg-wisebox-background-lighter"
+                  className="h-7 px-2 text-xs text-wisebox-text-secondary hover:text-wisebox-text-primary hover:bg-wisebox-background-lighter"
                   onClick={() => markAllMutation.mutate()}
                   disabled={unreadCount === 0 || markAllMutation.isPending}
                 >
@@ -215,7 +215,7 @@ function PortalHeader() {
                     }}
                   >
                     <div className="w-full flex items-start justify-between gap-2">
-                      <span className="text-sm font-medium text-white line-clamp-1">
+                      <span className="text-sm font-medium text-wisebox-text-primary line-clamp-1">
                         {notification.title}
                       </span>
                       {!notification.read_at && (
@@ -233,7 +233,7 @@ function PortalHeader() {
               )}
               <DropdownMenuSeparator className="bg-wisebox-border" />
               <DropdownMenuItem asChild className="hover:bg-wisebox-background-lighter">
-                <Link href="/notifications" className="cursor-pointer text-white">
+                <Link href="/notifications" className="cursor-pointer text-wisebox-text-primary">
                   {t('header.openNotificationCenter')}
                 </Link>
               </DropdownMenuItem>
@@ -242,7 +242,7 @@ function PortalHeader() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full bg-wisebox-text-muted/20 hover:bg-wisebox-text-muted/30 text-white h-8 w-8">
+              <Button variant="ghost" size="icon" className="rounded-full bg-wisebox-text-muted/20 hover:bg-wisebox-text-muted/30 text-wisebox-text-primary h-8 w-8">
                 <span className="text-sm font-medium">
                   {user?.name ? user.name.charAt(0).toUpperCase() : 'S'}
                 </span>
@@ -256,12 +256,12 @@ function PortalHeader() {
                 </>
               )}
               <DropdownMenuItem asChild className="hover:bg-wisebox-background-lighter">
-                <Link href="/settings" className="cursor-pointer text-white">
+                <Link href="/settings" className="cursor-pointer text-wisebox-text-primary">
                   <Settings className="h-4 w-4 mr-2" />
                   {t('nav.settings')}
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:bg-wisebox-background-lighter">
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-wisebox-status-danger hover:bg-wisebox-background-lighter">
                 <LogOut className="h-4 w-4 mr-2" />
                 {t('header.logout')}
               </DropdownMenuItem>

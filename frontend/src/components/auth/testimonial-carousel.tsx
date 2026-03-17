@@ -105,7 +105,7 @@ export function AuthTestimonialCarousel({ className }: { className?: string }) {
         {/* Testimonial content */}
         <div
           key={active}
-          className="max-w-xl space-y-4 bg-black/30 backdrop-blur-sm p-8 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+          className="max-w-xl space-y-4 bg-wisebox-overlay-light backdrop-blur-sm p-8 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500"
         >
           <svg
             className="w-10 h-10 text-white/80"

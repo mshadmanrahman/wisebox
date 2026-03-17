@@ -301,11 +301,11 @@ export default function AddPropertyPage() {
           {t('properties:breadcrumb.properties')}
         </button>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-white font-medium">{t('properties:breadcrumb.addNew')}</span>
+        <span className="text-wisebox-text-primary font-medium">{t('properties:breadcrumb.addNew')}</span>
       </nav>
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-white">{t('properties:new.title')}</h1>
+        <h1 className="text-2xl font-bold text-wisebox-text-primary">{t('properties:new.title')}</h1>
         <div className="flex items-center gap-3 text-sm text-wisebox-text-muted">
           <span>{t('properties:new.percentComplete', { percent: overallPct })}</span>
           <Progress value={overallPct} className="w-32 h-2" />
@@ -338,7 +338,7 @@ export default function AddPropertyPage() {
             <AccordionContent className="pt-2 pb-6">
               <form onSubmit={handleSubmit(onStep1Submit)} className="space-y-6">
                 {step1Error && (
-                  <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md">
+                  <div className="p-3 text-sm text-wisebox-status-danger bg-wisebox-status-danger/10 border border-wisebox-status-danger/20 rounded-md">
                     {step1Error}
                   </div>
                 )}
@@ -351,7 +351,7 @@ export default function AddPropertyPage() {
                     {...register('property_name')}
                   />
                   {errors.property_name && (
-                    <p className="text-sm text-red-500">{errors.property_name.message}</p>
+                    <p className="text-sm text-wisebox-status-danger">{errors.property_name.message}</p>
                   )}
                 </div>
 
@@ -377,7 +377,7 @@ export default function AddPropertyPage() {
                     )}
                   />
                   {errors.property_type_id && (
-                    <p className="text-sm text-red-500">{errors.property_type_id.message}</p>
+                    <p className="text-sm text-wisebox-status-danger">{errors.property_type_id.message}</p>
                   )}
                 </div>
 
@@ -407,7 +407,7 @@ export default function AddPropertyPage() {
                       )}
                     />
                     {errors.ownership_status_id && (
-                      <p className="text-sm text-red-500">{errors.ownership_status_id.message}</p>
+                      <p className="text-sm text-wisebox-status-danger">{errors.ownership_status_id.message}</p>
                     )}
                   </div>
 
@@ -433,7 +433,7 @@ export default function AddPropertyPage() {
                       )}
                     />
                     {errors.ownership_type_id && (
-                      <p className="text-sm text-red-500">{errors.ownership_type_id.message}</p>
+                      <p className="text-sm text-wisebox-status-danger">{errors.ownership_type_id.message}</p>
                     )}
                   </div>
                 </div>
@@ -453,7 +453,7 @@ export default function AddPropertyPage() {
                       )}
                     />
                     {errors.co_owners && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-sm text-wisebox-status-danger">
                         {t('properties:new.fixCoOwnerDetails')}
                       </p>
                     )}
@@ -513,7 +513,7 @@ export default function AddPropertyPage() {
                       })}
                     />
                     {errors.size_value && (
-                      <p className="text-sm text-red-500">{errors.size_value.message}</p>
+                      <p className="text-sm text-wisebox-status-danger">{errors.size_value.message}</p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -608,7 +608,7 @@ export default function AddPropertyPage() {
 
                   {primaryDocs.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold text-white">{t('properties:new.primaryDocuments')}</h3>
+                      <h3 className="text-lg font-semibold text-wisebox-text-primary">{t('properties:new.primaryDocuments')}</h3>
                       <p className="text-sm text-wisebox-text-muted">
                         {t('properties:new.primaryDocsDesc')}
                       </p>
@@ -629,7 +629,7 @@ export default function AddPropertyPage() {
                   {secondaryDocs.length > 0 && (
                     <div className="space-y-3">
                       <Separator />
-                      <h3 className="text-lg font-semibold text-white">{t('properties:new.secondaryDocuments')}</h3>
+                      <h3 className="text-lg font-semibold text-wisebox-text-primary">{t('properties:new.secondaryDocuments')}</h3>
                       <p className="text-sm text-wisebox-text-muted">
                         {t('properties:new.secondaryDocsDesc')}
                       </p>

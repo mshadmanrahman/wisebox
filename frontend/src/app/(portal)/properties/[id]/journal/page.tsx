@@ -146,7 +146,7 @@ export default function PropertyJournalPage() {
                               })}
                             </p>
                           </div>
-                          <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
+                          <Badge variant="outline" className="bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30">
                             {t('journal.completed')}
                           </Badge>
                         </div>

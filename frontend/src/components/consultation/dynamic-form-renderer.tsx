@@ -118,7 +118,7 @@ export function DynamicFormRenderer({
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.field_name}>
               {field.field_label}
-              {field.is_required && <span className="text-red-500 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </Label>
             {field.help_text && (
               <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>
@@ -127,9 +127,9 @@ export function DynamicFormRenderer({
               id={field.field_name}
               value={fieldValue as string}
               onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
-              className={fieldError ? 'border-red-500' : ''}
+              className={fieldError ? 'border-wisebox-status-danger' : ''}
             />
-            {fieldError && <p className="text-xs text-red-600">{fieldError}</p>}
+            {fieldError && <p className="text-xs text-wisebox-status-danger">{fieldError}</p>}
           </div>
         );
 
@@ -138,7 +138,7 @@ export function DynamicFormRenderer({
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.field_name}>
               {field.field_label}
-              {field.is_required && <span className="text-red-500 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </Label>
             {field.help_text && (
               <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>
@@ -148,9 +148,9 @@ export function DynamicFormRenderer({
               rows={4}
               value={fieldValue as string}
               onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
-              className={fieldError ? 'border-red-500' : ''}
+              className={fieldError ? 'border-wisebox-status-danger' : ''}
             />
-            {fieldError && <p className="text-xs text-red-600">{fieldError}</p>}
+            {fieldError && <p className="text-xs text-wisebox-status-danger">{fieldError}</p>}
           </div>
         );
 
@@ -159,7 +159,7 @@ export function DynamicFormRenderer({
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.field_name}>
               {field.field_label}
-              {field.is_required && <span className="text-red-500 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </Label>
             {field.help_text && (
               <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>
@@ -169,9 +169,9 @@ export function DynamicFormRenderer({
               type="number"
               value={fieldValue as string}
               onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
-              className={fieldError ? 'border-red-500' : ''}
+              className={fieldError ? 'border-wisebox-status-danger' : ''}
             />
-            {fieldError && <p className="text-xs text-red-600">{fieldError}</p>}
+            {fieldError && <p className="text-xs text-wisebox-status-danger">{fieldError}</p>}
           </div>
         );
 
@@ -180,7 +180,7 @@ export function DynamicFormRenderer({
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.field_name}>
               {field.field_label}
-              {field.is_required && <span className="text-red-500 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </Label>
             {field.help_text && (
               <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>
@@ -190,9 +190,9 @@ export function DynamicFormRenderer({
               type="date"
               value={fieldValue as string}
               onChange={(e) => handleFieldChange(field.field_name, e.target.value)}
-              className={fieldError ? 'border-red-500' : ''}
+              className={fieldError ? 'border-wisebox-status-danger' : ''}
             />
-            {fieldError && <p className="text-xs text-red-600">{fieldError}</p>}
+            {fieldError && <p className="text-xs text-wisebox-status-danger">{fieldError}</p>}
           </div>
         );
 
@@ -201,7 +201,7 @@ export function DynamicFormRenderer({
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.field_name}>
               {field.field_label}
-              {field.is_required && <span className="text-red-500 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </Label>
             {field.help_text && (
               <p className="text-xs text-wisebox-text-secondary">{field.help_text}</p>
@@ -210,7 +210,7 @@ export function DynamicFormRenderer({
               value={fieldValue as string}
               onValueChange={(value) => handleFieldChange(field.field_name, value)}
             >
-              <SelectTrigger className={fieldError ? 'border-red-500' : ''}>
+              <SelectTrigger className={fieldError ? 'border-wisebox-status-danger' : ''}>
                 <SelectValue placeholder="Select an option" />
               </SelectTrigger>
               <SelectContent>
@@ -221,7 +221,7 @@ export function DynamicFormRenderer({
                 ))}
               </SelectContent>
             </Select>
-            {fieldError && <p className="text-xs text-red-600">{fieldError}</p>}
+            {fieldError && <p className="text-xs text-wisebox-status-danger">{fieldError}</p>}
           </div>
         );
 
@@ -230,7 +230,7 @@ export function DynamicFormRenderer({
           <div key={field.id} className="space-y-2">
             <Label>
               {field.field_label}
-              {field.is_required && <span className="text-red-500 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </Label>
             {field.help_text && (
               <p className="text-xs text-wisebox-text-secondary mb-2">{field.help_text}</p>
@@ -250,7 +250,7 @@ export function DynamicFormRenderer({
                 </label>
               ))}
             </div>
-            {fieldError && <p className="text-xs text-red-600 mt-1">{fieldError}</p>}
+            {fieldError && <p className="text-xs text-wisebox-status-danger mt-1">{fieldError}</p>}
           </div>
         );
 
@@ -259,7 +259,7 @@ export function DynamicFormRenderer({
           <div key={field.id} className="space-y-2">
             <Label>
               {field.field_label}
-              {field.is_required && <span className="text-red-500 ml-1">*</span>}
+              {field.is_required && <span className="text-wisebox-status-danger ml-1">*</span>}
             </Label>
             {field.help_text && (
               <p className="text-xs text-wisebox-text-secondary mb-2">{field.help_text}</p>
@@ -277,7 +277,7 @@ export function DynamicFormRenderer({
                 </label>
               ))}
             </div>
-            {fieldError && <p className="text-xs text-red-600 mt-1">{fieldError}</p>}
+            {fieldError && <p className="text-xs text-wisebox-status-danger mt-1">{fieldError}</p>}
           </div>
         );
 
@@ -289,7 +289,7 @@ export function DynamicFormRenderer({
   if (submitMutation.isSuccess) {
     return (
       <div className="text-center py-8">
-        <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
+        <CheckCircle2 className="h-16 w-16 text-wisebox-status-success mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-wisebox-text-primary mb-2">
           Form Submitted Successfully!
         </h3>
@@ -317,8 +317,8 @@ export function DynamicFormRenderer({
       </div>
 
       {submitMutation.error && (
-        <div className="p-3 rounded-md bg-red-50 border border-red-200">
-          <p className="text-sm text-red-600">
+        <div className="p-3 rounded-md bg-wisebox-status-danger/10 border border-wisebox-status-danger/20">
+          <p className="text-sm text-wisebox-status-danger">
             {(submitMutation.error as Error).message || 'Failed to submit form. Please try again.'}
           </p>
         </div>

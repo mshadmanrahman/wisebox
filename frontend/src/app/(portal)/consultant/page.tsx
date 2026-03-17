@@ -37,29 +37,29 @@ const statusConfig = {
   assigned: {
     label: 'Awaiting Your Response',
     icon: AlertCircle,
-    color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    color: 'bg-wisebox-status-warning/20 text-wisebox-status-warning border-wisebox-status-warning/30',
   },
   scheduled: {
     label: 'Meeting Scheduled',
     icon: Calendar,
-    color: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    color: 'bg-wisebox-status-info/20 text-wisebox-status-info border-wisebox-status-info/30',
   },
   completed: {
     label: 'Completed',
     icon: CheckCircle,
-    color: 'bg-green-500/20 text-green-400 border-green-500/30',
+    color: 'bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30',
   },
   closed: {
     label: 'Closed',
     icon: CheckCircle,
-    color: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+    color: 'bg-wisebox-text-muted/20 text-wisebox-text-muted border-wisebox-text-muted/30',
   },
 };
 
 const priorityConfig = {
-  high: { color: 'bg-red-500/20 text-red-400 border-red-500/30' },
-  medium: { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  low: { color: 'bg-green-500/20 text-green-400 border-green-500/30' },
+  high: { color: 'bg-wisebox-status-danger/20 text-wisebox-status-danger border-wisebox-status-danger/30' },
+  medium: { color: 'bg-wisebox-status-warning/20 text-wisebox-status-warning border-wisebox-status-warning/30' },
+  low: { color: 'bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30' },
 };
 
 function formatDate(dateString: string): string {
@@ -99,7 +99,7 @@ export default function ConsultantDashboard() {
     <div className="px-6 py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-bold text-wisebox-text-primary">
           {t('dashboard.welcomeBack', { name: user?.name?.split(' ')[0] ?? '' })}
         </h1>
         <p className="text-wisebox-text-secondary mt-2">
@@ -109,38 +109,38 @@ export default function ConsultantDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-wisebox-background-card border-yellow-500/30">
+        <Card className="bg-wisebox-background-card border-wisebox-status-warning/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-wisebox-text-secondary">{t('dashboard.stats.pendingAction')}</p>
-                <p className="text-3xl font-bold text-yellow-400 mt-2">{stats.pending_action}</p>
+                <p className="text-3xl font-bold text-wisebox-status-warning mt-2">{stats.pending_action}</p>
               </div>
-              <AlertCircle className="h-10 w-10 text-yellow-400" />
+              <AlertCircle className="h-10 w-10 text-wisebox-status-warning" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-wisebox-background-card border-blue-500/30">
+        <Card className="bg-wisebox-background-card border-wisebox-status-info/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-wisebox-text-secondary">{t('dashboard.stats.scheduled')}</p>
-                <p className="text-3xl font-bold text-blue-400 mt-2">{stats.scheduled}</p>
+                <p className="text-3xl font-bold text-wisebox-status-info mt-2">{stats.scheduled}</p>
               </div>
-              <Calendar className="h-10 w-10 text-blue-400" />
+              <Calendar className="h-10 w-10 text-wisebox-status-info" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-wisebox-background-card border-green-500/30">
+        <Card className="bg-wisebox-background-card border-wisebox-status-success/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-wisebox-text-secondary">{t('dashboard.stats.completedThisMonth')}</p>
-                <p className="text-3xl font-bold text-green-400 mt-2">{stats.completed_this_month}</p>
+                <p className="text-3xl font-bold text-wisebox-status-success mt-2">{stats.completed_this_month}</p>
               </div>
-              <CheckCircle className="h-10 w-10 text-green-400" />
+              <CheckCircle className="h-10 w-10 text-wisebox-status-success" />
             </div>
           </CardContent>
         </Card>
@@ -150,7 +150,7 @@ export default function ConsultantDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-wisebox-text-secondary">{t('dashboard.stats.totalAssigned')}</p>
-                <p className="text-3xl font-bold text-white mt-2">{stats.assigned}</p>
+                <p className="text-3xl font-bold text-wisebox-text-primary mt-2">{stats.assigned}</p>
               </div>
               <FileText className="h-10 w-10 text-wisebox-text-secondary" />
             </div>
@@ -161,7 +161,7 @@ export default function ConsultantDashboard() {
       {/* Active Cases */}
       <Card className="bg-wisebox-background-card border-wisebox-border">
         <CardHeader>
-          <CardTitle className="text-white">{t('dashboard.cases.title')}</CardTitle>
+          <CardTitle className="text-wisebox-text-primary">{t('dashboard.cases.title')}</CardTitle>
           <CardDescription className="text-wisebox-text-secondary">
             {t('dashboard.cases.description')}
           </CardDescription>
@@ -180,7 +180,7 @@ export default function ConsultantDashboard() {
                 const statusInfo = statusConfig[ticket.status as keyof typeof statusConfig] || {
                   label: ticket.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
                   icon: FileText,
-                  color: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+                  color: 'bg-wisebox-text-muted/20 text-wisebox-text-muted border-wisebox-text-muted/30',
                 };
                 const StatusIcon = statusInfo.icon;
 
@@ -205,7 +205,7 @@ export default function ConsultantDashboard() {
                               {ticket.priority.toUpperCase()}
                             </Badge>
                           </div>
-                          <h3 className="font-semibold text-white text-base">{ticket.title}</h3>
+                          <h3 className="font-semibold text-wisebox-text-primary text-base">{ticket.title}</h3>
                         </div>
                         <ArrowRight className="h-5 w-5 text-wisebox-text-muted shrink-0" />
                       </div>
@@ -213,25 +213,25 @@ export default function ConsultantDashboard() {
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
                         <div>
                           <p className="text-wisebox-text-muted text-xs">{t('dashboard.fields.customer')}</p>
-                          <p className="text-white font-medium">{ticket.customer_name}</p>
+                          <p className="text-wisebox-text-primary font-medium">{ticket.customer_name}</p>
                         </div>
                         <div>
                           <p className="text-wisebox-text-muted text-xs">{t('dashboard.fields.property')}</p>
-                          <p className="text-white font-medium truncate">{ticket.property_name}</p>
+                          <p className="text-wisebox-text-primary font-medium truncate">{ticket.property_name}</p>
                         </div>
                         <div>
                           <p className="text-wisebox-text-muted text-xs">{t('dashboard.fields.service')}</p>
-                          <p className="text-white font-medium truncate">{ticket.service_name}</p>
+                          <p className="text-wisebox-text-primary font-medium truncate">{ticket.service_name}</p>
                         </div>
                         <div>
                           <p className="text-wisebox-text-muted text-xs">{t('dashboard.fields.created')}</p>
-                          <p className="text-white font-medium">{formatDate(ticket.created_at)}</p>
+                          <p className="text-wisebox-text-primary font-medium">{formatDate(ticket.created_at)}</p>
                         </div>
                       </div>
 
                       {ticket.status === 'assigned' && ticket.preferred_time_slots && (
                         <div className="mt-3 pt-3 border-t border-wisebox-border">
-                          <p className="text-xs text-yellow-400 flex items-center gap-1">
+                          <p className="text-xs text-wisebox-status-warning flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {t('dashboard.actionRequired', { count: ticket.preferred_time_slots.length })}
                           </p>
@@ -240,7 +240,7 @@ export default function ConsultantDashboard() {
 
                       {ticket.scheduled_at && (
                         <div className="mt-3 pt-3 border-t border-wisebox-border">
-                          <p className="text-xs text-blue-400 flex items-center gap-1">
+                          <p className="text-xs text-wisebox-status-info flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             {t('dashboard.meeting')}: {new Date(ticket.scheduled_at).toLocaleString('en-GB', {
                               day: 'numeric',

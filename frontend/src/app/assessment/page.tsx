@@ -18,9 +18,9 @@ interface AssessmentResult {
 }
 
 function statusClasses(status: 'red' | 'yellow' | 'green'): string {
-  if (status === 'green') return 'bg-green-500/20 text-green-400 border-green-500/30';
-  if (status === 'yellow') return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-  return 'bg-red-500/20 text-red-400 border-red-500/30';
+  if (status === 'green') return 'bg-wisebox-status-success/20 text-wisebox-status-success border-wisebox-status-success/30';
+  if (status === 'yellow') return 'bg-wisebox-secondary/20 text-wisebox-secondary border-wisebox-secondary/30';
+  return 'bg-wisebox-status-danger/20 text-wisebox-status-danger border-wisebox-status-danger/30';
 }
 
 // Encouraging, human messages that rotate with each question.
@@ -140,7 +140,7 @@ export default function FreeAssessmentPage() {
         <div className="max-w-3xl mx-auto space-y-6">
           <Card className="bg-wisebox-background-card border-wisebox-border">
             <CardHeader>
-              <CardTitle className="text-2xl text-white">Your Free Property Readiness Score</CardTitle>
+              <CardTitle className="text-2xl text-wisebox-text-primary">Your Free Property Readiness Score</CardTitle>
               <CardDescription className="text-wisebox-text-secondary">Instant assessment based on your answers.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
@@ -152,7 +152,7 @@ export default function FreeAssessmentPage() {
               <p className="text-sm text-wisebox-text-secondary">{result.summary}</p>
 
               <div className="space-y-2">
-                <h3 className="font-semibold text-white">Detected gaps</h3>
+                <h3 className="font-semibold text-wisebox-text-primary">Detected gaps</h3>
                 {result.gaps.length === 0 ? (
                   <p className="text-sm text-wisebox-text-secondary">No major gaps from your current answers.</p>
                 ) : (
@@ -165,11 +165,11 @@ export default function FreeAssessmentPage() {
               </div>
 
               <div className="space-y-2">
-                <h3 className="font-semibold text-white">Recommended services</h3>
+                <h3 className="font-semibold text-wisebox-text-primary">Recommended services</h3>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {result.recommended_services.map((service: RecommendedService) => (
                     <div key={service.id} className="rounded-lg border border-wisebox-border p-3 bg-wisebox-background-lighter">
-                      <p className="font-medium text-sm text-white">{service.name}</p>
+                      <p className="font-medium text-sm text-wisebox-text-primary">{service.name}</p>
                       <p className="text-xs text-wisebox-text-secondary mt-1">Starting at ${service.price.toFixed(2)}</p>
                     </div>
                   ))}
@@ -177,10 +177,10 @@ export default function FreeAssessmentPage() {
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button asChild className="bg-white hover:bg-gray-100 text-wisebox-background font-semibold">
+                <Button asChild className="bg-white hover:bg-white/90 text-wisebox-background font-semibold">
                   <Link href="/register">Create account to protect your property</Link>
                 </Button>
-                <Button asChild variant="outline" className="border-wisebox-border text-white hover:bg-wisebox-background-lighter">
+                <Button asChild variant="outline" className="border-wisebox-border text-wisebox-text-primary hover:bg-wisebox-background-lighter">
                   <Link href="/workspace/services">Talk to an expert</Link>
                 </Button>
               </div>
@@ -197,7 +197,7 @@ export default function FreeAssessmentPage() {
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Page Header */}
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold text-white">Free Property Assessment</h1>
+          <h1 className="text-3xl font-bold text-wisebox-text-primary">Free Property Assessment</h1>
           <p className="text-wisebox-text-secondary">
             Answer a few quick questions. No sign-up required. Takes under 3 minutes.
           </p>
@@ -237,7 +237,7 @@ export default function FreeAssessmentPage() {
         ) : (
           <Card className="bg-wisebox-background-card border-wisebox-border">
             <CardHeader>
-              <CardTitle className="text-white text-lg">Question {currentIndex + 1}</CardTitle>
+              <CardTitle className="text-wisebox-text-primary text-lg">Question {currentIndex + 1}</CardTitle>
               <CardDescription className="text-wisebox-text-secondary text-base mt-1">
                 {currentQuestion.question}
               </CardDescription>
@@ -251,8 +251,8 @@ export default function FreeAssessmentPage() {
                   onClick={() => handleAnswer(true)}
                   className={`flex items-center justify-center gap-2 rounded-lg border-2 py-5 text-lg font-semibold transition-all min-h-[72px] focus:outline-none focus:ring-2 focus:ring-wisebox-primary focus:ring-offset-2 focus:ring-offset-wisebox-background disabled:opacity-60 ${
                     answers[currentQuestion.id] === true
-                      ? 'border-green-500 bg-green-500/15 text-green-400'
-                      : 'border-wisebox-border bg-wisebox-background-card text-white hover:border-green-500/40 hover:bg-green-500/5'
+                      ? 'border-wisebox-status-success bg-wisebox-status-success/15 text-wisebox-status-success'
+                      : 'border-wisebox-border bg-wisebox-background-card text-wisebox-text-primary hover:border-wisebox-status-success/40 hover:bg-wisebox-status-success/5'
                   }`}
                 >
                   Yes
@@ -264,7 +264,7 @@ export default function FreeAssessmentPage() {
                   className={`flex items-center justify-center gap-2 rounded-lg border-2 py-5 text-lg font-semibold transition-all min-h-[72px] focus:outline-none focus:ring-2 focus:ring-wisebox-border-light focus:ring-offset-2 focus:ring-offset-wisebox-background disabled:opacity-60 ${
                     answers[currentQuestion.id] === false
                       ? 'border-wisebox-border-light bg-wisebox-background-lighter text-wisebox-text-secondary'
-                      : 'border-wisebox-border bg-wisebox-background-card text-white hover:border-wisebox-border-light hover:bg-wisebox-background-lighter'
+                      : 'border-wisebox-border bg-wisebox-background-card text-wisebox-text-primary hover:border-wisebox-border-light hover:bg-wisebox-background-lighter'
                   }`}
                 >
                   No
@@ -277,7 +277,7 @@ export default function FreeAssessmentPage() {
                   variant="ghost"
                   disabled={currentIndex === 0}
                   onClick={() => setCurrentIndex((value) => Math.max(0, value - 1))}
-                  className="text-wisebox-text-secondary hover:text-white hover:bg-wisebox-background-lighter"
+                  className="text-wisebox-text-secondary hover:text-wisebox-text-primary hover:bg-wisebox-background-lighter"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Previous
@@ -294,7 +294,7 @@ export default function FreeAssessmentPage() {
         {allAnswered && (
           <Card className="bg-wisebox-background-card border-wisebox-border">
             <CardHeader>
-              <CardTitle className="text-white">Get your score</CardTitle>
+              <CardTitle className="text-wisebox-text-primary">Get your score</CardTitle>
               <CardDescription className="text-wisebox-text-secondary">
                 Enter your email to receive your assessment result.
               </CardDescription>
@@ -305,16 +305,16 @@ export default function FreeAssessmentPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@example.com"
-                className="bg-wisebox-background-input border-wisebox-border text-white placeholder:text-wisebox-text-muted"
+                className="bg-wisebox-background-input border-wisebox-border text-wisebox-text-primary placeholder:text-wisebox-text-muted"
               />
               <Button
                 disabled={isSubmitting || email.trim() === ''}
                 onClick={submitAssessment}
-                className="bg-white hover:bg-gray-100 text-wisebox-background font-semibold"
+                className="bg-white hover:bg-white/90 text-wisebox-background font-semibold"
               >
                 {isSubmitting ? 'Calculating...' : 'See my assessment'}
               </Button>
-              {submitError && <p className="text-sm text-red-400">{submitError}</p>}
+              {submitError && <p className="text-sm text-wisebox-status-danger">{submitError}</p>}
             </CardContent>
           </Card>
         )}

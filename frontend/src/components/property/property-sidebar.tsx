@@ -24,7 +24,7 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
     <div className="space-y-6">
       {/* Map Placeholder */}
       <Card className="bg-wisebox-background-card border-wisebox-border overflow-hidden">
-        <div className="h-48 bg-slate-800 relative flex items-center justify-center">
+        <div className="h-48 bg-wisebox-background-lighter relative flex items-center justify-center">
           <div className="text-center space-y-2">
             <MapPin className="h-8 w-8 text-wisebox-primary mx-auto" />
             <p className="text-sm text-wisebox-text-secondary">{t('sidebar.yourProperty')}</p>
@@ -42,7 +42,7 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
         <Link href={`/properties/${property.id}/journal`}>
           <Button
             variant="outline"
-            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-white hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
+            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-wisebox-text-primary hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
           >
             <BookOpen className="h-5 w-5 text-wisebox-primary" />
             <span className="text-xs">{t('sidebar.journal')}</span>
@@ -51,7 +51,7 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
         <Link href={`/properties/${property.id}/recommendations`}>
           <Button
             variant="outline"
-            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-white hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
+            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-wisebox-text-primary hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
           >
             <BarChart3 className="h-5 w-5 text-wisebox-primary" />
             <span className="text-xs">{t('sidebar.analytics')}</span>
@@ -60,7 +60,7 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
         <Link href="/tickets">
           <Button
             variant="outline"
-            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-white hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
+            className="w-full h-auto flex-col gap-2 py-4 border-wisebox-border text-wisebox-text-primary hover:bg-wisebox-background-lighter hover:border-wisebox-border-light"
           >
             <MessageSquare className="h-5 w-5 text-wisebox-primary" />
             <span className="text-xs">{t('sidebar.consult')}</span>
@@ -87,10 +87,10 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
       {/* FAQ Accordion */}
       <Card className="bg-wisebox-background-card border-wisebox-border">
         <CardContent className="p-5">
-          <h3 className="text-sm font-semibold text-white mb-4">{t('sidebar.faq')}</h3>
+          <h3 className="text-sm font-semibold text-wisebox-text-primary mb-4">{t('sidebar.faq')}</h3>
           <Accordion type="single" collapsible className="space-y-2">
             <AccordionItem value="q1" className="border-wisebox-border">
-              <AccordionTrigger className="text-sm text-white hover:text-wisebox-primary py-3 hover:no-underline">
+              <AccordionTrigger className="text-sm text-wisebox-text-primary hover:text-wisebox-primary py-3 hover:no-underline">
                 {t('sidebar.faqQ1')}
               </AccordionTrigger>
               <AccordionContent className="text-sm text-wisebox-text-secondary pb-3">
@@ -98,7 +98,7 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q2" className="border-wisebox-border">
-              <AccordionTrigger className="text-sm text-white hover:text-wisebox-primary py-3 hover:no-underline">
+              <AccordionTrigger className="text-sm text-wisebox-text-primary hover:text-wisebox-primary py-3 hover:no-underline">
                 {t('sidebar.faqQ2')}
               </AccordionTrigger>
               <AccordionContent className="text-sm text-wisebox-text-secondary pb-3">
@@ -106,7 +106,7 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q3" className="border-wisebox-border">
-              <AccordionTrigger className="text-sm text-white hover:text-wisebox-primary py-3 hover:no-underline">
+              <AccordionTrigger className="text-sm text-wisebox-text-primary hover:text-wisebox-primary py-3 hover:no-underline">
                 {t('sidebar.faqQ3')}
               </AccordionTrigger>
               <AccordionContent className="text-sm text-wisebox-text-secondary pb-3">
@@ -114,7 +114,7 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q4" className="border-wisebox-border border-b-0">
-              <AccordionTrigger className="text-sm text-white hover:text-wisebox-primary py-3 hover:no-underline">
+              <AccordionTrigger className="text-sm text-wisebox-text-primary hover:text-wisebox-primary py-3 hover:no-underline">
                 {t('sidebar.faqQ4')}
               </AccordionTrigger>
               <AccordionContent className="text-sm text-wisebox-text-secondary pb-3">

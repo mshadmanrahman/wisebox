@@ -78,7 +78,7 @@ export default function PropertiesPage() {
                     <ChevronLeft className="h-4 w-4" />
                     {t('common:previous')}
                   </Button>
-                  <span className="text-sm text-muted-foreground px-3">
+                  <span className="text-sm text-wisebox-text-secondary px-3">
                     {t('common:page', { current: page, total: totalPages })}
                   </span>
                   <Button
@@ -135,7 +135,7 @@ function EmptyState() {
       <h2 className="text-lg font-semibold text-wisebox-text-primary mb-1">
         {t('empty.title')}
       </h2>
-      <p className="text-sm text-muted-foreground max-w-sm mb-6">
+      <p className="text-sm text-wisebox-text-secondary max-w-sm mb-6">
         {t('empty.description')}
       </p>
       <Button asChild className="bg-wisebox-primary hover:bg-wisebox-primary-hover">

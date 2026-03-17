@@ -11,9 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Order, PaginatedResponse } from '@/types';
 
 function paymentBadgeClass(status: Order['payment_status']): string {
-  if (status === 'paid') return 'bg-green-500/20 text-green-400';
-  if (status === 'pending') return 'bg-amber-500/20 text-amber-400';
-  if (status === 'failed') return 'bg-red-500/20 text-red-400';
+  if (status === 'paid') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'pending') return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
+  if (status === 'failed') return 'bg-wisebox-status-danger/20 text-wisebox-status-danger';
   return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
 }
 
@@ -53,13 +53,13 @@ export default function OrdersPage() {
       </div>
 
       {isError && !hasData && (
-        <Card className="border-red-200 bg-red-50/60">
+        <Card className="border-wisebox-status-danger/20 bg-wisebox-status-danger/10">
           <CardContent className="p-6 space-y-3">
-            <div className="flex items-center gap-2 text-red-700 font-medium">
+            <div className="flex items-center gap-2 text-wisebox-status-danger font-medium">
               <AlertTriangle className="h-4 w-4" />
               {t('orders:couldNotLoad')}
             </div>
-            <p className="text-sm text-red-700/90">{errorMessage}</p>
+            <p className="text-sm text-wisebox-status-danger/90">{errorMessage}</p>
             <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
               {isFetching ? t('common:retrying') : t('common:retry')}
             </Button>
@@ -68,9 +68,9 @@ export default function OrdersPage() {
       )}
 
       {isError && hasData && (
-        <Card className="border-amber-200 bg-amber-50/70">
+        <Card className="border-wisebox-status-warning/20 bg-wisebox-status-warning/10">
           <CardContent className="p-4 flex items-center justify-between gap-3">
-            <p className="text-sm text-amber-800">
+            <p className="text-sm text-wisebox-status-warning">
               {t('common:showingStaleData')} {errorMessage}
             </p>
             <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>

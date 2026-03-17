@@ -49,11 +49,11 @@ interface ConsultantMetricsResponse {
 }
 
 function statusBadgeClass(status: Ticket['status']): string {
-  if (status === 'completed') return 'bg-green-500/20 text-green-400';
-  if (status === 'in_progress' || status === 'assigned') return 'bg-blue-500/20 text-blue-400';
-  if (status === 'scheduled') return 'bg-purple-100 text-purple-700';
+  if (status === 'completed') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'in_progress' || status === 'assigned') return 'bg-wisebox-status-info/20 text-wisebox-status-info';
+  if (status === 'scheduled') return 'bg-wisebox-status-scheduled/20 text-wisebox-status-scheduled';
   if (status === 'cancelled') return 'bg-wisebox-background-lighter text-wisebox-text-secondary';
-  return 'bg-amber-500/20 text-amber-400';
+  return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
 }
 
 export default function ConsultantTicketsPage() {
