@@ -122,7 +122,7 @@ export default function RegisterPage() {
                 id="name"
                 placeholder={t('auth:register.namePlaceholder')}
                 autoComplete="name"
-                className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('name')}
               />
               {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
@@ -137,7 +137,7 @@ export default function RegisterPage() {
                 type="email"
                 placeholder={t('auth:register.emailPlaceholder')}
                 autoComplete="email"
-                className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('email')}
               />
               {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
@@ -152,7 +152,7 @@ export default function RegisterPage() {
                 type="password"
                 placeholder={t('auth:register.passwordPlaceholder')}
                 autoComplete="new-password"
-                className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('password')}
               />
               {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
@@ -164,7 +164,7 @@ export default function RegisterPage() {
                 value={watchedCountry}
                 onValueChange={(value) => setValue('country_of_residence', value, { shouldValidate: true })}
               >
-                <SelectTrigger className="bg-muted border-border text-foreground h-12">
+                <SelectTrigger className="bg-background border-border text-foreground h-12">
                   <SelectValue placeholder={t('auth:register.countryPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border">
@@ -188,7 +188,7 @@ export default function RegisterPage() {
               <input
                 type="checkbox"
                 id="terms"
-                className="mt-1 h-4 w-4 rounded border-border bg-muted checked:bg-primary checked:border-primary focus:ring-primary focus:ring-offset-background"
+                className="mt-1 h-4 w-4 rounded border-border bg-background checked:bg-primary checked:border-primary focus:ring-primary focus:ring-offset-background"
                 {...register('terms_accepted')}
               />
               <label htmlFor="terms" className="text-sm text-muted-foreground">
@@ -206,7 +206,7 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              className="w-full bg-white hover:bg-white/90 text-background h-12 font-semibold"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 font-medium"
               disabled={isLoading}
             >
               {isLoading ? (

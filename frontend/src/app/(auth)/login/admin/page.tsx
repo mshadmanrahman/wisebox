@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
                 type="email"
                 placeholder={t('login.emailPlaceholder')}
                 autoComplete="email"
-                className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('email')}
               />
               {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
@@ -116,7 +116,7 @@ export default function AdminLoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t('login.passwordPlaceholder')}
                   autoComplete="current-password"
-                  className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                   {...register('password')}
                 />
                 <button

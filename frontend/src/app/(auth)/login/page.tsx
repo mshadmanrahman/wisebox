@@ -92,7 +92,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder={t('auth:login.emailPlaceholder')}
                 autoComplete="email"
-                className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                 {...register('email')}
               />
               {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
@@ -116,7 +116,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t('auth:login.passwordPlaceholder')}
                   autoComplete="current-password"
-                  className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                   {...register('password')}
                 />
                 <button
@@ -134,7 +134,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-white hover:bg-white/90 text-background h-12 font-semibold"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 font-medium"
               disabled={isLoading}
             >
               {isLoading ? (

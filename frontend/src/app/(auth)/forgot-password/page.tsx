@@ -108,7 +108,7 @@ export default function ForgotPasswordPage() {
                     type="email"
                     placeholder={t('auth:forgotPassword.emailPlaceholder')}
                     autoComplete="email"
-                    className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12"
                     {...register('email')}
                   />
                   {errors.email && (
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-white hover:bg-white/90 text-background h-12 font-semibold"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 font-medium"
                   disabled={isLoading}
                 >
                   {isLoading ? (
