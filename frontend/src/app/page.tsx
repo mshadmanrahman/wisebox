@@ -8,7 +8,6 @@ import { marketingFaqs } from '@/components/marketing/content';
 import {
   LandingHero,
   RevealSection,
-  TestimonialScroller,
   FeatureCard,
   PropertyMock,
   NotificationMock,
@@ -35,14 +34,6 @@ const jsonLd = {
     { '@type': 'WebSite', '@id': 'https://mywisebox.com/#website', url: 'https://mywisebox.com', name: 'Wisebox', publisher: { '@id': 'https://mywisebox.com/#organization' }, inLanguage: 'en' },
   ],
 };
-
-const testimonials = [
-  { quote: 'I spent three years trying to sort out my father\u2019s land documents from London. Wisebox gave me clarity in one week.', name: 'Rafiq H.', location: 'London, UK' },
-  { quote: 'The assessment told me exactly which documents were missing. I didn\u2019t even know what a mutation certificate was before this.', name: 'Nasreen A.', location: 'Toronto, Canada' },
-  { quote: 'Having a tracked ticket for every consultant interaction changed everything. No more he-said-she-said.', name: 'Kamal U.', location: 'Dallas, USA' },
-  { quote: 'My siblings and I were arguing about the family property for months. Wisebox gave us one place to see the actual status.', name: 'Farhana R.', location: 'Sydney, Australia' },
-  { quote: 'I was always anxious about our property in Sylhet. Now I check the app once a week and I know exactly where things stand.', name: 'Imran S.', location: 'New York, USA' },
-];
 
 export default function Home() {
   return (
@@ -146,14 +137,6 @@ export default function Home() {
               </div>
             </RevealSection>
           </div>
-        </section>
-
-        {/* ── TESTIMONIAL CAROUSEL ── */}
-        <section className="py-24 sm:py-32">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8">
-            <RevealSection><p className="text-xl font-medium text-muted-foreground">Real stories from real families</p></RevealSection>
-          </div>
-          <TestimonialScroller testimonials={testimonials} />
         </section>
 
         {/* ── FAQ ── */}
