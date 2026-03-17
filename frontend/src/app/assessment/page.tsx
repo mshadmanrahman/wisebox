@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ChevronLeft } from 'lucide-react';
+import { AssessmentHeader } from '@/components/assessment/assessment-header';
 import type { ApiResponse, AssessmentQuestion, RecommendedService } from '@/types';
 
 interface AssessmentResult {
@@ -136,8 +137,9 @@ export default function FreeAssessmentPage() {
   // ─── Results Screen ────────────────────────────────────────────
   if (result) {
     return (
-      <div className="min-h-screen bg-background px-4 py-10">
-        <div className="max-w-xl mx-auto space-y-6">
+      <div className="min-h-screen bg-background">
+        <AssessmentHeader progress={100} />
+        <div className="max-w-xl mx-auto space-y-6 px-6 py-8">
           <div className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none">
             <div className="space-y-1 mb-6">
               <h2 className="text-2xl font-semibold tracking-tight text-foreground">Your Free Property Readiness Score</h2>
@@ -193,12 +195,13 @@ export default function FreeAssessmentPage() {
 
   // ─── Assessment Flow ───────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-background px-4 py-10">
-      <div className="max-w-xl mx-auto space-y-6">
+    <div className="min-h-screen bg-background">
+      <AssessmentHeader progress={progress} />
+      <div className="max-w-xl mx-auto space-y-6 px-6 py-8">
         {/* Page Header */}
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Free Property Assessment</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             Answer a few quick questions. No sign-up required. Takes under 3 minutes.
           </p>
         </div>

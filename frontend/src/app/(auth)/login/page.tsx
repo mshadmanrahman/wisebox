@@ -64,7 +64,7 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
-          <WiseboxLogo variant="light" />
+          <WiseboxLogo variant="auto" />
 
           {/* Header */}
           <div>
