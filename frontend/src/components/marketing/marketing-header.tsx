@@ -69,7 +69,7 @@ export function MarketingHeader() {
           <Button
             asChild
             size="sm"
-            className="bg-primary text-primary-foreground transition-all duration-200 hover:bg-primary/90 rounded-xl"
+            className="bg-primary text-primary-foreground transition-all duration-200 hover:bg-primary/90 rounded-full"
           >
             <Link href="/assessment/start">Get Free Assessment</Link>
           </Button>

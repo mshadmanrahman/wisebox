@@ -207,9 +207,7 @@ export const marketingFaqs: MarketingFaq[] = [
 ];
 
 export const marketingNavLinks = [
-  { href: '#process-section', label: 'How It Works' },
+  { href: '#features-section', label: 'Overview' },
   { href: '#features-section', label: 'Features' },
-  { href: '#pricing-section', label: 'Pricing' },
-  { href: '#faq-section', label: 'FAQ' },
-  { href: '/about', label: 'About' },
+  { href: '#faq-section', label: 'Results' },
 ];

@@ -13,7 +13,7 @@ export function PricingTable({ plans }: PricingTableProps) {
       {plans.map((plan) => (
         <div
           key={plan.name}
-          className={`relative flex h-full flex-col rounded-2xl p-6 transition-all duration-200 ${
+          className={`relative flex h-full flex-col rounded-3xl p-8 transition-all duration-300 ${
             plan.highlighted
               ? 'border-2 border-primary bg-primary/[0.03] dark:bg-primary/[0.05]'
               : 'border border-border dark:border-white/10 bg-card dark:bg-white/[0.03] hover:border-border/80 dark:hover:border-white/15'
@@ -50,10 +50,10 @@ export function PricingTable({ plans }: PricingTableProps) {
 
           <Button
             asChild
-            className={`w-full rounded-xl transition-all duration-200 ${
+            className={`w-full rounded-full transition-all duration-300 ${
               plan.highlighted
-                ? 'bg-primary text-primary-foreground hover:bg-primary/90 py-3 text-base shadow-lg shadow-primary/20'
-                : 'border border-border bg-transparent text-muted-foreground hover:text-foreground hover:border-border/80 dark:hover:border-white/15'
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90 py-3.5 text-base shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25'
+                : 'border border-border bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
             variant={plan.highlighted ? 'default' : 'outline'}
           >
