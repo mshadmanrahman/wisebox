@@ -8,6 +8,7 @@ import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { trackDocumentUploaded } from '@/lib/analytics';
 import { DocumentInfoModal } from '@/components/property/document-info-modal';
 import {
   Upload,
@@ -106,6 +107,7 @@ export function DocumentUploadItem({
       setShowDropzone(false);
       setUploadProgress(0);
       setError(null);
+      trackDocumentUploaded(documentType.name);
       onUploadComplete();
     },
     onError: (err: unknown) => {

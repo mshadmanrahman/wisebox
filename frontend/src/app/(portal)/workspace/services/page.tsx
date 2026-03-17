@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { trackServiceCatalogViewed, trackServiceSelected } from '@/lib/analytics';
 import { Calendar, CheckCircle, Loader2, Sparkles } from 'lucide-react';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -94,6 +95,10 @@ export default function ServicesPage() {
   const [consultPropertyId, setConsultPropertyId] = useState<string>('');
 
   useEffect(() => {
+    trackServiceCatalogViewed();
+  }, []);
+
+  useEffect(() => {
     setPage(1);
   }, [activeTab]);
 
@@ -155,6 +160,7 @@ export default function ServicesPage() {
   const openServiceDetail = (service: Service) => {
     setSelectedService(service);
     setDetailOpen(true);
+    trackServiceSelected(service.name ?? String(service.id));
   };
 
   return (
