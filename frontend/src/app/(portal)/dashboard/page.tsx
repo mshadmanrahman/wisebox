@@ -151,54 +151,29 @@ export default function DashboardPage() {
       />
 
       {/* Guide Section */}
-      <div className="space-y-5">
-        <p className="text-sm text-muted-foreground">
-          {t('common:letsGetStarted')}
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <Link href="/workspace/services" className="block group">
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none hover:border-border/80 dark:hover:border-white/12 transition-all duration-200">
-              <div className="flex items-start gap-4">
-                <Compass className="w-5 h-5 text-primary shrink-0 mt-0.5" strokeWidth={1.5} />
-                <div className="flex-1">
-                  <h3 className="text-base font-medium text-foreground mb-2">{t('dashboard:exploreServices')}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t('dashboard:exploreServicesDesc')}
-                  </p>
+      <section className="space-y-4">
+        <h2 className="text-base font-medium text-foreground">{t('common:letsGetStarted')}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { href: '/workspace/services', icon: Compass, title: t('dashboard:exploreServices'), desc: t('dashboard:exploreServicesDesc') },
+            { href: '/workspace/services', icon: Sparkles, title: t('dashboard:talkToExpert'), desc: t('dashboard:talkToExpertDesc') },
+            { href: '/learning', icon: BookOpen, title: t('dashboard:learningCenter'), desc: t('dashboard:learningCenterDesc') },
+          ].map((card) => {
+            const Icon = card.icon;
+            return (
+              <Link key={card.title} href={card.href} className="block group">
+                <div className="h-full bg-card border border-border rounded-2xl p-6 shadow-md dark:shadow-none transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:hover:border-white/12">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                    <Icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-base font-medium text-foreground">{card.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-1.5">{card.desc}</p>
                 </div>
-              </div>
-            </div>
-          </Link>
-
-          <Link href="/workspace/services" className="block group">
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none hover:border-border/80 dark:hover:border-white/12 transition-all duration-200">
-              <div className="flex items-start gap-4">
-                <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" strokeWidth={1.5} />
-                <div className="flex-1">
-                  <h3 className="text-base font-medium text-foreground mb-2">{t('dashboard:talkToExpert')}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t('dashboard:talkToExpertDesc')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          <Link href="/learning" className="block group">
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none hover:border-border/80 dark:hover:border-white/12 transition-all duration-200">
-              <div className="flex items-start gap-4">
-                <BookOpen className="w-5 h-5 text-primary shrink-0 mt-0.5" strokeWidth={1.5} />
-                <div className="flex-1">
-                  <h3 className="text-base font-medium text-foreground mb-2">{t('dashboard:learningCenter')}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t('dashboard:learningCenterDesc')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Link>
+              </Link>
+            );
+          })}
         </div>
-      </div>
+      </section>
 
       {/* Property Grid (only when properties exist) */}
       {topProperties.length > 0 && (
