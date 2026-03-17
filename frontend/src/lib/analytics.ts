@@ -10,7 +10,7 @@ function generateDeviceId(): string {
   if (crypto) {
     const values = new Uint8Array(22);
     crypto.getRandomValues(values);
-    for (const v of values) result += chars[v % chars.length];
+    for (let i = 0; i < values.length; i++) result += chars[values[i] % chars.length];
   } else {
     for (let i = 0; i < 22; i++) result += chars[Math.floor(Math.random() * chars.length)];
   }
