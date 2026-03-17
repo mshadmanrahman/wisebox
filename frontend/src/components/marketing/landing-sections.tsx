@@ -74,10 +74,16 @@ export function LandingHero() {
           </div>
         </div>
 
-        {/* Product showcase card */}
-        <div className={cn('mt-16 relative transition-all duration-1000', loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')} style={{ transitionDelay: '600ms' }}>
-          <div className="max-w-5xl mx-auto rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr_260px] min-h-[360px]">
+        {/* Hero visual: photo + product mock side by side */}
+        <div className={cn('mt-12 transition-all duration-1000', loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')} style={{ transitionDelay: '600ms' }}>
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6 items-end">
+            {/* Left: Large lifestyle photo */}
+            <div className="lg:col-span-2 rounded-3xl overflow-hidden shadow-xl dark:shadow-none ring-1 ring-black/5 dark:ring-white/5">
+              <img src="/images/landing/hero-family.jpg" alt="Grandfather and grandson" className="w-full aspect-[3/4] object-cover" />
+            </div>
+            {/* Right: Product mock */}
+            <div className="lg:col-span-3 rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden">
+              <div className="grid grid-cols-1 lg:grid-cols-[180px_1fr_240px] min-h-[360px]">
               {/* Sidebar mock */}
               <div className="hidden lg:block border-r border-border bg-muted/50 p-4 space-y-3">
                 <div className="h-6 w-24 rounded-lg bg-primary/10" />
@@ -134,12 +140,8 @@ export function LandingHero() {
                   <p className="text-2xl font-semibold text-primary">72<span className="text-sm font-normal text-muted-foreground">/100</span></p>
                 </div>
               </div>
+              </div>
             </div>
-          </div>
-
-          {/* Overlapping family photo */}
-          <div className="absolute -bottom-6 -left-4 sm:left-8 w-28 h-28 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-4 border-background shadow-lg hidden sm:block">
-            <img src="/images/landing/hero-family.jpg" alt="Family" className="w-full h-full object-cover" />
           </div>
         </div>
       </div>
@@ -152,18 +154,22 @@ interface Testimonial { quote: string; name: string; location: string; }
 
 export function TestimonialScroller({ testimonials }: { testimonials: Testimonial[] }) {
   return (
-    <div className="mt-10 -mx-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-      <div className="flex gap-5 sm:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]">
-        {testimonials.map((t) => (
-          <div key={t.name} className="min-w-[300px] sm:min-w-[340px] shrink-0 snap-start rounded-2xl border border-border bg-card p-6 shadow-md dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/15">
-            <p className="text-sm text-foreground leading-relaxed">{t.quote}</p>
-            <div className="mt-5 flex items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">{t.name.charAt(0)}</div>
-              <div><p className="text-sm font-medium text-foreground">{t.name}</p><p className="text-xs text-muted-foreground">{t.location}</p></div>
+    <div className="mt-10 relative">
+      <div className="-mx-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+        <div className="flex gap-5 sm:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]">
+          {testimonials.map((t) => (
+            <div key={t.name} className="min-w-[340px] sm:min-w-[380px] shrink-0 snap-start rounded-2xl border border-border bg-card p-6 shadow-md dark:shadow-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:border-white/15">
+              <p className="text-base text-foreground leading-relaxed">{t.quote}</p>
+              <div className="mt-5 flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">{t.name.charAt(0)}</div>
+                <div><p className="text-sm font-medium text-foreground">{t.name}</p><p className="text-xs text-muted-foreground">{t.location}</p></div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+      {/* Right edge fade */}
+      <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none" />
     </div>
   );
 }
@@ -172,16 +178,16 @@ export function TestimonialScroller({ testimonials }: { testimonials: Testimonia
 export function FeatureCard({ kicker, heading, body, children, reverse = false }: { kicker: string; heading: string; body: string; children: ReactNode; reverse?: boolean }) {
   return (
     <RevealSection>
-      <div className={`rounded-3xl bg-card border border-border shadow-lg dark:shadow-none overflow-hidden grid grid-cols-1 lg:grid-cols-2 ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
-        <div className="p-8 sm:p-10 flex flex-col justify-center">
+      <div className={`rounded-3xl bg-card border border-border shadow-lg dark:shadow-none overflow-hidden grid grid-cols-1 lg:grid-cols-2 min-h-[400px] ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
+        <div className="p-10 sm:p-12 flex flex-col justify-center">
           <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.15em' }}>{kicker}</p>
           <h3 className="mt-3 text-2xl font-semibold text-foreground tracking-tight leading-[1.2]">{heading}</h3>
-          <p className="mt-3 text-base text-muted-foreground leading-relaxed">{body}</p>
-          <Link href="/assessment/start" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+          <p className="mt-4 text-base text-muted-foreground leading-relaxed">{body}</p>
+          <Link href="/assessment/start" className="mt-8 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
             Get started <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
           </Link>
         </div>
-        <div className="bg-muted/30 p-6 sm:p-8 flex items-center justify-center min-h-[280px]">
+        <div className="bg-muted/30 p-8 flex items-center justify-center">
           {children}
         </div>
       </div>
