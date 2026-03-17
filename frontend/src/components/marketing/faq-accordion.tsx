@@ -9,11 +9,11 @@ export function FaqAccordion({ faqs }: FaqAccordionProps) {
   return (
     <Accordion type="single" collapsible className="w-full">
       {faqs.map((faq, index) => (
-        <AccordionItem key={faq.question} value={`faq-${index}`}>
-          <AccordionTrigger className="text-left text-base font-semibold text-wisebox-text-primary">
+        <AccordionItem key={faq.question} value={`faq-${index}`} className="border-b border-border">
+          <AccordionTrigger className="text-left text-base font-medium text-foreground py-5" style={{ letterSpacing: '-0.01em' }}>
             {faq.question}
           </AccordionTrigger>
-          <AccordionContent className="text-sm leading-6 text-wisebox-text-secondary">
+          <AccordionContent className="pb-5 text-sm leading-relaxed text-muted-foreground" style={{ lineHeight: '1.6' }}>
             {faq.answer}
           </AccordionContent>
         </AccordionItem>
