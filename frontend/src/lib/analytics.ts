@@ -32,6 +32,8 @@ export function initAnalytics() {
   amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_KEY!, {
     autocapture: true,
     deviceId,
+    serverUrl: 'https://api2.amplitude.com/2/httpapi',
+    useBatch: false,
   });
   initialized = true;
 }
