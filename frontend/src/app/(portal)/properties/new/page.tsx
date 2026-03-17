@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { trackPropertyAdded } from '@/lib/analytics';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -256,6 +257,7 @@ export default function AddPropertyPage() {
       setCreatedProperty(property);
       setActiveStep('step-2');
       setStep1Error(null);
+      trackPropertyAdded(property.ownership_type?.name ?? 'unknown');
     },
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };

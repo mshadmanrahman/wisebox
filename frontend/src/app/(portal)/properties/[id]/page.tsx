@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { trackPropertyViewed } from '@/lib/analytics';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { ChevronRight, ArrowLeft, History, ClipboardList, ChevronRight as ArrowRight, Trash2 } from 'lucide-react';
@@ -52,6 +53,10 @@ export default function PropertyDetailPage() {
       router.push('/properties');
     },
   });
+
+  useEffect(() => {
+    if (id) trackPropertyViewed(id);
+  }, [id]);
 
   const { data: assessmentsResponse } = useQuery({
     queryKey: ['property', Number(id), 'assessments'],
