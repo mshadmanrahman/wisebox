@@ -73,18 +73,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── LIFESTYLE PHOTO BREAK ── */}
-        <section className="py-24 sm:py-32">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8">
-            <RevealSection>
-              <div className="rounded-3xl overflow-hidden shadow-xl dark:shadow-none ring-1 ring-black/5 dark:ring-white/5">
-                <img src="/images/landing/woman-armchair-away.jpg" alt="Managing property from home" className="w-full aspect-[2.5/1] object-cover object-center" />
-              </div>
-              <p className="text-center text-sm text-muted-foreground mt-4">Manage your property from anywhere in the world.</p>
-            </RevealSection>
-          </div>
-        </section>
-
         {/* ── STATS (with gradient-15 accent) ── */}
         <section className="py-8">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
@@ -118,20 +106,20 @@ export default function Home() {
         <section className="py-24 sm:py-32">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
-              <div className="max-w-5xl mx-auto rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden">
-                <div className="grid grid-cols-1 lg:grid-cols-5">
-                  <div className="lg:col-span-3 p-10 sm:p-14 flex flex-col justify-center">
+              <div className="rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-2">
+                  <div className="relative min-h-[300px] lg:min-h-[450px]">
+                    <img src="/images/landing/father-son-laptop.jpg" alt="Family using Wisebox" className="absolute inset-0 w-full h-full object-cover" />
+                  </div>
+                  <div className="bg-card p-10 sm:p-14 flex flex-col justify-center">
                     <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.15em' }}>Case Study</p>
                     <blockquote className="mt-6 text-xl sm:text-2xl font-medium leading-relaxed italic text-foreground">
-                      &ldquo;Wisebox has <em className="not-italic text-primary font-semibold">completely transformed</em> how our family manages property back in Bangladesh. What used to be scattered documents and anxious phone calls is now a clear, trackable system we all trust.&rdquo;
+                      &ldquo;Wisebox has <span className="not-italic text-primary font-semibold">completely transformed</span> how our family manages property back in Bangladesh. What used to be scattered documents and anxious phone calls is now a clear, trackable system we all trust.&rdquo;
                     </blockquote>
                     <div className="mt-8 flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">R</div>
                       <div><p className="text-sm font-medium text-foreground">Rafiq H.</p><p className="text-xs text-muted-foreground">London, UK</p></div>
                     </div>
-                  </div>
-                  <div className="lg:col-span-2 hidden lg:block min-h-[300px]">
-                    <img src="/images/landing/father-son-laptop.jpg" alt="Family using Wisebox" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
@@ -152,19 +140,28 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── FINAL CTA (with gradient-23 accent) ── */}
+        {/* ── FINAL CTA (with gradient-23 accent + woman photo) ── */}
         <section className="py-24 sm:py-32 relative overflow-hidden">
           <img src="/images/gradients/gradient-23.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-15 dark:opacity-10" />
-          <div className="absolute inset-0 bg-background/60" />
-          <div className="relative z-10 max-w-3xl mx-auto px-6 sm:px-8 text-center">
+          <div className="absolute inset-0 bg-background/70" />
+          <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
-              <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">From scattered to structured</h2>
-              <div className="mt-8">
-                <Link href="/assessment/start" className="inline-flex items-center gap-2 rounded-full bg-primary px-10 py-4 text-lg font-medium text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02]">
-                  Get started — it&rsquo;s free <ArrowRight className="h-5 w-5" strokeWidth={1.5} />
-                </Link>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">From scattered to structured</h2>
+                  <p className="mt-4 text-lg text-muted-foreground leading-relaxed">Building clarity for families who own property across borders.</p>
+                  <div className="mt-8">
+                    <Link href="/assessment/start" className="inline-flex items-center gap-2 rounded-full bg-primary px-10 py-4 text-lg font-medium text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02]">
+                      Get started — it&rsquo;s free <ArrowRight className="h-5 w-5" strokeWidth={1.5} />
+                    </Link>
+                  </div>
+                </div>
+                <div className="hidden lg:block">
+                  <div className="rounded-3xl overflow-hidden shadow-xl dark:shadow-none ring-1 ring-black/5 dark:ring-white/5">
+                    <img src="/images/landing/woman-armchair-away.jpg" alt="Peace of mind" className="w-full aspect-[4/3] object-cover" />
+                  </div>
+                </div>
               </div>
-              <p className="mt-6 text-lg text-muted-foreground leading-relaxed">Building clarity for families who own property across borders.</p>
             </RevealSection>
           </div>
         </section>
