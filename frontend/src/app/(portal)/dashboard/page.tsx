@@ -68,27 +68,24 @@ function timeAgo(dateStr: string): string {
 function getServiceRecommendation(property: Property | null): {
   name: string;
   longDesc: string;
-  price: string | null;
 } {
   if (!property) {
-    return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.', price: null };
+    return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.' };
   }
   const typeName = (property.property_type?.name ?? '').toLowerCase();
   if (typeName.includes('apartment') || typeName.includes('flat')) {
     return {
       name: 'Apartment Purchase Verification',
       longDesc: 'Our consultants verify ownership documents and ensure your apartment purchase is legally sound.',
-      price: 'BDT 8,000',
     };
   }
   if (typeName.includes('land')) {
     return {
       name: 'Land Purchase Verification',
       longDesc: 'Our consultants can help track down missing documents including Mutation Khatian, tax receipts, and land records.',
-      price: 'BDT 10,000',
     };
   }
-  return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.', price: null };
+  return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.' };
 }
 
 function notificationDotColor(type: string): string {
@@ -239,13 +236,10 @@ function PropertyHealthOverview({
                 <p className="text-xs font-medium text-primary uppercase tracking-wider">Recommended</p>
                 <p className="mt-1 text-sm font-semibold text-foreground">{service.name}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{service.longDesc}</p>
-                <div className="mt-3 flex items-center gap-3">
+                <div className="mt-3">
                   <a href="/workspace/services" className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1">
-                    View service <ArrowRight className="w-3 h-3" />
+                    Learn more <ArrowRight className="w-3 h-3" />
                   </a>
-                  {service.price && (
-                    <span className="text-xs text-muted-foreground">· From {service.price}</span>
-                  )}
                 </div>
               </div>
             </div>
@@ -365,13 +359,10 @@ function PropertyHealthOverview({
                 <p className="text-xs font-medium text-primary uppercase tracking-wider">Recommended</p>
                 <p className="mt-1 text-sm font-semibold text-foreground">{service.name}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{service.longDesc}</p>
-                <div className="mt-3 flex items-center gap-3">
+                <div className="mt-3">
                   <a href="/workspace/services" className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1">
-                    View service <ArrowRight className="w-3 h-3" />
+                    Learn more <ArrowRight className="w-3 h-3" />
                   </a>
-                  {service.price && (
-                    <span className="text-xs text-muted-foreground">· From {service.price}</span>
-                  )}
                 </div>
               </div>
             </div>
@@ -390,11 +381,10 @@ function RecommendedForYou({ worstProperty }: { worstProperty: Property | null }
   const isApartment = typeName.includes('apartment') || typeName.includes('flat');
 
   const card2 = {
-    name: contextService.price !== null ? contextService.name : 'Land Purchase Verification',
-    desc: contextService.price !== null
+    name: contextService.name !== 'Free Property Consultation' ? contextService.name : 'Land Purchase Verification',
+    desc: contextService.name !== 'Free Property Consultation'
       ? (isApartment ? 'Document verification and ownership validation' : 'Full due diligence and ownership validation')
       : 'Full due diligence and ownership validation',
-    price: contextService.price ?? 'BDT 10,000',
     Icon: Search,
   };
 
@@ -430,16 +420,16 @@ function RecommendedForYou({ worstProperty }: { worstProperty: Property | null }
           href="/workspace/services"
           className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <div className="mb-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <card2.Icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
             </div>
-            <span className="text-[10px] font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-              {card2.price}
-            </span>
           </div>
           <p className="text-sm font-medium text-foreground">{card2.name}</p>
           <p className="text-xs text-muted-foreground mt-1">{card2.desc}</p>
+          <p className="mt-3 text-xs font-medium text-primary inline-flex items-center gap-1">
+            Learn more <ArrowRight className="w-3 h-3" />
+          </p>
         </a>
 
         {/* Card 3 — Land Ownership Papers */}
@@ -447,16 +437,16 @@ function RecommendedForYou({ worstProperty }: { worstProperty: Property | null }
           href="/workspace/services"
           className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <div className="mb-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <FileCheck className="w-4 h-4 text-primary" strokeWidth={1.5} />
             </div>
-            <span className="text-[10px] font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-              BDT 8,000
-            </span>
           </div>
           <p className="text-sm font-medium text-foreground">Land Ownership Papers</p>
           <p className="text-xs text-muted-foreground mt-1">Mutation, tax receipts, and land records</p>
+          <p className="mt-3 text-xs font-medium text-primary inline-flex items-center gap-1">
+            Learn more <ArrowRight className="w-3 h-3" />
+          </p>
         </a>
       </div>
     </div>
@@ -585,14 +575,9 @@ function NeedHelp() {
           <p className="mt-0.5 text-xs text-muted-foreground">
             Document verification, field inspection, ownership validation
           </p>
-          <div className="mt-2 flex items-center gap-2">
-            <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-              BDT 10,000
-            </span>
-            <span className="text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-              View →
-            </span>
-          </div>
+          <p className="mt-2 text-xs font-medium text-primary inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            View details <ArrowRight className="w-3 h-3" />
+          </p>
         </a>
       </div>
     </div>
