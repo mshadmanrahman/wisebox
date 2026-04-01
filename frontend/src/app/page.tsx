@@ -12,7 +12,6 @@ import {
   PropertyMock,
   NotificationMock,
   TicketMock,
-  GrainyGradientBg,
 } from '@/components/marketing/landing-sections';
 
 export const metadata: Metadata = {
@@ -79,8 +78,8 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
               <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg dark:shadow-none border border-border relative">
-                <GrainyGradientBg name="gradient-10" className="opacity-45 dark:opacity-20" />
-                <div className="absolute inset-0 bg-card/60 dark:bg-card/75" />
+                <img src="/images/gradients/gradient-15.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-10" />
+                <div className="absolute inset-0 bg-card/70 dark:bg-card/80" />
                 <div className="relative z-10 p-12 sm:p-16">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
                     {[
@@ -143,8 +142,8 @@ export default function Home() {
 
         {/* ── FINAL CTA (with gradient-23 accent + woman photo) ── */}
         <section className="py-24 sm:py-32 relative overflow-hidden">
-          <GrainyGradientBg name="gradient-12" className="opacity-55 dark:opacity-25" />
-          <div className="absolute inset-0 bg-background/50 dark:bg-background/60" />
+          <img src="/images/gradients/gradient-23.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-15 dark:opacity-10" />
+          <div className="absolute inset-0 bg-background/70" />
           <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

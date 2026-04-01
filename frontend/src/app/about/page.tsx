@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { MarketingHeader } from '@/components/marketing/marketing-header';
 import { MarketingFooter } from '@/components/marketing/marketing-footer';
-import { RevealSection, GrainyGradientBg } from '@/components/marketing/landing-sections';
+import { RevealSection } from '@/components/marketing/landing-sections';
 
 export const metadata: Metadata = {
   title: 'About Wisebox | Built for Diaspora Families',
@@ -104,9 +104,8 @@ export default function AboutPage() {
       <main>
 
         {/* ── 1. HERO ── */}
-        <section className="relative overflow-hidden py-24 sm:py-32">
-          <GrainyGradientBg name="gradient-02" className="opacity-55 dark:opacity-25" />
-          <div className="relative z-10 mx-auto max-w-6xl px-6 text-center sm:px-8">
+        <section className="py-24 sm:py-32">
+          <div className="mx-auto max-w-6xl px-6 text-center sm:px-8">
             <RevealSection>
               <p className="text-xs font-medium uppercase tracking-widest text-primary">
                 About Wisebox
@@ -252,10 +251,8 @@ export default function AboutPage() {
         </section>
 
         {/* ── 8. CTA ── */}
-        <section className="relative overflow-hidden py-24 sm:py-32">
-          <GrainyGradientBg name="gradient-12" className="opacity-55 dark:opacity-25" />
-          <div className="absolute inset-0 bg-background/50 dark:bg-background/60" />
-          <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8">
+        <section className="py-24 sm:py-32">
+          <div className="mx-auto max-w-6xl px-6 sm:px-8">
             <RevealSection>
               <div className="text-center">
                 <h2 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
