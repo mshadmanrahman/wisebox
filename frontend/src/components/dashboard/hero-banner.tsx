@@ -1,8 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
-import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 
 export interface HeroSlide {
@@ -24,79 +22,30 @@ export interface DashboardHeroBannerProps {
   className?: string
 }
 
-function resolveHeroCtaHref(
-  rawUrl: string | null | undefined,
-  fallback = '/properties/new'
-): string {
-  const value = rawUrl?.trim()
-
-  if (!value) return fallback
-  if (value.startsWith('/')) return value
-
-  // Guard against malformed values like "localhost" or empty host links.
-  if (!/^https?:\/\//i.test(value)) return fallback
-
-  try {
-    const parsed = new URL(value)
-    const localHostnames = new Set(['localhost', '127.0.0.1'])
-
-    if (localHostnames.has(parsed.hostname)) {
-      const path = `${parsed.pathname || ''}${parsed.search}${parsed.hash}`
-      if (!path || path === '/' || /^\/localhost\/?$/i.test(path)) {
-        return fallback
-      }
-
-      return path.startsWith('/') ? path : `/${path}`
-    }
-
-    return value
-  } catch {
-    return fallback
-  }
-}
-
-export function DashboardHeroBanner({
-  slides,
-  className,
-}: DashboardHeroBannerProps) {
-  const { t } = useTranslation(['dashboard', 'common'])
-  // Use first slide data if available, otherwise show defaults
-  const currentSlide = slides[0] ?? null
-  const heroCtaHref = resolveHeroCtaHref(currentSlide?.cta_url, '/properties/new')
-
+export function DashboardHeroBanner({ className }: DashboardHeroBannerProps) {
   return (
-    <div className={cn("relative rounded-3xl overflow-hidden h-44 sm:h-52 md:h-56 bg-primary/5", className)}>
-      {/* Gradient background */}
-      <img src="/images/gradients/gradient-24.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" />
-      {/* Left-heavy overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent dark:from-black/50 dark:via-black/25 dark:to-transparent" />
+    <div className={cn("relative overflow-hidden rounded-2xl bg-foreground dark:bg-card p-8 sm:p-10", className)}>
+      {/* CSS ambient glow orbs */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+      <div className="absolute bottom-0 left-1/3 w-48 h-48 bg-primary/10 rounded-full blur-3xl translate-y-1/2 pointer-events-none" />
 
-      {/* Content - always white text, left-aligned */}
-      <div className="relative z-10 flex flex-col justify-center h-full p-6 sm:p-8 max-w-md">
-        <p className="text-sm font-medium text-white/70">
-          {t('dashboard:heroBanner.label')}
-        </p>
-        <h2 className="mt-1 text-2xl font-semibold text-white">
-          {currentSlide?.title ?? t('dashboard:heroBanner.defaultTitle')}
-        </h2>
-        {currentSlide?.subtitle && (
-          <p className="mt-2 text-sm text-white/60 leading-relaxed line-clamp-2">
-            {currentSlide.subtitle}
-          </p>
-        )}
-        <div className="flex flex-wrap items-center gap-3 mt-4">
-          <Link
-            href={heroCtaHref}
-            className="bg-white/90 text-gray-900 hover:bg-white rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 inline-flex items-center"
+      <div className="relative z-10">
+        <p className="text-xs font-medium text-white/60 dark:text-muted-foreground uppercase tracking-wider">Wisebox</p>
+        <h2 className="mt-2 text-xl sm:text-2xl font-semibold text-white dark:text-foreground">Get Land Related Service Online</h2>
+        <p className="mt-1 text-sm text-white/70 dark:text-muted-foreground">Learn more about our services</p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <a
+            href="/workspace/services"
+            className="bg-white text-foreground rounded-full px-5 py-2.5 text-sm font-medium hover:bg-white/90 transition-all"
           >
-            {currentSlide?.cta_text || t('dashboard:addNewProperty')}
-          </Link>
-          <Link
+            Learn More
+          </a>
+          <a
             href="/assessment/start"
-            className="border border-white/30 text-white hover:bg-white/10 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 inline-flex items-center"
+            className="border border-white/30 text-white rounded-full px-5 py-2.5 text-sm font-medium hover:bg-white/10 transition-all dark:border-border dark:text-foreground dark:hover:bg-muted"
           >
-            {t('dashboard:getFreeAssessment')}
-          </Link>
+            Get Free Assessment
+          </a>
         </div>
       </div>
     </div>
