@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useI18nStore } from '@/stores/i18n';
-import { getPropertyTypeStyles, scoreBarColor } from '@/lib/property-type-styles';
+import { getPropertyCardStyles, scoreBarColor } from '@/lib/property-type-styles';
 import type { Property } from '@/types';
 
 interface PropertyCardProps {
@@ -29,20 +29,32 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
   const { t } = useTranslation('properties');
   const language = useI18nStore((s) => s.language);
   const location = buildLocation(property, language);
-  const styles = getPropertyTypeStyles(property.property_type?.name);
+  const styles = getPropertyCardStyles(property.property_type?.name, index);
   const pct = property.completion_percentage ?? 0;
 
   return (
     <Link href={`/properties/${property.id}`} className="block group cursor-pointer">
       <div
         className={cn(
-          'relative rounded-xl border-border bg-gradient-to-br overflow-hidden p-6 min-h-[200px] flex flex-col justify-between transition-all duration-200 shadow-sm dark:shadow-none hover:shadow-md hover:-translate-y-0.5',
+          'relative rounded-xl border-border overflow-hidden p-6 min-h-[200px] flex flex-col justify-between transition-all duration-200 shadow-sm dark:shadow-none hover:shadow-md hover:-translate-y-0.5',
+          styles.gradientDirection,
           styles.gradient,
           styles.border,
         )}
       >
         {/* Grain texture — top-left quadrant only */}
         <div className="property-grain absolute top-0 left-0 w-3/5 h-3/5 opacity-[0.025] pointer-events-none" />
+
+        {/* Accent dot — unique position per card index */}
+        <div
+          className="absolute w-32 h-32 rounded-full opacity-[0.04] pointer-events-none text-current"
+          style={{
+            background: 'currentColor',
+            top: `${(index * 37) % 60 - 20}%`,
+            right: `${(index * 23) % 40 - 10}%`,
+            filter: 'blur(40px)',
+          }}
+        />
 
         {/* Type badge */}
         {property.property_type && (

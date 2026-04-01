@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
-import { getPropertyTypeStyles } from '@/lib/property-type-styles';
+import { getPropertyTypeStyles, getPropertyCardStyles } from '@/lib/property-type-styles';
 import type { ApiResponse, DashboardSummary, Notification, Property } from '@/types';
 
 /* ─── Helpers ───────────────────────────────────────────────────────── */
@@ -293,20 +293,29 @@ function PropertyHealthOverview({
 
       {/* Per-property rows */}
       <div className="space-y-1">
-        {visible.map((p) => {
+        {visible.map((p, i) => {
           const { badge, bar } = scoreClasses(p.completion_percentage);
           const location = getPropertyLocation(p);
           const typeName = p.property_type?.name ?? '';
           const subtitle = [location, typeName].filter(Boolean).join(' · ');
-          const typeStyles = getPropertyTypeStyles(p.property_type?.name);
+          const cardStyles = getPropertyCardStyles(p.property_type?.name, i);
 
           return (
             <Link
               key={p.id}
               href={`/properties/${p.id}`}
-              className={`relative overflow-hidden flex items-center gap-4 p-3 rounded-xl bg-gradient-to-br transition-all duration-200 group hover:shadow-sm ${typeStyles.gradient} ${typeStyles.border}`}
+              className={`relative overflow-hidden flex items-center gap-4 p-3 rounded-xl transition-all duration-200 group hover:shadow-sm ${cardStyles.gradientDirection} ${cardStyles.gradient} ${cardStyles.border}`}
             >
               <div className="property-grain absolute top-0 left-0 w-1/2 h-full opacity-[0.02] pointer-events-none" />
+              <div
+                className="absolute w-24 h-24 rounded-full opacity-[0.04] pointer-events-none text-current"
+                style={{
+                  background: 'currentColor',
+                  top: `${(i * 37) % 60 - 20}%`,
+                  right: `${(i * 23) % 40 - 10}%`,
+                  filter: 'blur(32px)',
+                }}
+              />
               <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-semibold ${badge}`}>
                 {p.completion_percentage}
               </div>
