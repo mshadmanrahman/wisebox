@@ -11,7 +11,6 @@ import {
   Lock,
   MapPin,
   ShieldCheck,
-  User,
 } from 'lucide-react';
 import { MarketingHeader } from '@/components/marketing/marketing-header';
 import { MarketingFooter } from '@/components/marketing/marketing-footer';
@@ -106,15 +105,6 @@ const SECURITY_POLICIES = [
   'Permissioned document access only',
   'Regular security reviews',
   'Data retention and deletion controls',
-];
-
-const TEAM_PLACEHOLDERS = [
-  { name: 'Team Member', role: 'Co-Founder & CEO', location: 'Washington, D.C.' },
-  { name: 'Team Member', role: 'Co-Founder & CTO', location: 'Uppsala, Sweden' },
-  { name: 'Team Member', role: 'Head of Operations', location: 'Dhaka, Bangladesh' },
-  { name: 'Team Member', role: 'Product Designer', location: 'Washington, D.C.' },
-  { name: 'Team Member', role: 'Lead Engineer', location: 'Uppsala, Sweden' },
-  { name: 'Team Member', role: 'Legal Advisor', location: 'Dhaka, Bangladesh' },
 ];
 
 /* ─── Page ──────────────────────────────────────────────────────────── */
@@ -250,35 +240,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── 6. TEAM ── */}
-        <section className="bg-muted/30 py-24 sm:py-32">
-          <div className="mx-auto max-w-6xl px-6 sm:px-8">
-            <RevealSection>
-              <div className="text-center">
-                <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                  The team behind Wisebox
-                </h2>
-                <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-                  A global team of product builders, property experts, and engineers.
-                </p>
-              </div>
-              <div className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
-                {TEAM_PLACEHOLDERS.map(({ name, role, location }, i) => (
-                  <div key={i} className="text-center">
-                    <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-muted">
-                      <User className="h-8 w-8 text-muted-foreground/40" />
-                    </div>
-                    <p className="mt-4 text-sm font-semibold text-foreground">{name}</p>
-                    <p className="text-xs text-muted-foreground">{role}</p>
-                    <p className="text-xs text-muted-foreground/60">{location}</p>
-                  </div>
-                ))}
-              </div>
-            </RevealSection>
-          </div>
-        </section>
-
-        {/* ── 7. SECURITY & COMPLIANCE ── */}
+{/* ── 7. SECURITY & COMPLIANCE ── */}
         <section className="py-24 sm:py-32">
           <div className="mx-auto max-w-6xl px-6 sm:px-8">
             <RevealSection>
