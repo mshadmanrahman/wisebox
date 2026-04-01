@@ -47,8 +47,9 @@ export function LandingHero() {
   useEffect(() => setLoaded(true), []);
 
   return (
-    <section className="pt-16 pb-16 sm:pt-24 sm:pb-24">
-      <div className="max-w-6xl mx-auto px-6 sm:px-8">
+    <section className="bg-grain-cool relative overflow-hidden pt-16 pb-16 sm:pt-24 sm:pb-24">
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background z-[1]" />
+      <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
         {/* Centered text */}
         <div className="text-center max-w-4xl mx-auto">
           <h1

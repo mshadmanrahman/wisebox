@@ -104,8 +104,9 @@ export default function AboutPage() {
       <main>
 
         {/* ── 1. HERO ── */}
-        <section className="py-24 sm:py-32">
-          <div className="mx-auto max-w-6xl px-6 text-center sm:px-8">
+        <section className="bg-grain-warm relative overflow-hidden py-24 sm:py-32">
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background z-[1]" />
+          <div className="relative z-10 mx-auto max-w-6xl px-6 text-center sm:px-8">
             <RevealSection>
               <p className="text-xs font-medium uppercase tracking-widest text-primary">
                 About Wisebox
@@ -196,8 +197,8 @@ export default function AboutPage() {
         </section>
 
         {/* ── 5. VALUES ── */}
-        <section className="py-24 sm:py-32">
-          <div className="mx-auto max-w-6xl px-6 sm:px-8">
+        <section className="bg-grain-cool relative overflow-hidden py-24 sm:py-32">
+          <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8">
             <RevealSection>
               <h2 className="mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                 What we stand for
@@ -251,8 +252,10 @@ export default function AboutPage() {
         </section>
 
         {/* ── 8. CTA ── */}
-        <section className="py-24 sm:py-32">
-          <div className="mx-auto max-w-6xl px-6 sm:px-8">
+        <section className="bg-grain-warm relative overflow-hidden py-24 sm:py-32">
+          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background to-transparent z-[1]" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-background z-[1]" />
+          <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8">
             <RevealSection>
               <div className="text-center">
                 <h2 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
