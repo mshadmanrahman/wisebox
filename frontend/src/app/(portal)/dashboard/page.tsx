@@ -527,7 +527,7 @@ export default function DashboardPage() {
   /* Loading skeleton */
   if (isLoading && !hasSummary) {
     return (
-      <div className="bg-muted/40 dark:bg-background px-6 py-8 space-y-6">
+      <div className="px-6 py-8 space-y-6">
         <div className="animate-pulse space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
@@ -551,7 +551,7 @@ export default function DashboardPage() {
   /* Full error (no cached data) */
   if (isError && !hasSummary) {
     return (
-      <div className="bg-muted/40 dark:bg-background px-6 py-8">
+      <div className="px-6 py-8">
         <div className="bg-card border border-destructive/20 rounded-2xl p-6 space-y-3">
           <p className="text-sm font-medium text-destructive">Could not load dashboard</p>
           <p className="text-sm text-muted-foreground">{errorMessage}</p>
@@ -572,7 +572,7 @@ export default function DashboardPage() {
     : null;
 
   return (
-    <div className="bg-muted/40 dark:bg-background px-6 py-8 space-y-6">
+    <div className="px-6 py-8 space-y-6">
 
       {/* 1. Welcome header */}
       <div className="flex items-start justify-between gap-4">
