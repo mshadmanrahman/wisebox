@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useI18nStore } from '@/stores/i18n';
+import { getPropertyTypeStyles, scoreBarColor } from '@/lib/property-type-styles';
 import type { Property } from '@/types';
 
 interface PropertyCardProps {
@@ -29,22 +29,31 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
   const { t } = useTranslation('properties');
   const language = useI18nStore((s) => s.language);
   const location = buildLocation(property, language);
+  const styles = getPropertyTypeStyles(property.property_type?.name);
+  const pct = property.completion_percentage ?? 0;
 
   return (
-    <Link href={`/properties/${property.id}`} className="block group">
+    <Link href={`/properties/${property.id}`} className="block group cursor-pointer">
       <div
         className={cn(
-          'relative rounded-xl border border-border bg-card overflow-hidden p-6 min-h-[200px] flex flex-col justify-between transition-all duration-200 shadow-sm dark:shadow-none hover:shadow-md hover:border-border',
+          'relative rounded-xl border-border bg-gradient-to-br overflow-hidden p-6 min-h-[200px] flex flex-col justify-between transition-all duration-200 shadow-sm dark:shadow-none hover:shadow-md hover:-translate-y-0.5',
+          styles.gradient,
+          styles.border,
         )}
       >
+        {/* Grain texture — top-left quadrant only */}
+        <div className="property-grain absolute top-0 left-0 w-3/5 h-3/5 opacity-[0.025] pointer-events-none" />
+
         {/* Type badge */}
         {property.property_type && (
-          <Badge className="absolute top-4 right-4 bg-primary/10 backdrop-blur-sm text-primary border-primary/20 text-xs uppercase tracking-wider">
-            {property.property_type.name}
-          </Badge>
+          <div className="absolute top-4 right-4">
+            <span className={cn('text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full', styles.badge)}>
+              {property.property_type.name}
+            </span>
+          </div>
         )}
 
-        <div className="space-y-3 mt-auto">
+        <div className="space-y-3 mt-auto relative">
           {/* Property name */}
           <h3 className="text-base font-medium text-foreground leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
             {property.property_name}
@@ -82,6 +91,22 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
                   ? t('card.coOwner', { count: 1 })
                   : t('card.coOwners', { count: property.co_owners.length })}
               </span>
+            </div>
+          )}
+
+          {/* Readiness bar */}
+          {pct > 0 && (
+            <div className="pt-1">
+              <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
+                <span>Readiness</span>
+                <span className="font-medium">{pct}%</span>
+              </div>
+              <div className="h-1 rounded-full bg-black/10 dark:bg-white/10">
+                <div
+                  className={cn('h-full rounded-full transition-all', scoreBarColor(pct))}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
             </div>
           )}
         </div>
