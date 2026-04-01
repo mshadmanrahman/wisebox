@@ -122,7 +122,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── 2. TRUST BADGES ── */}
-        <section className="py-12">
+        <section className="pt-4 pb-12">
           <div className="mx-auto max-w-6xl px-6 sm:px-8">
             <RevealSection>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
