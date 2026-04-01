@@ -10,10 +10,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import type { Property } from '@/types';
+import { AssessmentSection } from '@/components/property/assessment-section';
+import type { Property, PropertyAssessment } from '@/types';
 
 interface PropertySidebarProps {
   property: Property;
+  assessmentHistory?: PropertyAssessment[];
 }
 
 const FAQ_ITEMS = [
@@ -35,9 +37,12 @@ const FAQ_ITEMS = [
   },
 ];
 
-export function PropertySidebar({ property }: PropertySidebarProps) {
+export function PropertySidebar({ property, assessmentHistory = [] }: PropertySidebarProps) {
   return (
     <div className="space-y-6">
+      {/* Readiness Assessment */}
+      <AssessmentSection property={property} assessmentHistory={assessmentHistory} />
+
       {/* Map Placeholder */}
       <Card className="bg-card border border-border overflow-hidden">
         <div className="h-48 bg-muted relative flex items-center justify-center">

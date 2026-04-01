@@ -139,8 +139,6 @@ export default function PropertyDetailPage() {
             completionStatus={property.completion_status}
           />
 
-          <AssessmentSection property={property} assessmentHistory={assessmentsResponse?.data ?? []} />
-
           {/* Consultation Resources */}
           <Card className="bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-none">
             <CardHeader>
@@ -238,7 +236,7 @@ export default function PropertyDetailPage() {
         {/* Right Sidebar */}
         <div className="hidden lg:block w-80 shrink-0">
           <div className="sticky top-8">
-            <PropertySidebar property={property} />
+            <PropertySidebar property={property} assessmentHistory={assessmentsResponse?.data ?? []} />
           </div>
         </div>
       </div>
