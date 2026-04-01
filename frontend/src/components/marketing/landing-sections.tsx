@@ -20,6 +20,17 @@ function useInView(options: { threshold?: number; rootMargin?: string; once?: bo
   return { ref, isInView };
 }
 
+/* ── GrainyGradientBg ── */
+export function GrainyGradientBg({ name, className }: { name: string; className?: string }) {
+  const base = 'absolute inset-0 w-full h-full object-cover pointer-events-none select-none';
+  return (
+    <>
+      <img src={`/images/gradients/${name}-light.png`} alt="" aria-hidden className={cn(base, 'dark:hidden', className)} />
+      <img src={`/images/gradients/${name}-dark.png`}  alt="" aria-hidden className={cn(base, 'hidden dark:block', className)} />
+    </>
+  );
+}
+
 /* ── RevealSection ── */
 export function RevealSection({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
   const { ref, isInView } = useInView();
@@ -47,8 +58,9 @@ export function LandingHero() {
   useEffect(() => setLoaded(true), []);
 
   return (
-    <section className="pt-16 pb-16 sm:pt-24 sm:pb-24">
-      <div className="max-w-6xl mx-auto px-6 sm:px-8">
+    <section className="relative overflow-hidden pt-16 pb-16 sm:pt-24 sm:pb-24">
+      <GrainyGradientBg name="gradient-09" className="opacity-55 dark:opacity-25" />
+      <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
         {/* Centered text */}
         <div className="text-center max-w-4xl mx-auto">
           <h1
