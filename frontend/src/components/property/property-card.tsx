@@ -36,24 +36,26 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
 
   return (
     <Link href={`/properties/${property.id}`} className="block group cursor-pointer">
-      <div className="relative bg-card border border-border rounded-2xl shadow-md overflow-hidden p-6 min-h-[200px] flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+      <div className="relative bg-card border border-white/50 dark:border-white/10 rounded-2xl shadow-lg overflow-hidden p-6 min-h-[200px] flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-[3px]">
         {/* Unique per-card gradient */}
         <div
-          className="absolute inset-0 rounded-2xl pointer-events-none dark:opacity-40"
+          className="absolute inset-0 rounded-2xl pointer-events-none dark:opacity-60"
           style={{ background: getPropertyGradient(index) }}
         />
         {/* Grain texture */}
         <div
-          className="absolute inset-0 rounded-2xl pointer-events-none opacity-50"
+          className="absolute inset-0 rounded-2xl pointer-events-none opacity-40"
           style={{ backgroundImage: GRAIN_SVG, backgroundRepeat: 'repeat', backgroundSize: '256px' }}
         />
+        {/* Glass readability overlay */}
+        <div className="absolute inset-0 rounded-2xl bg-white/40 dark:bg-black/30 pointer-events-none" />
 
         {/* Card content */}
         <div className="relative z-10 flex flex-col justify-between h-full space-y-3">
           {/* Type badge */}
           {property.property_type && (
             <div className="flex justify-end">
-              <span className={cn('text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full', badge)}>
+              <span className="text-[10px] font-medium uppercase tracking-wider px-3 py-1 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur-sm text-foreground border border-white/30">
                 {property.property_type.name}
               </span>
             </div>
