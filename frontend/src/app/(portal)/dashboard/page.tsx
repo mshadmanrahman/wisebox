@@ -9,10 +9,13 @@ import {
   BookOpen,
   Check,
   ChevronRight,
+  FileCheck,
   Home,
-  MessageSquare,
+  Lightbulb,
+  MessageCircle,
   Plus,
   Scale,
+  Search,
   Ticket,
 } from 'lucide-react';
 import api from '@/lib/api';
@@ -60,6 +63,32 @@ function timeAgo(dateStr: string): string {
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h ago`;
   return `${Math.floor(hours / 24)}d ago`;
+}
+
+function getServiceRecommendation(property: Property | null): {
+  name: string;
+  longDesc: string;
+  price: string | null;
+} {
+  if (!property) {
+    return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.', price: null };
+  }
+  const typeName = (property.property_type?.name ?? '').toLowerCase();
+  if (typeName.includes('apartment') || typeName.includes('flat')) {
+    return {
+      name: 'Apartment Purchase Verification',
+      longDesc: 'Our consultants verify ownership documents and ensure your apartment purchase is legally sound.',
+      price: 'BDT 8,000',
+    };
+  }
+  if (typeName.includes('land')) {
+    return {
+      name: 'Land Purchase Verification',
+      longDesc: 'Our consultants can help track down missing documents including Mutation Khatian, tax receipts, and land records.',
+      price: 'BDT 10,000',
+    };
+  }
+  return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.', price: null };
 }
 
 function notificationDotColor(type: string): string {
@@ -140,6 +169,8 @@ function PropertyHealthOverview({
     const hasScore = p.completion_percentage > 0;
     const location = getPropertyLocation(p);
     const { bar, badge } = scoreClasses(p.completion_percentage);
+    const service = getServiceRecommendation(p);
+    const showRec = p.completion_percentage < 70;
 
     return (
       <div className="bg-card border border-border rounded-2xl shadow-md p-6">
@@ -184,7 +215,7 @@ function PropertyHealthOverview({
                 href="/assessment/start"
                 className="inline-flex bg-primary text-primary-foreground rounded-full px-4 py-1.5 text-xs font-medium hover:opacity-90 transition-all"
               >
-                Run Assessment
+                Reassess
               </Link>
             )}
           </div>
@@ -197,6 +228,29 @@ function PropertyHealthOverview({
             <span className="text-xs text-muted-foreground shrink-0">· {location}</span>
           )}
         </div>
+
+        {showRec && (
+          <div className="mt-5 pt-4 border-t border-border">
+            <div className="flex items-start gap-3 p-4 bg-primary/[0.04] rounded-xl">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                <Lightbulb className="w-4 h-4 text-primary" strokeWidth={1.5} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-primary uppercase tracking-wider">Recommended</p>
+                <p className="mt-1 text-sm font-semibold text-foreground">{service.name}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{service.longDesc}</p>
+                <div className="mt-3 flex items-center gap-3">
+                  <a href="/workspace/services" className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1">
+                    View service <ArrowRight className="w-3 h-3" />
+                  </a>
+                  {service.price && (
+                    <span className="text-xs text-muted-foreground">· From {service.price}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -297,6 +351,114 @@ function PropertyHealthOverview({
           <span>All properties in good standing</span>
         </div>
       )}
+
+      {!allHealthy && sorted[0] && sorted[0].completion_percentage < 70 && (() => {
+        const worst = sorted[0];
+        const service = getServiceRecommendation(worst);
+        return (
+          <div className="mt-5 pt-4 border-t border-border">
+            <div className="flex items-start gap-3 p-4 bg-primary/[0.04] rounded-xl">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                <Lightbulb className="w-4 h-4 text-primary" strokeWidth={1.5} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-primary uppercase tracking-wider">Recommended</p>
+                <p className="mt-1 text-sm font-semibold text-foreground">{service.name}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{service.longDesc}</p>
+                <div className="mt-3 flex items-center gap-3">
+                  <a href="/workspace/services" className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1">
+                    View service <ArrowRight className="w-3 h-3" />
+                  </a>
+                  {service.price && (
+                    <span className="text-xs text-muted-foreground">· From {service.price}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+    </div>
+  );
+}
+
+/* ─── RecommendedForYou ─────────────────────────────────────────────── */
+
+function RecommendedForYou({ worstProperty }: { worstProperty: Property | null }) {
+  const contextService = getServiceRecommendation(worstProperty);
+  const typeName = (worstProperty?.property_type?.name ?? '').toLowerCase();
+  const isApartment = typeName.includes('apartment') || typeName.includes('flat');
+
+  const card2 = {
+    name: contextService.price !== null ? contextService.name : 'Land Purchase Verification',
+    desc: contextService.price !== null
+      ? (isApartment ? 'Document verification and ownership validation' : 'Full due diligence and ownership validation')
+      : 'Full due diligence and ownership validation',
+    price: contextService.price ?? 'BDT 10,000',
+    Icon: Search,
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-foreground">Recommended for you</h3>
+        <a href="/workspace/services" className="text-xs text-primary font-medium hover:underline">
+          All services →
+        </a>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Card 1 — always free consultation */}
+        <a
+          href="/workspace/services"
+          className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200"
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <MessageCircle className="w-4 h-4 text-primary" strokeWidth={1.5} />
+            </div>
+            <span className="text-[10px] font-medium bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400 px-2 py-0.5 rounded-full">
+              Free
+            </span>
+          </div>
+          <p className="text-sm font-medium text-foreground">Free Consultation</p>
+          <p className="text-xs text-muted-foreground mt-1">30 min session with a property expert</p>
+        </a>
+
+        {/* Card 2 — based on property type */}
+        <a
+          href="/workspace/services"
+          className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200"
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <card2.Icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
+            </div>
+            <span className="text-[10px] font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+              {card2.price}
+            </span>
+          </div>
+          <p className="text-sm font-medium text-foreground">{card2.name}</p>
+          <p className="text-xs text-muted-foreground mt-1">{card2.desc}</p>
+        </a>
+
+        {/* Card 3 — Land Ownership Papers */}
+        <a
+          href="/workspace/services"
+          className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200"
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <FileCheck className="w-4 h-4 text-primary" strokeWidth={1.5} />
+            </div>
+            <span className="text-[10px] font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+              BDT 8,000
+            </span>
+          </div>
+          <p className="text-sm font-medium text-foreground">Land Ownership Papers</p>
+          <p className="text-xs text-muted-foreground mt-1">Mutation, tax receipts, and land records</p>
+        </a>
+      </div>
     </div>
   );
 }
@@ -314,7 +476,7 @@ function QuickActions({
     {
       href: '/assessment/start',
       Icon: BarChart3,
-      label: 'Run Assessment',
+      label: 'Reassess',
       sub: propertiesNeedingReview > 0 ? `${propertiesNeedingReview} need review` : '3 min check',
     },
     {
@@ -397,18 +559,42 @@ function RecentActivity({ notifications }: { notifications: Notification[] }) {
 
 function NeedHelp() {
   return (
-    <div className="bg-card border border-primary/20 rounded-2xl p-5">
-      <p className="text-xs font-medium text-primary uppercase tracking-wider">Need help?</p>
-      <p className="mt-2 text-sm font-semibold text-foreground">Talk to a property expert</p>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Free 30-minute consultation. No commitment.
-      </p>
-      <Link
-        href="/workspace/services"
-        className="mt-4 inline-flex items-center gap-1.5 text-primary text-sm font-medium hover:gap-2.5 transition-all duration-200"
-      >
-        Book consultation <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
-      </Link>
+    <div className="bg-card border border-primary/20 rounded-2xl p-5 space-y-4">
+      {/* Free consultation CTA */}
+      <div>
+        <p className="text-xs font-medium text-primary uppercase tracking-wider">Need help?</p>
+        <p className="mt-2 text-sm font-semibold text-foreground">Talk to a property expert</p>
+        <p className="mt-1 text-xs text-muted-foreground">Free 30-minute consultation. No commitment.</p>
+        <Link
+          href="/workspace/services"
+          className="mt-3 inline-flex items-center gap-1.5 text-primary text-sm font-medium hover:gap-2.5 transition-all duration-200"
+        >
+          Book consultation <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+        </Link>
+      </div>
+
+      <div className="border-t border-border" />
+
+      {/* Popular service */}
+      <div>
+        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Popular service</p>
+        <a href="/workspace/services" className="mt-2 block group">
+          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+            Land Purchase Verification
+          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Document verification, field inspection, ownership validation
+          </p>
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+              BDT 10,000
+            </span>
+            <span className="text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+              View →
+            </span>
+          </div>
+        </a>
+      </div>
     </div>
   );
 }
@@ -530,8 +716,17 @@ export default function DashboardPage() {
       {/* 2. Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
 
-        {/* Left: property health */}
-        <PropertyHealthOverview properties={properties} totalProperties={totalProperties} />
+        {/* Left: property health + recommendations */}
+        <div className="space-y-6">
+          <PropertyHealthOverview properties={properties} totalProperties={totalProperties} />
+          {totalProperties > 0 && (
+            <RecommendedForYou
+              worstProperty={
+                [...properties].sort((a, b) => a.completion_percentage - b.completion_percentage)[0] ?? null
+              }
+            />
+          )}
+        </div>
 
         {/* Right: sidebar stack */}
         <div className="space-y-4">
@@ -539,6 +734,7 @@ export default function DashboardPage() {
           <RecentActivity notifications={notifications} />
           <NeedHelp />
         </div>
+
       </div>
     </div>
   );
