@@ -188,37 +188,45 @@ function PropertyHealthOverview({
             <ScoreRing score={p.completion_percentage} status={p.completion_status} />
           ) : (
             <div className="w-24 h-24 shrink-0 flex items-center justify-center bg-muted rounded-full">
-              <span className="text-xs text-muted-foreground text-center leading-tight">
-                Not yet
+              <span className="text-xs text-muted-foreground text-center leading-tight px-2">
+                No docs
                 <br />
-                assessed
+                yet
               </span>
             </div>
           )}
 
           <div className="flex-1 space-y-3">
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-muted-foreground">Readiness score</span>
-                <span className="font-medium">{p.completion_percentage}%</span>
+            {hasScore ? (
+              <>
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Readiness score</span>
+                    <span className="font-medium">{p.completion_percentage}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-muted">
+                    <div className={`h-full rounded-full ${bar}`} style={{ width: `${p.completion_percentage}%` }} />
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-muted-foreground">Status</span>
+                  <span className={`font-medium px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide ${badge}`}>
+                    {statusLabel(p.completion_status)}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Upload your property documents to get an automatic readiness score.
+                </p>
+                <Link
+                  href={`/properties/${p.id}`}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                >
+                  Upload documents <ArrowRight className="w-3 h-3" />
+                </Link>
               </div>
-              <div className="h-1.5 rounded-full bg-muted">
-                <div className={`h-full rounded-full ${bar}`} style={{ width: `${p.completion_percentage}%` }} />
-              </div>
-            </div>
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-muted-foreground">Status</span>
-              <span className={`font-medium px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide ${badge}`}>
-                {statusLabel(p.completion_status)}
-              </span>
-            </div>
-            {!hasScore && (
-              <Link
-                href="/assessment/start"
-                className="inline-flex bg-primary text-primary-foreground rounded-full px-4 py-1.5 text-xs font-medium hover:opacity-90 transition-all"
-              >
-                Reassess
-              </Link>
             )}
           </div>
         </div>
@@ -474,16 +482,21 @@ function RecommendedForYou({ worstProperty }: { worstProperty: Property | null }
 function QuickActions({
   openTickets,
   propertiesNeedingReview,
+  worstPropertyId,
 }: {
   openTickets: number;
   propertiesNeedingReview: number;
+  worstPropertyId: number | null;
 }) {
+  const docsHref = worstPropertyId ? `/properties/${worstPropertyId}` : '/properties';
+  const docsLabel = propertiesNeedingReview > 0 ? `${propertiesNeedingReview} need docs` : 'Upload & track';
+
   const actions = [
     {
-      href: '/assessment/start',
+      href: docsHref,
       Icon: BarChart3,
-      label: 'Reassess',
-      sub: propertiesNeedingReview > 0 ? `${propertiesNeedingReview} need review` : '3 min check',
+      label: 'Documents',
+      sub: docsLabel,
     },
     {
       href: '/workspace/services',
@@ -503,7 +516,7 @@ function QuickActions({
       label: 'Learn',
       sub: 'Guides & FAQs',
     },
-  ] as const;
+  ];
 
   return (
     <div className="space-y-3">
@@ -731,7 +744,15 @@ export default function DashboardPage() {
 
         {/* Right: sidebar stack */}
         <div className="space-y-4">
-          <QuickActions openTickets={openTickets} propertiesNeedingReview={propertiesNeedingReview} />
+          <QuickActions
+            openTickets={openTickets}
+            propertiesNeedingReview={propertiesNeedingReview}
+            worstPropertyId={
+              properties.length > 0
+                ? ([...properties].sort((a, b) => a.completion_percentage - b.completion_percentage)[0]?.id ?? null)
+                : null
+            }
+          />
           <RecentActivity notifications={notifications} />
           <NeedHelp />
         </div>

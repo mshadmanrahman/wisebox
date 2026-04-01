@@ -289,9 +289,9 @@ export default function AddPropertyPage() {
 
   const handleFinish = () => {
     if (createdProperty) {
-      router.push('/assessment/start');
+      router.push(`/properties/${createdProperty.id}`);
       toast({
-        title: "Property added! Let's assess your document readiness.",
+        title: 'Property added! Upload documents to build your readiness score.',
       });
     }
   };
