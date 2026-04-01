@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
+import { getPropertyTypeStyles } from '@/lib/property-type-styles';
 import type { ApiResponse, DashboardSummary, Notification, Property } from '@/types';
 
 /* ─── Helpers ───────────────────────────────────────────────────────── */
@@ -168,17 +169,21 @@ function PropertyHealthOverview({
     const { bar, badge } = scoreClasses(p.completion_percentage);
     const service = getServiceRecommendation(p);
     const showRec = p.completion_percentage < 70;
+    const typeStyles = getPropertyTypeStyles(p.property_type?.name);
 
     return (
-      <div className="bg-card border border-border rounded-2xl shadow-md p-6">
-        <div className="flex items-center justify-between mb-5">
+      <div className={`relative overflow-hidden bg-gradient-to-br border-border rounded-2xl shadow-md p-6 ${typeStyles.gradient} ${typeStyles.border}`}>
+        {/* Grain texture */}
+        <div className="property-grain absolute top-0 left-0 w-3/5 h-3/5 opacity-[0.025] pointer-events-none" />
+
+        <div className="relative flex items-center justify-between mb-5">
           <h3 className="text-sm font-semibold text-foreground">Property Readiness</h3>
           <Link href={`/properties/${p.id}`} className="text-xs text-primary font-medium hover:underline">
             View details →
           </Link>
         </div>
 
-        <div className="flex items-center gap-8">
+        <div className="relative flex items-center gap-8">
           {hasScore ? (
             <ScoreRing score={p.completion_percentage} status={p.completion_status} />
           ) : (
@@ -293,18 +298,20 @@ function PropertyHealthOverview({
           const location = getPropertyLocation(p);
           const typeName = p.property_type?.name ?? '';
           const subtitle = [location, typeName].filter(Boolean).join(' · ');
+          const typeStyles = getPropertyTypeStyles(p.property_type?.name);
 
           return (
             <Link
               key={p.id}
               href={`/properties/${p.id}`}
-              className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors group"
+              className={`relative overflow-hidden flex items-center gap-4 p-3 rounded-xl bg-gradient-to-br transition-all duration-200 group hover:shadow-sm ${typeStyles.gradient} ${typeStyles.border}`}
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-semibold ${badge}`}>
+              <div className="property-grain absolute top-0 left-0 w-1/2 h-full opacity-[0.02] pointer-events-none" />
+              <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-semibold ${badge}`}>
                 {p.completion_percentage}
               </div>
 
-              <div className="flex-1 min-w-0">
+              <div className="relative flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-foreground truncate">{p.property_name}</p>
                   {p.completion_percentage < 50 && (
