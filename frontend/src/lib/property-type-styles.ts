@@ -43,9 +43,24 @@ const DEFAULT_STYLES: PropertyTypeStyles = {
   badge: 'bg-primary/10 text-primary',
 };
 
+const GRADIENT_DIRECTIONS = [
+  'bg-gradient-to-br',
+  'bg-gradient-to-r',
+  'bg-gradient-to-tr',
+  'bg-gradient-to-b',
+  'bg-gradient-to-bl',
+  'bg-gradient-to-tl',
+] as const;
+
 export function getPropertyTypeStyles(typeName: string | null | undefined): PropertyTypeStyles {
   if (!typeName) return DEFAULT_STYLES;
   return STYLES[typeName.toLowerCase()] ?? DEFAULT_STYLES;
+}
+
+export function getPropertyCardStyles(typeName: string | null | undefined, index: number) {
+  const typeStyles = getPropertyTypeStyles(typeName);
+  const gradientDirection = GRADIENT_DIRECTIONS[index % GRADIENT_DIRECTIONS.length];
+  return { ...typeStyles, gradientDirection };
 }
 
 export function scoreBarColor(pct: number): string {
