@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
-import { getPropertyTypeStyles, getPropertyCardStyles } from '@/lib/property-type-styles';
+import { getPropertyGradient, getPropertyTypeBadge } from '@/lib/property-type-styles';
 import type { ApiResponse, DashboardSummary, Notification, Property } from '@/types';
 
 /* ─── Helpers ───────────────────────────────────────────────────────── */
@@ -169,12 +169,19 @@ function PropertyHealthOverview({
     const { bar, badge } = scoreClasses(p.completion_percentage);
     const service = getServiceRecommendation(p);
     const showRec = p.completion_percentage < 70;
-    const typeStyles = getPropertyTypeStyles(p.property_type?.name);
 
     return (
-      <div className={`relative overflow-hidden bg-gradient-to-br border-border rounded-2xl shadow-md p-6 ${typeStyles.gradient} ${typeStyles.border}`}>
+      <div className="relative overflow-hidden bg-card border border-border rounded-2xl shadow-md p-6">
+        {/* Unique per-card gradient */}
+        <div
+          className="absolute inset-0 rounded-2xl pointer-events-none dark:opacity-40"
+          style={{ background: getPropertyGradient(0) }}
+        />
         {/* Grain texture */}
-        <div className="property-grain absolute top-0 left-0 w-3/5 h-3/5 opacity-[0.025] pointer-events-none" />
+        <div
+          className="absolute inset-0 rounded-2xl pointer-events-none opacity-50"
+          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", backgroundRepeat: 'repeat', backgroundSize: '256px' }}
+        />
 
         <div className="relative flex items-center justify-between mb-5">
           <h3 className="text-sm font-semibold text-foreground">Property Readiness</h3>
@@ -306,29 +313,27 @@ function PropertyHealthOverview({
           const location = getPropertyLocation(p);
           const typeName = p.property_type?.name ?? '';
           const subtitle = [location, typeName].filter(Boolean).join(' · ');
-          const cardStyles = getPropertyCardStyles(p.property_type?.name, i);
+          const typeBadge = getPropertyTypeBadge(p.property_type?.name);
 
           return (
             <Link
               key={p.id}
               href={`/properties/${p.id}`}
-              className={`relative overflow-hidden flex items-center gap-4 p-3 rounded-xl transition-all duration-200 group hover:shadow-sm ${cardStyles.gradientDirection} ${cardStyles.gradient} ${cardStyles.border}`}
+              className="relative overflow-hidden flex items-center gap-4 p-3 rounded-xl bg-card border border-border transition-all duration-200 group hover:shadow-sm"
             >
-              <div className="property-grain absolute top-0 left-0 w-1/2 h-full opacity-[0.02] pointer-events-none" />
               <div
-                className="absolute w-24 h-24 rounded-full opacity-[0.04] pointer-events-none text-current"
-                style={{
-                  background: 'currentColor',
-                  top: `${(i * 37) % 60 - 20}%`,
-                  right: `${(i * 23) % 40 - 10}%`,
-                  filter: 'blur(32px)',
-                }}
+                className="absolute inset-0 rounded-xl pointer-events-none dark:opacity-40"
+                style={{ background: getPropertyGradient(i) }}
               />
-              <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-semibold ${badge}`}>
+              <div
+                className="absolute inset-0 rounded-xl pointer-events-none opacity-30"
+                style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", backgroundRepeat: 'repeat', backgroundSize: '256px' }}
+              />
+              <div className={`relative z-10 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-semibold ${badge}`}>
                 {p.completion_percentage}
               </div>
 
-              <div className="relative flex-1 min-w-0">
+              <div className="relative z-10 flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-foreground truncate">{p.property_name}</p>
                   {p.completion_percentage < 50 && (
@@ -342,13 +347,13 @@ function PropertyHealthOverview({
                 )}
               </div>
 
-              <div className="w-20 shrink-0 hidden sm:block">
+              <div className="relative z-10 w-20 shrink-0 hidden sm:block">
                 <div className="h-1.5 rounded-full bg-muted">
                   <div className={`h-full rounded-full ${bar}`} style={{ width: `${p.completion_percentage}%` }} />
                 </div>
               </div>
 
-              <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground shrink-0" strokeWidth={1.5} />
+              <ChevronRight className="relative z-10 w-4 h-4 text-muted-foreground group-hover:text-foreground shrink-0" strokeWidth={1.5} />
             </Link>
           );
         })}
