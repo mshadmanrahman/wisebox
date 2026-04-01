@@ -8,7 +8,6 @@ import {
   BarChart3,
   BookOpen,
   Check,
-  ChevronRight,
   FileCheck,
   Home,
   Lightbulb,
@@ -23,6 +22,10 @@ import { useAuthStore } from '@/stores/auth';
 import { getPropertyGradient, getPropertyTypeBadge } from '@/lib/property-type-styles';
 import type { ApiResponse, DashboardSummary, Notification, Property } from '@/types';
 
+/* ─── Constants ─────────────────────────────────────────────────────── */
+
+const GRAIN_SVG = "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")";
+
 /* ─── Helpers ───────────────────────────────────────────────────────── */
 
 function getPropertyLocation(property: Property): string {
@@ -34,21 +37,16 @@ function getPropertyLocation(property: Property): string {
   return parts.join(', ');
 }
 
-function scoreClasses(score: number): { badge: string; bar: string } {
-  if (score >= 70)
-    return {
-      badge: 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400',
-      bar: 'bg-green-500',
-    };
-  if (score >= 40)
-    return {
-      badge: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
-      bar: 'bg-amber-500',
-    };
-  return {
-    badge: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
-    bar: 'bg-red-500',
-  };
+function scoreBar(score: number): string {
+  if (score >= 70) return 'bg-green-500';
+  if (score >= 40) return 'bg-amber-500';
+  return 'bg-red-500';
+}
+
+function scoreStroke(score: number): string {
+  if (score >= 70) return '#22c55e';
+  if (score >= 40) return '#eab308';
+  return '#ef4444';
 }
 
 function statusLabel(status: 'red' | 'yellow' | 'green'): string {
@@ -66,26 +64,13 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-function getServiceRecommendation(property: Property | null): {
-  name: string;
-  longDesc: string;
-} {
-  if (!property) {
-    return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.' };
-  }
-  const typeName = (property.property_type?.name ?? '').toLowerCase();
-  if (typeName.includes('apartment') || typeName.includes('flat')) {
-    return {
-      name: 'Apartment Purchase Verification',
-      longDesc: 'Our consultants verify ownership documents and ensure your apartment purchase is legally sound.',
-    };
-  }
-  if (typeName.includes('land')) {
-    return {
-      name: 'Land Purchase Verification',
-      longDesc: 'Our consultants can help track down missing documents including Mutation Khatian, tax receipts, and land records.',
-    };
-  }
+function getServiceRecommendation(property: Property | null): { name: string; longDesc: string } {
+  if (!property) return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.' };
+  const t = (property.property_type?.name ?? '').toLowerCase();
+  if (t.includes('apartment') || t.includes('flat'))
+    return { name: 'Apartment Purchase Verification', longDesc: 'Our consultants verify ownership documents and ensure your apartment purchase is legally sound.' };
+  if (t.includes('land'))
+    return { name: 'Land Purchase Verification', longDesc: 'Our consultants can help track down missing documents including Mutation Khatian, tax receipts, and land records.' };
   return { name: 'Free Property Consultation', longDesc: 'Talk to an expert about your property needs. Free, no commitment.' };
 }
 
@@ -96,35 +81,102 @@ function notificationDotColor(type: string): string {
   return 'bg-amber-500';
 }
 
-/* ─── ScoreRing ─────────────────────────────────────────────────────── */
+/* ─── PropertyDashboardCard ─────────────────────────────────────────── */
 
-function ScoreRing({ score, status }: { score: number; status: 'red' | 'yellow' | 'green' }) {
-  const r = 42;
-  const circ = 2 * Math.PI * r;
+function PropertyDashboardCard({ property, index }: { property: Property; index: number }) {
+  const score = property.completion_percentage;
+  const location = getPropertyLocation(property);
+  const circ = 2 * Math.PI * 42;
   const dash = (score / 100) * circ;
-  const strokeClass =
-    status === 'green'
-      ? 'text-green-500'
-      : status === 'yellow'
-      ? 'text-amber-500'
-      : 'text-red-500';
 
   return (
-    <div className="relative w-24 h-24 shrink-0">
-      <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r={r} fill="none" strokeWidth="8" className="stroke-muted" />
-        <circle
-          cx="50" cy="50" r={r} fill="none" strokeWidth="8"
-          className={`stroke-current ${strokeClass}`}
-          strokeDasharray={`${dash} ${circ}`}
-          strokeLinecap="round"
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-semibold text-foreground">{score}</span>
-        <span className="text-[10px] text-muted-foreground">/100</span>
+    <Link
+      href={`/properties/${property.id}`}
+      className="block rounded-2xl shadow-lg overflow-hidden relative hover:shadow-xl hover:-translate-y-[2px] transition-all duration-300 cursor-pointer border border-white/50 dark:border-white/10"
+    >
+      {/* Gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none dark:opacity-60"
+        style={{ background: getPropertyGradient(index) }}
+      />
+      {/* Grain */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-40"
+        style={{ backgroundImage: GRAIN_SVG, backgroundRepeat: 'repeat', backgroundSize: '256px' }}
+      />
+      {/* Glass overlay for text readability */}
+      <div className="absolute inset-0 bg-white/40 dark:bg-black/30 pointer-events-none" />
+
+      <div className="relative z-10 p-6">
+        {/* Top: name + type badge */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-lg font-semibold text-foreground truncate">{property.property_name}</h3>
+            {location && <p className="text-sm text-muted-foreground mt-0.5 truncate">{location}</p>}
+          </div>
+          {property.property_type && (
+            <span className="text-xs font-medium bg-white/60 dark:bg-white/10 backdrop-blur-sm text-foreground px-3 py-1 rounded-full border border-white/30 shrink-0">
+              {property.property_type.name}
+            </span>
+          )}
+        </div>
+
+        {/* Score ring + stats */}
+        <div className="mt-5 flex items-center gap-6">
+          {score > 0 ? (
+            <>
+              <div className="relative w-16 h-16 shrink-0">
+                <svg className="w-16 h-16 -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="10" />
+                  <circle
+                    cx="50" cy="50" r="42" fill="none"
+                    stroke={scoreStroke(score)} strokeWidth="10"
+                    strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-base font-bold text-foreground">{score}</span>
+                </div>
+              </div>
+              <div className="flex-1 grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Readiness</p>
+                  <p className="text-2xl font-bold text-foreground mt-0.5">{score}%</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Status</p>
+                  <p className="text-sm font-semibold text-foreground mt-1.5">{statusLabel(property.completion_status)}</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 space-y-2">
+              <p className="text-sm text-muted-foreground">Upload documents to get your readiness score.</p>
+              <span className="text-xs font-medium text-primary">Upload documents →</span>
+            </div>
+          )}
+        </div>
+
+        {/* Progress bar */}
+        {score > 0 && (
+          <div className="mt-4">
+            <div className="h-1.5 rounded-full bg-white/30 dark:bg-white/10">
+              <div className={`h-full rounded-full ${scoreBar(score)}`} style={{ width: `${score}%` }} />
+            </div>
+          </div>
+        )}
+
+        {/* Needs attention badge */}
+        {score > 0 && score < 50 && (
+          <div className="mt-3">
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-red-100/80 dark:bg-red-500/20 text-red-700 dark:text-red-400 px-2.5 py-1 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+              Needs attention
+            </span>
+          </div>
+        )}
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -148,8 +200,7 @@ function PropertyHealthOverview({
         </div>
         <h3 className="mt-4 text-lg font-semibold text-foreground">Add your first property</h3>
         <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
-          Start by adding a property profile. It takes about 5 minutes and gives you a baseline
-          readiness score.
+          Start by adding a property profile. It takes about 5 minutes and gives you a baseline readiness score.
         </p>
         <Link
           href="/properties/new"
@@ -164,104 +215,24 @@ function PropertyHealthOverview({
   /* 1 property */
   if (totalProperties === 1 && properties.length >= 1) {
     const p = properties[0];
-    const hasScore = p.completion_percentage > 0;
-    const location = getPropertyLocation(p);
-    const { bar, badge } = scoreClasses(p.completion_percentage);
     const service = getServiceRecommendation(p);
     const showRec = p.completion_percentage < 70;
 
     return (
-      <div className="relative overflow-hidden bg-card border border-border rounded-2xl shadow-md p-6">
-        {/* Unique per-card gradient */}
-        <div
-          className="absolute inset-0 rounded-2xl pointer-events-none dark:opacity-40"
-          style={{ background: getPropertyGradient(0) }}
-        />
-        {/* Grain texture */}
-        <div
-          className="absolute inset-0 rounded-2xl pointer-events-none opacity-50"
-          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", backgroundRepeat: 'repeat', backgroundSize: '256px' }}
-        />
-
-        <div className="relative flex items-center justify-between mb-5">
-          <h3 className="text-sm font-semibold text-foreground">Property Readiness</h3>
-          <Link href={`/properties/${p.id}`} className="text-xs text-primary font-medium hover:underline">
-            View details →
-          </Link>
-        </div>
-
-        <div className="relative flex items-center gap-8">
-          {hasScore ? (
-            <ScoreRing score={p.completion_percentage} status={p.completion_status} />
-          ) : (
-            <div className="w-24 h-24 shrink-0 flex items-center justify-center bg-muted rounded-full">
-              <span className="text-xs text-muted-foreground text-center leading-tight px-2">
-                No docs
-                <br />
-                yet
-              </span>
-            </div>
-          )}
-
-          <div className="flex-1 space-y-3">
-            {hasScore ? (
-              <>
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-muted-foreground">Readiness score</span>
-                    <span className="font-medium">{p.completion_percentage}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-muted">
-                    <div className={`h-full rounded-full ${bar}`} style={{ width: `${p.completion_percentage}%` }} />
-                  </div>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-muted-foreground">Status</span>
-                  <span className={`font-medium px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide ${badge}`}>
-                    {statusLabel(p.completion_status)}
-                  </span>
-                </div>
-              </>
-            ) : (
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Upload your property documents to get an automatic readiness score.
-                </p>
-                <Link
-                  href={`/properties/${p.id}`}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                >
-                  Upload documents <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-4 pt-4 border-t border-border flex items-center gap-2 min-w-0">
-          <Home className="w-4 h-4 text-primary shrink-0" strokeWidth={1.5} />
-          <span className="text-sm font-medium text-foreground truncate">{p.property_name}</span>
-          {location && (
-            <span className="text-xs text-muted-foreground shrink-0">· {location}</span>
-          )}
-        </div>
-
+      <div className="space-y-4">
+        <PropertyDashboardCard property={p} index={0} />
         {showRec && (
-          <div className="mt-5 pt-4 border-t border-border">
-            <div className="flex items-start gap-3 p-4 bg-primary/[0.04] rounded-xl">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                <Lightbulb className="w-4 h-4 text-primary" strokeWidth={1.5} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-primary uppercase tracking-wider">Recommended</p>
-                <p className="mt-1 text-sm font-semibold text-foreground">{service.name}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{service.longDesc}</p>
-                <div className="mt-3">
-                  <a href="/workspace/services" className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1">
-                    Learn more <ArrowRight className="w-3 h-3" />
-                  </a>
-                </div>
-              </div>
+          <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-2xl shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+              <Lightbulb className="w-4 h-4 text-primary" strokeWidth={1.5} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-primary uppercase tracking-wider">Recommended</p>
+              <p className="mt-1 text-sm font-semibold text-foreground">{service.name}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{service.longDesc}</p>
+              <a href="/workspace/services" className="mt-3 text-xs font-medium text-primary hover:underline inline-flex items-center gap-1">
+                Learn more <ArrowRight className="w-3 h-3" />
+              </a>
             </div>
           </div>
         )}
@@ -271,133 +242,83 @@ function PropertyHealthOverview({
 
   /* 2+ properties */
   const sorted = [...properties].sort((a, b) => a.completion_percentage - b.completion_percentage);
-  const avgScore =
-    sorted.length > 0
-      ? Math.round(sorted.reduce((s, p) => s + p.completion_percentage, 0) / sorted.length)
-      : 0;
+  const avgScore = sorted.length > 0
+    ? Math.round(sorted.reduce((s, p) => s + p.completion_percentage, 0) / sorted.length)
+    : 0;
   const needAttention = sorted.filter((p) => p.completion_percentage < 40).length;
   const allHealthy = sorted.every((p) => p.completion_percentage >= 80);
   const visible = showAll ? sorted : sorted.slice(0, 3);
+  const worst = sorted[0];
+  const worstService = getServiceRecommendation(worst ?? null);
 
   return (
-    <div className="bg-card border border-border rounded-2xl shadow-md p-6">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-semibold text-foreground">Property Health Overview</h3>
+    <div className="space-y-5">
+      {/* Section header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-semibold text-foreground">Your Properties</h2>
         <Link href="/properties" className="text-xs text-primary font-medium hover:underline">
           View all →
         </Link>
       </div>
 
-      {/* Aggregate stats */}
-      <div className="flex items-center gap-6 py-3 mb-4 border-b border-border flex-wrap">
+      {/* Aggregate stats — naked numbers */}
+      <div className="flex items-center gap-8">
         <div>
-          <p className="text-2xl font-semibold text-foreground">{totalProperties}</p>
-          <p className="text-xs text-muted-foreground">properties</p>
+          <p className="text-3xl font-bold text-foreground">{totalProperties}</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Properties</p>
         </div>
+        <div className="h-8 w-px bg-border" />
         <div>
-          <p className="text-2xl font-semibold text-foreground">{avgScore}%</p>
-          <p className="text-xs text-muted-foreground">avg readiness</p>
+          <p className="text-3xl font-bold text-foreground">{avgScore}%</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Avg Readiness</p>
         </div>
+        <div className="h-8 w-px bg-border" />
         <div>
-          <p className={`text-2xl font-semibold ${needAttention > 0 ? 'text-destructive' : 'text-foreground'}`}>
+          <p className={`text-3xl font-bold ${needAttention > 0 ? 'text-destructive' : 'text-foreground'}`}>
             {needAttention}
           </p>
-          <p className="text-xs text-muted-foreground">need attention</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Need Attention</p>
         </div>
       </div>
 
-      {/* Per-property rows */}
-      <div className="space-y-1">
-        {visible.map((p, i) => {
-          const { badge, bar } = scoreClasses(p.completion_percentage);
-          const location = getPropertyLocation(p);
-          const typeName = p.property_type?.name ?? '';
-          const subtitle = [location, typeName].filter(Boolean).join(' · ');
-          const typeBadge = getPropertyTypeBadge(p.property_type?.name);
-
-          return (
-            <Link
-              key={p.id}
-              href={`/properties/${p.id}`}
-              className="relative overflow-hidden flex items-center gap-4 p-3 rounded-xl bg-card border border-border transition-all duration-200 group hover:shadow-sm"
-            >
-              <div
-                className="absolute inset-0 rounded-xl pointer-events-none dark:opacity-40"
-                style={{ background: getPropertyGradient(i) }}
-              />
-              <div
-                className="absolute inset-0 rounded-xl pointer-events-none opacity-30"
-                style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", backgroundRepeat: 'repeat', backgroundSize: '256px' }}
-              />
-              <div className={`relative z-10 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-semibold ${badge}`}>
-                {p.completion_percentage}
-              </div>
-
-              <div className="relative z-10 flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-foreground truncate">{p.property_name}</p>
-                  {p.completion_percentage < 50 && (
-                    <span className="text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 px-2 py-0.5 rounded-full shrink-0">
-                      Needs attention
-                    </span>
-                  )}
-                </div>
-                {subtitle && (
-                  <p className="text-xs text-muted-foreground truncate">{subtitle}</p>
-                )}
-              </div>
-
-              <div className="relative z-10 w-20 shrink-0 hidden sm:block">
-                <div className="h-1.5 rounded-full bg-muted">
-                  <div className={`h-full rounded-full ${bar}`} style={{ width: `${p.completion_percentage}%` }} />
-                </div>
-              </div>
-
-              <ChevronRight className="relative z-10 w-4 h-4 text-muted-foreground group-hover:text-foreground shrink-0" strokeWidth={1.5} />
-            </Link>
-          );
-        })}
+      {/* Property cards */}
+      <div className="space-y-4">
+        {visible.map((p, i) => (
+          <PropertyDashboardCard key={p.id} property={p} index={i} />
+        ))}
       </div>
 
       {totalProperties > 3 && !showAll && (
         <button
           onClick={() => setShowAll(true)}
-          className="w-full mt-3 pt-3 border-t border-border text-xs text-primary font-medium text-center hover:underline"
+          className="w-full text-xs text-primary font-medium text-center hover:underline py-1"
         >
           Show all {totalProperties} properties
         </button>
       )}
 
       {allHealthy && (
-        <div className="mt-4 pt-3 border-t border-border flex items-center gap-2 text-xs text-green-600 dark:text-green-400">
+        <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400">
           <Check className="w-4 h-4" strokeWidth={2} />
           <span>All properties in good standing</span>
         </div>
       )}
 
-      {!allHealthy && sorted[0] && sorted[0].completion_percentage < 70 && (() => {
-        const worst = sorted[0];
-        const service = getServiceRecommendation(worst);
-        return (
-          <div className="mt-5 pt-4 border-t border-border">
-            <div className="flex items-start gap-3 p-4 bg-primary/[0.04] rounded-xl">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                <Lightbulb className="w-4 h-4 text-primary" strokeWidth={1.5} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-primary uppercase tracking-wider">Recommended</p>
-                <p className="mt-1 text-sm font-semibold text-foreground">{service.name}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{service.longDesc}</p>
-                <div className="mt-3">
-                  <a href="/workspace/services" className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1">
-                    Learn more <ArrowRight className="w-3 h-3" />
-                  </a>
-                </div>
-              </div>
-            </div>
+      {!allHealthy && worst && worst.completion_percentage < 70 && (
+        <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-2xl shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+            <Lightbulb className="w-4 h-4 text-primary" strokeWidth={1.5} />
           </div>
-        );
-      })()}
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-primary uppercase tracking-wider">Recommended</p>
+            <p className="mt-1 text-sm font-semibold text-foreground">{worstService.name}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{worstService.longDesc}</p>
+            <a href="/workspace/services" className="mt-3 text-xs font-medium text-primary hover:underline inline-flex items-center gap-1">
+              Learn more <ArrowRight className="w-3 h-3" />
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -419,62 +340,43 @@ function RecommendedForYou({ worstProperty }: { worstProperty: Property | null }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-foreground">Recommended for you</h3>
-        <a href="/workspace/services" className="text-xs text-primary font-medium hover:underline">
-          All services →
-        </a>
+        <a href="/workspace/services" className="text-xs text-primary font-medium hover:underline">All services →</a>
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {/* Card 1 — always free consultation */}
-        <a
-          href="/workspace/services"
-          className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <MessageCircle className="w-4 h-4 text-primary" strokeWidth={1.5} />
+        <a href="/workspace/services" className="bg-card border border-border rounded-xl p-3 hover:border-primary/30 transition-all duration-200">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <MessageCircle className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
             </div>
-            <span className="text-[10px] font-medium bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400 px-2 py-0.5 rounded-full">
-              Free
-            </span>
+            <span className="text-[10px] font-medium bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400 px-2 py-0.5 rounded-full">Free</span>
           </div>
-          <p className="text-sm font-medium text-foreground">Free Consultation</p>
-          <p className="text-xs text-muted-foreground mt-1">30 min session with a property expert</p>
+          <p className="text-xs font-medium text-foreground">Free Consultation</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">30 min with a property expert</p>
         </a>
-
-        {/* Card 2 — based on property type */}
-        <a
-          href="/workspace/services"
-          className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200"
-        >
-          <div className="mb-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <card2.Icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
+        <a href="/workspace/services" className="bg-card border border-border rounded-xl p-3 hover:border-primary/30 transition-all duration-200">
+          <div className="mb-2">
+            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+              <card2.Icon className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
             </div>
           </div>
-          <p className="text-sm font-medium text-foreground">{card2.name}</p>
-          <p className="text-xs text-muted-foreground mt-1">{card2.desc}</p>
-          <p className="mt-3 text-xs font-medium text-primary inline-flex items-center gap-1">
-            Learn more <ArrowRight className="w-3 h-3" />
+          <p className="text-xs font-medium text-foreground">{card2.name}</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{card2.desc}</p>
+          <p className="mt-2 text-[11px] font-medium text-primary inline-flex items-center gap-1">
+            Learn more <ArrowRight className="w-2.5 h-2.5" />
           </p>
         </a>
-
-        {/* Card 3 — Land Ownership Papers */}
-        <a
-          href="/workspace/services"
-          className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200"
-        >
-          <div className="mb-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <FileCheck className="w-4 h-4 text-primary" strokeWidth={1.5} />
+        <a href="/workspace/services" className="bg-card border border-border rounded-xl p-3 hover:border-primary/30 transition-all duration-200">
+          <div className="mb-2">
+            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+              <FileCheck className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
             </div>
           </div>
-          <p className="text-sm font-medium text-foreground">Land Ownership Papers</p>
-          <p className="text-xs text-muted-foreground mt-1">Mutation, tax receipts, and land records</p>
-          <p className="mt-3 text-xs font-medium text-primary inline-flex items-center gap-1">
-            Learn more <ArrowRight className="w-3 h-3" />
+          <p className="text-xs font-medium text-foreground">Land Ownership Papers</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Mutation, tax receipts, and land records</p>
+          <p className="mt-2 text-[11px] font-medium text-primary inline-flex items-center gap-1">
+            Learn more <ArrowRight className="w-2.5 h-2.5" />
           </p>
         </a>
       </div>
@@ -497,30 +399,10 @@ function QuickActions({
   const docsLabel = propertiesNeedingReview > 0 ? `${propertiesNeedingReview} need docs` : 'Upload & track';
 
   const actions = [
-    {
-      href: docsHref,
-      Icon: BarChart3,
-      label: 'Documents',
-      sub: docsLabel,
-    },
-    {
-      href: '/workspace/services',
-      Icon: Scale,
-      label: 'Services',
-      sub: 'Browse catalog',
-    },
-    {
-      href: '/tickets',
-      Icon: Ticket,
-      label: 'Tickets',
-      sub: openTickets > 0 ? `${openTickets} open` : 'Track requests',
-    },
-    {
-      href: '/learning',
-      Icon: BookOpen,
-      label: 'Learn',
-      sub: 'Guides & FAQs',
-    },
+    { href: docsHref,             Icon: BarChart3,   label: 'Documents', sub: docsLabel },
+    { href: '/workspace/services', Icon: Scale,       label: 'Services',  sub: 'Browse catalog' },
+    { href: '/tickets',            Icon: Ticket,      label: 'Tickets',   sub: openTickets > 0 ? `${openTickets} open` : 'Track requests' },
+    { href: '/learning',           Icon: BookOpen,    label: 'Learn',     sub: 'Guides & FAQs' },
   ];
 
   return (
@@ -533,8 +415,8 @@ function QuickActions({
             href={href}
             className="bg-card border border-border rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-px transition-all duration-200 shadow-sm"
           >
-            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
-              <Icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
+            <div className="w-12 h-12 rounded-2xl bg-primary/15 flex items-center justify-center mb-3">
+              <Icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
             </div>
             <p className="text-sm font-medium text-foreground">{label}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
@@ -549,14 +431,11 @@ function QuickActions({
 
 function RecentActivity({ notifications }: { notifications: Notification[] }) {
   return (
-    <div className="bg-card border border-border rounded-2xl shadow-md p-5">
+    <div className="bg-card border-l-2 border-primary/30 border border-border rounded-2xl shadow-sm p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-foreground">Recent Activity</h3>
-        <Link href="/notifications" className="text-xs text-primary font-medium hover:underline">
-          View all
-        </Link>
+        <Link href="/notifications" className="text-xs text-primary font-medium hover:underline">View all</Link>
       </div>
-
       {notifications.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-4">No recent activity</p>
       ) : (
@@ -566,9 +445,7 @@ function RecentActivity({ notifications }: { notifications: Notification[] }) {
               <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${notificationDotColor(item.type)}`} />
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground leading-snug">{item.title}</p>
-                {item.body && (
-                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{item.body}</p>
-                )}
+                {item.body && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{item.body}</p>}
                 <p className="text-xs text-muted-foreground mt-0.5">{timeAgo(item.created_at)}</p>
               </div>
             </div>
@@ -583,12 +460,11 @@ function RecentActivity({ notifications }: { notifications: Notification[] }) {
 
 function NeedHelp() {
   return (
-    <div className="bg-card border border-primary/20 rounded-2xl p-5 space-y-4">
-      {/* Free consultation CTA */}
+    <div className="rounded-2xl bg-foreground dark:bg-card p-5 space-y-4">
       <div>
         <p className="text-xs font-medium text-primary uppercase tracking-wider">Need help?</p>
-        <p className="mt-2 text-sm font-semibold text-foreground">Talk to a property expert</p>
-        <p className="mt-1 text-xs text-muted-foreground">Free 30-minute consultation. No commitment.</p>
+        <p className="mt-2 text-sm font-semibold text-background dark:text-foreground">Talk to a property expert</p>
+        <p className="mt-1 text-xs text-background/70 dark:text-muted-foreground">Free 30-minute consultation. No commitment.</p>
         <Link
           href="/workspace/services"
           className="mt-3 inline-flex items-center gap-1.5 text-primary text-sm font-medium hover:gap-2.5 transition-all duration-200"
@@ -596,17 +472,14 @@ function NeedHelp() {
           Book consultation <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
         </Link>
       </div>
-
-      <div className="border-t border-border" />
-
-      {/* Popular service */}
+      <div className="border-t border-white/10 dark:border-border" />
       <div>
-        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Popular service</p>
+        <p className="text-[10px] font-medium text-background/50 dark:text-muted-foreground uppercase tracking-wider">Popular service</p>
         <a href="/workspace/services" className="mt-2 block group">
-          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+          <p className="text-sm font-medium text-background dark:text-foreground group-hover:text-primary transition-colors">
             Land Purchase Verification
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+          <p className="mt-0.5 text-xs text-background/60 dark:text-muted-foreground">
             Document verification, field inspection, ownership validation
           </p>
           <p className="mt-2 text-xs font-medium text-primary inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -654,7 +527,7 @@ export default function DashboardPage() {
   /* Loading skeleton */
   if (isLoading && !hasSummary) {
     return (
-      <div className="px-6 py-8 space-y-6">
+      <div className="bg-muted/40 dark:bg-background px-6 py-8 space-y-6">
         <div className="animate-pulse space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
@@ -663,7 +536,7 @@ export default function DashboardPage() {
             </div>
             <div className="h-10 w-32 rounded-full bg-muted" />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
             <div className="h-64 rounded-2xl bg-muted" />
             <div className="space-y-4">
               <div className="h-44 rounded-2xl bg-muted" />
@@ -678,7 +551,7 @@ export default function DashboardPage() {
   /* Full error (no cached data) */
   if (isError && !hasSummary) {
     return (
-      <div className="px-6 py-8">
+      <div className="bg-muted/40 dark:bg-background px-6 py-8">
         <div className="bg-card border border-destructive/20 rounded-2xl p-6 space-y-3">
           <p className="text-sm font-medium text-destructive">Could not load dashboard</p>
           <p className="text-sm text-muted-foreground">{errorMessage}</p>
@@ -694,8 +567,12 @@ export default function DashboardPage() {
     );
   }
 
+  const worstProperty = properties.length > 0
+    ? ([...properties].sort((a, b) => a.completion_percentage - b.completion_percentage)[0] ?? null)
+    : null;
+
   return (
-    <div className="px-6 py-8 space-y-6">
+    <div className="bg-muted/40 dark:bg-background px-6 py-8 space-y-6">
 
       {/* 1. Welcome header */}
       <div className="flex items-start justify-between gap-4">
@@ -733,18 +610,12 @@ export default function DashboardPage() {
       )}
 
       {/* 2. Two-column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start">
 
         {/* Left: property health + recommendations */}
         <div className="space-y-6">
           <PropertyHealthOverview properties={properties} totalProperties={totalProperties} />
-          {totalProperties > 0 && (
-            <RecommendedForYou
-              worstProperty={
-                [...properties].sort((a, b) => a.completion_percentage - b.completion_percentage)[0] ?? null
-              }
-            />
-          )}
+          {totalProperties > 0 && <RecommendedForYou worstProperty={worstProperty} />}
         </div>
 
         {/* Right: sidebar stack */}
@@ -752,11 +623,7 @@ export default function DashboardPage() {
           <QuickActions
             openTickets={openTickets}
             propertiesNeedingReview={propertiesNeedingReview}
-            worstPropertyId={
-              properties.length > 0
-                ? ([...properties].sort((a, b) => a.completion_percentage - b.completion_percentage)[0]?.id ?? null)
-                : null
-            }
+            worstPropertyId={worstProperty?.id ?? null}
           />
           <RecentActivity notifications={notifications} />
           <NeedHelp />
