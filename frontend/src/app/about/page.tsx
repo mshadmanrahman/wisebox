@@ -55,18 +55,6 @@ const TRUST_BADGES = [
   },
 ];
 
-const COMPANY_DETAILS = [
-  { label: 'Legal name', value: 'Wisebox Inc.' },
-  { label: 'Incorporation', value: 'Delaware C-Corporation, USA' },
-  { label: 'Founded', value: '2025' },
-  { label: 'Headquarters', value: 'Washington, D.C., United States' },
-  { label: 'Industry', value: 'Property Technology (PropTech)' },
-  {
-    label: 'Focus',
-    value: 'Cross-border property operations for diaspora families',
-  },
-];
-
 const OFFICES = [
   { city: 'Washington, D.C.', country: 'United States', role: 'Headquarters' },
   { city: 'Uppsala', country: 'Sweden', role: 'Engineering' },
@@ -192,20 +180,7 @@ export default function AboutPage() {
         <section className="bg-muted/30 py-24 sm:py-32">
           <div className="mx-auto max-w-4xl px-6 sm:px-8">
             <RevealSection>
-              <h2 className="text-2xl font-semibold text-foreground">Company details</h2>
-              <div className="mt-8">
-                {COMPANY_DETAILS.map(({ label, value }, i) => (
-                  <div
-                    key={label}
-                    className={`flex justify-between py-3 ${i < COMPANY_DETAILS.length - 1 ? 'border-b border-border' : ''}`}
-                  >
-                    <span className="text-sm text-muted-foreground">{label}</span>
-                    <span className="max-w-[60%] text-right text-sm font-medium text-foreground">{value}</span>
-                  </div>
-                ))}
-              </div>
-
-              <h2 className="mt-16 text-2xl font-semibold text-foreground">Our offices</h2>
+              <h2 className="text-2xl font-semibold text-foreground">Our offices</h2>
               <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 {OFFICES.map(({ city, country, role }) => (
                   <div key={city} className="rounded-2xl border border-border bg-card p-6">
