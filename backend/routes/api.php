@@ -156,6 +156,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Free Consultation Requests (user-facing)
+        Route::get('free-consultations/status', [FreeConsultationController::class, 'status']);
         Route::get('free-consultations', [FreeConsultationController::class, 'index']);
         Route::post('free-consultations', [FreeConsultationController::class, 'store']);
         Route::get('free-consultations/{ticket}', [FreeConsultationController::class, 'show']);

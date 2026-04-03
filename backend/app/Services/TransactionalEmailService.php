@@ -249,9 +249,30 @@ class TransactionalEmailService
         $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
         $orderUrl = "{$frontendUrl}/dashboard/orders/{$order->id}";
 
+        // Load relations for enrichment if not already loaded
+        $order->loadMissing(['items.service', 'property']);
+
+        $propertyName = $order->property?->property_name ?? __('notifications.email.default_property', [], $locale);
+
+        // Build service line items summary
+        $serviceLines = '';
+        if ($order->items && $order->items->isNotEmpty()) {
+            $serviceLines = '<ul style="margin:8px 0;padding-left:20px;">';
+            foreach ($order->items as $item) {
+                $serviceName = $item->service?->name ?? __('notifications.email.default_service', [], $locale);
+                $qty = (int) $item->quantity;
+                $itemTotal = number_format((float) $item->total_price, 2);
+                $serviceLines .= "<li>{$serviceName}" . ($qty > 1 ? " x{$qty}" : '') . " &mdash; {$currency} {$itemTotal}</li>";
+            }
+            $serviceLines .= '</ul>';
+        }
+
         $html = "<h2>{$label}</h2>"
             . "<p>".__('notifications.email.hello', ['name' => $user->name], $locale)."</p>"
             . "<p>".__('notifications.email.order_body', ['order_number' => $orderNumber, 'currency' => $currency, 'total' => $total, 'event' => $event], $locale)."</p>"
+            . "<p><strong>".__('notifications.email.label_property', [], $locale)."</strong> {$propertyName}</p>"
+            . ($serviceLines !== '' ? "<p><strong>".__('notifications.email.label_services', [], $locale)."</strong></p>{$serviceLines}" : '')
+            . "<p><strong>".__('notifications.email.label_total', [], $locale)."</strong> {$currency} {$total}</p>"
             . $this->ctaButton(__('notifications.email.view_order', [], $locale), $orderUrl);
 
         $this->sendViaResend(

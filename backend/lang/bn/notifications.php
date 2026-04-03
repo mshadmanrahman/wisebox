@@ -178,6 +178,8 @@ return [
         'label_ticket' => 'টিকেট:',
         'label_property' => 'সম্পত্তি:',
         'label_service' => 'সেবা:',
+        'label_services' => 'সেবাসমূহ:',
+        'label_total' => 'মোট:',
         'label_consultant' => 'পরামর্শদাতা:',
         'label_date' => 'তারিখ:',
         'label_duration' => 'সময়কাল:',
