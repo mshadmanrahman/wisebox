@@ -31,10 +31,10 @@ export function PropertyCard({ property, index = 0 }: PropertyCardProps) {
   const location = buildLocation(property, language);
 
   return (
-    <Link href={`/properties/${property.id}`} className="block group">
+    <Link href={`/properties/${property.id}`} className="block group cursor-pointer">
       <div
         className={cn(
-          'relative rounded-xl border border-border bg-card overflow-hidden p-6 min-h-[200px] flex flex-col justify-between transition-all duration-200 shadow-sm dark:shadow-none hover:shadow-md hover:border-border',
+          'relative rounded-xl border border-border bg-card overflow-hidden p-6 min-h-[200px] flex flex-col justify-between transition-all duration-200 shadow-sm dark:shadow-none hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5',
         )}
       >
         {/* Type badge */}

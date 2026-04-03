@@ -122,7 +122,7 @@ function PortalHeader() {
         { href: '/settings', label: t('nav.settings') },
       ]
     : [
-        { href: '/properties', label: t('nav.assets') },
+        { href: '/dashboard', label: t('nav.assets') },
         { href: '/learning', label: t('nav.learning') },
         { href: '/assessment/start', label: t('nav.assessment') },
         { href: '/workspace/services', label: t('nav.services') },
