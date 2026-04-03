@@ -1,0 +1,19 @@
+{
+  "greeting": "হ্যালো {{name}}!",
+  "greetingFallback": "হ্যালো!",
+  "noPropertiesSubtitle": "আপনার প্রথম সম্পত্তি যোগ করে শুরু করুন!",
+  "propertiesCount": "আপনার {{count}}টি সম্পত্তি যোগ করা আছে",
+  "addNewProperty": "নতুন সম্পত্তি যোগ করুন",
+  "getFreeAssessment": "বিনামূল্যে মূল্যায়ন পান",
+  "completionTime": "সম্পূর্ণ করতে সময় ~১৫ মিনিট",
+  "title": "ওয়াইজবক্স ড্যাশবোর্ড",
+  "loadingSummary": "ড্যাশবোর্ড সারাংশ লোড হচ্ছে...",
+  "couldNotLoad": "ড্যাশবোর্ড সারাংশ লোড করা যায়নি।",
+  "exploreServices": "সেবা অনুসন্ধান",
+  "exploreServicesDesc": "আপনার যাত্রা শুরু করতে ১১টি সেবা আবিষ্কার করুন",
+  "talkToExpert": "বিশেষজ্ঞের সাথে কথা বলুন",
+  "talkToExpertDesc": "বিনামূল্যে ৩০ মিনিটের পরামর্শ বুক করুন",
+  "learningCenter": "শিক্ষা কেন্দ্র",
+  "learningCenterDesc": "মালিকানা, দলিল, এবং সম্পত্তি ক্রয়ের গাইড",
+  "myProperties": "আমার সম্পত্তি"
+}

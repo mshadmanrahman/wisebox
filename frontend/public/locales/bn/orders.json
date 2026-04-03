@@ -1,0 +1,33 @@
+{
+  "title": "আমার অর্ডার",
+  "subtitle": "চেকআউটের অবস্থা এবং সেবা পূরণ ট্র্যাক করুন।",
+  "refreshing": "অর্ডার রিফ্রেশ হচ্ছে...",
+  "addServices": "সেবা যোগ করুন",
+  "browseServices": "সেবা ব্রাউজ করুন",
+  "couldNotLoad": "অর্ডার লোড করা যায়নি।",
+  "loadingOrders": "অর্ডার লোড হচ্ছে...",
+  "empty": {
+    "title": "এখনো কোনো অর্ডার নেই",
+    "description": "আপনার একটি সম্পত্তির জন্য সেবা নির্বাচন করে শুরু করুন।"
+  },
+  "fields": {
+    "total": "মোট",
+    "status": "অবস্থা",
+    "date": "তারিখ"
+  },
+  "viewOrder": "অর্ডার দেখুন",
+  "paymentStatus": {
+    "pending": "মুলতুবি",
+    "paid": "পরিশোধিত",
+    "failed": "ব্যর্থ",
+    "refunded": "ফেরত দেওয়া হয়েছে",
+    "partially_refunded": "আংশিক ফেরত"
+  },
+  "orderStatus": {
+    "pending": "মুলতুবি",
+    "confirmed": "নিশ্চিত",
+    "in_progress": "চলমান",
+    "completed": "সম্পন্ন",
+    "cancelled": "বাতিল"
+  }
+}

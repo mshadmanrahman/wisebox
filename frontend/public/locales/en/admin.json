@@ -1,0 +1,107 @@
+{
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "subtitle": "Manage consultation requests and platform operations",
+    "stats": {
+      "pending": "Pending",
+      "assigned": "Assigned",
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "rejected": "Rejected"
+    },
+    "consultations": {
+      "title": "Consultation Requests",
+      "description": "Review and manage incoming consultation requests",
+      "viewAll": "View All",
+      "loading": "Loading consultations...",
+      "noRequests": "No consultation requests yet",
+      "pendingReview": "Pending Review"
+    },
+    "fields": {
+      "customer": "Customer",
+      "property": "Property",
+      "requested": "Requested"
+    },
+    "na": "N/A"
+  },
+  "consultations": {
+    "title": "Consultation Requests",
+    "subtitle": "Review, approve, and assign consultation requests to consultants",
+    "loading": "Loading...",
+    "noConsultations": "No consultations yet",
+    "noFilteredConsultations": "No {{status}} consultations",
+    "percentComplete": "{{percent}}% complete",
+    "preferredSlots": "{{count}} preferred time slot(s) submitted",
+    "filters": {
+      "all": "All",
+      "pending": "Pending",
+      "assigned": "Assigned",
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "rejected": "Rejected"
+    },
+    "statusLabels": {
+      "open": "Pending Review",
+      "assigned": "Assigned",
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Rejected"
+    },
+    "fields": {
+      "customer": "Customer",
+      "property": "Property",
+      "consultant": "Consultant",
+      "requested": "Requested",
+      "unassigned": "Unassigned"
+    }
+  },
+  "detail": {
+    "backToConsultations": "Back to Consultations",
+    "notFound": "Consultation not found.",
+    "pendingReview": "Pending Review",
+    "customer": "Customer",
+    "property": "Property",
+    "type": "Type",
+    "status": "Status",
+    "documentsCount": "{{count}} document(s) uploaded",
+    "requestDetails": "Consultation Request Details",
+    "preferredTimeSlots": "Preferred Time Slots",
+    "slotAt": "at",
+    "takeAction": "Take Action",
+    "takeActionDescription": "Approve and assign a consultant, or reject the request",
+    "assignConsultant": "Assign Consultant",
+    "selectConsultant": "Select a consultant...",
+    "consultantCases": "{{active}}/{{max}} cases",
+    "adminNotes": "Admin Notes (optional)",
+    "adminNotesPlaceholder": "Any notes for the consultant...",
+    "approveAndAssign": "Approve & Assign",
+    "reject": "Reject",
+    "approving": "Approving...",
+    "failedToApprove": "Failed to approve. Please try again.",
+    "rejectReason": "Reason for Rejection",
+    "rejectReasonPlaceholder": "Provide a reason for rejection...",
+    "confirmRejection": "Confirm Rejection",
+    "rejecting": "Rejecting...",
+    "assignedConsultant": "Assigned Consultant"
+  },
+  "login": {
+    "brand": "Wisebox Admin",
+    "title": "Admin Portal",
+    "subtitle": "Sign in to manage consultations, users, and platform operations",
+    "emailLabel": "Admin Email",
+    "emailPlaceholder": "admin@wisebox.co",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "submit": "Sign in to Admin",
+    "submitting": "Signing in...",
+    "notAdmin": "Not an admin?",
+    "userLogin": "User login",
+    "consultantLogin": "Consultant login",
+    "footer": "Wisebox Admin Portal. Authorized access only.",
+    "invalidCredentials": "Invalid credentials or insufficient permissions.",
+    "sideTitle": "Administration Center",
+    "sideStep1": "Review and approve free consultation requests",
+    "sideStep2": "Assign consultants to customer properties",
+    "sideStep3": "Monitor platform health and user activity"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "title": "My Orders",
+  "subtitle": "Track checkout status and service fulfillment.",
+  "refreshing": "Refreshing orders...",
+  "addServices": "Add Services",
+  "browseServices": "Browse Services",
+  "couldNotLoad": "Could not load orders.",
+  "loadingOrders": "Loading orders...",
+  "empty": {
+    "title": "No orders yet",
+    "description": "Start by selecting services for one of your properties."
+  },
+  "fields": {
+    "total": "Total",
+    "status": "Status",
+    "date": "Date"
+  },
+  "viewOrder": "View order",
+  "paymentStatus": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "failed": "Failed",
+    "refunded": "Refunded",
+    "partially_refunded": "Partially Refunded"
+  },
+  "orderStatus": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  }
+}

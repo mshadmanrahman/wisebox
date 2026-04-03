@@ -1,0 +1,44 @@
+{
+  "property": {
+    "nameLabel": "Property name",
+    "namePlaceholder": "e.g., Family Land in Dhaka",
+    "typeLabel": "Property type",
+    "typePlaceholder": "Select property type",
+    "ownershipStatusLabel": "Ownership status",
+    "ownershipStatusPlaceholder": "Select ownership status",
+    "ownershipTypeLabel": "Ownership type",
+    "ownershipTypePlaceholder": "Select ownership type",
+    "divisionLabel": "Division",
+    "divisionPlaceholder": "Select division",
+    "districtLabel": "District",
+    "districtPlaceholder": "Select district",
+    "upazilaLabel": "Upazila",
+    "upazilaPlaceholder": "Select upazila",
+    "mouzaLabel": "Mouza",
+    "mouzaPlaceholder": "Select mouza",
+    "addressLabel": "Address",
+    "addressPlaceholder": "Street address or landmark",
+    "sizeLabel": "Size",
+    "sizePlaceholder": "Enter size",
+    "sizeUnitLabel": "Unit",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Additional details about this property"
+  },
+  "coOwner": {
+    "title": "Co-owners",
+    "addCoOwner": "Add co-owner",
+    "nameLabel": "Name",
+    "relationshipLabel": "Relationship",
+    "percentageLabel": "Ownership %",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "nidLabel": "NID number",
+    "remove": "Remove"
+  },
+  "document": {
+    "uploadTitle": "Upload Documents",
+    "dragDrop": "Drag and drop or click to upload",
+    "maxSize": "Maximum file size: {{size}}MB",
+    "acceptedFormats": "Accepted: {{formats}}"
+  }
+}
