@@ -47,8 +47,9 @@ export function LandingHero() {
   useEffect(() => setLoaded(true), []);
 
   return (
-    <section className="pt-16 pb-16 sm:pt-24 sm:pb-24">
-      <div className="max-w-6xl mx-auto px-6 sm:px-8">
+    <section className="bg-grain-cool relative overflow-hidden pt-16 pb-16 sm:pt-24 sm:pb-24">
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background z-[1]" />
+      <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
         {/* Centered text */}
         <div className="text-center max-w-4xl mx-auto">
           <h1
@@ -221,7 +222,7 @@ export function FeatureCard({ kicker, heading, body, children, reverse = false }
   return (
     <RevealSection>
       <div className={`rounded-3xl bg-card border border-border shadow-lg dark:shadow-none overflow-hidden grid grid-cols-1 lg:grid-cols-2 min-h-[400px] ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
-        <div className="p-10 sm:p-12 flex flex-col justify-center">
+        <div className="p-10 sm:p-12 flex flex-col justify-center border-l-2 border-primary/20">
           <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.15em' }}>{kicker}</p>
           <h3 className="mt-3 text-2xl font-semibold text-foreground tracking-tight leading-[1.2]">{heading}</h3>
           <p className="mt-4 text-base text-muted-foreground leading-relaxed">{body}</p>
@@ -229,7 +230,7 @@ export function FeatureCard({ kicker, heading, body, children, reverse = false }
             Get started <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
           </Link>
         </div>
-        <div className="bg-muted/30 p-8 flex items-center justify-center">
+        <div className="bg-primary/[0.04] p-8 flex items-center justify-center">
           {children}
         </div>
       </div>

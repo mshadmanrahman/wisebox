@@ -1,109 +1,282 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Globe2, ShieldCheck, Workflow } from 'lucide-react';
-import { MarketingFooter } from '@/components/marketing/marketing-footer';
+import {
+  ArrowRight,
+  Building2,
+  Check,
+  Eye,
+  FileCheck,
+  Globe,
+  Heart,
+  Lock,
+  MapPin,
+  ShieldCheck,
+} from 'lucide-react';
 import { MarketingHeader } from '@/components/marketing/marketing-header';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { MarketingFooter } from '@/components/marketing/marketing-footer';
+import { RevealSection } from '@/components/marketing/landing-sections';
 
 export const metadata: Metadata = {
-  title: 'About',
+  title: 'About Wisebox | Built for Diaspora Families',
   description:
-    'Learn how Wisebox helps diaspora families manage property records, workflows, and consultant support securely.',
-  alternates: {
-    canonical: '/about',
-  },
+    'Wisebox is a US-incorporated property technology company building secure cross-border property operations infrastructure for diaspora families worldwide.',
+  alternates: { canonical: '/about' },
   openGraph: {
-    title: 'About Wisebox',
+    title: 'About Wisebox | Built for Diaspora Families',
     description:
-      'Learn how Wisebox helps diaspora families manage property records, workflows, and consultant support securely.',
+      'Wisebox is a US-incorporated property technology company building secure cross-border property operations infrastructure for diaspora families worldwide.',
     type: 'website',
     url: 'https://mywisebox.com/about',
-    images: [
-      {
-        url: 'https://mywisebox.com/og/wisebox-about.png',
-        width: 1200,
-        height: 630,
-        alt: 'About Wisebox',
-      },
-    ],
   },
 };
 
-const pillars = [
+/* ─── Data ─────────────────────────────────────────────────────────── */
+
+const TRUST_BADGES = [
   {
-    title: 'Operational clarity',
-    description: 'We convert scattered documents and updates into a structured operating workflow.',
-    icon: Workflow,
+    Icon: Building2,
+    title: 'Delaware C-Corp',
+    subtitle: 'US incorporated entity',
   },
   {
-    title: 'Trust and security',
-    description: 'Data handling prioritizes secure access paths and clear ownership controls.',
-    icon: ShieldCheck,
+    Icon: ShieldCheck,
+    title: 'Encrypted & Secure',
+    subtitle: 'Data encrypted at rest and in transit',
   },
   {
-    title: 'Global accessibility',
-    description: 'Owners can coordinate property decisions from any country and timezone.',
-    icon: Globe2,
+    Icon: Globe,
+    title: 'Global Operations',
+    subtitle: 'US · Sweden · Bangladesh',
+  },
+  {
+    Icon: FileCheck,
+    title: 'Compliance First',
+    subtitle: 'SOC 2 readiness roadmap',
   },
 ];
+
+const OFFICES = [
+  { city: 'Washington, D.C.', country: 'United States', role: 'Headquarters' },
+  { city: 'Uppsala', country: 'Sweden', role: 'Engineering' },
+  { city: 'Dhaka', country: 'Bangladesh', role: 'Operations & Consulting' },
+];
+
+const VALUES = [
+  {
+    Icon: Eye,
+    title: 'Transparency over opacity',
+    body: 'Every document, every status update, every consultant interaction is tracked and visible. No black boxes. No guesswork.',
+  },
+  {
+    Icon: Lock,
+    title: 'Security by default',
+    body: "Your property records are encrypted, access-controlled, and private. We don't share data with third parties. Your documents are yours.",
+  },
+  {
+    Icon: Heart,
+    title: 'Families first',
+    body: 'We are building for real families with real property concerns. Every feature, every workflow, every decision is shaped by the needs of diaspora property owners.',
+  },
+];
+
+const SECURITY_INFRASTRUCTURE = [
+  '256-bit AES encryption at rest',
+  'TLS 1.3 encryption in transit',
+  'Role-based access control (RBAC)',
+  'Audit-friendly status logging',
+  'Hosted on SOC 2 certified infrastructure',
+];
+
+const SECURITY_POLICIES = [
+  'No third-party data sharing',
+  'GDPR-aligned data handling practices',
+  'Permissioned document access only',
+  'Regular security reviews',
+  'Data retention and deletion controls',
+];
+
+/* ─── Page ──────────────────────────────────────────────────────────── */
 
 export default function AboutPage() {
   return (
     <>
       <MarketingHeader />
-      <main className="bg-background">
-        <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <h1 className="text-4xl font-bold text-foreground sm:text-5xl">About Wisebox</h1>
-            <p className="text-lg text-muted-foreground">
-              Wisebox exists to give property owners a reliable system for handling documentation,
-              service requests, and long-term planning with less friction.
-            </p>
-            <p className="text-muted-foreground">
-              We focus on real operational needs: tracking records, resolving issues quickly, and
-              creating visibility for families who manage assets across borders.
-            </p>
+      <main>
+
+        {/* ── 1. HERO ── */}
+        <section className="bg-grain-warm relative overflow-hidden py-24 sm:py-32">
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background z-[1]" />
+          <div className="relative z-10 mx-auto max-w-6xl px-6 text-center sm:px-8">
+            <RevealSection>
+              <p className="text-xs font-medium uppercase tracking-widest text-primary">
+                About Wisebox
+              </p>
+              <h1 className="mx-auto mt-4 max-w-3xl text-4xl font-semibold leading-[1.15] tracking-tight text-foreground sm:text-5xl">
+                Built by families who understand what it means to own property across borders.
+              </h1>
+              <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                Wisebox is a US-incorporated technology company building secure property operations infrastructure for diaspora families worldwide.
+              </p>
+            </RevealSection>
           </div>
         </section>
 
-        <section className="bg-muted">
-          <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-4 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
-            {pillars.map((pillar) => {
-              const Icon = pillar.icon;
-              return (
-                <Card key={pillar.title} className="border-border bg-card">
-                  <CardHeader>
-                    <Icon className="h-5 w-5 text-primary" />
-                    <CardTitle className="text-lg text-foreground">{pillar.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm leading-6 text-muted-foreground">{pillar.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
+        {/* ── 2. TRUST BADGES ── */}
+        <section className="pt-4 pb-12">
+          <div className="mx-auto max-w-6xl px-6 sm:px-8">
+            <RevealSection>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {TRUST_BADGES.map(({ Icon, title, subtitle }) => (
+                  <div
+                    key={title}
+                    className="rounded-2xl border border-border bg-card p-5 text-center"
+                  >
+                    <Icon className="mx-auto h-6 w-6 text-primary" strokeWidth={1.5} />
+                    <p className="mt-3 text-sm font-semibold text-foreground">{title}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
+                  </div>
+                ))}
+              </div>
+            </RevealSection>
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <Card className="border-primary/30 bg-card">
-            <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-2xl font-semibold text-foreground">Start with a free readiness check</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
+        {/* ── 3. MISSION ── */}
+        <section className="py-24 sm:py-32">
+          <div className="mx-auto max-w-6xl px-6 sm:px-8">
+            <RevealSection>
+              <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+                <div>
+                  <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                    Our mission
+                  </h2>
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
+                    <p>
+                      Millions of Bangladeshi families living abroad own property back home. Land passed down through generations. Homes built by parents and grandparents. Agricultural plots that have been in the family for decades.
+                    </p>
+                    <p>
+                      Managing these properties from thousands of miles away has always meant scattered documents, unreliable local contacts, and reactive crisis management. There has never been a proper system for it.
+                    </p>
+                    <p>
+                      Wisebox exists to change that. We are building the operating system for cross-border property management — a secure, structured platform where families can organize documents, track property status, coordinate legal support, and plan succession. All from one place, anywhere in the world.
+                    </p>
+                    <p>
+                      We are not a law firm. We are not a brokerage. We are an infrastructure company that gives property-owning families the tools, visibility, and professional support they need to protect what matters most.
+                    </p>
+                  </div>
+                </div>
+                <div className="overflow-hidden rounded-3xl shadow-xl ring-1 ring-black/5 dark:shadow-none dark:ring-white/5">
+                  <img
+                    src="/images/landing/hero-family.jpg"
+                    alt="Family discussing property"
+                    className="aspect-[4/3] w-full object-cover"
+                  />
+                </div>
+              </div>
+            </RevealSection>
+          </div>
+        </section>
+
+        {/* ── 4. COMPANY DETAILS + OFFICES ── */}
+        <section className="bg-muted/30 py-24 sm:py-32">
+          <div className="mx-auto max-w-4xl px-6 sm:px-8">
+            <RevealSection>
+              <h2 className="text-2xl font-semibold text-foreground">Our offices</h2>
+              <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+                {OFFICES.map(({ city, country, role }) => (
+                  <div key={city} className="rounded-2xl border border-border bg-card p-6">
+                    <MapPin className="h-5 w-5 text-primary" strokeWidth={1.5} />
+                    <p className="mt-3 text-lg font-semibold text-foreground">{city}</p>
+                    <p className="text-sm text-muted-foreground">{country}</p>
+                    <p className="mt-2 text-xs font-medium uppercase tracking-wider text-primary">{role}</p>
+                  </div>
+                ))}
+              </div>
+            </RevealSection>
+          </div>
+        </section>
+
+        {/* ── 5. VALUES ── */}
+        <section className="bg-grain-cool relative overflow-hidden py-24 sm:py-32">
+          <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8">
+            <RevealSection>
+              <h2 className="mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                What we stand for
+              </h2>
+              <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+                {VALUES.map(({ Icon, title, body }) => (
+                  <div key={title} className="rounded-2xl border border-border bg-card p-8">
+                    <Icon className="h-8 w-8 text-primary" strokeWidth={1.5} />
+                    <p className="mt-4 text-lg font-semibold text-foreground">{title}</p>
+                    <p className="mt-2 text-base leading-relaxed text-muted-foreground">{body}</p>
+                  </div>
+                ))}
+              </div>
+            </RevealSection>
+          </div>
+        </section>
+
+{/* ── 7. SECURITY & COMPLIANCE ── */}
+        <section className="py-24 sm:py-32">
+          <div className="mx-auto max-w-6xl px-6 sm:px-8">
+            <RevealSection>
+              <h2 className="mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                How we protect your data
+              </h2>
+              <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
+                <div className="rounded-2xl border border-border bg-card p-8">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-primary">Infrastructure</p>
+                  <ul className="mt-6 space-y-4">
+                    {SECURITY_INFRASTRUCTURE.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={2.5} />
+                        <span className="text-base text-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-2xl border border-border bg-card p-8">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-primary">Policies</p>
+                  <ul className="mt-6 space-y-4">
+                    {SECURITY_POLICIES.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={2.5} />
+                        <span className="text-base text-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </RevealSection>
+          </div>
+        </section>
+
+        {/* ── 8. CTA ── */}
+        <section className="bg-grain-warm relative overflow-hidden py-24 sm:py-32">
+          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background to-transparent z-[1]" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-background z-[1]" />
+          <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8">
+            <RevealSection>
+              <div className="text-center">
+                <h2 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                  Start with a free readiness check
+                </h2>
+                <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
                   Run the free assessment to understand your current documentation status and next best actions.
                 </p>
+                <div className="mt-8">
+                  <Link
+                    href="/assessment/start"
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-10 py-4 text-lg font-medium text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/25"
+                  >
+                    Get Free Assessment <ArrowRight className="h-5 w-5" strokeWidth={1.5} />
+                  </Link>
+                </div>
               </div>
-              <Button asChild className="bg-primary text-white hover:bg-primary/90">
-                <Link href="/assessment/start">
-                  Get Free Assessment
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+            </RevealSection>
+          </div>
         </section>
+
       </main>
       <MarketingFooter />
     </>

@@ -42,6 +42,7 @@ import { LocationCascade } from '@/components/property/location-cascade';
 import { CoOwnerFields } from '@/components/property/co-owner-fields';
 import { DocumentUploadItem } from '@/components/property/document-upload-item';
 import { RadioCardGroup } from '@/components/forms';
+import { useToast } from '@/hooks/use-toast';
 import type {
   PropertyType,
   OwnershipStatus,
@@ -104,6 +105,7 @@ function getPropertyTypeIcon(slug: string): React.ReactNode {
 
 export default function AddPropertyPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const { t } = useTranslation(['properties', 'common']);
   const [activeStep, setActiveStep] = useState<string>('step-1');
   const [createdProperty, setCreatedProperty] = useState<Property | null>(null);
@@ -287,7 +289,10 @@ export default function AddPropertyPage() {
 
   const handleFinish = () => {
     if (createdProperty) {
-      router.replace(`/properties/${createdProperty.id}`);
+      router.push(`/properties/${createdProperty.id}`);
+      toast({
+        title: 'Property added! Upload documents to build your readiness score.',
+      });
     }
   };
 

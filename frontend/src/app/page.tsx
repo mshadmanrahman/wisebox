@@ -73,14 +73,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── STATS (with gradient-15 accent) ── */}
-        <section className="py-8">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+        {/* ── STATS ── */}
+        <section className="bg-grain-warm relative overflow-hidden py-20 sm:py-28">
+          <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
-              <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg dark:shadow-none border border-border relative">
-                <img src="/images/gradients/gradient-15.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-10" />
-                <div className="absolute inset-0 bg-card/70 dark:bg-card/80" />
-                <div className="relative z-10 p-12 sm:p-16">
+              <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg dark:shadow-none border border-border bg-card/80 dark:bg-card/90 backdrop-blur-sm">
+                <div className="p-12 sm:p-16">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
                     {[
                       { num: '15', unit: 'min', desc: 'Average time to complete your first property assessment' },
@@ -106,13 +104,13 @@ export default function Home() {
         <section className="py-16 sm:py-20">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
-              <div className="rounded-3xl bg-card border border-border shadow-xl dark:shadow-none overflow-hidden">
+              <div className="rounded-3xl bg-card border border-border border-t-2 border-t-primary shadow-xl dark:shadow-none overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-2">
                   <div className="relative min-h-[300px] lg:min-h-[450px]">
                     <img src="/images/landing/father-son-laptop.jpg" alt="Family using Wisebox" className="absolute inset-0 w-full h-full object-cover" />
                   </div>
                   <div className="bg-card p-10 sm:p-14 flex flex-col justify-center">
-                    <p className="text-xs font-medium uppercase text-primary" style={{ letterSpacing: '0.15em' }}>Case Study</p>
+                    <span className="inline-flex w-fit items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Case Study</span>
                     <blockquote className="mt-6 text-xl sm:text-2xl font-medium leading-relaxed italic text-foreground">
                       &ldquo;Wisebox has <span className="not-italic text-primary font-semibold">completely transformed</span> how our family manages property back in Bangladesh. What used to be scattered documents and anxious phone calls is now a clear, trackable system we all trust.&rdquo;
                     </blockquote>
@@ -132,6 +130,7 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
               <RevealSection className="lg:col-span-1">
+                <div className="w-8 h-1 bg-primary rounded-full mb-6" />
                 <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Everything you need to know</h2>
                 <Link href="/contact" className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">Contact us <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} /></Link>
               </RevealSection>
@@ -140,10 +139,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── FINAL CTA (with gradient-23 accent + woman photo) ── */}
-        <section className="py-16 sm:py-20 relative overflow-hidden">
-          <img src="/images/gradients/gradient-23.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-15 dark:opacity-10" />
-          <div className="absolute inset-0 bg-background/70" />
+        {/* ── FINAL CTA ── */}
+        <section className="bg-grain-cool relative overflow-hidden py-24 sm:py-32">
+          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background to-transparent z-[1]" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-background z-[1]" />
           <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
