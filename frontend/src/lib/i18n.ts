@@ -28,9 +28,18 @@ const ApiBackend = {
     api
       .get('/translations', { params: { locale: language, ns: namespace } })
       .then((res) => callback(null, res.data))
-      .catch((err) => {
-        console.warn(`Failed to load ${language}/${namespace} translations, using fallback`);
-        callback(err, null);
+      .catch(() => {
+        // Fallback to static JSON files when API is unavailable
+        fetch(`/locales/${language}/${namespace}.json`)
+          .then((res) => {
+            if (!res.ok) throw new Error(`Static file not found: ${language}/${namespace}`);
+            return res.json();
+          })
+          .then((data) => callback(null, data))
+          .catch((staticErr) => {
+            console.warn(`Failed to load ${language}/${namespace} translations from both API and static files`);
+            callback(staticErr, null);
+          });
       });
   },
 };

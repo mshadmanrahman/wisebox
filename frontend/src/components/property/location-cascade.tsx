@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -19,18 +21,21 @@ interface LocationCascadeProps {
     district_id?: number;
     upazila_id?: number;
     mouza_id?: number;
+    mouza_name?: string;
   };
   onChange: (location: {
     division_id?: number;
     district_id?: number;
     upazila_id?: number;
     mouza_id?: number;
+    mouza_name?: string;
   }) => void;
 }
 
 export function LocationCascade({ value, onChange }: LocationCascadeProps) {
   const { t, i18n } = useTranslation('properties');
   const isBn = i18n.language === 'bn';
+  const [manualMouza, setManualMouza] = useState(false);
 
   const { data: divisions, isLoading: divisionsLoading } = useQuery({
     queryKey: ['locations', 'divisions'],
@@ -194,39 +199,64 @@ export function LocationCascade({ value, onChange }: LocationCascadeProps) {
 
       <div className="space-y-2">
         <Label>{t('locationCascade.mouza')}</Label>
-        <Select
-          value={value.mouza_id?.toString() ?? ''}
-          onValueChange={handleMouzaChange}
-          disabled={!value.upazila_id || mouzasLoading}
-        >
-          <SelectTrigger>
-            <SelectValue
-              placeholder={
-                !value.upazila_id
-                  ? t('locationCascade.selectUpazilaFirst')
-                  : mouzasLoading
-                    ? t('locationCascade.loading')
-                    : hasMouzaOptions
-                      ? t('locationCascade.selectMouza')
-                      : t('locationCascade.noMouzaAvailable')
-              }
+        {/* Show text input when no mouza options or user toggles manual entry */}
+        {(manualMouza || (!mouzasLoading && value.upazila_id && !hasMouzaOptions)) ? (
+          <div className="space-y-1">
+            <Input
+              placeholder="Type mouza name manually"
+              value={value.mouza_name ?? ''}
+              onChange={(e) => onChange({ ...value, mouza_id: undefined, mouza_name: e.target.value })}
+              disabled={!value.upazila_id}
             />
-          </SelectTrigger>
-          <SelectContent>
-            {!mouzasLoading && value.upazila_id && !hasMouzaOptions && (
-              <SelectItem value="__none" disabled>
-                {t('locationCascade.noMouzaForUpazila')}
-              </SelectItem>
+            {hasMouzaOptions && (
+              <button
+                type="button"
+                className="text-xs text-primary hover:underline"
+                onClick={() => { setManualMouza(false); onChange({ ...value, mouza_name: undefined }); }}
+              >
+                Select from list instead
+              </button>
             )}
-            {mouzas?.map((mz) => (
-              <SelectItem key={mz.id} value={mz.id.toString()}>
-                {isBn && mz.bn_name ? mz.bn_name : mz.name}
-                {isBn && mz.bn_name ? ` (${mz.name})` : mz.bn_name ? ` (${mz.bn_name})` : ''}
-                {mz.jl_number ? ` - JL ${mz.jl_number}` : ''}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            <Select
+              value={value.mouza_id?.toString() ?? ''}
+              onValueChange={handleMouzaChange}
+              disabled={!value.upazila_id || mouzasLoading}
+            >
+              <SelectTrigger>
+                <SelectValue
+                  placeholder={
+                    !value.upazila_id
+                      ? t('locationCascade.selectUpazilaFirst')
+                      : mouzasLoading
+                        ? t('locationCascade.loading')
+                        : t('locationCascade.selectMouza')
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {mouzas?.map((mz) => (
+                  <SelectItem key={mz.id} value={mz.id.toString()}>
+                    {isBn && mz.bn_name ? mz.bn_name : mz.name}
+                    {isBn && mz.bn_name ? ` (${mz.name})` : mz.bn_name ? ` (${mz.bn_name})` : ''}
+                    {mz.jl_number ? ` - JL ${mz.jl_number}` : ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {hasMouzaOptions && (
+              <button
+                type="button"
+                className="text-xs text-primary hover:underline"
+                onClick={() => setManualMouza(true)}
+              >
+                Type manually instead
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

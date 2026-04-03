@@ -99,8 +99,10 @@ export default function RegisterPage() {
       {/* Left side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md space-y-8">
-          {/* Logo */}
-          <WiseboxLogo variant="auto" />
+          {/* Logo — links to home */}
+          <Link href="/">
+            <WiseboxLogo variant="auto" />
+          </Link>
 
           {/* Header */}
           <div>
