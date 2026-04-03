@@ -24,24 +24,27 @@ class AdminConsultationController extends Controller
     {
         $this->ensureAdmin($request->user());
 
-        $query = Ticket::where('is_free_consultation', true)
+        // WB-230: Show all tickets by default; optionally filter to free consultations only.
+        $query = Ticket::query()
             ->with([
                 'customer:id,name,email,phone',
                 'property:id,property_name,completion_percentage,completion_status',
+                'service:id,name',
                 'consultant:id,name,email',
             ])
+            ->when($request->boolean('free_only'), fn ($q) => $q->where('is_free_consultation', true))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')->toString()))
             ->latest();
 
         $consultations = $query->paginate($request->integer('per_page', 20));
 
-        // Add stats
+        // WB-230: Count all tickets, not just free consultations, so admin sees accurate totals.
         $stats = [
-            'pending' => Ticket::where('is_free_consultation', true)->where('status', 'open')->count(),
-            'assigned' => Ticket::where('is_free_consultation', true)->where('status', 'assigned')->count(),
-            'scheduled' => Ticket::where('is_free_consultation', true)->where('status', 'scheduled')->count(),
-            'completed' => Ticket::where('is_free_consultation', true)->where('status', 'completed')->count(),
-            'rejected' => Ticket::where('is_free_consultation', true)->where('status', 'cancelled')->count(),
+            'pending' => Ticket::where('status', 'open')->count(),
+            'assigned' => Ticket::where('status', 'assigned')->count(),
+            'scheduled' => Ticket::where('status', 'scheduled')->count(),
+            'completed' => Ticket::where('status', 'completed')->count(),
+            'rejected' => Ticket::where('status', 'cancelled')->count(),
         ];
 
         $paginated = $consultations->toArray();

@@ -21,6 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Set application locale from user profile or Accept-Language header
         $middleware->append(\App\Http\Middleware\SetLocale::class);
+
+        // WB-229: Register admin role-checking middleware alias
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

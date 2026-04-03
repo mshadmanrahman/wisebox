@@ -160,15 +160,15 @@ Route::prefix('v1')->group(function () {
         Route::post('free-consultations', [FreeConsultationController::class, 'store']);
         Route::get('free-consultations/{ticket}', [FreeConsultationController::class, 'show']);
 
-        // Admin: Translation Management
-        Route::prefix('admin/translations')->group(function () {
+        // Admin: Translation Management (WB-229: admin middleware)
+        Route::prefix('admin/translations')->middleware('admin')->group(function () {
             Route::get('/', [TranslationController::class, 'adminIndex']);
             Route::put('{id}', [TranslationController::class, 'update']);
             Route::post('/', [TranslationController::class, 'store']);
         });
 
-        // Admin: Consultation Management
-        Route::prefix('admin/consultations')->group(function () {
+        // Admin: Consultation Management (WB-229: admin middleware)
+        Route::prefix('admin/consultations')->middleware('admin')->group(function () {
             Route::get('/', [AdminConsultationController::class, 'index']);
             Route::get('consultants', [AdminConsultationController::class, 'consultants']);
             Route::get('{ticket}', [AdminConsultationController::class, 'show']);
