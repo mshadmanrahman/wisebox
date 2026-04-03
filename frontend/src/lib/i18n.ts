@@ -25,22 +25,30 @@ const ApiBackend = {
   type: 'backend' as const,
   init() {},
   read(language: string, namespace: string, callback: (err: unknown, data: Record<string, string> | null) => void) {
+    const loadStatic = () =>
+      fetch(`/locales/${language}/${namespace}.json`)
+        .then((res) => {
+          if (!res.ok) throw new Error(`Static file not found: ${language}/${namespace}`);
+          return res.json();
+        })
+        .then((data) => callback(null, data))
+        .catch((staticErr) => {
+          console.warn(`Failed to load ${language}/${namespace} translations from both API and static files`);
+          callback(staticErr, null);
+        });
+
     api
       .get('/translations', { params: { locale: language, ns: namespace } })
-      .then((res) => callback(null, res.data))
-      .catch(() => {
-        // Fallback to static JSON files when API is unavailable
-        fetch(`/locales/${language}/${namespace}.json`)
-          .then((res) => {
-            if (!res.ok) throw new Error(`Static file not found: ${language}/${namespace}`);
-            return res.json();
-          })
-          .then((data) => callback(null, data))
-          .catch((staticErr) => {
-            console.warn(`Failed to load ${language}/${namespace} translations from both API and static files`);
-            callback(staticErr, null);
-          });
-      });
+      .then((res) => {
+        const data = res.data;
+        // If API returns empty/null/non-object, fall back to static files
+        if (!data || typeof data !== 'object' || Object.keys(data).length === 0) {
+          loadStatic();
+        } else {
+          callback(null, data);
+        }
+      })
+      .catch(() => loadStatic());
   },
 };
 
