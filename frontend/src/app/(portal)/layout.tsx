@@ -79,7 +79,7 @@ export default function PortalLayout({
 
   return (
     <Providers>
-      <div className={`min-h-screen bg-background${!isAdmin ? ' bg-grain-warm relative overflow-x-hidden' : ''}`}>
+      <div className={`min-h-screen bg-background${!isAdmin ? ' relative overflow-x-hidden' : ''}`}>
         {!isAdmin && <PortalHeader />}
         <main className={isAdmin ? '' : 'max-w-7xl mx-auto'}>{children}</main>
       </div>
