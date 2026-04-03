@@ -51,7 +51,7 @@ export default function Home() {
         </section>
 
         {/* ── FEATURES ── */}
-        <section id="features-section" className="scroll-mt-16 py-24 sm:py-32">
+        <section id="features-section" className="scroll-mt-16 py-16 sm:py-20">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
               <h2 className="text-center font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground max-w-3xl mx-auto">
@@ -101,7 +101,7 @@ export default function Home() {
         </section>
 
         {/* ── FEATURED TESTIMONIAL ── */}
-        <section className="py-24 sm:py-32">
+        <section className="py-16 sm:py-20">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
               <div className="rounded-3xl bg-card border border-border border-t-2 border-t-primary shadow-xl dark:shadow-none overflow-hidden">
@@ -126,7 +126,7 @@ export default function Home() {
         </section>
 
         {/* ── FAQ ── */}
-        <section id="faq-section" className="scroll-mt-16 py-24 sm:py-32">
+        <section id="faq-section" className="scroll-mt-16 py-16 sm:py-20">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
               <RevealSection className="lg:col-span-1">
@@ -139,10 +139,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── FINAL CTA ── */}
-        <section className="bg-grain-cool relative overflow-hidden py-24 sm:py-32">
-          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background to-transparent z-[1]" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-background z-[1]" />
+        {/* ── FINAL CTA (with gradient-23 accent + woman photo) ── */}
+        <section className="py-16 sm:py-20 relative overflow-hidden">
+          <img src="/images/gradients/gradient-23.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-15 dark:opacity-10" />
+          <div className="absolute inset-0 bg-background/70" />
           <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

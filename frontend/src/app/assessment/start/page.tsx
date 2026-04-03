@@ -7,7 +7,7 @@ import { trackAssessmentStarted, trackAssessmentCompleted } from '@/lib/analytic
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Info } from 'lucide-react';
 import { AssessmentHeader } from '@/components/assessment/assessment-header';
 import type { ApiResponse, AssessmentQuestion, RecommendedService } from '@/types';
 
@@ -44,6 +44,45 @@ const ENCOURAGEMENTS = [
   "Nearly done. We promise the results are worth the 3 minutes.",
   "Final question! Your property readiness score is almost ready.",
 ];
+
+/** Bangla legal term glossary -- shown as inline tooltips when terms appear in question text */
+const BANGLA_TERM_GLOSSARY: ReadonlyArray<{ term: string; definition: string }> = [
+  { term: 'Dolil', definition: 'The deed / ownership document' },
+  { term: 'Dakhila', definition: 'Land tax receipt' },
+  { term: 'Khatian', definition: 'Official land record (Record of Rights)' },
+  { term: 'Mutation', definition: 'Transfer of ownership record in government registry' },
+  { term: 'Mouza', definition: 'Smallest revenue / cadastral unit' },
+  { term: 'Position of Land', definition: 'Document showing exact physical location and boundaries' },
+];
+
+/** Wraps recognized Bangla legal terms in the question text with a tooltip indicator */
+function renderQuestionWithTooltips(text: string): React.ReactNode {
+  // Build a single regex that matches any known term (case-insensitive, word boundary)
+  const pattern = new RegExp(
+    `(${BANGLA_TERM_GLOSSARY.map((g) => g.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`,
+    'gi'
+  );
+
+  const parts = text.split(pattern);
+  if (parts.length === 1) return text;
+
+  return parts.map((part, index) => {
+    const match = BANGLA_TERM_GLOSSARY.find(
+      (g) => g.term.toLowerCase() === part.toLowerCase()
+    );
+    if (!match) return part;
+
+    return (
+      <span key={index} className="relative inline-flex items-center gap-0.5 group">
+        <span className="underline decoration-dotted decoration-primary/50 underline-offset-2">{part}</span>
+        <Info className="inline h-3.5 w-3.5 text-primary/60 shrink-0 cursor-help" strokeWidth={1.5} />
+        <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 rounded-lg bg-popover border border-border px-3 py-2 text-xs text-popover-foreground shadow-md opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 z-50">
+          {match.definition}
+        </span>
+      </span>
+    );
+  });
+}
 
 export default function FreeAssessmentPage() {
   const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
@@ -189,7 +228,7 @@ export default function FreeAssessmentPage() {
                   <Link href="/register">Create account to protect your property</Link>
                 </Button>
                 <Button asChild variant="outline" className="border border-border text-foreground hover:bg-muted rounded-lg transition-all duration-200">
-                  <Link href="/workspace/services">Talk to an expert</Link>
+                  <Link href="/register?redirect=/workspace/services">Talk to an expert</Link>
                 </Button>
               </div>
             </div>
@@ -248,7 +287,7 @@ export default function FreeAssessmentPage() {
             <div className="space-y-1 mb-4">
               <h3 className="text-base font-medium text-foreground">Question {currentIndex + 1}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mt-1">
-                {currentQuestion.question}
+                {renderQuestionWithTooltips(currentQuestion.question)}
               </p>
             </div>
             <div className="space-y-4">

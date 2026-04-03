@@ -1,0 +1,47 @@
+{
+  "title": "Tickets",
+  "subtitleConsultant": "Manage your assigned tickets and keep customers updated.",
+  "subtitleCustomer": "Follow consultant progress for your service requests.",
+  "viewOrders": "View Orders",
+  "refreshing": "Refreshing tickets...",
+  "couldNotLoad": "Could not load tickets.",
+  "loadingTickets": "Loading tickets...",
+  "empty": {
+    "title": "No tickets found",
+    "description": "Try changing filters or create new service orders to generate tickets.",
+    "bookServices": "Book Services"
+  },
+  "openTicket": "Open ticket",
+  "tabs": {
+    "all": "All",
+    "open": "Open",
+    "assigned": "Assigned",
+    "in_progress": "In Progress",
+    "awaiting_customer": "Awaiting Customer",
+    "awaiting_consultant": "Awaiting Consultant",
+    "completed": "Completed"
+  },
+  "filters": {
+    "allAssignments": "All Assignments",
+    "assigned": "Assigned",
+    "unassigned": "Unassigned"
+  },
+  "fields": {
+    "priority": "Priority",
+    "updated": "Updated",
+    "property": "Property",
+    "service": "Service",
+    "customer": "Customer",
+    "consultant": "Consultant"
+  },
+  "status": {
+    "open": "Open",
+    "assigned": "Assigned",
+    "in_progress": "In Progress",
+    "awaiting_customer": "Awaiting Customer",
+    "awaiting_consultant": "Awaiting Consultant",
+    "scheduled": "Scheduled",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  }
+}

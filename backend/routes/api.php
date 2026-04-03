@@ -47,43 +47,6 @@ Route::prefix('v1')->group(function () {
         return response()->json(['status' => 'ok']);
     });
 
-    // Temporary: test meeting email (remove after testing)
-    Route::get('/test-meeting-email/{ticketId}', function (int $ticketId) {
-        $ticket = \App\Models\Ticket::with(['customer', 'consultant', 'property'])->findOrFail($ticketId);
-        $customer = $ticket->customer;
-        if (!$customer || !$customer->email) {
-            return response()->json(['error' => 'Ticket has no customer with email'], 422);
-        }
-
-        // Seed preferred_time_slots if missing (for UI testing)
-        if (empty($ticket->preferred_time_slots)) {
-            $ticket->update([
-                'preferred_time_slots' => [
-                    ['date' => now()->addDays(2)->format('Y-m-d'), 'time' => '10:00'],
-                    ['date' => now()->addDays(3)->format('Y-m-d'), 'time' => '14:00'],
-                    ['date' => now()->addDays(4)->format('Y-m-d'), 'time' => '11:00'],
-                ],
-            ]);
-            $ticket->refresh();
-        }
-
-        $service = app(\App\Services\TransactionalEmailService::class);
-        $service->sendMeetingScheduled(
-            $customer,
-            $ticket,
-            'https://meet.google.com/test-wisebox-demo',
-            \Carbon\Carbon::now()->addDays(2)->setHour(10)->setMinute(0),
-            60,
-        );
-
-        return response()->json([
-            'status' => 'sent',
-            'to' => $customer->email,
-            'ticket' => $ticket->ticket_number,
-            'note' => 'Check Resend dashboard or inbox. Remove this endpoint after testing.',
-        ]);
-    });
-
     // Auth routes (public, rate-limited: 5 attempts/min)
     Route::prefix('auth')->middleware('throttle:auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
@@ -156,19 +119,20 @@ Route::prefix('v1')->group(function () {
         });
 
         // Free Consultation Requests (user-facing)
+        Route::get('free-consultations/status', [FreeConsultationController::class, 'status']);
         Route::get('free-consultations', [FreeConsultationController::class, 'index']);
         Route::post('free-consultations', [FreeConsultationController::class, 'store']);
         Route::get('free-consultations/{ticket}', [FreeConsultationController::class, 'show']);
 
-        // Admin: Translation Management
-        Route::prefix('admin/translations')->group(function () {
+        // Admin: Translation Management (WB-229: admin middleware)
+        Route::prefix('admin/translations')->middleware('admin')->group(function () {
             Route::get('/', [TranslationController::class, 'adminIndex']);
             Route::put('{id}', [TranslationController::class, 'update']);
             Route::post('/', [TranslationController::class, 'store']);
         });
 
-        // Admin: Consultation Management
-        Route::prefix('admin/consultations')->group(function () {
+        // Admin: Consultation Management (WB-229: admin middleware)
+        Route::prefix('admin/consultations')->middleware('admin')->group(function () {
             Route::get('/', [AdminConsultationController::class, 'index']);
             Route::get('consultants', [AdminConsultationController::class, 'consultants']);
             Route::get('{ticket}', [AdminConsultationController::class, 'show']);

@@ -1,0 +1,47 @@
+{
+  "title": "টিকেট",
+  "subtitleConsultant": "আপনার নির্ধারিত টিকেটগুলো পরিচালনা করুন এবং গ্রাহকদের আপডেট রাখুন।",
+  "subtitleCustomer": "আপনার সেবা অনুরোধের জন্য পরামর্শকের অগ্রগতি অনুসরণ করুন।",
+  "viewOrders": "অর্ডার দেখুন",
+  "refreshing": "টিকেট রিফ্রেশ হচ্ছে...",
+  "couldNotLoad": "টিকেট লোড করা যায়নি।",
+  "loadingTickets": "টিকেট লোড হচ্ছে...",
+  "empty": {
+    "title": "কোনো টিকেট পাওয়া যায়নি",
+    "description": "ফিল্টার পরিবর্তন করুন অথবা টিকেট তৈরি করতে নতুন সেবা অর্ডার করুন।",
+    "bookServices": "সেবা বুক করুন"
+  },
+  "openTicket": "টিকেট খুলুন",
+  "tabs": {
+    "all": "সব",
+    "open": "খোলা",
+    "assigned": "নির্ধারিত",
+    "in_progress": "চলমান",
+    "awaiting_customer": "গ্রাহকের অপেক্ষায়",
+    "awaiting_consultant": "পরামর্শকের অপেক্ষায়",
+    "completed": "সম্পন্ন"
+  },
+  "filters": {
+    "allAssignments": "সকল নির্ধারণ",
+    "assigned": "নির্ধারিত",
+    "unassigned": "অনির্ধারিত"
+  },
+  "fields": {
+    "priority": "অগ্রাধিকার",
+    "updated": "আপডেট",
+    "property": "সম্পত্তি",
+    "service": "সেবা",
+    "customer": "গ্রাহক",
+    "consultant": "পরামর্শক"
+  },
+  "status": {
+    "open": "খোলা",
+    "assigned": "নির্ধারিত",
+    "in_progress": "চলমান",
+    "awaiting_customer": "গ্রাহকের অপেক্ষায়",
+    "awaiting_consultant": "পরামর্শকের অপেক্ষায়",
+    "scheduled": "নির্ধারিত সময়",
+    "completed": "সম্পন্ন",
+    "cancelled": "বাতিল"
+  }
+}

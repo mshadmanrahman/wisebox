@@ -1,0 +1,19 @@
+{
+  "greeting": "Hi {{name}}!",
+  "greetingFallback": "Hi there!",
+  "noPropertiesSubtitle": "Let's kick things off by adding your first property!",
+  "propertiesCount": "You have {{count}} added Properties",
+  "addNewProperty": "Add New Property",
+  "getFreeAssessment": "Get a Free Assessment",
+  "completionTime": "Completion time ~15 min",
+  "title": "Wisebox Dashboard",
+  "loadingSummary": "Loading dashboard summary...",
+  "couldNotLoad": "Could not load dashboard summary.",
+  "exploreServices": "Explore services",
+  "exploreServicesDesc": "Discover 11 services to kickstart your journey",
+  "talkToExpert": "Talk to an Expert",
+  "talkToExpertDesc": "Book a free 30-min consultation",
+  "learningCenter": "Learning Center",
+  "learningCenterDesc": "Guides on ownership, documents, and buying property",
+  "myProperties": "My Properties"
+}

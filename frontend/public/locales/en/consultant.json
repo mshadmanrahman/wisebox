@@ -1,0 +1,156 @@
+{
+  "dashboard": {
+    "welcomeBack": "Welcome back, {{name}}!",
+    "subtitle": "Manage your consultation cases and help customers with their property needs",
+    "stats": {
+      "pendingAction": "Pending Action",
+      "scheduled": "Scheduled",
+      "completedThisMonth": "Completed This Month",
+      "totalAssigned": "Total Assigned"
+    },
+    "cases": {
+      "title": "Your Cases",
+      "description": "Consultation tickets assigned to you",
+      "loading": "Loading cases...",
+      "noCases": "No cases assigned yet"
+    },
+    "fields": {
+      "customer": "Customer",
+      "property": "Property",
+      "service": "Service",
+      "created": "Created"
+    },
+    "actionRequired": "Action Required: Select meeting time from {{count}} preferred slots",
+    "meeting": "Meeting"
+  },
+  "status": {
+    "assigned": "Awaiting Your Response",
+    "scheduled": "Meeting Scheduled",
+    "completed": "Completed",
+    "closed": "Closed"
+  },
+  "tickets": {
+    "title": "Consultant Workspace",
+    "subtitle": "Manage assigned tickets, update statuses, and coordinate meetings.",
+    "accessRequired": "Consultant access required",
+    "accessDescription": "This section is available only to consultants and admins.",
+    "backToTickets": "Back to Tickets",
+    "loading": "Loading tickets...",
+    "noTickets": "No tickets found for the selected filter.",
+    "stats": {
+      "open": "Open",
+      "awaitingCustomer": "Awaiting Customer",
+      "upcomingMeetings": "Upcoming Meetings",
+      "avgResolution": "Avg Resolution (hrs)",
+      "utilization": "Utilization (%)"
+    },
+    "tabs": {
+      "all": "All",
+      "open": "Open",
+      "assigned": "Assigned",
+      "in_progress": "In Progress",
+      "awaiting_customer": "Awaiting Customer",
+      "awaiting_consultant": "Awaiting Consultant",
+      "scheduled": "Scheduled",
+      "completed": "Completed"
+    },
+    "fields": {
+      "priority": "Priority",
+      "customer": "Customer",
+      "property": "Property",
+      "service": "Service",
+      "meeting": "Meeting"
+    },
+    "openWorkspace": "Open workspace"
+  },
+  "detail": {
+    "backToTickets": "Back to consultant tickets",
+    "accessRequired": "Consultant access required.",
+    "loading": "Loading consultant ticket...",
+    "joinMeeting": "Join Meeting Link",
+    "fields": {
+      "customer": "Customer",
+      "customerEmail": "Customer Email",
+      "property": "Property",
+      "service": "Service",
+      "priority": "Priority",
+      "scheduled": "Scheduled"
+    },
+    "timeSlots": {
+      "title": "Preferred Time Slots",
+      "description": "Customer has provided {{count}} preferred time slots. Select one to create a Google Meet consultation.",
+      "selected": "Selected",
+      "confirmAndCreate": "Confirm & Create Google Meet",
+      "creatingMeet": "Creating Google Meet..."
+    },
+    "updateTicket": "Update Ticket",
+    "statusLabel": "Status",
+    "selectStatus": "Select status",
+    "scheduledAt": "Scheduled At",
+    "meetingUrl": "Meeting URL",
+    "meetingUrlPlaceholder": "https://meet.google.com/...",
+    "duration": "Duration (minutes)",
+    "resolutionNotes": "Resolution Notes",
+    "resolutionNotesPlaceholder": "Add completion notes or summary...",
+    "consultationNotes": "Consultation Notes",
+    "consultationNotesPlaceholder": "Add consultation notes, recommendations, findings, and action items...",
+    "consultationNotesHint": "These notes will be saved to the property record and visible in the consultation history.",
+    "saveUpdates": "Save Updates",
+    "saving": "Saving...",
+    "documents": {
+      "title": "Property Documents",
+      "noDocuments": "No documents uploaded for this property yet.",
+      "markedMissing": "Marked as missing",
+      "view": "View",
+      "download": "Download",
+      "downloadFailed": "Failed to download document."
+    },
+    "forms": {
+      "title": "Consultation Forms",
+      "sendToCustomer": "Send to Customer",
+      "fillForm": "Fill Form",
+      "sentToCustomer": "Sent to Customer",
+      "completedResponses": "Completed Responses",
+      "noForms": "No consultation forms completed yet. Click \"Fill Form\" to complete an assessment, or \"Send to Customer\" to request the customer fills one out.",
+      "selectForm": "Select Consultation Form",
+      "sendFormTitle": "Send Form to Customer",
+      "sendFormDescription": "Select a form to send to {{email}}. They will receive an email with a link to fill it out (no login required).",
+      "sentAt": "Sent {{date}} to {{email}}",
+      "sendingForm": "Sending form invitation...",
+      "fieldsCount": "{{count}} fields",
+      "statusCompleted": "Completed",
+      "statusExpired": "Expired",
+      "statusPending": "Pending"
+    },
+    "conversation": {
+      "title": "Conversation",
+      "noComments": "No comments yet.",
+      "user": "User",
+      "internalBadge": "Internal",
+      "writePlaceholder": "Write an update...",
+      "internalNote": "Internal note (not visible to customer)",
+      "addComment": "Add Comment",
+      "sending": "Sending..."
+    }
+  },
+  "login": {
+    "brand": "Wisebox Consultant",
+    "title": "Consultant Portal",
+    "subtitle": "Sign in to manage your assigned consultations and help property owners",
+    "emailLabel": "Consultant Email",
+    "emailPlaceholder": "consultant@wisebox.co",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "submit": "Sign in to Consultant Portal",
+    "submitting": "Signing in...",
+    "notConsultant": "Not a consultant?",
+    "userLogin": "User login",
+    "adminLogin": "Admin login",
+    "footer": "Wisebox Consultant Portal. For authorized consultants only.",
+    "invalidCredentials": "Invalid credentials or insufficient permissions.",
+    "sideTitle": "Consultation Hub",
+    "sideStep1": "Accept consultation requests and select meeting times",
+    "sideStep2": "Review property documents during consultations",
+    "sideStep3": "Schedule Google Meet sessions with automatic calendar invites"
+  }
+}

@@ -9,7 +9,7 @@ class CalendlyWebhookService
         $secret = config('services.calendly.webhook_secret');
 
         if (empty($secret)) {
-            return true;
+            return false;
         }
 
         if (empty($signatureHeader)) {

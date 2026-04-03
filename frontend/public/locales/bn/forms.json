@@ -1,0 +1,44 @@
+{
+  "property": {
+    "nameLabel": "সম্পত্তির নাম",
+    "namePlaceholder": "যেমন, ঢাকায় পারিবারিক জমি",
+    "typeLabel": "সম্পত্তির ধরন",
+    "typePlaceholder": "সম্পত্তির ধরন নির্বাচন করুন",
+    "ownershipStatusLabel": "মালিকানার অবস্থা",
+    "ownershipStatusPlaceholder": "মালিকানার অবস্থা নির্বাচন করুন",
+    "ownershipTypeLabel": "মালিকানার ধরন",
+    "ownershipTypePlaceholder": "মালিকানার ধরন নির্বাচন করুন",
+    "divisionLabel": "বিভাগ",
+    "divisionPlaceholder": "বিভাগ নির্বাচন করুন",
+    "districtLabel": "জেলা",
+    "districtPlaceholder": "জেলা নির্বাচন করুন",
+    "upazilaLabel": "উপজেলা",
+    "upazilaPlaceholder": "উপজেলা নির্বাচন করুন",
+    "mouzaLabel": "মৌজা",
+    "mouzaPlaceholder": "মৌজা নির্বাচন করুন",
+    "addressLabel": "ঠিকানা",
+    "addressPlaceholder": "রাস্তার ঠিকানা বা ল্যান্ডমার্ক",
+    "sizeLabel": "আয়তন",
+    "sizePlaceholder": "আয়তন দিন",
+    "sizeUnitLabel": "একক",
+    "descriptionLabel": "বিবরণ",
+    "descriptionPlaceholder": "এই সম্পত্তি সম্পর্কে অতিরিক্ত বিবরণ"
+  },
+  "coOwner": {
+    "title": "সহ-মালিক",
+    "addCoOwner": "সহ-মালিক যোগ করুন",
+    "nameLabel": "নাম",
+    "relationshipLabel": "সম্পর্ক",
+    "percentageLabel": "মালিকানা %",
+    "phoneLabel": "ফোন",
+    "emailLabel": "ইমেইল",
+    "nidLabel": "NID নম্বর",
+    "remove": "সরান"
+  },
+  "document": {
+    "uploadTitle": "ডকুমেন্ট আপলোড করুন",
+    "dragDrop": "ড্র্যাগ এবং ড্রপ করুন অথবা আপলোড করতে ক্লিক করুন",
+    "maxSize": "সর্বোচ্চ ফাইল সাইজ: {{size}}MB",
+    "acceptedFormats": "গ্রহণযোগ্য: {{formats}}"
+  }
+}

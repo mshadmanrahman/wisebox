@@ -82,6 +82,10 @@ export const useAuthStore = create<AuthState>()(
           localStorage.removeItem('wisebox_token');
           document.cookie = 'wisebox_token=; path=/; max-age=0';
           set({ user: null, token: null, isAuthenticated: false });
+          // Redirect to landing page, not login
+          if (typeof window !== 'undefined') {
+            window.location.href = '/';
+          }
         }
       },
 

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Contracts\GovernmentGatewayAdapter;
 use App\Services\Government\MockGovernmentGatewayAdapter;
 use App\Services\Government\NullGovernmentGatewayAdapter;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -34,6 +35,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Password reset emails: generate frontend URL instead of backend route
+        ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
+            $frontendUrl = config('app.frontend_url', env('FRONTEND_URL', 'https://wisebox-mvp.vercel.app'));
+            return $frontendUrl . '/reset-password?token=' . $token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
+        });
+
         // Public endpoints: 30 requests/minute per IP
         RateLimiter::for('public', function (Request $request) {
             return Limit::perMinute(30)->by($request->ip());

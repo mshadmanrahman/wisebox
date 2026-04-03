@@ -1,0 +1,50 @@
+{
+  "title": "Account Settings",
+  "subtitle": "Manage your profile, security, and notification preferences.",
+  "tabs": {
+    "profile": "Profile",
+    "password": "Password",
+    "danger": "Danger Zone"
+  },
+  "profile": {
+    "title": "Profile & Preferences",
+    "description": "Update account details and notification preferences.",
+    "fullName": "Full name",
+    "phone": "Phone",
+    "countryIso": "Country (ISO 3)",
+    "timezone": "Timezone",
+    "preferredLanguage": "Preferred language",
+    "english": "English",
+    "bangla": "Bangla",
+    "emailPreferences": "Email notification preferences",
+    "orderUpdates": "Order updates",
+    "ticketUpdates": "Ticket updates",
+    "consultantUpdates": "Consultant updates",
+    "marketingUpdates": "Marketing updates",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "savedTitle": "Settings saved",
+    "savedDescription": "Profile and notification preferences updated.",
+    "failedTitle": "Failed to update settings"
+  },
+  "password": {
+    "title": "Password",
+    "description": "Change your password securely.",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "updatePassword": "Update password",
+    "updating": "Updating...",
+    "updatedTitle": "Password updated",
+    "failedTitle": "Password update failed",
+    "failedDescription": "Check your current password and try again.",
+    "missingFieldsTitle": "Missing fields",
+    "missingFieldsDescription": "Fill all password fields before saving."
+  },
+  "danger": {
+    "title": "Danger zone",
+    "description": "Destructive actions for your account.",
+    "deleteInfo": "Account deletion is not enabled in this build yet. Contact support for immediate account closure requests.",
+    "deleteButton": "Delete account (coming soon)"
+  }
+}

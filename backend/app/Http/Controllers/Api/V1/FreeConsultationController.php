@@ -114,6 +114,37 @@ class FreeConsultationController extends Controller
     }
 
     /**
+     * Check if the authenticated user has already used their free consultation.
+     *
+     * Returns true if any free consultation ticket exists (any status),
+     * meaning the user should not be offered another free consultation.
+     */
+    public function status(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $hasUsed = Ticket::where('customer_id', $user->id)
+            ->where('is_free_consultation', true)
+            ->exists();
+
+        $activeTicket = null;
+        if ($hasUsed) {
+            $activeTicket = Ticket::where('customer_id', $user->id)
+                ->where('is_free_consultation', true)
+                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->with('property:id,property_name')
+                ->first(['id', 'ticket_number', 'status', 'property_id', 'created_at']);
+        }
+
+        return response()->json([
+            'data' => [
+                'has_used_free_consultation' => $hasUsed,
+                'active_ticket' => $activeTicket,
+            ],
+        ]);
+    }
+
+    /**
      * Get a single consultation request.
      */
     public function show(Request $request, Ticket $ticket): JsonResponse

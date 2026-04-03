@@ -51,7 +51,12 @@ class DashboardController extends Controller
         }
 
         $ticketsPreview = (clone $ticketsBaseQuery)
-            ->with(['property:id,property_name'])
+            ->with([
+                'property:id,property_name',
+                'customer:id,name,email',
+                'service:id,name',
+                'consultant:id,name,email',
+            ])
             ->latest()
             ->limit(5)
             ->get();

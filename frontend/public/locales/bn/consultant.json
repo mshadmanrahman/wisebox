@@ -1,0 +1,156 @@
+{
+  "dashboard": {
+    "welcomeBack": "আবার স্বাগতম, {{name}}!",
+    "subtitle": "আপনার পরামর্শ কেসগুলো পরিচালনা করুন এবং গ্রাহকদের সম্পত্তি বিষয়ে সাহায্য করুন",
+    "stats": {
+      "pendingAction": "কার্যক্রম মুলতুবি",
+      "scheduled": "নির্ধারিত",
+      "completedThisMonth": "এই মাসে সম্পন্ন",
+      "totalAssigned": "মোট নির্ধারিত"
+    },
+    "cases": {
+      "title": "আপনার কেস",
+      "description": "আপনাকে নির্ধারিত পরামর্শ টিকেট",
+      "loading": "কেস লোড হচ্ছে...",
+      "noCases": "এখনো কোনো কেস নির্ধারিত হয়নি"
+    },
+    "fields": {
+      "customer": "গ্রাহক",
+      "property": "সম্পত্তি",
+      "service": "সেবা",
+      "created": "তৈরি"
+    },
+    "actionRequired": "কার্যক্রম প্রয়োজন: {{count}}টি পছন্দের স্লট থেকে মিটিংয়ের সময় নির্বাচন করুন",
+    "meeting": "মিটিং"
+  },
+  "status": {
+    "assigned": "আপনার সাড়ার অপেক্ষায়",
+    "scheduled": "মিটিং নির্ধারিত",
+    "completed": "সম্পন্ন",
+    "closed": "বন্ধ"
+  },
+  "tickets": {
+    "title": "পরামর্শদাতা ওয়ার্কস্পেস",
+    "subtitle": "নির্ধারিত টিকেট পরিচালনা করুন, অবস্থা আপডেট করুন এবং মিটিং সমন্বয় করুন।",
+    "accessRequired": "পরামর্শদাতার প্রবেশাধিকার প্রয়োজন",
+    "accessDescription": "এই বিভাগটি শুধুমাত্র পরামর্শদাতা এবং অ্যাডমিনদের জন্য উপলব্ধ।",
+    "backToTickets": "টিকেটে ফিরে যান",
+    "loading": "টিকেট লোড হচ্ছে...",
+    "noTickets": "নির্বাচিত ফিল্টারের জন্য কোনো টিকেট পাওয়া যায়নি।",
+    "stats": {
+      "open": "খোলা",
+      "awaitingCustomer": "গ্রাহকের অপেক্ষায়",
+      "upcomingMeetings": "আসন্ন মিটিং",
+      "avgResolution": "গড় সমাধান (ঘণ্টা)",
+      "utilization": "ব্যবহার (%)"
+    },
+    "tabs": {
+      "all": "সব",
+      "open": "খোলা",
+      "assigned": "নির্ধারিত",
+      "in_progress": "চলমান",
+      "awaiting_customer": "গ্রাহকের অপেক্ষায়",
+      "awaiting_consultant": "পরামর্শদাতার অপেক্ষায়",
+      "scheduled": "নির্ধারিত সময়",
+      "completed": "সম্পন্ন"
+    },
+    "fields": {
+      "priority": "অগ্রাধিকার",
+      "customer": "গ্রাহক",
+      "property": "সম্পত্তি",
+      "service": "সেবা",
+      "meeting": "মিটিং"
+    },
+    "openWorkspace": "ওয়ার্কস্পেস খুলুন"
+  },
+  "detail": {
+    "backToTickets": "পরামর্শদাতা টিকেটে ফিরে যান",
+    "accessRequired": "পরামর্শদাতার প্রবেশাধিকার প্রয়োজন।",
+    "loading": "পরামর্শদাতা টিকেট লোড হচ্ছে...",
+    "joinMeeting": "মিটিং লিংকে যোগ দিন",
+    "fields": {
+      "customer": "গ্রাহক",
+      "customerEmail": "গ্রাহকের ইমেইল",
+      "property": "সম্পত্তি",
+      "service": "সেবা",
+      "priority": "অগ্রাধিকার",
+      "scheduled": "নির্ধারিত"
+    },
+    "timeSlots": {
+      "title": "পছন্দের সময় স্লট",
+      "description": "গ্রাহক {{count}}টি পছন্দের সময় স্লট দিয়েছেন। একটি Google Meet পরামর্শ তৈরি করতে একটি নির্বাচন করুন।",
+      "selected": "নির্বাচিত",
+      "confirmAndCreate": "নিশ্চিত করুন ও Google Meet তৈরি করুন",
+      "creatingMeet": "Google Meet তৈরি হচ্ছে..."
+    },
+    "updateTicket": "টিকেট আপডেট করুন",
+    "statusLabel": "অবস্থা",
+    "selectStatus": "অবস্থা নির্বাচন করুন",
+    "scheduledAt": "নির্ধারিত সময়",
+    "meetingUrl": "মিটিং URL",
+    "meetingUrlPlaceholder": "https://meet.google.com/...",
+    "duration": "সময়কাল (মিনিট)",
+    "resolutionNotes": "সমাধানের নোট",
+    "resolutionNotesPlaceholder": "সমাপ্তি নোট বা সারাংশ যোগ করুন...",
+    "consultationNotes": "পরামর্শের নোট",
+    "consultationNotesPlaceholder": "পরামর্শের নোট, সুপারিশ, ফলাফল এবং পদক্ষেপের তালিকা যোগ করুন...",
+    "consultationNotesHint": "এই নোটগুলো সম্পত্তির রেকর্ডে সংরক্ষিত হবে এবং পরামর্শের ইতিহাসে দেখা যাবে।",
+    "saveUpdates": "আপডেট সংরক্ষণ করুন",
+    "saving": "সংরক্ষণ হচ্ছে...",
+    "documents": {
+      "title": "সম্পত্তির ডকুমেন্ট",
+      "noDocuments": "এই সম্পত্তির জন্য এখনো কোনো ডকুমেন্ট আপলোড করা হয়নি।",
+      "markedMissing": "অনুপস্থিত হিসেবে চিহ্নিত",
+      "view": "দেখুন",
+      "download": "ডাউনলোড",
+      "downloadFailed": "ডকুমেন্ট ডাউনলোড ব্যর্থ হয়েছে।"
+    },
+    "forms": {
+      "title": "পরামর্শ ফর্ম",
+      "sendToCustomer": "গ্রাহকের কাছে পাঠান",
+      "fillForm": "ফর্ম পূরণ করুন",
+      "sentToCustomer": "গ্রাহকের কাছে পাঠানো হয়েছে",
+      "completedResponses": "সম্পন্ন প্রতিক্রিয়া",
+      "noForms": "এখনো কোনো পরামর্শ ফর্ম সম্পন্ন হয়নি। একটি মূল্যায়ন সম্পন্ন করতে \"ফর্ম পূরণ করুন\" ক্লিক করুন, অথবা গ্রাহককে পূরণ করতে অনুরোধ করতে \"গ্রাহকের কাছে পাঠান\" ক্লিক করুন।",
+      "selectForm": "পরামর্শ ফর্ম নির্বাচন করুন",
+      "sendFormTitle": "গ্রাহকের কাছে ফর্ম পাঠান",
+      "sendFormDescription": "{{email}}-এ পাঠানোর জন্য একটি ফর্ম নির্বাচন করুন। তারা পূরণ করার জন্য একটি লিংকসহ ইমেইল পাবেন (লগইন প্রয়োজন নেই)।",
+      "sentAt": "{{date}}-এ {{email}}-তে পাঠানো হয়েছে",
+      "sendingForm": "ফর্ম আমন্ত্রণ পাঠানো হচ্ছে...",
+      "fieldsCount": "{{count}}টি ক্ষেত্র",
+      "statusCompleted": "সম্পন্ন",
+      "statusExpired": "মেয়াদোত্তীর্ণ",
+      "statusPending": "মুলতুবি"
+    },
+    "conversation": {
+      "title": "কথোপকথন",
+      "noComments": "এখনো কোনো মন্তব্য নেই।",
+      "user": "ব্যবহারকারী",
+      "internalBadge": "অভ্যন্তরীণ",
+      "writePlaceholder": "একটি আপডেট লিখুন...",
+      "internalNote": "অভ্যন্তরীণ নোট (গ্রাহকের কাছে দৃশ্যমান নয়)",
+      "addComment": "মন্তব্য যোগ করুন",
+      "sending": "পাঠানো হচ্ছে..."
+    }
+  },
+  "login": {
+    "brand": "ওয়াইজবক্স পরামর্শদাতা",
+    "title": "পরামর্শদাতা পোর্টাল",
+    "subtitle": "আপনার নির্ধারিত পরামর্শ পরিচালনা করতে এবং সম্পত্তি মালিকদের সাহায্য করতে সাইন ইন করুন",
+    "emailLabel": "পরামর্শদাতার ইমেইল",
+    "emailPlaceholder": "consultant@wisebox.co",
+    "passwordLabel": "পাসওয়ার্ড",
+    "passwordPlaceholder": "আপনার পাসওয়ার্ড দিন",
+    "submit": "পরামর্শদাতা পোর্টালে সাইন ইন",
+    "submitting": "সাইন ইন হচ্ছে...",
+    "notConsultant": "পরামর্শদাতা নন?",
+    "userLogin": "ব্যবহারকারী লগইন",
+    "adminLogin": "অ্যাডমিন লগইন",
+    "footer": "ওয়াইজবক্স পরামর্শদাতা পোর্টাল। শুধুমাত্র অনুমোদিত পরামর্শদাতাদের জন্য।",
+    "invalidCredentials": "ভুল তথ্য অথবা অপর্যাপ্ত অনুমতি।",
+    "sideTitle": "পরামর্শ হাব",
+    "sideStep1": "পরামর্শ অনুরোধ গ্রহণ করুন এবং মিটিংয়ের সময় নির্বাচন করুন",
+    "sideStep2": "পরামর্শের সময় সম্পত্তির ডকুমেন্ট পর্যালোচনা করুন",
+    "sideStep3": "স্বয়ংক্রিয় ক্যালেন্ডার আমন্ত্রণসহ Google Meet সেশন নির্ধারণ করুন"
+  }
+}

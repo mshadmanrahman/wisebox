@@ -178,6 +178,8 @@ return [
         'label_ticket' => 'Ticket:',
         'label_property' => 'Property:',
         'label_service' => 'Service:',
+        'label_services' => 'Services:',
+        'label_total' => 'Total:',
         'label_consultant' => 'Consultant:',
         'label_date' => 'Date:',
         'label_duration' => 'Duration:',

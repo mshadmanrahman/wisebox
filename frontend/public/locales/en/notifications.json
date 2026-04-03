@@ -1,0 +1,28 @@
+{
+  "title": "Notification Center",
+  "subtitle": "Track assignments, ticket updates, and order events.",
+  "refreshing": "Refreshing notifications...",
+  "markAllAsRead": "Mark all as read",
+  "markRead": "Mark read",
+  "couldNotLoad": "Could not load notifications.",
+  "loadingNotifications": "Loading notifications...",
+  "allNotifications": "All notifications",
+  "unreadCount": "{{count}} unread in total",
+  "resultCount": "{{count}} result(s)",
+  "empty": {
+    "title": "No matching notifications",
+    "description": "Try changing your filters or search query."
+  },
+  "filters": {
+    "status": "Filter by status",
+    "allStatuses": "All statuses",
+    "unreadOnly": "Unread only",
+    "readOnly": "Read only",
+    "type": "Filter by type",
+    "allTypes": "All types",
+    "searchPlaceholder": "Search title or body"
+  },
+  "badge": {
+    "unread": "Unread"
+  }
+}
