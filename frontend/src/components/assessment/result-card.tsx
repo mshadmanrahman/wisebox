@@ -194,7 +194,7 @@ export function AssessmentResultCard({
             variant="outline"
             className="flex-1 border border-border text-foreground hover:bg-muted rounded-lg transition-all duration-200"
           >
-            <Link href="/workspace/services">Talk to an expert</Link>
+            <Link href="/register?redirect=/workspace/services">Talk to an expert</Link>
           </Button>
         </div>
       </div>

@@ -258,6 +258,8 @@ export default function AddPropertyPage() {
       setActiveStep('step-2');
       setStep1Error(null);
       trackPropertyAdded(property.ownership_type?.name ?? 'unknown');
+      // Replace history entry so browser back doesn't re-show the creation form with stale data
+      router.replace(`/properties/new?created=${property.id}`, { scroll: false });
     },
     onError: (err: unknown) => {
       const axiosErr = err as { response?: { data?: { message?: string } } };
@@ -285,7 +287,7 @@ export default function AddPropertyPage() {
 
   const handleFinish = () => {
     if (createdProperty) {
-      router.push(`/properties/${createdProperty.id}`);
+      router.replace(`/properties/${createdProperty.id}`);
     }
   };
 
@@ -466,7 +468,9 @@ export default function AddPropertyPage() {
 
                 <div className="space-y-2">
                   <Label className="text-base font-medium">{t('properties:new.locationTitle')}</Label>
-                  <p className="text-sm text-muted-foreground">{t('properties:new.country')}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('properties:new.country')}: <span className="font-medium text-foreground">Bangladesh</span>
+                  </p>
                   <Controller
                     name="division_id"
                     control={control}
@@ -554,7 +558,13 @@ export default function AddPropertyPage() {
                   />
                 </div>
 
-                <div className="pt-2">
+                <div className="pt-2 space-y-3">
+                  {Object.keys(errors).length > 0 && (
+                    <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
+                      Please fill in all required fields above ({Object.keys(errors).length}{' '}
+                      {Object.keys(errors).length === 1 ? 'field needs' : 'fields need'} attention)
+                    </div>
+                  )}
                   <Button
                     type="submit"
                     className="w-full sm:w-auto bg-primary text-primary-foreground rounded-lg transition-all duration-200"
