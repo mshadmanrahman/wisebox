@@ -81,6 +81,26 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* ── Marketing headline system ── */
+  .heading-display {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  .heading-section {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  /* ── Gradient text ── */
+  .text-gradient-brand {
+    background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--primary)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 @layer base {

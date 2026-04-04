@@ -28,7 +28,7 @@ export function PricingTable({ plans }: PricingTableProps) {
           <div className="mb-6">
             <p className="text-sm font-medium text-foreground">{plan.name}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">{plan.subtitle}</p>
-            <p className="mt-4 font-[family-name:var(--font-geist-sans)] text-3xl font-semibold text-foreground" style={{ letterSpacing: '-0.02em' }}>
+            <p className="mt-4 heading-section text-3xl font-bold text-foreground">
               {plan.price}
               {plan.priceSuffix && (
                 <span className="text-base font-normal text-muted-foreground">{plan.priceSuffix}</span>
