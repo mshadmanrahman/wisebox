@@ -44,7 +44,7 @@ export default function Home() {
         <LandingHero />
 
         {/* ── TRUST LINE ── */}
-        <section className="py-8 text-center">
+        <section className="pt-6 lg:pt-12 pb-6 lg:pb-8 text-center">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <p className="text-sm text-muted-foreground">Trusted by 500+ families across the US, UK, Canada, and Australia</p>
           </div>
@@ -54,7 +54,7 @@ export default function Home() {
         <section id="features-section" className="scroll-mt-16 py-16 sm:py-20">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <RevealSection>
-              <h2 className="text-center font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground max-w-3xl mx-auto">
+              <h2 className="text-center heading-section text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground max-w-3xl mx-auto">
                 Everything you need to protect what matters.
               </h2>
             </RevealSection>
@@ -87,7 +87,7 @@ export default function Home() {
                     ].map((stat) => (
                       <div key={stat.num}>
                         <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-5xl font-semibold text-primary">{stat.num}</span>
+                          <span className="heading-display text-5xl font-bold text-primary">{stat.num}</span>
                           <span className="text-lg text-muted-foreground font-medium">{stat.unit}</span>
                         </div>
                         <p className="mt-2 text-sm text-muted-foreground leading-snug max-w-[200px] mx-auto">{stat.desc}</p>
@@ -131,7 +131,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
               <RevealSection className="lg:col-span-1">
                 <div className="w-8 h-1 bg-primary rounded-full mb-6" />
-                <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Everything you need to know</h2>
+                <h2 className="heading-section text-3xl sm:text-4xl font-bold text-foreground">Everything you need to know</h2>
                 <Link href="/contact" className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">Contact us <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} /></Link>
               </RevealSection>
               <RevealSection delay={100} className="lg:col-span-2"><FaqAccordion faqs={marketingFaqs} /></RevealSection>
@@ -147,11 +147,11 @@ export default function Home() {
             <RevealSection>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
-                  <h2 className="font-[family-name:var(--font-geist-sans)] text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">From scattered to structured</h2>
+                  <h2 className="heading-section text-3xl sm:text-4xl lg:text-5xl font-bold text-gradient-brand">From scattered to structured</h2>
                   <p className="mt-4 text-lg text-muted-foreground leading-relaxed">Building clarity for families who own property across borders.</p>
                   <div className="mt-8">
-                    <Link href="/assessment/start" className="inline-flex items-center gap-2 rounded-full bg-primary px-10 py-4 text-lg font-medium text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02]">
-                      Get started — it&rsquo;s free <ArrowRight className="h-5 w-5" strokeWidth={1.5} />
+                    <Link href="/register" className="inline-flex items-center gap-2 rounded-full bg-primary px-10 py-4 text-lg font-medium text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02]">
+                      Sign up for free <ArrowRight className="h-5 w-5" strokeWidth={1.5} />
                     </Link>
                   </div>
                 </div>

@@ -108,10 +108,10 @@ export default function AboutPage() {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background z-[1]" />
           <div className="relative z-10 mx-auto max-w-6xl px-6 text-center sm:px-8">
             <RevealSection>
-              <p className="text-xs font-medium uppercase tracking-widest text-primary">
+              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.2em] text-primary">
                 About Wisebox
               </p>
-              <h1 className="mx-auto mt-4 max-w-3xl text-4xl font-semibold leading-[1.15] tracking-tight text-foreground sm:text-5xl">
+              <h1 className="mx-auto mt-4 max-w-3xl heading-display text-3xl sm:text-4xl lg:text-5xl font-bold text-gradient-brand">
                 Built by families who understand what it means to own property across borders.
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
@@ -132,7 +132,7 @@ export default function AboutPage() {
                     className="rounded-2xl border border-border bg-card p-5 text-center"
                   >
                     <Icon className="mx-auto h-6 w-6 text-primary" strokeWidth={1.5} />
-                    <p className="mt-3 text-sm font-semibold text-foreground">{title}</p>
+                    <p className="mt-3 text-sm font-bold text-foreground">{title}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
                   </div>
                 ))}
@@ -147,7 +147,7 @@ export default function AboutPage() {
             <RevealSection>
               <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
                 <div>
-                  <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                  <h2 className="heading-section text-3xl sm:text-4xl font-bold text-foreground">
                     Our mission
                   </h2>
                   <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
@@ -181,12 +181,12 @@ export default function AboutPage() {
         <section className="bg-muted/30 py-24 sm:py-32">
           <div className="mx-auto max-w-4xl px-6 sm:px-8">
             <RevealSection>
-              <h2 className="text-2xl font-semibold text-foreground">Our offices</h2>
+              <h2 className="heading-section text-2xl sm:text-3xl font-bold text-foreground">Our offices</h2>
               <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 {OFFICES.map(({ city, country, role }) => (
                   <div key={city} className="rounded-2xl border border-border bg-card p-6">
                     <MapPin className="h-5 w-5 text-primary" strokeWidth={1.5} />
-                    <p className="mt-3 text-lg font-semibold text-foreground">{city}</p>
+                    <p className="mt-3 text-lg font-bold text-foreground">{city}</p>
                     <p className="text-sm text-muted-foreground">{country}</p>
                     <p className="mt-2 text-xs font-medium uppercase tracking-wider text-primary">{role}</p>
                   </div>
@@ -200,14 +200,14 @@ export default function AboutPage() {
         <section className="bg-grain-cool relative overflow-hidden py-24 sm:py-32">
           <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8">
             <RevealSection>
-              <h2 className="mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              <h2 className="mx-auto max-w-2xl text-center heading-section text-3xl sm:text-4xl font-bold text-foreground">
                 What we stand for
               </h2>
               <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 {VALUES.map(({ Icon, title, body }) => (
                   <div key={title} className="rounded-2xl border border-border bg-card p-8">
                     <Icon className="h-8 w-8 text-primary" strokeWidth={1.5} />
-                    <p className="mt-4 text-lg font-semibold text-foreground">{title}</p>
+                    <p className="mt-4 text-lg font-bold text-foreground">{title}</p>
                     <p className="mt-2 text-base leading-relaxed text-muted-foreground">{body}</p>
                   </div>
                 ))}
@@ -220,7 +220,7 @@ export default function AboutPage() {
         <section className="py-24 sm:py-32">
           <div className="mx-auto max-w-6xl px-6 sm:px-8">
             <RevealSection>
-              <h2 className="mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              <h2 className="mx-auto max-w-2xl text-center heading-section text-3xl sm:text-4xl font-bold text-foreground">
                 How we protect your data
               </h2>
               <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -258,7 +258,7 @@ export default function AboutPage() {
           <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8">
             <RevealSection>
               <div className="text-center">
-                <h2 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                <h2 className="mx-auto max-w-2xl heading-section text-3xl sm:text-4xl font-bold text-gradient-brand">
                   Start with a free readiness check
                 </h2>
                 <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
