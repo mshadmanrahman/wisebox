@@ -4,12 +4,17 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Ticket;
+use App\Services\TransactionalEmailService;
 
 class OrderFulfillmentService
 {
+    public function __construct(
+        private TransactionalEmailService $emailService,
+    ) {}
+
     public function createFromOrder(Order $order, ?array $preferredTimeSlots = null): void
     {
-        $order->loadMissing(['items.service']);
+        $order->loadMissing(['items.service', 'user']);
 
         if (!$order->property_id) {
             return;
@@ -41,7 +46,7 @@ class OrderFulfillmentService
                 }
             }
 
-            Ticket::create([
+            $ticket = Ticket::create([
                 'ticket_number' => $this->generateTicketNumber(),
                 'order_id' => $order->id,
                 'property_id' => $order->property_id,
@@ -53,6 +58,11 @@ class OrderFulfillmentService
                 'status' => 'open',
                 'preferred_time_slots' => $isConsultation ? $preferredTimeSlots : null,
             ]);
+
+            if ($order->user) {
+                $ticket->load(['property', 'service']);
+                $this->emailService->sendTicketCreated($order->user, $ticket);
+            }
         }
     }
 

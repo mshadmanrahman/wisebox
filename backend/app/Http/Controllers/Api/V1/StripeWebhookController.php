@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
 use App\Services\OrderFulfillmentService;
 use App\Services\StripeService;
 use App\Services\TransactionalEmailService;
@@ -80,8 +81,15 @@ class StripeWebhookController extends Controller
 
         $this->fulfillmentService->createFromOrder($order);
 
+        $order->loadMissing(['user', 'property', 'items.service', 'tickets']);
+
         if ($order->user) {
             $this->transactionalEmailService->sendOrderPaid($order->user, $order);
+        }
+
+        $admins = User::where('role', 'admin')->where('status', 'active')->get();
+        foreach ($admins as $admin) {
+            $this->transactionalEmailService->sendAdminNewOrder($admin, $order);
         }
     }
 

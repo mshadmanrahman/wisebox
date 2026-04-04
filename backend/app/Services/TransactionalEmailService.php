@@ -43,6 +43,37 @@ class TransactionalEmailService
         $this->sendOrderEmail($user, $order, 'refunded', __('notifications.order_lifecycle.refunded.subject', [], $this->userLocale($user)));
     }
 
+    // ── Admin notification emails ──────────────────────────────────
+
+    public function sendAdminNewOrder(User $admin, Order $order): void
+    {
+        $locale = $this->userLocale($admin);
+        $orderNumber = (string) $order->order_number;
+        $total = number_format((float) $order->total, 2);
+        $currency = strtoupper((string) $order->currency);
+        $customerName = (string) ($order->user?->name ?? 'Unknown Customer');
+        $propertyName = (string) ($order->property?->property_name ?? __('notifications.email.default_property', [], $locale));
+        $ticketsCreated = $order->tickets?->count() ?? 0;
+        $adminUrl = rtrim((string) config('app.url', 'https://api.mywisebox.com'), '/') . '/admin/tickets';
+
+        $html = "<h2>New Paid Order — Action Required</h2>"
+            . "<p>Hello {$admin->name},</p>"
+            . "<p>A new order has been paid and <strong>{$ticketsCreated}</strong> ticket(s) are awaiting consultant assignment.</p>"
+            . "<p><strong>Order:</strong> {$orderNumber}<br>"
+            . "<strong>Customer:</strong> {$customerName}<br>"
+            . "<strong>Property:</strong> {$propertyName}<br>"
+            . "<strong>Total:</strong> {$currency} {$total}</p>"
+            . $this->ctaButton('Assign Consultants', $adminUrl);
+
+        $this->sendViaResend(
+            $admin->email,
+            "New Order {$orderNumber} — Consultant Assignment Needed",
+            $html,
+            'admin_new_order',
+            ['order_id' => $order->id]
+        );
+    }
+
     // ── Ticket emails ─────────────────────────────────────────────
 
     public function sendTicketAssigned(User $user, Ticket $ticket): void
@@ -224,7 +255,9 @@ class TransactionalEmailService
         $locale = $this->userLocale($user);
         $ticketNumber = (string) $ticket->ticket_number;
         $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
-        $ticketUrl = "{$frontendUrl}/tickets/{$ticket->id}";
+        $ticketUrl = $user->isConsultant()
+            ? "{$frontendUrl}/consultant/tickets/{$ticket->id}"
+            : "{$frontendUrl}/tickets/{$ticket->id}";
 
         $html = "<h2>".__('notifications.email.ticket_update_heading', ['ticket_number' => $ticketNumber], $locale)."</h2>"
             . "<p>".__('notifications.email.hello', ['name' => $user->name], $locale)."</p>"
