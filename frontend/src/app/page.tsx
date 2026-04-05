@@ -23,7 +23,6 @@ export const metadata: Metadata = {
     description: 'Manage ancestral properties from anywhere with document tracking, consultant workflows, and secure collaboration.',
     type: 'website',
     url: 'https://mywisebox.com',
-    images: [{ url: 'https://mywisebox.com/og/wisebox-home.png', width: 1200, height: 630, alt: 'Wisebox home page' }],
   },
 };
 
