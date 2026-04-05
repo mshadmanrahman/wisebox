@@ -19,40 +19,46 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://mywisebox.com"),
   title: {
-    default: "Wisebox",
+    default: "Wisebox | Property Management for Diaspora Families",
     template: "%s | Wisebox",
   },
   description:
-    "Wisebox helps property owners manage records, services, and support workflows in one secure workspace.",
+    "One secure place to track documents, monitor readiness, and coordinate expert help for your property in Bangladesh. Trusted by 500+ families across the US, UK, Canada, and Australia.",
+  keywords: [
+    "Bangladesh property management",
+    "diaspora property",
+    "ancestral property Bangladesh",
+    "property documents Bangladesh",
+    "NRB property management",
+    "Bangladesh land management",
+    "property consultant Bangladesh",
+  ],
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Wisebox",
+    title: "Wisebox | Property Management for Diaspora Families",
     description:
-      "Wisebox helps property owners manage records, services, and support workflows in one secure workspace.",
+      "One secure place to track documents, monitor readiness, and coordinate expert help for your property in Bangladesh.",
     url: "https://mywisebox.com",
     siteName: "Wisebox",
     type: "website",
-    images: [
-      {
-        url: "https://mywisebox.com/og/wisebox-default.png",
-        width: 1200,
-        height: 630,
-        alt: "Wisebox property management platform",
-      },
-    ],
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wisebox",
+    title: "Wisebox | Property Management for Diaspora Families",
     description:
-      "Wisebox helps property owners manage records, services, and support workflows in one secure workspace.",
-    images: ["https://mywisebox.com/og/wisebox-default.png"],
+      "One secure place to track documents, monitor readiness, and coordinate expert help for your property in Bangladesh.",
+    site: "@mywisebox",
   },
 };
 

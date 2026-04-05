@@ -1,0 +1,44 @@
+# Wisebox
+
+> One secure place for diaspora families to track documents, monitor property readiness, and coordinate expert help — specifically for properties in Bangladesh.
+
+## What Wisebox does
+
+Wisebox helps families living abroad (US, UK, Canada, Australia) manage ancestral properties back in Bangladesh. The core problems it solves:
+
+- Property documents (deeds, tax clearances, legal correspondence) are scattered across WhatsApp groups, emails, and paper files
+- Families have no visibility into the status or readiness of their properties
+- Finding and coordinating trusted consultants (lawyers, land surveyors, agents) is opaque and risky
+- Cross-border collaboration between family members and local consultants is difficult to track
+
+## Core features
+
+- **Document vault**: Versioned, time-stamped storage for all property records
+- **Readiness score**: Automated assessment of a property's legal and administrative health
+- **Consultant workflows**: Connect with licensed consultants; all requests become trackable tickets
+- **Smart alerts**: Real-time status updates, action items, and deadline reminders
+- **Family collaboration**: Invite family members with role-based access
+
+## Who it's for
+
+Bangladeshi diaspora families who own land or property back home and need a structured, digital way to manage it from abroad. Also useful for NRBs (Non-Resident Bangladeshis) with inheritance, dispute, or compliance needs.
+
+## Key stats
+
+- 15 minutes average time to complete a first property assessment
+- 72% average readiness score improvement after 30 days
+- Families from 4 countries: US, UK, Canada, Australia
+- Offices in Washington DC, Uppsala, and Dhaka
+
+## Pages
+
+- Homepage: https://mywisebox.com
+- About: https://mywisebox.com/about
+- Services: https://mywisebox.com/services
+- Free Assessment: https://mywisebox.com/assessment
+- FAQ: https://mywisebox.com/faq
+- Contact: https://mywisebox.com/contact
+
+## Contact
+
+support@mywisebox.com
