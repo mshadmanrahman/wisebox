@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'next/navigation';
 
@@ -28,6 +29,7 @@ declare global {
               width?: number;
               text?: string;
               shape?: string;
+              locale?: string;
             }
           ) => void;
         };
@@ -36,21 +38,32 @@ declare global {
   }
 }
 
-// Module-level script load promise (survives component remounts)
+// Module-level script load tracking (survives component remounts)
 let gisPromise: Promise<void> | null = null;
+let gisLoadedLocale: string | null = null;
 
-function ensureGISLoaded(): Promise<void> {
-  if (gisPromise) return gisPromise;
-  if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+function ensureGISLoaded(locale: string): Promise<void> {
+  // If already loaded with the same locale, reuse
+  if (gisPromise && gisLoadedLocale === locale) return gisPromise;
+  if (
+    typeof window !== 'undefined' &&
+    window.google?.accounts?.id &&
+    gisLoadedLocale === locale
+  ) {
     return Promise.resolve();
   }
+  // Reset if locale changed (rare — only on language switch)
   gisPromise = new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = GIS_SRC;
+    script.src = `${GIS_SRC}?hl=${locale}`;
     script.async = true;
-    script.onload = () => resolve();
+    script.onload = () => {
+      gisLoadedLocale = locale;
+      resolve();
+    };
     script.onerror = () => {
       gisPromise = null;
+      gisLoadedLocale = null;
       reject(new Error('Failed to load Google Sign-In'));
     };
     document.head.appendChild(script);
@@ -68,10 +81,12 @@ function ensureGISLoaded(): Promise<void> {
  */
 export function useGoogleAuth() {
   const router = useRouter();
+  const { i18n } = useTranslation();
   const { googleLogin } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const locale = i18n.language || 'en';
 
   // Ref-based callback so GIS always invokes the latest closure
   const credentialHandlerRef = useRef<(response: { credential: string }) => void>();
@@ -96,7 +111,7 @@ export function useGoogleAuth() {
   // Load GIS script and initialize once
   useEffect(() => {
     let cancelled = false;
-    ensureGISLoaded()
+    ensureGISLoaded(locale)
       .then(() => {
         if (cancelled) return;
         window.google?.accounts.id.initialize({
@@ -114,7 +129,7 @@ export function useGoogleAuth() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [locale]);
 
   // Render the official Google button into the container element
   const renderButton = useCallback((el: HTMLDivElement | null) => {
@@ -126,8 +141,9 @@ export function useGoogleAuth() {
       text: 'continue_with',
       shape: 'rectangular',
       width: Math.min(el.offsetWidth || 400, 400),
+      locale,
     });
-  }, []);
+  }, [locale]);
 
   // Ref callback: store container and render when possible
   const googleButtonRef = useCallback(

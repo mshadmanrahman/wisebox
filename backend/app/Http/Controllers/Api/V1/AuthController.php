@@ -32,7 +32,7 @@ class AuthController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $validated['name'],
+            'name' => strip_tags($validated['name']),
             'email' => $validated['email'],
             'password' => $validated['password'],
             'country_of_residence' => $validated['country_of_residence'] ?? null,
@@ -168,7 +168,7 @@ class AuthController extends Controller
         } else {
             // Create new user
             $user = User::create([
-                'name' => $name,
+                'name' => strip_tags($name),
                 'email' => $email,
                 'google_id' => $googleId,
                 'avatar_url' => $avatarUrl,

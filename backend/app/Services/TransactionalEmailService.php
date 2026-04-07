@@ -51,13 +51,13 @@ class TransactionalEmailService
         $orderNumber = (string) $order->order_number;
         $total = number_format((float) $order->total, 2);
         $currency = strtoupper((string) $order->currency);
-        $customerName = (string) ($order->user?->name ?? 'Unknown Customer');
+        $customerName = $this->safeName($order->user?->name ?? 'Unknown Customer');
         $propertyName = (string) ($order->property?->property_name ?? __('notifications.email.default_property', [], $locale));
         $ticketsCreated = $order->tickets?->count() ?? 0;
         $adminUrl = rtrim((string) config('app.url', 'https://api.mywisebox.com'), '/') . '/admin/tickets';
 
         $html = "<h2>New Paid Order — Action Required</h2>"
-            . "<p>Hello {$admin->name},</p>"
+            . "<p>Hello {$this->safeName($admin->name)},</p>"
             . "<p>A new order has been paid and <strong>{$ticketsCreated}</strong> ticket(s) are awaiting consultant assignment.</p>"
             . "<p><strong>Order:</strong> {$orderNumber}<br>"
             . "<strong>Customer:</strong> {$customerName}<br>"
@@ -108,7 +108,7 @@ class TransactionalEmailService
         $ticketUrl = "{$frontendUrl}/tickets/{$ticket->id}";
 
         $html = "<h2>".__('notifications.email.ticket_created_heading', [], $locale)."</h2>"
-            . "<p>".__('notifications.email.hello', ['name' => $customer->name], $locale)."</p>"
+            . "<p>".__('notifications.email.hello', ['name' => $this->safeName($customer->name)], $locale)."</p>"
             . "<p>".__('notifications.email.ticket_created_body', [], $locale)."</p>"
             . "<p><strong>".__('notifications.email.label_ticket', [], $locale)."</strong> {$ticketNumber}<br>"
             . "<strong>".__('notifications.email.label_property', [], $locale)."</strong> {$propertyName}<br>"
@@ -145,7 +145,7 @@ class TransactionalEmailService
             : "<p><strong>".__('notifications.email.meeting_no_link', [], $locale)."</strong></p>";
 
         $html = "<h2>".__('notifications.email.meeting_heading', [], $locale)."</h2>"
-            . "<p>".__('notifications.email.hello', ['name' => $customer->name], $locale)."</p>"
+            . "<p>".__('notifications.email.hello', ['name' => $this->safeName($customer->name)], $locale)."</p>"
             . "<p>".__('notifications.email.meeting_body', [], $locale)."</p>"
             . "<p><strong>".__('notifications.email.label_ticket', [], $locale)."</strong> {$ticketNumber}<br>"
             . "<strong>".__('notifications.email.label_property', [], $locale)."</strong> {$propertyName}<br>"
@@ -174,7 +174,7 @@ class TransactionalEmailService
         $locale = $this->userLocale($consultant);
         $ticketNumber = (string) $ticket->ticket_number;
         $propertyName = (string) ($ticket->property?->property_name ?? __('notifications.email.default_property', [], $locale));
-        $customerName = (string) ($ticket->customer?->name ?? 'Customer');
+        $customerName = $this->safeName($ticket->customer?->name ?? 'Customer');
         $formattedDate = $scheduledAt->format('l, F j, Y \a\t g:i A');
         $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
         $ticketUrl = "{$frontendUrl}/consultant/tickets/{$ticket->id}";
@@ -184,7 +184,7 @@ class TransactionalEmailService
             : "<p><strong>".__('notifications.email.meeting_no_link', [], $locale)."</strong></p>";
 
         $html = "<h2>".__('notifications.email.consultant_meeting_heading', [], $locale)."</h2>"
-            . "<p>".__('notifications.email.hello', ['name' => $consultant->name], $locale)."</p>"
+            . "<p>".__('notifications.email.hello', ['name' => $this->safeName($consultant->name)], $locale)."</p>"
             . "<p>".__('notifications.email.consultant_meeting_body', ['customer_name' => $customerName], $locale)."</p>"
             . "<p><strong>".__('notifications.email.label_ticket', [], $locale)."</strong> {$ticketNumber}<br>"
             . "<strong>".__('notifications.email.label_property', [], $locale)."</strong> {$propertyName}<br>"
@@ -210,8 +210,8 @@ class TransactionalEmailService
         $adminUrl = rtrim((string) config('app.url', 'https://api.mywisebox.com'), '/') . '/admin/tickets';
 
         $html = "<h2>".__('notifications.email.admin_free_consultation_heading', [], $locale)."</h2>"
-            . "<p>".__('notifications.email.hello', ['name' => $admin->name], $locale)."</p>"
-            . "<p>".__('notifications.email.admin_free_consultation_body', ['customer_name' => $customer->name, 'property_name' => $propertyName], $locale)."</p>"
+            . "<p>".__('notifications.email.hello', ['name' => $this->safeName($admin->name)], $locale)."</p>"
+            . "<p>".__('notifications.email.admin_free_consultation_body', ['customer_name' => $this->safeName($customer->name), 'property_name' => $propertyName], $locale)."</p>"
             . "<p><strong>".__('notifications.email.label_ticket', [], $locale)."</strong> {$ticketNumber}<br>"
             . "<strong>".__('notifications.email.label_property', [], $locale)."</strong> {$propertyName}</p>"
             . $this->ctaButton(__('notifications.email.admin_free_consultation_cta', [], $locale), $adminUrl);
@@ -235,7 +235,7 @@ class TransactionalEmailService
         $consultantName = (string) ($ticket->consultant?->name ?? __('notifications.email.default_consultant', [], $locale));
 
         $html = "<h2>".__('notifications.email.booking_heading', [], $locale)."</h2>"
-            . "<p>".__('notifications.email.hello', ['name' => $customer->name], $locale)."</p>"
+            . "<p>".__('notifications.email.hello', ['name' => $this->safeName($customer->name)], $locale)."</p>"
             . "<p>".__('notifications.email.booking_body', ['consultant_name' => $consultantName, 'property_name' => $propertyName, 'ticket_number' => $ticketNumber], $locale)."</p>"
             . "<p>".__('notifications.email.booking_pick_time', [], $locale)."</p>"
             . $this->ctaButton(__('notifications.email.book_time', [], $locale), $bookingUrl)
@@ -295,7 +295,7 @@ class TransactionalEmailService
         $ticketUrl = "{$frontendUrl}/consultant/tickets/{$ticket->id}";
 
         $html = "<h2>".__('notifications.email.form_completed_heading', [], $locale)."</h2>"
-            . "<p>".__('notifications.email.hello', ['name' => $consultant->name], $locale)."</p>"
+            . "<p>".__('notifications.email.hello', ['name' => $this->safeName($consultant->name)], $locale)."</p>"
             . "<p>".__('notifications.email.form_completed_body', ['customer_email' => $customerEmail, 'template_name' => $templateName, 'ticket_number' => $ticketNumber], $locale)."</p>"
             . "<p>".__('notifications.email.form_completed_review', [], $locale)."</p>"
             . $this->ctaButton(__('notifications.email.view_ticket_detail', [], $locale), $ticketUrl);
@@ -321,7 +321,7 @@ class TransactionalEmailService
             : "{$frontendUrl}/tickets/{$ticket->id}";
 
         $html = "<h2>".__('notifications.email.ticket_update_heading', ['ticket_number' => $ticketNumber], $locale)."</h2>"
-            . "<p>".__('notifications.email.hello', ['name' => $user->name], $locale)."</p>"
+            . "<p>".__('notifications.email.hello', ['name' => $this->safeName($user->name)], $locale)."</p>"
             . "<p>{$message}</p>"
             . $this->ctaButton(__('notifications.email.view_ticket', [], $locale), $ticketUrl);
 
@@ -362,7 +362,7 @@ class TransactionalEmailService
         }
 
         $html = "<h2>{$label}</h2>"
-            . "<p>".__('notifications.email.hello', ['name' => $user->name], $locale)."</p>"
+            . "<p>".__('notifications.email.hello', ['name' => $this->safeName($user->name)], $locale)."</p>"
             . "<p>".__('notifications.email.order_body', ['order_number' => $orderNumber, 'currency' => $currency, 'total' => $total, 'event' => $event], $locale)."</p>"
             . "<p><strong>".__('notifications.email.label_property', [], $locale)."</strong> {$propertyName}</p>"
             . ($serviceLines !== '' ? "<p><strong>".__('notifications.email.label_services', [], $locale)."</strong></p>{$serviceLines}" : '')
@@ -386,6 +386,15 @@ class TransactionalEmailService
     private function userLocale(User $user): string
     {
         return $user->profile?->preferred_language ?? App::getLocale();
+    }
+
+    /**
+     * HTML-escape a user-supplied name for safe embedding in email HTML.
+     * Defense-in-depth: input is also stripped on registration.
+     */
+    private function safeName(?string $name): string
+    {
+        return e($name ?? '');
     }
 
     /**
