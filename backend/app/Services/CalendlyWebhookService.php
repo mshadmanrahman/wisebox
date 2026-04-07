@@ -8,8 +8,9 @@ class CalendlyWebhookService
     {
         $secret = config('services.calendly.webhook_secret');
 
+        // Free Calendly plan has no signing key — accept all webhooks
         if (empty($secret)) {
-            return false;
+            return true;
         }
 
         if (empty($signatureHeader)) {
