@@ -151,6 +151,15 @@ return [
         'meeting_subject' => ':ticket_number-এর জন্য মিটিং নির্ধারিত',
         'join_meeting' => 'মিটিংয়ে যোগ দিন',
 
+        'consultant_meeting_heading' => 'নতুন মিটিং নির্ধারিত',
+        'consultant_meeting_body' => 'আপনার গ্রাহক <strong>:customer_name</strong> একটি পরামর্শ মিটিং বুক করেছেন।',
+        'consultant_meeting_subject' => ':customer_name :ticket_number-এর জন্য মিটিং বুক করেছেন',
+
+        'admin_free_consultation_heading' => 'নতুন বিনামূল্যে পরামর্শ অনুরোধ',
+        'admin_free_consultation_body' => '<strong>:customer_name</strong> <strong>:property_name</strong>-এর জন্য একটি বিনামূল্যে পরামর্শ অনুরোধ জমা দিয়েছেন।',
+        'admin_free_consultation_cta' => 'পর্যালোচনা ও পরামর্শদাতা নিযুক্ত করুন',
+        'admin_free_consultation_subject' => 'নতুন পরামর্শ অনুরোধ: :ticket_number',
+
         'booking_heading' => 'আপনার পরামর্শ শিডিউল করুন',
         'booking_body' => 'আপনার পরামর্শদাতা <strong>:consultant_name</strong> <strong>:property_name</strong> (টিকেট :ticket_number) সম্পর্কে আপনার সাথে দেখা করতে প্রস্তুত।',
         'booking_pick_time' => 'আপনার সুবিধামতো একটি সময় বেছে নিন:',

@@ -118,6 +118,38 @@ class CalendlyWebhookController extends Controller
                 ]
             );
         }
+
+        // Notify consultant about the scheduled meeting
+        if ($ticket->consultant) {
+            $scheduledAt = isset($scheduledAt) ? $scheduledAt : (
+                $startTime ? \Carbon\Carbon::parse($startTime) : now()
+            );
+            $duration = $durationMinutes ?: 30;
+            $link = isset($link) ? $link : (is_string($meetingUrl) ? $meetingUrl : '');
+
+            if ($link) {
+                $this->transactionalEmailService->sendConsultantMeetingScheduled(
+                    $ticket->consultant,
+                    $ticket,
+                    $link,
+                    $scheduledAt,
+                    $duration,
+                );
+            }
+
+            $this->createNotification(
+                (int) $ticket->consultant_id,
+                'ticket.meeting.scheduled',
+                'Meeting scheduled with customer',
+                "A meeting for ticket {$ticket->ticket_number} has been scheduled by the customer.",
+                [
+                    'ticket_id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                    'meeting_url' => $link,
+                    'scheduled_at' => $scheduledAt->toISOString(),
+                ]
+            );
+        }
     }
 
     private function handleInviteeCanceled(array $payload): void

@@ -164,6 +164,67 @@ class TransactionalEmailService
         );
     }
 
+    public function sendConsultantMeetingScheduled(
+        User $consultant,
+        Ticket $ticket,
+        string $meetLink,
+        \Carbon\Carbon $scheduledAt,
+        int $durationMinutes,
+    ): void {
+        $locale = $this->userLocale($consultant);
+        $ticketNumber = (string) $ticket->ticket_number;
+        $propertyName = (string) ($ticket->property?->property_name ?? __('notifications.email.default_property', [], $locale));
+        $customerName = (string) ($ticket->customer?->name ?? 'Customer');
+        $formattedDate = $scheduledAt->format('l, F j, Y \a\t g:i A');
+        $frontendUrl = (string) config('services.frontend.url', 'http://localhost:3000');
+        $ticketUrl = "{$frontendUrl}/consultant/tickets/{$ticket->id}";
+
+        $meetSection = $meetLink
+            ? $this->ctaButton(__('notifications.email.join_meeting', [], $locale), $meetLink)
+            : "<p><strong>".__('notifications.email.meeting_no_link', [], $locale)."</strong></p>";
+
+        $html = "<h2>".__('notifications.email.consultant_meeting_heading', [], $locale)."</h2>"
+            . "<p>".__('notifications.email.hello', ['name' => $consultant->name], $locale)."</p>"
+            . "<p>".__('notifications.email.consultant_meeting_body', ['customer_name' => $customerName], $locale)."</p>"
+            . "<p><strong>".__('notifications.email.label_ticket', [], $locale)."</strong> {$ticketNumber}<br>"
+            . "<strong>".__('notifications.email.label_property', [], $locale)."</strong> {$propertyName}<br>"
+            . "<strong>".__('notifications.email.label_date', [], $locale)."</strong> {$formattedDate}<br>"
+            . "<strong>".__('notifications.email.label_duration', [], $locale)."</strong> {$durationMinutes} minutes</p>"
+            . $meetSection
+            . "<p>".$this->ctaButton(__('notifications.email.view_ticket', [], $locale), $ticketUrl)."</p>";
+
+        $this->sendViaResend(
+            $consultant->email,
+            __('notifications.email.consultant_meeting_subject', ['ticket_number' => $ticketNumber, 'customer_name' => $customerName], $locale),
+            $html,
+            'consultant_meeting_scheduled',
+            ['ticket_id' => $ticket->id]
+        );
+    }
+
+    public function sendAdminFreeConsultation(User $admin, Ticket $ticket, User $customer): void
+    {
+        $locale = $this->userLocale($admin);
+        $ticketNumber = (string) $ticket->ticket_number;
+        $propertyName = (string) ($ticket->property?->property_name ?? __('notifications.email.default_property', [], $locale));
+        $adminUrl = rtrim((string) config('app.url', 'https://api.mywisebox.com'), '/') . '/admin/tickets';
+
+        $html = "<h2>".__('notifications.email.admin_free_consultation_heading', [], $locale)."</h2>"
+            . "<p>".__('notifications.email.hello', ['name' => $admin->name], $locale)."</p>"
+            . "<p>".__('notifications.email.admin_free_consultation_body', ['customer_name' => $customer->name, 'property_name' => $propertyName], $locale)."</p>"
+            . "<p><strong>".__('notifications.email.label_ticket', [], $locale)."</strong> {$ticketNumber}<br>"
+            . "<strong>".__('notifications.email.label_property', [], $locale)."</strong> {$propertyName}</p>"
+            . $this->ctaButton(__('notifications.email.admin_free_consultation_cta', [], $locale), $adminUrl);
+
+        $this->sendViaResend(
+            $admin->email,
+            __('notifications.email.admin_free_consultation_subject', ['ticket_number' => $ticketNumber], $locale),
+            $html,
+            'admin_free_consultation',
+            ['ticket_id' => $ticket->id]
+        );
+    }
+
     // ── Booking link email ─────────────────────────────────────────
 
     public function sendBookingLink(User $customer, Ticket $ticket, string $bookingUrl): void

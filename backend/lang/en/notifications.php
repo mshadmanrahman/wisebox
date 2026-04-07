@@ -151,6 +151,15 @@ return [
         'meeting_subject' => 'Meeting scheduled for :ticket_number',
         'join_meeting' => 'Join Meeting',
 
+        'consultant_meeting_heading' => 'New Meeting Scheduled',
+        'consultant_meeting_body' => 'Your customer <strong>:customer_name</strong> has booked a consultation meeting.',
+        'consultant_meeting_subject' => 'Meeting booked for :ticket_number by :customer_name',
+
+        'admin_free_consultation_heading' => 'New Free Consultation Request',
+        'admin_free_consultation_body' => '<strong>:customer_name</strong> has submitted a free consultation request for <strong>:property_name</strong>.',
+        'admin_free_consultation_cta' => 'Review & Assign Consultant',
+        'admin_free_consultation_subject' => 'New consultation request: :ticket_number',
+
         'booking_heading' => 'Schedule Your Consultation',
         'booking_body' => 'Your consultant <strong>:consultant_name</strong> is ready to meet with you regarding <strong>:property_name</strong> (ticket :ticket_number).',
         'booking_pick_time' => 'Please pick a time that works for you:',

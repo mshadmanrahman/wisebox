@@ -67,7 +67,7 @@ class FreeConsultationController extends Controller
             'is_free_consultation' => true,
         ]);
 
-        // Notify admins
+        // Notify admins (in-app + email)
         $admins = User::where('role', 'admin')->orWhere('role', 'super_admin')->get();
         foreach ($admins as $admin) {
             $this->createNotification(
@@ -82,6 +82,8 @@ class FreeConsultationController extends Controller
                     'customer_name' => $user->name,
                 ]
             );
+
+            $this->transactionalEmailService->sendAdminFreeConsultation($admin, $ticket, $user);
         }
 
         $ticket->load(['customer:id,name,email', 'property:id,property_name']);
