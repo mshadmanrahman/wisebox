@@ -12,6 +12,16 @@ class TranslationApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Clear translations seeded by migrations so each test starts clean.
+        // The seeder migrations populate hundreds of rows that conflict with
+        // the specific Translation::create() calls in each test method.
+        Translation::query()->delete();
+    }
+
     public function test_public_endpoint_returns_translations_for_locale_and_namespace(): void
     {
         Translation::create(['locale' => 'en', 'namespace' => 'common', 'key' => 'nav.home', 'value' => 'Home']);

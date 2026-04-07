@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -28,7 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->renderable(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['message' => 'Resource not found.'], 404);
-        });
+        // Map ModelNotFoundException to a generic 404 BEFORE Laravel's
+        // prepareException() converts it — otherwise the model class path
+        // leaks into the NotFoundHttpException message.
+        $exceptions->map(
+            \Illuminate\Database\Eloquent\ModelNotFoundException::class,
+            fn ($e) => new NotFoundHttpException('Resource not found.', $e),
+        );
     })->create();

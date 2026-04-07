@@ -5,6 +5,15 @@ const nextConfig = {
     // Pre-existing lint issues in the codebase; build should not fail on warnings
     ignoreDuringBuilds: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/free-consultation',
+        destination: '/services',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
