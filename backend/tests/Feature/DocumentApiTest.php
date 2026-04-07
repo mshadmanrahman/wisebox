@@ -13,6 +13,17 @@ class DocumentApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Clear seeded reference data that conflicts with test inserts
+        DB::table('document_types')->delete();
+        DB::table('property_types')->delete();
+        DB::table('ownership_statuses')->delete();
+        DB::table('ownership_types')->delete();
+    }
+
     public function test_property_documents_index_returns_document_types_and_uploaded_arrays(): void
     {
         $user = User::factory()->create();

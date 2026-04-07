@@ -111,7 +111,7 @@ class PropertyApiTest extends TestCase
     {
         $propertyTypeId = DB::table('property_types')->insertGetId([
             'name' => 'Building',
-            'slug' => 'building',
+            'slug' => 'building-'.uniqid(),
             'is_active' => true,
             'sort_order' => 1,
             'created_at' => now(),
@@ -120,7 +120,7 @@ class PropertyApiTest extends TestCase
 
         $ownershipStatusId = DB::table('ownership_statuses')->insertGetId([
             'name' => 'Purchased',
-            'slug' => 'purchased',
+            'slug' => 'purchased-'.uniqid(),
             'display_label' => 'I purchased it',
             'is_active' => true,
             'sort_order' => 1,
@@ -130,7 +130,7 @@ class PropertyApiTest extends TestCase
 
         $ownershipTypeId = DB::table('ownership_types')->insertGetId([
             'name' => 'Joint Ownership',
-            'slug' => 'joint',
+            'slug' => 'joint-'.uniqid(),
             'requires_co_owners' => true,
             'is_active' => true,
             'sort_order' => 1,

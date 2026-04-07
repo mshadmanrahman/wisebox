@@ -14,6 +14,14 @@ class DashboardSummaryApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Clear seeded sliders so test controls exact slider count
+        DB::table('sliders')->delete();
+    }
+
     public function test_dashboard_summary_returns_scoped_data_for_authenticated_user(): void
     {
         $user = User::factory()->create();

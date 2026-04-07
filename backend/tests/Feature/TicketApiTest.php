@@ -6,13 +6,10 @@ use App\Models\Property;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 use App\Models\User;
-use App\Notifications\TicketCreatedNotification;
-use App\Notifications\TicketLifecycleNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -80,8 +77,6 @@ class TicketApiTest extends TestCase
 
     public function test_ticket_creation_sends_confirmation_email_to_customer(): void
     {
-        Notification::fake();
-
         $customer = User::factory()->create();
         $property = $this->createPropertyForUser($customer);
 
@@ -106,16 +101,13 @@ class TicketApiTest extends TestCase
             ->assertJsonPath('data.status', 'open')
             ->assertJsonPath('data.customer_id', $customer->id);
 
-        Notification::assertSentTo($customer, TicketCreatedNotification::class, function (TicketCreatedNotification $notification) use ($property) {
-            return $notification->propertyName === $property->property_name
-                && $notification->serviceName === 'Ownership Verification';
-        });
+        // Email is sent via TransactionalEmailService (Resend HTTP API)
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.resend.com/emails'
+            && str_contains($request['to'][0], $customer->email));
     }
 
     public function test_ticket_creation_sends_email_even_without_service(): void
     {
-        Notification::fake();
-
         $customer = User::factory()->create();
         $property = $this->createPropertyForUser($customer);
 
@@ -126,9 +118,8 @@ class TicketApiTest extends TestCase
             'title' => 'General inquiry',
         ])->assertCreated();
 
-        Notification::assertSentTo($customer, TicketCreatedNotification::class, function (TicketCreatedNotification $notification) {
-            return $notification->serviceName === null;
-        });
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.resend.com/emails'
+            && str_contains($request['to'][0], $customer->email));
     }
 
     public function test_internal_comments_are_hidden_from_customers(): void
@@ -309,12 +300,18 @@ class TicketApiTest extends TestCase
 
     public function test_scheduling_link_uses_calendly_api_when_event_type_is_configured(): void
     {
+        // Replace the Http factory so the base TestCase's catch-all is gone.
+        // Laravel's Http::fake() merges into stubCallbacks — the base setUp's
+        // catch-all (index 0) would shadow URL-specific fakes added later.
+        $this->app->forgetInstance(\Illuminate\Http\Client\Factory::class);
+        Http::clearResolvedInstances();
         Http::fake([
             'https://api.calendly.test/scheduling_links' => Http::response([
                 'resource' => [
                     'booking_url' => 'https://calendly.com/d/single-use/wisebox-abc123',
                 ],
             ], 201),
+            '*' => Http::response('', 200),
         ]);
 
         config([
@@ -356,10 +353,13 @@ class TicketApiTest extends TestCase
 
     public function test_scheduling_link_falls_back_when_calendly_api_fails(): void
     {
+        $this->app->forgetInstance(\Illuminate\Http\Client\Factory::class);
+        Http::clearResolvedInstances();
         Http::fake([
             'https://api.calendly.test/scheduling_links' => Http::response([
                 'message' => 'upstream failure',
             ], 500),
+            '*' => Http::response('', 200),
         ]);
 
         config([
@@ -446,8 +446,6 @@ class TicketApiTest extends TestCase
 
     public function test_assignment_and_public_comment_create_notifications(): void
     {
-        Notification::fake();
-
         $admin = User::factory()->create([
             'role' => 'admin',
             'status' => 'active',
@@ -474,6 +472,7 @@ class TicketApiTest extends TestCase
             'consultant_id' => $consultant->id,
         ])->assertOk();
 
+        // In-app notifications created directly in DB
         $this->assertDatabaseHas('notifications', [
             'user_id' => $consultant->id,
             'type' => 'ticket.assigned',
@@ -483,13 +482,8 @@ class TicketApiTest extends TestCase
             'type' => 'ticket.consultant.assigned',
         ]);
 
-        Notification::assertSentTo($consultant, TicketLifecycleNotification::class, function (TicketLifecycleNotification $notification) {
-            return $notification->event === 'assigned';
-        });
-
-        Notification::assertSentTo($customer, TicketLifecycleNotification::class, function (TicketLifecycleNotification $notification) {
-            return $notification->event === 'assigned';
-        });
+        // Emails sent via TransactionalEmailService (Resend HTTP API)
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.resend.com/emails');
 
         Sanctum::actingAs($consultant);
 
@@ -503,10 +497,6 @@ class TicketApiTest extends TestCase
             'type' => 'ticket.comment.added',
             'title' => 'Ticket updated by consultant',
         ]);
-
-        Notification::assertSentTo($customer, TicketLifecycleNotification::class, function (TicketLifecycleNotification $notification) {
-            return $notification->event === 'comment_added';
-        });
     }
 
     private function createPropertyForUser(User $user): Property

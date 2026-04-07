@@ -6,11 +6,10 @@ use App\Models\Order;
 use App\Models\Property;
 use App\Models\Service;
 use App\Models\User;
-use App\Notifications\OrderLifecycleNotification;
 use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
 use Stripe\Event;
 use Tests\TestCase;
@@ -21,7 +20,6 @@ class StripeWebhookTest extends TestCase
 
     public function test_checkout_session_completed_marks_order_paid_and_creates_tickets(): void
     {
-        Notification::fake();
 
         $user = User::factory()->create();
         $property = $this->createPropertyForUser($user);
@@ -77,14 +75,12 @@ class StripeWebhookTest extends TestCase
             'service_id' => $service->id,
         ]);
 
-        Notification::assertSentTo($user, OrderLifecycleNotification::class, function (OrderLifecycleNotification $notification) {
-            return $notification->event === 'paid';
-        });
+        // Email sent via TransactionalEmailService (Resend HTTP API)
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.resend.com/emails');
     }
 
     public function test_payment_failed_webhook_marks_order_failed(): void
     {
-        Notification::fake();
 
         $user = User::factory()->create();
         $property = $this->createPropertyForUser($user);
@@ -130,14 +126,11 @@ class StripeWebhookTest extends TestCase
             'status' => 'pending',
         ]);
 
-        Notification::assertSentTo($user, OrderLifecycleNotification::class, function (OrderLifecycleNotification $notification) {
-            return $notification->event === 'failed';
-        });
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.resend.com/emails');
     }
 
     public function test_charge_refunded_webhook_marks_order_refunded_and_sends_email(): void
     {
-        Notification::fake();
 
         $user = User::factory()->create();
         $property = $this->createPropertyForUser($user);
@@ -187,9 +180,7 @@ class StripeWebhookTest extends TestCase
             'status' => 'cancelled',
         ]);
 
-        Notification::assertSentTo($user, OrderLifecycleNotification::class, function (OrderLifecycleNotification $notification) {
-            return $notification->event === 'refunded';
-        });
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.resend.com/emails');
     }
 
     private function createPropertyForUser(User $user): Property

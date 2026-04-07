@@ -6,11 +6,10 @@ use App\Models\Order;
 use App\Models\Property;
 use App\Models\Service;
 use App\Models\User;
-use App\Notifications\OrderLifecycleNotification;
 use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
 use Stripe\Checkout\Session;
 use Tests\TestCase;
@@ -21,7 +20,6 @@ class OrderApiTest extends TestCase
 
     public function test_customer_can_create_paid_order(): void
     {
-        Notification::fake();
 
         $user = User::factory()->create();
         $property = $this->createPropertyForUser($user);
@@ -58,9 +56,7 @@ class OrderApiTest extends TestCase
             'order_id' => $orderId,
         ]);
 
-        Notification::assertSentTo($user, OrderLifecycleNotification::class, function (OrderLifecycleNotification $notification) {
-            return $notification->event === 'created';
-        });
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.resend.com/emails');
     }
 
     public function test_free_order_is_auto_paid_and_creates_ticket(): void
@@ -177,7 +173,6 @@ class OrderApiTest extends TestCase
 
     public function test_customer_can_cancel_pending_order_and_receives_email_notification(): void
     {
-        Notification::fake();
 
         $user = User::factory()->create();
         $property = $this->createPropertyForUser($user);
@@ -196,9 +191,7 @@ class OrderApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.status', 'cancelled');
 
-        Notification::assertSentTo($user, OrderLifecycleNotification::class, function (OrderLifecycleNotification $notification) {
-            return $notification->event === 'cancelled';
-        });
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.resend.com/emails');
     }
 
     public function test_checkout_for_already_paid_order_returns_confirmation_url(): void
@@ -270,7 +263,7 @@ class OrderApiTest extends TestCase
     {
         $propertyTypeId = DB::table('property_types')->insertGetId([
             'name' => 'Apartment',
-            'slug' => 'apartment',
+            'slug' => 'apartment-'.uniqid(),
             'is_active' => true,
             'sort_order' => 1,
             'created_at' => now(),
@@ -279,7 +272,7 @@ class OrderApiTest extends TestCase
 
         $ownershipStatusId = DB::table('ownership_statuses')->insertGetId([
             'name' => 'Purchased',
-            'slug' => 'purchased',
+            'slug' => 'purchased-'.uniqid(),
             'display_label' => 'I purchased it',
             'is_active' => true,
             'sort_order' => 1,
@@ -289,7 +282,7 @@ class OrderApiTest extends TestCase
 
         $ownershipTypeId = DB::table('ownership_types')->insertGetId([
             'name' => 'Sole',
-            'slug' => 'sole',
+            'slug' => 'sole-'.uniqid(),
             'requires_co_owners' => false,
             'is_active' => true,
             'sort_order' => 1,

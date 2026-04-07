@@ -11,6 +11,15 @@ class ServiceCatalogApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Clear seeded services and categories so tests control exact data
+        DB::table('services')->delete();
+        DB::table('service_categories')->delete();
+    }
+
     public function test_public_services_endpoint_returns_active_sorted_services(): void
     {
         $legalCategoryId = $this->createCategory('Legal', 'legal', true, 1);

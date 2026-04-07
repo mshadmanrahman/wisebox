@@ -14,6 +14,14 @@ class AssessmentApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Clear seeded document types that conflict with hardcoded test slugs
+        DB::table('document_types')->delete();
+    }
+
     public function test_public_questions_and_free_assessment_are_available(): void
     {
         $this->seed(AssessmentQuestionSeeder::class);

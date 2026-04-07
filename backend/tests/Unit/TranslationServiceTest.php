@@ -18,6 +18,10 @@ class TranslationServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Clear seeded translations so each test starts clean
+        Translation::query()->delete();
+
         $this->service = new TranslationService();
     }
 
