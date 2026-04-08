@@ -19,6 +19,14 @@ function paymentBadgeClass(status: Order['payment_status']): string {
   return 'bg-muted text-muted-foreground';
 }
 
+function orderStatusBadgeClass(status: Order['status']): string {
+  if (status === 'completed') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
+  if (status === 'cancelled') return 'bg-destructive/20 text-destructive';
+  if (status === 'in_progress') return 'bg-primary/20 text-primary';
+  if (status === 'confirmed') return 'bg-primary/20 text-primary';
+  return 'bg-wisebox-status-warning/20 text-wisebox-status-warning';
+}
+
 export default function OrderDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -108,13 +116,18 @@ export default function OrderDetailPage() {
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="text-base font-medium text-foreground">{order.order_number}</CardTitle>
-            <Badge className={paymentBadgeClass(order.payment_status)}>{order.payment_status}</Badge>
+            <div className="flex items-center gap-2">
+              <Badge className={orderStatusBadgeClass(order.status)}>{order.status.replace('_', ' ')}</Badge>
+              {order.status !== 'cancelled' && (
+                <Badge className={paymentBadgeClass(order.payment_status)}>{order.payment_status}</Badge>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
             <p className="text-muted-foreground">
-              {t('orders:detail.status')}: <span className="font-medium text-foreground">{order.status}</span>
+              {t('orders:detail.payment')}: <span className="font-medium text-foreground">{order.payment_status}</span>
             </p>
             <p className="text-muted-foreground">
               {t('orders:detail.total')}: <span className="font-medium text-foreground">{order.currency} {Number(order.total).toFixed(2)}</span>
