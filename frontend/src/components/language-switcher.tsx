@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useI18nStore } from '@/stores/i18n';
 import api from '@/lib/api';
+import { trackLanguageSwitched } from '@/lib/analytics';
 
 const LANGUAGES = [
   { code: 'en' as const, label: 'EN', fullLabel: 'English' },
@@ -20,7 +21,9 @@ export function LanguageSwitcher() {
   const { language, setLanguage } = useI18nStore();
 
   const handleLanguageChange = async (lang: 'en' | 'bn') => {
+    const previousLang = language;
     setLanguage(lang);
+    trackLanguageSwitched(previousLang, lang);
     try {
       await api.put('/auth/me', { preferred_language: lang });
     } catch {

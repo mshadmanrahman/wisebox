@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ApiResponse, Order } from '@/types';
+import { trackCheckoutStarted, trackPaymentFailed } from '@/lib/analytics';
 
 function paymentBadgeClass(status: Order['payment_status']): string {
   if (status === 'paid') return 'bg-wisebox-status-success/20 text-wisebox-status-success';
@@ -36,10 +37,19 @@ export default function OrderDetailPage() {
 
   const checkoutMutation = useMutation({
     mutationFn: async () => {
+      if (order) {
+        trackCheckoutStarted(
+          order.items?.[0]?.service?.name ?? 'unknown',
+          Number(order.total)
+        );
+      }
       const res = await api.post<ApiResponse<{ checkout_url: string; session_id: string | null }>>(
         `/orders/${orderId}/checkout`
       );
       return res.data.data;
+    },
+    onError: (error) => {
+      trackPaymentFailed(error instanceof Error ? error.message : 'checkout_failed');
     },
     onSuccess: (data) => {
       if (data.checkout_url.startsWith('http')) {

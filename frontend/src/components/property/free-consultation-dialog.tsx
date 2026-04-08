@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { TimeSlotPicker } from '@/components/consultation/time-slot-picker';
+import { trackConsultationBooked } from '@/lib/analytics';
 
 interface FreeConsultationDialogProps {
   propertyId: number;
@@ -47,6 +48,7 @@ export function FreeConsultationDialog({ propertyId, propertyName, trigger }: Fr
       });
     },
     onSuccess: () => {
+      trackConsultationBooked('free_consultation');
       setSuccess(true);
       queryClient.invalidateQueries({ queryKey: ['property', propertyId, 'consultations'] });
       queryClient.invalidateQueries({ queryKey: ['free-consultations'] });

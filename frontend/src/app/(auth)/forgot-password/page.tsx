@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, KeyRound, Loader2, Mail } from 'lucide-react';
+import { trackPasswordResetRequested } from '@/lib/analytics';
 
 const schema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -37,6 +38,7 @@ export default function ForgotPasswordPage() {
     setError(null);
     try {
       await api.post('/auth/forgot-password', data);
+      trackPasswordResetRequested();
       setSent(true);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };

@@ -4,11 +4,13 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { useEffect, useRef } from 'react';
 import { CheckCircle2, Clock3 } from 'lucide-react';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ApiResponse, Order } from '@/types';
+import { trackPaymentCompleted } from '@/lib/analytics';
 
 export default function OrderConfirmationPage() {
   const params = useParams();
@@ -36,6 +38,18 @@ export default function OrderConfirmationPage() {
   }
 
   const paid = order.payment_status === 'paid';
+  const trackedRef = useRef(false);
+
+  useEffect(() => {
+    if (paid && !trackedRef.current) {
+      trackedRef.current = true;
+      trackPaymentCompleted(
+        order.items?.[0]?.service?.name ?? 'unknown',
+        Number(order.total),
+        order.currency
+      );
+    }
+  }, [paid, order]);
 
   return (
     <div className="px-6 py-8">

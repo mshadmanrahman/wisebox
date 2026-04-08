@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDropzone } from 'react-dropzone';
@@ -23,6 +23,7 @@ import type {
   DocumentType,
   PropertyDocument,
 } from '@/types';
+import { trackDocumentChecklistViewed, trackDocumentChecklistCompletion } from '@/lib/analytics';
 
 interface DocumentStatusListProps {
   propertyId: number;
@@ -164,6 +165,15 @@ export function DocumentStatusList({
   }
 
   const { document_types, uploaded } = data;
+
+  const checklistTrackedRef = useRef(false);
+  useEffect(() => {
+    if (!checklistTrackedRef.current) {
+      checklistTrackedRef.current = true;
+      trackDocumentChecklistViewed(propertyId);
+      trackDocumentChecklistCompletion(completionPercentage);
+    }
+  }, [propertyId, completionPercentage]);
 
   const uploadedByType = new Map<number, PropertyDocument>();
   for (const doc of uploaded ?? []) {

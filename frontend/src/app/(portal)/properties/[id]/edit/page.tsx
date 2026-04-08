@@ -46,6 +46,7 @@ import type {
   Mouza,
   SizeUnit,
 } from '@/types';
+import { trackCoOwnerInvited } from '@/lib/analytics';
 
 const coOwnerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -267,7 +268,10 @@ export default function EditPropertyPage() {
       };
       return api.put<ApiResponse<Property>>(`/properties/${id}`, payload);
     },
-    onSuccess: () => {
+    onSuccess: (_response, variables) => {
+      if (variables.co_owners.length > 0) {
+        trackCoOwnerInvited();
+      }
       router.push(`/properties/${id}`);
     },
   });
