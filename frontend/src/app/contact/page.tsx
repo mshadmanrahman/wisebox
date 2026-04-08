@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Mail, MessageSquare, Phone } from 'lucide-react';
+import { Mail, MessageSquare } from 'lucide-react';
 import { MarketingFooter } from '@/components/marketing/marketing-footer';
 import { MarketingHeader } from '@/components/marketing/marketing-header';
 import { Button } from '@/components/ui/button';
@@ -30,25 +30,28 @@ export const metadata: Metadata = {
 
 const channels = [
   {
-    title: 'Email support',
-    detail: 'support@mywisebox.com',
-    note: 'Best for account and onboarding help within one business day.',
+    title: 'Email us',
+    detail: 'hello@wiseboxinc.com',
+    note: 'For onboarding, service enquiries, partnerships, and general questions. We respond within one business day.',
     icon: Mail,
-    href: 'mailto:support@mywisebox.com',
+    href: 'mailto:hello@wiseboxinc.com',
+    cta: 'Send email',
   },
   {
-    title: 'Ticket workflow',
-    detail: 'In-app support tickets',
+    title: 'Support',
+    detail: 'support@mywisebox.com',
+    note: 'For account issues, technical help, and existing service support.',
+    icon: Mail,
+    href: 'mailto:support@mywisebox.com',
+    cta: 'Send email',
+  },
+  {
+    title: 'In-app tickets',
+    detail: 'Support tickets',
     note: 'Track updates and consultant replies directly in your workspace.',
     icon: MessageSquare,
     href: '/login?redirect=%2Ftickets',
-  },
-  {
-    title: 'Call scheduling',
-    detail: '+1 (555) 014-2026',
-    note: 'For service planning and enterprise onboarding discussions.',
-    icon: Phone,
-    href: 'tel:+15550142026',
+    cta: 'Open tickets',
   },
 ];
 
@@ -78,7 +81,7 @@ export default function ContactPage() {
                     <p className="font-medium text-foreground">{channel.detail}</p>
                     <p className="text-sm leading-6 text-muted-foreground">{channel.note}</p>
                     <Button asChild variant="outline" className="border-border text-primary">
-                      <Link href={channel.href}>Open</Link>
+                      <Link href={channel.href}>{channel.cta}</Link>
                     </Button>
                   </CardContent>
                 </Card>

@@ -25,12 +25,12 @@ export function MarketingFooter() {
               <Link href="/about" className="text-sm font-medium uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground">
                 About
               </Link>
-              <a href="#faq-section" className="text-sm font-medium uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground">
+              <Link href="/#faq-section" className="text-sm font-medium uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground">
                 FAQ
-              </a>
-              <a href="#contact-section" className="text-sm font-medium uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground">
+              </Link>
+              <Link href="/contact" className="text-sm font-medium uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground">
                 Contact
-              </a>
+              </Link>
               <Link href="/assessment/start" className="text-sm font-medium uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground">
                 Free Assessment
               </Link>
@@ -72,8 +72,8 @@ export function MarketingFooter() {
         <div className="mt-16 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>&copy; 2026 Wisebox. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <span className="cursor-default">Terms of Service</span>
-            <span className="cursor-default">Privacy Policy</span>
+            <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </div>
