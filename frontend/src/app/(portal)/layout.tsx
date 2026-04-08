@@ -62,9 +62,18 @@ export default function PortalLayout({
 
   const user = useAuthStore((s) => s.user);
   const isAdminRole = user?.role === 'admin' || user?.role === 'super_admin';
+  const isConsultantRole = user?.role === 'consultant';
+  const isConsultantRoute = pathname.startsWith('/consultant');
 
+  // Role-based route guards
   if (hasHydrated && isAdminRole && !isAdmin) {
     redirect('/admin/dashboard');
+  }
+  if (hasHydrated && isConsultantRole && !isConsultantRoute) {
+    redirect('/consultant');
+  }
+  if (hasHydrated && !isConsultantRole && !isAdminRole && isConsultantRoute) {
+    redirect('/dashboard');
   }
 
   if (!hasHydrated) {
