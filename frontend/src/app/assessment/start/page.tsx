@@ -103,32 +103,21 @@ export default function FreeAssessmentPage() {
     trackAssessmentStarted();
   }, []);
 
-  useEffect(() => {
-    let mounted = true;
-
-    const loadQuestions = async () => {
-      try {
-        const response = await api.get<ApiResponse<AssessmentQuestion[]>>('/assessments/questions');
-        if (mounted) {
-          setQuestions(response.data.data);
-        }
-      } catch {
-        if (mounted) {
-          setQuestions([]);
-        }
-      } finally {
-        if (mounted) {
-          setIsLoadingQuestions(false);
-        }
-      }
-    };
-
-    loadQuestions();
-
-    return () => {
-      mounted = false;
-    };
+  const loadQuestions = useCallback(async () => {
+    setIsLoadingQuestions(true);
+    try {
+      const response = await api.get<ApiResponse<AssessmentQuestion[]>>('/assessments/questions');
+      setQuestions(response.data.data);
+    } catch {
+      setQuestions([]);
+    } finally {
+      setIsLoadingQuestions(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadQuestions();
+  }, [loadQuestions]);
 
   const totalQuestions = questions.length;
   const answeredCount = useMemo(
@@ -315,6 +304,11 @@ export default function FreeAssessmentPage() {
             <p className="text-sm text-muted-foreground">
               {isLoadingQuestions ? 'Loading assessment questions...' : 'Questions are unavailable right now.'}
             </p>
+            {!isLoadingQuestions && questions.length === 0 && (
+              <Button variant="outline" size="sm" className="mt-3" onClick={loadQuestions}>
+                Try again
+              </Button>
+            )}
           </div>
         ) : (
           <div className="bg-card border border-border rounded-xl p-6 max-w-2xl mx-auto shadow-sm dark:shadow-none">

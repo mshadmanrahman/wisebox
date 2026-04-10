@@ -196,6 +196,11 @@ class AdminConsultationController extends Controller
             ]
         );
 
+        // Send rejection email to customer
+        if ($ticket->customer?->email) {
+            $this->emailService->sendTicketStatusUpdated($ticket->customer, $ticket, 'open');
+        }
+
         $ticket->load(['customer:id,name,email', 'property:id,property_name']);
 
         return response()->json([
