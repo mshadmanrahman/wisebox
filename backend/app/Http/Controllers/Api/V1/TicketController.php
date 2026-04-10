@@ -336,7 +336,7 @@ class TicketController extends Controller
                 if ($ticket->consultant_id) {
                     $consultant = User::query()->find($ticket->consultant_id);
                     if ($consultant) {
-                        $this->transactionalEmailService->sendTicketCommentAdded($consultant, $ticket, 'Customer');
+                        $this->transactionalEmailService->sendTicketCommentAdded($consultant, $ticket, 'Customer', $bodyText);
                     }
                 }
             }
@@ -356,7 +356,7 @@ class TicketController extends Controller
 
                 $customer = User::query()->find($ticket->customer_id);
                 if ($customer) {
-                    $this->transactionalEmailService->sendTicketCommentAdded($customer, $ticket, 'Consultant');
+                    $this->transactionalEmailService->sendTicketCommentAdded($customer, $ticket, 'Consultant', $bodyText);
                 }
             }
         }

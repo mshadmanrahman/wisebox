@@ -54,7 +54,7 @@ class TransactionalEmailService
         $customerName = $this->safeName($order->user?->name ?? 'Unknown Customer');
         $propertyName = (string) ($order->property?->property_name ?? __('notifications.email.default_property', [], $locale));
         $ticketsCreated = $order->tickets?->count() ?? 0;
-        $adminUrl = rtrim((string) config('app.url', 'https://api.mywisebox.com'), '/') . '/admin/tickets';
+        $adminUrl = rtrim((string) config('services.frontend.url', 'http://localhost:3000'), '/') . '/admin/consultations';
 
         $html = "<h2>New Paid Order — Action Required</h2>"
             . "<p>Hello {$this->safeName($admin->name)},</p>"
@@ -94,7 +94,7 @@ class TransactionalEmailService
     public function sendTicketCommentAdded(User $user, Ticket $ticket, string $actor, ?string $commentBody = null): void
     {
         $locale = $this->userLocale($user);
-        $body = $commentBody ? "<blockquote>{$commentBody}</blockquote>" : '';
+        $body = $commentBody ? '<blockquote>' . e($commentBody) . '</blockquote>' : '';
         $this->sendTicketEmail($user, $ticket, __('notifications.email.ticket_comment_added', ['actor' => $actor], $locale).$body);
     }
 
@@ -207,7 +207,7 @@ class TransactionalEmailService
         $locale = $this->userLocale($admin);
         $ticketNumber = (string) $ticket->ticket_number;
         $propertyName = (string) ($ticket->property?->property_name ?? __('notifications.email.default_property', [], $locale));
-        $adminUrl = rtrim((string) config('app.url', 'https://api.mywisebox.com'), '/') . '/admin/tickets';
+        $adminUrl = rtrim((string) config('services.frontend.url', 'http://localhost:3000'), '/') . '/admin/consultations';
 
         $html = "<h2>".__('notifications.email.admin_free_consultation_heading', [], $locale)."</h2>"
             . "<p>".__('notifications.email.hello', ['name' => $this->safeName($admin->name)], $locale)."</p>"
@@ -309,6 +309,71 @@ class TransactionalEmailService
         );
     }
 
+    // ── Assessment email ────────────────────────────────────────────
+
+    public function sendAssessmentResults(
+        User $user,
+        int $score,
+        string $status,
+        string $summary,
+        array $gaps,
+        bool $isNewUser,
+    ): void {
+        $locale = $this->userLocale($user);
+        $frontendUrl = rtrim((string) config('services.frontend.url', 'http://localhost:3000'), '/');
+
+        $statusLabel = match ($status) {
+            'green' => 'Strong',
+            'yellow' => 'Needs Attention',
+            default => 'At Risk',
+        };
+        $statusColor = match ($status) {
+            'green' => '#16a34a',
+            'yellow' => '#d97706',
+            default => '#dc2626',
+        };
+
+        $gapsHtml = '';
+        if (!empty($gaps)) {
+            $gapsHtml = '<p><strong>Gaps identified:</strong></p><ul style="margin:8px 0;padding-left:20px;">';
+            foreach (array_slice($gaps, 0, 10) as $gap) {
+                $gapsHtml .= '<li>' . e($gap) . '</li>';
+            }
+            $gapsHtml .= '</ul>';
+            if (count($gaps) > 10) {
+                $gapsHtml .= '<p style="color:#666;font-size:13px;">...and ' . (count($gaps) - 10) . ' more. View all in your dashboard.</p>';
+            }
+        }
+
+        $accountSection = $isNewUser
+            ? '<p><strong>Your Wisebox account has been created.</strong> You can log in with your email address. We recommend setting a password from your dashboard settings.</p>'
+            : '<p>Results have been saved to your existing Wisebox account.</p>';
+
+        $dashboardUrl = "{$frontendUrl}/dashboard";
+        $loginUrl = "{$frontendUrl}/login";
+        $ctaUrl = $isNewUser ? $loginUrl : $dashboardUrl;
+        $ctaLabel = $isNewUser ? 'Log in to your dashboard' : 'View your dashboard';
+
+        $html = '<h2>Your Property Assessment Results</h2>'
+            . '<p>Hello ' . $this->safeName($user->name) . ',</p>'
+            . '<p>' . e($summary) . '</p>'
+            . '<p><strong>Score:</strong> ' . $score . '/100<br>'
+            . '<strong>Status:</strong> <span style="color:' . $statusColor . ';font-weight:bold;">' . $statusLabel . '</span></p>'
+            . $gapsHtml
+            . $accountSection
+            . '<p>A draft property called <strong>"Free Assessment"</strong> has been created in your dashboard. You can rename it, add documents, and book a free consultation from there.</p>'
+            . $this->ctaButton($ctaLabel, $ctaUrl)
+            . '<p style="color:#666;font-size:13px;">If you did not request this assessment, you can ignore this email.</p>';
+
+        $this->sendViaResend(
+            $user->email,
+            "Your Property Assessment: {$statusLabel} ({$score}/100)",
+            $html,
+            'assessment_results',
+            ['user_id' => $user->id, 'score' => $score, 'status' => $status]
+        );
+    }
+
     // ── Private helpers ───────────────────────────────────────────
 
     private function sendTicketEmail(User $user, Ticket $ticket, string $message): void
@@ -380,7 +445,7 @@ class TransactionalEmailService
 
     private function ctaButton(string $label, string $url): string
     {
-        return "<p><a href=\"{$url}\" style=\"background:#2563eb;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;\">{$label}</a></p>";
+        return '<p><a href="' . e($url) . '" style="background:#2563eb;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;">' . e($label) . '</a></p>';
     }
 
     private function userLocale(User $user): string
@@ -403,7 +468,11 @@ class TransactionalEmailService
      */
     private function sendViaResend(string $to, string $subject, string $html, string $tag, array $context = []): void
     {
-        $apiKey = config('services.resend.key') ?: env('MAIL_PASSWORD');
+        $apiKey = config('services.resend.key');
+        if (empty($apiKey)) {
+            Log::warning("Resend API key not configured. Email not sent [{$tag}]", $context);
+            return;
+        }
         $fromAddress = config('mail.from.address', 'onboarding@resend.dev');
         $fromName = config('mail.from.name', 'Wisebox');
 

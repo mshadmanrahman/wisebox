@@ -169,11 +169,12 @@ Route::prefix('v1')->group(function () {
         Route::post('/webhooks/calendly', CalendlyWebhookController::class);
     });
 
-    // Public assessment routes (rate-limited: 30 req/min)
-    Route::middleware('throttle:public')->group(function () {
-        Route::get('/assessments/questions', [AssessmentController::class, 'questions']);
-        Route::post('/assessments/free', [AssessmentController::class, 'freeAssessment']);
-    });
+    // Public assessment routes
+    Route::get('/assessments/questions', [AssessmentController::class, 'questions'])
+        ->middleware('throttle:public');
+    // Tight limit: creates accounts + sends emails
+    Route::post('/assessments/free', [AssessmentController::class, 'freeAssessment'])
+        ->middleware('throttle:5,1');
 
     // Phase 2: Locations
     Route::prefix('locations')->group(function () {

@@ -110,17 +110,20 @@ class AdminConsultationController extends Controller
             'resolution_notes' => $validated['admin_notes'] ?? null,
         ]);
 
+        // Eager-load relations needed by notifications and emails
+        $ticket->load(['customer', 'property']);
+
         // Notify consultant via email and in-app
         $this->createNotification(
             $consultant->id,
             'consultation.assigned',
             __('messages.notif_consultation_assigned_title'),
-            __('messages.notif_consultation_assigned_body', ['customer_name' => $ticket->customer->name, 'property_name' => $ticket->property->property_name]),
+            __('messages.notif_consultation_assigned_body', ['customer_name' => $ticket->customer->name ?? '', 'property_name' => $ticket->property->property_name ?? '']),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
                 'property_id' => $ticket->property_id,
-                'customer_name' => $ticket->customer->name,
+                'customer_name' => $ticket->customer->name ?? '',
             ]
         );
 
@@ -129,7 +132,7 @@ class AdminConsultationController extends Controller
             $ticket->customer_id,
             'consultation.approved',
             __('messages.notif_consultation_approved_title'),
-            __('messages.notif_consultation_approved_body', ['property_name' => $ticket->property->property_name]),
+            __('messages.notif_consultation_approved_body', ['property_name' => $ticket->property->property_name ?? '']),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -143,7 +146,7 @@ class AdminConsultationController extends Controller
         }
 
         // Send email to customer
-        if ($ticket->customer->email) {
+        if ($ticket->customer?->email) {
             $this->emailService->sendTicketStatusUpdated($ticket->customer, $ticket, 'open');
         }
 
@@ -177,12 +180,15 @@ class AdminConsultationController extends Controller
             'resolution_notes' => $validated['reason'],
         ]);
 
+        // Eager-load relations needed by notifications
+        $ticket->load(['customer', 'property']);
+
         // Notify customer
         $this->createNotification(
             $ticket->customer_id,
             'consultation.rejected',
             __('messages.notif_consultation_rejected_title'),
-            __('messages.notif_consultation_rejected_body', ['property_name' => $ticket->property->property_name, 'reason' => $validated['reason']]),
+            __('messages.notif_consultation_rejected_body', ['property_name' => $ticket->property->property_name ?? '', 'reason' => $validated['reason']]),
             [
                 'ticket_id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,

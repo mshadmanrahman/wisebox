@@ -1,15 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import api from '@/lib/api';
+import { useAuthStore } from '@/stores/auth';
 import { trackAssessmentStarted, trackAssessmentCompleted } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ChevronLeft, Info } from 'lucide-react';
 import { AssessmentHeader } from '@/components/assessment/assessment-header';
-import type { ApiResponse, AssessmentQuestion, RecommendedService } from '@/types';
+import type { ApiResponse, AssessmentQuestion, RecommendedService, User } from '@/types';
 
 interface AssessmentResult {
   score: number;
@@ -17,6 +19,8 @@ interface AssessmentResult {
   summary: string;
   gaps: string[];
   recommended_services: RecommendedService[];
+  token?: string;
+  user?: User;
 }
 
 function statusClasses(status: 'red' | 'yellow' | 'green'): string {
@@ -170,8 +174,19 @@ export default function FreeAssessmentPage() {
       };
 
       const response = await api.post<ApiResponse<AssessmentResult>>('/assessments/free', payload);
-      setResult(response.data.data);
-      trackAssessmentCompleted(response.data.data.score);
+      const data = response.data.data;
+      setResult(data);
+      trackAssessmentCompleted(data.score);
+
+      // Auto-login: set token and user in auth store so they're immediately authenticated
+      if (data.token && data.user) {
+        const isSecure = window.location.protocol === 'https:';
+        const securePart = isSecure ? '; Secure' : '';
+        localStorage.setItem('wisebox_token', data.token);
+        document.cookie = `wisebox_token=${data.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${securePart}`;
+        useAuthStore.getState().setToken(data.token);
+        useAuthStore.setState({ user: data.user, isAuthenticated: true });
+      }
     } catch {
       setSubmitError('Could not process the assessment. Please try again.');
     } finally {
@@ -224,13 +239,32 @@ export default function FreeAssessmentPage() {
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button asChild className="bg-primary text-primary-foreground rounded-lg font-medium transition-all duration-200">
-                  <Link href="/register">Create account to protect your property</Link>
-                </Button>
-                <Button asChild variant="outline" className="border border-border text-foreground hover:bg-muted rounded-lg transition-all duration-200">
-                  <Link href="/register?redirect=/workspace/services">Talk to an expert</Link>
-                </Button>
+                {result.token ? (
+                  <>
+                    <Button asChild className="bg-primary text-primary-foreground rounded-lg font-medium transition-all duration-200">
+                      <Link href="/dashboard">Go to your dashboard</Link>
+                    </Button>
+                    <Button asChild variant="outline" className="border border-border text-foreground hover:bg-muted rounded-lg transition-all duration-200">
+                      <Link href="/workspace/services">Book a free consultation</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild className="bg-primary text-primary-foreground rounded-lg font-medium transition-all duration-200">
+                      <Link href="/register">Create account to protect your property</Link>
+                    </Button>
+                    <Button asChild variant="outline" className="border border-border text-foreground hover:bg-muted rounded-lg transition-all duration-200">
+                      <Link href="/register?redirect=/workspace/services">Talk to an expert</Link>
+                    </Button>
+                  </>
+                )}
               </div>
+              {result.token && (
+                <p className="text-sm text-muted-foreground pt-2">
+                  A draft property called &quot;Free Assessment&quot; is waiting in your dashboard.
+                  You can rename it, add documents, and book a free consultation from there.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -344,7 +378,7 @@ export default function FreeAssessmentPage() {
             <div className="space-y-1 mb-4">
               <h3 className="text-base font-medium text-foreground">Get your score</h3>
               <p className="text-sm text-muted-foreground">
-                Enter your email to receive your assessment result.
+                Enter your email to receive your assessment result and create your account.
               </p>
             </div>
             <div className="space-y-3">

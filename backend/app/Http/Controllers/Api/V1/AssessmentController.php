@@ -5,15 +5,19 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\AssessmentQuestion;
 use App\Models\Property;
+use App\Models\User;
 use App\Services\PropertyAssessmentService;
+use App\Services\TransactionalEmailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AssessmentController extends Controller
 {
     public function __construct(
-        private PropertyAssessmentService $propertyAssessmentService
+        private PropertyAssessmentService $propertyAssessmentService,
+        private TransactionalEmailService $emailService,
     ) {}
 
     public function questions(): JsonResponse
@@ -30,7 +34,7 @@ class AssessmentController extends Controller
     {
         $validated = $request->validate([
             'email' => ['required', 'email', 'max:255'],
-            'answers' => ['required', 'array', 'min:5'],
+            'answers' => ['required', 'array', 'min:5', 'max:50'],
             'answers.*.question_id' => ['required', 'exists:assessment_questions,id'],
             'answers.*.answer' => ['required', 'boolean'],
         ]);
@@ -75,21 +79,150 @@ class AssessmentController extends Controller
             ])
             ->values();
 
-        DB::table('activity_log')->insert([
-            'user_id' => null,
-            'subject_type' => 'free_assessment',
-            'subject_id' => 0,
-            'action' => 'submitted',
-            'changes' => json_encode([
-                'email' => $validated['email'],
-                'score' => $score,
-                'status' => $status,
-                'gaps_count' => count($gaps),
-            ], JSON_UNESCAPED_SLASHES),
-            'ip_address' => $request->ip(),
-            'user_agent' => substr((string) $request->userAgent(), 0, 500),
-            'created_at' => now(),
-        ]);
+        // Auto-create account + property
+        // Check for existing user (including soft-deleted to prevent duplicate email collision)
+        $isNewUser = false;
+        $token = null;
+        $user = User::withTrashed()->where('email', $validated['email'])->first();
+
+        if ($user && $user->trashed()) {
+            // Soft-deleted account: don't re-create, don't reveal existence
+            // Return results without account creation
+            $this->logAssessmentActivity(null, $validated['email'], $score, $status, count($gaps), false, $request);
+
+            return response()->json([
+                'data' => [
+                    'score' => $score,
+                    'status' => $status,
+                    'summary' => $this->freeSummary($score),
+                    'gaps' => $gaps,
+                    'recommended_services' => $recommendedServices,
+                ],
+            ]);
+        }
+
+        // Security: only issue tokens for customer accounts, never admin/consultant
+        if ($user && !$user->isCustomer()) {
+            // Non-customer account exists: return results without token or email (don't reveal role)
+            $this->logAssessmentActivity($user->id, $validated['email'], $score, $status, count($gaps), false, $request);
+
+            return response()->json([
+                'data' => [
+                    'score' => $score,
+                    'status' => $status,
+                    'summary' => $this->freeSummary($score),
+                    'gaps' => $gaps,
+                    'recommended_services' => $recommendedServices,
+                ],
+            ]);
+        }
+
+        $assessmentPropertyData = [
+            'property_name' => 'Free Assessment',
+            'status' => 'draft',
+            'completion_percentage' => 0,
+            'completion_status' => $status, // Use actual score status (red/yellow/green)
+            'draft_data' => [
+                'source' => 'free_assessment',
+                'assessment_score' => $score,
+                'assessment_status' => $status,
+                'assessment_gaps' => $gaps,
+                'assessed_at' => now()->toISOString(),
+            ],
+        ];
+
+        if (!$user) {
+            $isNewUser = true;
+
+            try {
+                $user = DB::transaction(function () use ($validated, $assessmentPropertyData) {
+                    // Lock check inside transaction to prevent race condition
+                    $existing = User::where('email', $validated['email'])->lockForUpdate()->first();
+                    if ($existing) {
+                        return $existing;
+                    }
+
+                    $newUser = User::create([
+                        'name' => explode('@', $validated['email'])[0],
+                        'email' => $validated['email'],
+                        'password' => Str::random(32),
+                        'role' => 'customer',
+                        'status' => 'active',
+                    ]);
+
+                    $newUser->profile()->create([
+                        'preferred_language' => 'en',
+                        'timezone' => 'UTC',
+                    ]);
+
+                    Property::create([
+                        ...$assessmentPropertyData,
+                        'user_id' => $newUser->id,
+                    ]);
+
+                    return $newUser;
+                });
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Race condition: duplicate email inserted concurrently
+                if (str_contains($e->getMessage(), 'Duplicate entry') || str_contains($e->getMessage(), 'UNIQUE constraint')) {
+                    $user = User::where('email', $validated['email'])->firstOrFail();
+                    $isNewUser = false;
+
+                    // Re-guard recovered user: must be customer and not trashed
+                    if ($user->trashed() || !$user->isCustomer()) {
+                        $this->logAssessmentActivity($user->trashed() ? null : $user->id, $validated['email'], $score, $status, count($gaps), false, $request);
+
+                        return response()->json([
+                            'data' => [
+                                'score' => $score,
+                                'status' => $status,
+                                'summary' => $this->freeSummary($score),
+                                'gaps' => $gaps,
+                                'recommended_services' => $recommendedServices,
+                            ],
+                        ]);
+                    }
+                } else {
+                    throw $e;
+                }
+            }
+
+            // If transaction returned an existing user (lock check), we didn't create
+            if (!$isNewUser || $user->wasRecentlyCreated === false) {
+                $isNewUser = false;
+            }
+        }
+
+        // For existing users, create a draft property only if they don't already have a recent one
+        if (!$isNewUser) {
+            $hasRecentDraft = Property::where('user_id', $user->id)
+                ->where('property_name', 'Free Assessment')
+                ->where('status', 'draft')
+                ->where('created_at', '>=', now()->subDay())
+                ->exists();
+
+            if (!$hasRecentDraft) {
+                Property::create([
+                    ...$assessmentPropertyData,
+                    'user_id' => $user->id,
+                ]);
+            }
+        }
+
+        // Generate auth token for immediate login (customer-only, verified above)
+        $token = $user->createToken('assessment-token')->plainTextToken;
+
+        $this->logAssessmentActivity($user->id, $validated['email'], $score, $status, count($gaps), $isNewUser, $request);
+
+        // Send assessment results email
+        $this->emailService->sendAssessmentResults(
+            $user,
+            $score,
+            $status,
+            $this->freeSummary($score),
+            $gaps,
+            $isNewUser,
+        );
 
         return response()->json([
             'data' => [
@@ -98,6 +231,8 @@ class AssessmentController extends Controller
                 'summary' => $this->freeSummary($score),
                 'gaps' => $gaps,
                 'recommended_services' => $recommendedServices,
+                'token' => $token,
+                'user' => $user->load('profile'),
             ],
         ]);
     }
@@ -147,6 +282,39 @@ class AssessmentController extends Controller
         }
 
         return 'red';
+    }
+
+    private function logAssessmentActivity(
+        ?int $userId,
+        string $email,
+        int $score,
+        string $status,
+        int $gapsCount,
+        bool $isNewUser,
+        Request $request,
+    ): void {
+        try {
+            DB::table('activity_log')->insert([
+                'user_id' => $userId,
+                'subject_type' => 'free_assessment',
+                'subject_id' => 0,
+                'action' => 'submitted',
+                'changes' => json_encode([
+                    'email' => $email,
+                    'score' => $score,
+                    'status' => $status,
+                    'gaps_count' => $gapsCount,
+                    'is_new_user' => $isNewUser,
+                ], JSON_UNESCAPED_SLASHES),
+                'ip_address' => $request->ip(),
+                'user_agent' => substr((string) $request->userAgent(), 0, 500),
+                'created_at' => now(),
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to log free assessment activity', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     private function freeSummary(int $score): string
