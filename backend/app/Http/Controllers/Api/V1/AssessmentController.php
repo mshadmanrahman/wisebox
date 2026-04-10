@@ -68,7 +68,7 @@ class AssessmentController extends Controller
 
         $recommendedServices = DB::table('services')
             ->where('is_active', true)
-            ->whereIn('slug', ['general-consultation', 'deed-ownership-verification', 'property-background-check'])
+            ->whereIn('slug', ['free-consultation', 'land-purchase-verification', 'deed-searching'])
             ->orderBy('sort_order')
             ->limit(3)
             ->get(['id', 'name', 'price'])
