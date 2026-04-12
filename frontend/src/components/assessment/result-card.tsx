@@ -172,9 +172,11 @@ export function AssessmentResultCard({
                       {service.description}
                     </p>
                   )}
-                  <p className="text-sm text-primary font-medium mt-2">
-                    Starting at ${service.price.toFixed(2)}
-                  </p>
+                  {service.price > 0 && (
+                    <p className="text-sm text-primary font-medium mt-2">
+                      Paid service
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

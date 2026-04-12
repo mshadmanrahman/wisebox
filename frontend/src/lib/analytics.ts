@@ -46,7 +46,7 @@ export function identifyUser(user: { id: number; role: string; created_at?: stri
   if (user.created_at) {
     identifyEvent.set('registered_at', user.created_at);
   }
-  amplitude.setUserId(String(user.id));
+  amplitude.setUserId(`wb_${user.id}`);
   amplitude.identify(identifyEvent);
 }
 
